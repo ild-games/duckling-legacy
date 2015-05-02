@@ -11,7 +11,7 @@ CSS_FILES := $(addprefix $(BIN)/,$(wildcard styles/*.css))
 VIEW_FILES := $(addprefix $(BIN)/,$(wildcard views/*.html))
 
 directories:
-	mkdir -p $(BIN)/scripts $(BIN)/views $(BIN)/styles $(BIN)
+	@mkdir -p $(BIN)/scripts $(BIN)/views $(BIN)/styles $(BIN)
 
 $(BIN)/%: %
 	cp -f $< $@
