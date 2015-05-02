@@ -1,2 +1,8 @@
 .idea
 build/
+node_modules/
+*.js
+
+#Ignore editor files
+*~
+*.swp

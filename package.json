@@ -1,0 +1,15 @@
+{
+    "name ": "ducklin",
+    "description" : "Editor designed to be used with the Ancona Game Framework",
+    "version ": "0.0.1",
+    "main" : "views/index.html",
+    "repository" : {
+        "type": "git",
+        "url": "https://bitbucket.org/ilikeducks/duckling.git"
+    },
+    "dependencies" : {
+        "coffee-script" : "latest",
+        "rivets" : "latest",
+        "nw" : "latest"
+    }
+}
