@@ -1,29 +1,36 @@
 MOD = node_modules
 COFFEECC = $(MOD)/coffee-script/bin/coffee
-BIN = build/
+BIN = build
+NW_RUN = $(MOD)/nw/bin/nw
+DEP_TARGET = $(MOD)/.flag
 
-all: directories scripts views style
+all: directories scripts views style $(BIN)/package.json
 
-COFFEE_FILES := $($(wildcard scripts/*.coffee):%.js:%.coffee)
-CSS_FILES := $(wildcard style/*.css)
-VIEW_FILES := $(wildcard views/*.html)
+COFFEE_FILES := $(addprefix $(BIN)/,$(patsubst %.coffee,%.js,$(wildcard scripts/*.coffee)))
+CSS_FILES := $(addprefix $(BIN)/,$(wildcard styles/*.css))
+VIEW_FILES := $(addprefix $(BIN)/,$(wildcard views/*.html))
 
 directories:
 	mkdir -p $(BIN)/scripts $(BIN)/views $(BIN)/styles $(BIN)
 
-%.js: $*.coffee
-	$(COFFEECC) -c $*.coffee $(BIN)/scripts
+$(BIN)/%: %
+	cp -f $< $@
 
-scripts: $(COFFEE_FILES)
+$(BIN)/%.js: %.coffee $(DEP_TARGET)
+	$(COFFEECC) -o $(BIN)/scripts -c $*.coffee
 
-%.html: $*.html
-	mv $* $(BIN)/views
+scripts: $(COFFEE_FILES) 
 
 views: $(VIEW_FILES)
 
-%.css: $*.css
-	mv $* $(BIN)/styles
-
 style: $(CSS_FILES)
 
-run:
+$(DEP_TARGET): package.json 
+	npm install
+	echo "Flag file for make process. Used to serialize parallel make." > $(MOD)/.flag
+
+run: all $(DEP_TARGET)
+	$(NW_RUN) $(BIN)
+
+clean:
+	rm -rf $(BIN)

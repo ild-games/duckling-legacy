@@ -1,5 +1,5 @@
 {
-    "name ": "ducklin",
+    "name" : "duckling",
     "description" : "Editor designed to be used with the Ancona Game Framework",
     "version ": "0.0.1",
     "main" : "views/index.html",

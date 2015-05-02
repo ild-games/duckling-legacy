@@ -6,7 +6,6 @@
 TODO: Write webstorm setup instructions 
 
 ###Hard Mode (Vim / Sublime / ... )
-1. Install nw.js and add it to your path.
-2. Clone the github repository.
-3. Change into the directory and run npm install to download the dependencies.
-TODO: Write make files and instructions for use
+1. Clone the github repository.
+2. Run `make` to build the application.
+3. Run `make run` to run the application.
