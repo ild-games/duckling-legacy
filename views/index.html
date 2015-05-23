@@ -2,9 +2,28 @@
 <html>
   <head>
     <title>Hello World!</title>
+    <script src="../dependencies/sightglass.js"></script>
+    <script src="../dependencies/rivets.js"></script>
+    <script src="../dependencies/jquery.js"></script>
+    <script>
+        vm = require("../scripts/canvas/CanvasViewModel.js");
+        $(document).ready(function () {
+            data = { text: "Hellow View!" };
+            element = $("#firstView")
+            viewmodel = new vm(element,data,window);    
+            viewmodel.render()
+        });
+    </script>
   </head>
   <body>
     <h1>Hello World!</h1>
     We are using node.js <script>document.write(process.version)</script>.
+
+    <h2> Below is our first view and view model! </h2>
+
+    <div id="firstView">
+
+    </div>
+
   </body>
 </html>

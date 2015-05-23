@@ -9,7 +9,9 @@
     },
     "dependencies" : {
         "coffee-script" : "latest",
+        "jquery" : "latest",
         "rivets" : "latest",
+        "sightglass" : "latest",
         "nw" : "latest"
     }
 }
