@@ -1,0 +1,25 @@
+<div class="fill_view sidebarview">
+    <div class="content">
+        <table class="data_table">
+            <tr>
+                <th> Entity </th>
+                <th> Size </th>
+                <th> Actions </th>
+            </tr>
+            <tr rv-each-entity="table">
+                <td> { entity.name } </td>
+                <td> { entity.number } </td>
+                <td> <button rv-command-delete-entity="entity"> Remove </button>
+            </tr>
+        </table>
+    </div>
+    <div class="sidebar">
+        <input type="text" placeholder="new entity name" rv-value="newEntityName" />
+        <button rv-command-create-entity>Create Entity</button>
+
+        <input type="text" placeholder="entity name" rv-value="entitySelector" />
+        <input type="text" placeholder="entity value" rv-value="entityValue" />
+        <button rv-command-change-entity>Change Entity</button>
+
+    </div>
+</div>

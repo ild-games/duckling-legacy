@@ -2,11 +2,12 @@
 <html>
   <head>
     <title>Hello World!</title>
+    <link rel="stylesheet" type="text/css" href="../styles/index.css" />
     <script src="../dependencies/sightglass.js"></script>
     <script src="../dependencies/rivets.js"></script>
     <script src="../dependencies/jquery.js"></script>
     <script>
-        vm = require("../scripts/canvas/CanvasViewModel.js");
+        vm = require("../scripts/proto/SystemBuilderViewModel.js");
         $(document).ready(function () {
             data = { text: "Hellow View!" };
             element = $("#firstView")
@@ -21,7 +22,7 @@
 
     <h2> Below is our first view and view model! </h2>
 
-    <div id="firstView">
+    <div id="firstView" class="view_root">
 
     </div>
 
