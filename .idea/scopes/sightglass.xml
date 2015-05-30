@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="sightglass" pattern="file:node_modules/sightglass/index.js" />
+</component>

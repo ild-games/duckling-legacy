@@ -4,7 +4,7 @@ class SystemBuilderViewModel extends vm
     constructor: (args...) ->
         super args...
         @table = [
-            (name: "Alpha", number: 5, deleteEntity: -> debugger;)
+            (name: "Alpha", number: 5, deleteEntity: -> debugger)
             (name: "Green", number: 7)
         ]
         @setCallback("delete-entity", (entity) => @deleteEntity entity)
