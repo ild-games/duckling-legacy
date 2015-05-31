@@ -1,9 +1,4 @@
 div {
-    margin: 0;
-    padding: 0;
-} 
-
-div {
     box-sizing: border-box;
 }
 
@@ -20,11 +15,12 @@ div {
 .fill_view
 {
     position: absolute; 
-    border: solid;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+    margin: 0;
+    padding: 0;
 }
 
 table.data_table

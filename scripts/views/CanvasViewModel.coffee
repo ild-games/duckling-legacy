@@ -1,4 +1,4 @@
-ViewModel = require('../ViewModel.js')
+ViewModel = require('../framework/ViewModel.js')
 
 class CanvasViewModel extends ViewModel 
     viewFile: ->

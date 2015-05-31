@@ -8,7 +8,6 @@ The ViewModel will be used
 ###
 class ViewModel
     constructor: (@htmlRoot,@data,@window) ->
-        @__attachCommandBinder(@window.rivets)
         @__commandCallbacks = {}
 
     $: (selector) ->
@@ -42,14 +41,6 @@ class ViewModel
         else
             @__commandCallbacks[name].call(@, arg)
 
-    __attachCommandBinder: (rivets) ->
-        return if rivets["command-*"]?
-        rivets.binders["command-*"] =
-            routine: (el, value) ->
-                command = @type.slice("command-".length)
-                $(el).off()
-                $(el).on('click', => @view.models.handleCommand(command, value))
-            unbind: (el) ->
-                $(el).off('click')
+
                 
 module.exports = ViewModel

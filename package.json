@@ -12,6 +12,7 @@
         "jquery" : "latest",
         "rivets" : "latest",
         "sightglass" : "latest",
-        "nw" : "latest"
+        "nw" : "latest",
+        "bootstrap" : "latest"
     }
 }

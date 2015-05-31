@@ -3,6 +3,13 @@ obs = require('./Observer.js')
 class EntitySystem extends obs.Observable
     constructor: ->
         @_entities = {}
+        @_systems = {}
+
+    registerSystem: (systemName, componentClass) ->
+        @_systems[systemName] = componentClass
+
+    systemNames: ->
+        name for name in @_systems
 
     createEntity: (entityName) ->
         @removeEntity entityName if @containsEntity entityName
