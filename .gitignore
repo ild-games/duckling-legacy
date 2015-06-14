@@ -2,6 +2,8 @@ build/
 node_modules/
 *.js
 
+__pycache__/
+
 #Ignore editor files
 *~
 *.swp
