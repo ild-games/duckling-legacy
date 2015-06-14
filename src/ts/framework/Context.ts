@@ -1,10 +1,11 @@
 module framework {
+
     /**
      * The context holds objects shared between different parts of the application.
      */
     export class Context {
         private _views : framework.Views;
-        private _commandQueue : framework.CommandQueue;
+        private _commandQueue : framework.command.CommandQueue;
         private _window : Window;
         private _rivets;
 
@@ -15,7 +16,7 @@ module framework {
          */
         constructor(templateContainer, window: Window) {
             this._views = new framework.Views(templateContainer);
-            this._commandQueue = new framework.CommandQueue();
+            this._commandQueue = new framework.command.CommandQueue();
             this._window = window;
             this._rivets = window["rivets"];
 
@@ -27,7 +28,7 @@ module framework {
             return this._views;
         }
 
-        get CommandQueue() : framework.CommandQueue {
+        get CommandQueue() : framework.command.CommandQueue {
             return this._commandQueue;
         }
 

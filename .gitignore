@@ -1,6 +1,7 @@
 # Ignore build files and dependencies
 build/
 node_modules/
+.sass-cache/
 
 # Ignore certain IntelliJ files
 .idea/workspace.xml

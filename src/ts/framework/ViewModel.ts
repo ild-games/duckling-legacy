@@ -33,6 +33,14 @@ module framework {
         render() {
             this._htmlRoot.innerHTML = this._context.Views.getTemplate(this.viewFile)(this);
             this._rivetsBinding = this._context.Rivets.bind(this._htmlRoot, this);
+            this.onReady();
+        }
+
+        /**
+         * Called when the HTML for the view model is rendered and ready for dom manipulation.
+         */
+        onReady() {
+
         }
 
         /**

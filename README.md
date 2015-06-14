@@ -5,6 +5,8 @@
 ###Installing Dependencies
 1. Install npm
 2. Use npm to globally install grunt `sudo npm install -g grunt-cli'
+3. Install Ruby `sudo apt-get install ruby'
+4. Install Sass 'sudo gem install sass'
 
 ###Webstorm
 1. Clone the git repository.

@@ -11,7 +11,7 @@ html
         script(type='text/javascript').
             $(document).ready(function() {
                 var context = new framework.Context(views.templates, window);
-                var canvasVM = (new viewmodels.CanvasVM()).init(
+                var canvasVM = (new editorcanvas.CanvasVM()).init(
                         context,
                         document.getElementById("ViewRoot"),
                         {text: "Hello World!"}
