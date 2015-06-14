@@ -1,5 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="duckling" type="NodeWebKit" factoryName="NW.js" exePath="$PROJECT_DIR$/node_modules/nw/nwjs/nw.exe" inputPath="$PROJECT_DIR$/build">
-    <method />
-  </configuration>
-</component>

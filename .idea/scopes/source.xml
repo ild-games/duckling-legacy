@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="source" pattern="!file[duckling]:build//*&amp;&amp;!file[duckling]:.idea//*&amp;&amp;!file[duckling]:node_modules//*&amp;&amp;!file[duckling]:editors/*" />
-</component>

@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="dependencies" pattern="file:node_modules/jquery/dist/jquery.js||file:node_modules/rivets/dist/rivets.js||file:node_modules/bootstrap/dist/css/bootstrap.css||file:node_modules/bootstrap/dist/js/bootstrap.js" />
-</component>
