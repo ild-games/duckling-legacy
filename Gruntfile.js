@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 src: ['src/ts/**/*.ts'],
                 dest: 'build/scripts/duckling.js',
                 options: {
-                    module: 'amd',
+                    module: 'commonjs',
                     target: 'es5'
                 }
             }
@@ -35,19 +35,13 @@ module.exports = function(grunt) {
             cssdepend: {
                 src: ['node_modules/bootstrap/dist/css/bootstrap.css'],
                 dest: 'build/dependencies/dependencies.css'
-            },
-            css: {
-                src: ['src/css/**/*.css'],
-                dest: 'build/styles/duckling.css'
             }
         },
         sass: {
-            duckling: {
-                files: [{
-                    expand: true,
-                    src: ['srs/sass/main.sass'],
-                    dest: 'build/styles/duckling.css'
-                }]
+            dist : {
+                files: {
+                    'build/styles/duckling.css': 'src/sass/main.scss'
+                }
             }
         },
         copy: {
@@ -78,5 +72,5 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['typescript','concat','copy','jade']);
+    grunt.registerTask('default', ['typescript','concat','copy','jade', 'sass']);
 }
