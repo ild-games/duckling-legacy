@@ -4,7 +4,7 @@
 
 ###Installing Dependencies
 1. Install npm
-2. Use npm to globaly install grunt `sudo npm install -g grunt-cli'
+2. Use npm to globally install grunt `sudo npm install -g grunt-cli'
 
 ###Webstorm
 1. Clone the git repository.
@@ -14,5 +14,4 @@
 
 ###Hard Mode (Vim / Sublime / ... )
 1. Clone the git repository.
-2. Run `make` to build the application.
-3. Run `make run` to run the application.
+2. Run the duckling script.
