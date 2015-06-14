@@ -57,17 +57,18 @@ module framework {
          * @param callback Callback that will be fired.
          */
         registerCallback(key : string, callback) {
-            this._commandCallbacks[key] = callback;
+            this._commandCallbacks[key] = (event, arg) => callback.call(this, event, arg);
         }
 
         /**
          * Called by rivets when a view command is fired.
          * @param key Key that identifies the view command.
+         * @param event The event that triggered the callback.  Usually an HTML event.
          * @param arg Argument describing the event.
          */
-        handleCommand(key, arg) {
+        handleCommand(key : string, event, arg) {
             if (key in this._commandCallbacks) {
-                this._commandCallbacks[key].call(this, arg);
+                this._commandCallbacks[key].call(this, event, arg);
             } else {
                 debugger;
             }

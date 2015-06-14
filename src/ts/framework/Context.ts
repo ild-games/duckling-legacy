@@ -18,6 +18,8 @@ module framework {
             this._commandQueue = new framework.CommandQueue();
             this._window = window;
             this._rivets = window["rivets"];
+
+            framework.dependencies.ConfigureRivets(this._rivets);
         }
 
         //region Getters and Setters
