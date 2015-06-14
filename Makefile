@@ -23,13 +23,21 @@ $(BIN)/%.js: %.coffee $(DEP_TARGET)
 $(DEP_DIR)/jquery.js: node_modules/jquery/dist/jquery.js $(DEP_TARGET)
 	cp $< $(DEP_DIR) 
 
+$(DEP_DIR)/bootstrap.js: node_modules/bootstrap/dist/js/bootstrap.js $(DEP_TARGET)
+	cp $< $(DEP_DIR) 
+
+$(DEP_DIR)/bootstrap.css: node_modules/bootstrap/dist/css/bootstrap.css $(DEP_TARGET)
+	cp $< $(DEP_DIR) 
+
 $(DEP_DIR)/rivets.js: node_modules/rivets/dist/rivets.js $(DEP_TARGET)
 	cp $< $(DEP_DIR) 
 
 $(DEP_DIR)/sightglass.js: node_modules/sightglass/index.js $(DEP_TARGET)
 	cp $< $(DEP_DIR)/sightglass.js 
 
-dependencies: $(DEP_DIR)/jquery.js $(DEP_DIR)/rivets.js $(DEP_DIR)/sightglass.js
+dependencies: $(DEP_DIR)/jquery.js $(DEP_DIR)/rivets.js \
+	$(DEP_DIR)/sightglass.js $(DEP_DIR)/bootstrap.js \
+	$(DEP_DIR)/bootstrap.css
 
 scripts: $(COFFEE_FILES) 
 

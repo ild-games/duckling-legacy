@@ -1,17 +1,24 @@
 {
-    "name" : "duckling",
-    "description" : "Editor designed to be used with the Ancona Game Framework",
-    "version ": "0.0.1",
-    "main" : "views/index.html",
-    "repository" : {
-        "type": "git",
-        "url": "https://bitbucket.org/ilikeducks/duckling.git"
-    },
-    "dependencies" : {
-        "coffee-script" : "latest",
-        "jquery" : "latest",
-        "rivets" : "latest",
-        "sightglass" : "latest",
-        "nw" : "latest"
-    }
+  "name": "duckling",
+  "description": "Editor designed to be used with the Ancona Game Framework",
+  "version ": "0.0.1",
+  "main": "views/index.html",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/ilikeducks/duckling.git"
+  },
+  "dependencies": {
+    "coffee-script": "latest",
+    "jquery": "latest",
+    "rivets": "latest",
+    "sightglass": "latest",
+    "nw": "latest",
+    "bootstrap": "latest",
+    "grunt-contrib-coffee": "latest",
+    "grunt": "latest",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-concat": "~0.5.1",
+    "grunt-contrib-copy": "~0.8.0",
+    "grunt-contrib-jade": "~0.14.1"
+  }
 }
