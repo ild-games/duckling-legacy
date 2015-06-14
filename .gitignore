@@ -1,0 +1,8 @@
+# Ignore build files and dependencies
+build/
+node_modules/
+
+# Ignore certain IntelliJ files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
