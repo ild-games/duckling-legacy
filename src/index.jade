@@ -6,14 +6,24 @@ html
         each file in ["dependencies/dependencies.js", "scripts/duckling.js", "scripts/duckling_views.js"]
             script(type='text/javascript' src=file)
     body
-        h1 Hello Jade!
-        div(id="ViewRoot")
+        div(id="container")
+            div(id="canvas-view-container")
+            div.entity-editor(id="entity-editor-container")
         script(type='text/javascript').
             $(document).ready(function() {
                 var context = new framework.Context(views.templates, window);
+                var es = new entityframework.EntitySystem();
+                es.addComponentType(new entityframework.components.PhysicsComponentFactory());
+
                 var canvasVM = (new editorcanvas.CanvasVM()).init(
                         context,
-                        document.getElementById("ViewRoot"),
+                        document.getElementById("canvas-view-container"),
                         {text: "Hello World!"}
+                );
+
+                var entityVM = (new entityframework.EntityEditorVM()).init(
+                        context,
+                        document.getElementById("entity-editor-container"),
+                        es
                 );
             });

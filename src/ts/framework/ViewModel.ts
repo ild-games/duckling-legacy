@@ -1,14 +1,18 @@
 module framework {
+    var nextId : number = 0;
+
     /**
      * A ViewModel is responsible for responding to user actions and population the view
      * with information from the model.
      */
-    export class ViewModel {
+    export class ViewModel<T> {
+        protected _children : ViewModel<any>[];
         protected _context : framework.Context;
         protected _htmlRoot : HTMLElement;
         protected _rivetsBinding;
         protected _commandCallbacks = {};
-        private _data;
+        protected _id = nextId++;
+        private _data : T;
 
         /**
          * Initialize the ViewModel. Using init instead of the constructor means that
@@ -19,12 +23,27 @@ module framework {
          * @param data The root of the ViewModel's data.
          * @returns A reference to the ViewModel instance.
          */
-        init(context: framework.Context, htmlRoot : HTMLElement, data) : ViewModel {
+        init(context: framework.Context, htmlRoot : HTMLElement, data : T) : ViewModel<T> {
             this._context = context;
             this._htmlRoot = htmlRoot;
             this._data = data;
             this.render();
             return this;
+        }
+
+        /**
+         * Create an Id unique to the view. Calling id("string") will always produced the same result
+         * for a specific view model, but it will produce different results for different view models.
+         * Elements can be retrieved using the findById method.
+         * @param base Base of the Id
+         * @returns An Id unique to the ViewModel.
+         */
+        id(base : string) {
+            return this._id + base;
+        }
+
+        findById(id : string) {
+            return document.getElementById(this.id(id));
         }
 
         /**
@@ -34,6 +53,22 @@ module framework {
             this._htmlRoot.innerHTML = this._context.Views.getTemplate(this.viewFile)(this);
             this._rivetsBinding = this._context.Rivets.bind(this._htmlRoot, this);
             this.onReady();
+        }
+
+        /**
+         * Detach the ViewModel and then render it again.
+         */
+        reset() {
+            this.detach();
+            this.render();
+        }
+
+        /**
+         * Remove the ViewModel from the page.
+         */
+        detach() {
+            this._rivetsBinding.unbind();
+            this._htmlRoot.innerHTML = "";
         }
 
         /**
@@ -80,6 +115,17 @@ module framework {
             } else {
                 debugger;
             }
+        }
+
+        /**
+         * Add a child viewmodel to the viewmodel. The child will be initialized and attached to the html hierarchy.
+         * @param child ViewModel that is bound to a sub element of this ViewModel's html hierarchy.
+         * @param element Element the view will be bound to.
+         * @param data Model object the ViewModel is rendering.
+         */
+        addChild<T>(child : ViewModel<T>, element : HTMLElement, data : T) {
+            this._children.push(child);
+            child.init(this._context, element, data);
         }
 
         //region Getters and Setters

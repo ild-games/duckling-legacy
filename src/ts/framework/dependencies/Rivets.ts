@@ -37,6 +37,27 @@ module framework.dependencies {
             unbind : function(el : HTMLElement) {
                 removeCommandCallback(el);
             }
-        }
+        };
+
+        rivets.adapters["@"] = {
+            observe : function(){},
+            unobserve : function(){},
+            get : function(obj, keypath) {
+                window[keypath] = obj;
+            },
+            set : function(obj, keypath, value) {
+                throw "Set should never be called on this adapter";
+            }
+        };
+
+        rivets.components['view-model'] = {
+            template : function() {
+                return ''
+            },
+            initialize: function(el, data, arg2) {
+                var vm = new data.vm();
+                this.addChild(vm, el, data.data);
+            }
+        };
     }
 }

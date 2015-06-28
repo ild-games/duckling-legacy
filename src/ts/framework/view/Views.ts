@@ -19,8 +19,8 @@ module framework {
          * @param key A string key describing the template.
          * @returns A function that can be used to generate the view.
          */
-        getTemplate(key: string) : (locals: ViewModel)=>string {
-            return <(locals: ViewModel)=>string>this._templates[key];
+        getTemplate(key: string) : (locals: ViewModel<any>)=>string {
+            return <(locals: ViewModel<any>)=>string>this._templates[key];
         }
     }
 }

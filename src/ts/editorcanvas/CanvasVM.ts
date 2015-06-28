@@ -23,7 +23,7 @@ module editorcanvas {
     /**
      * ViewModel for the main canvas used to interact with entities.
      */
-    export class CanvasVM extends framework.ViewModel implements framework.observe.Observer {
+    export class CanvasVM extends framework.ViewModel<any> implements framework.observe.Observer {
         private _rectangles : framework.observe.ObservableArray<drawing.Rectangle>;
         private _canvas : HTMLCanvasElement;
         private _canvasContext : CanvasRenderingContext2D;
