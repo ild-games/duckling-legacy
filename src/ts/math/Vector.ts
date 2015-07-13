@@ -26,13 +26,13 @@ module math {
         }
 
         set x(val : number) {
+            this._x = Number(val);
             this.dataChanged("x", val);
-            this.x = val;
         }
 
         set y(val : number) {
+            this._y = Number(val);
             this.dataChanged("y", val);
-            this.y = val;
         }
         //endregion
     }

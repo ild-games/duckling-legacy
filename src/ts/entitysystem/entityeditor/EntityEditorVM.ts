@@ -6,13 +6,15 @@ module entityframework
         vm : framework.ViewModel<any>
     }
 
-    export class EntityEditorVM extends  framework.ViewModel<EntitySystem> implements framework.observe.Observer, framework.listvm.ListAdapter {
+    export class EntityEditorVM extends  framework.ViewModel<EntitySystem> implements framework.observe.Observer, framework.listvm.ListAdapter<Component> {
         //Field that exist for rivets bindings
         private currentEntityName : string = "Select Entity";
         private currentEntity : Entity;
-        private entityNames : string[];
-        private _components : ComponentType[];
-        private adapter : framework.listvm.ListAdapter;
+        private entityNames : string[] = [];
+        private _components : ComponentType[] = [];
+        private adapter : framework.listvm.ListAdapter<Component>;
+        private _selectedEntity : entityframework.core.SelectedEntity;
+        private _listVM : framework.listvm.ListVM;
 
         constructor() {
             super();
@@ -24,39 +26,36 @@ module entityframework
                 case "data":
                     this.onSystemChange(event);
                     break;
+                case "selectedEntity":
+                    this.selectEntity(this._selectedEntity.entityKey);
+                    break;
             }
         }
 
-        onReady() {
-            super.onReady();
-
-            var name = "Physics";
-
-            this.data.createEntity("test1");
-            this.data.createEntity("test2");
-            this.data.createEntity("test3");
-            this.data.createEntity("test4");
-
-            this.data.addComponent("test1", name);
-            this.data.addComponent("test2", name);
-            this.data.addComponent("test3", name);
-
-            this.data.listenForChanges("data", this)
+        onDataReady() {
+            this._listVM = new framework.listvm.ListVM("entityeditor/componentwrapper");
+            this.addChildView("entity-form-list", this._listVM , this.adapter);
             this.onSystemChange(null);
-            this.selectEntity("test1");
+            this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
+            this._selectedEntity.listenForChanges("selectedEntity", this);
+        }
+
+        onViewReady() {
+            super.onViewReady();
         }
 
         get length() {
             return this._components.length;
         }
 
-        renderItem(index:number, root:HTMLElement) {
+        getItemVM(index:number) {
             var info = this._components[index];
-            info.vm.init(this._context, root, this.currentEntity.getComponent(info.name));
+            info.vm.setData(this._context, this.currentEntity.getComponent(info.name));
+            return info.vm;
         }
 
-        detachItem(index:number, root:HTMLElement) {
-            this._components[index].vm.detach();
+        getItem(index:number) {
+            return this.currentEntity.getComponent(this._components[index].name);
         }
 
         getComponents() {
@@ -70,7 +69,8 @@ module entityframework
                 if (this.currentEntity.getComponent(name)) {
                     components.push({
                         data : this.currentEntity.getComponent(name),
-                        vm : factory.createFormVM()
+                        vm : factory.createFormVM(),
+                        name : name
                     });
                 }
             });
@@ -88,7 +88,8 @@ module entityframework
                     name : type,
                     vm : factory.createFormVM()
                 });
-            })
+            });
+            this._listVM.dataChanged();
         }
 
         onSystemChange(event : framework.observe.DataChangeEvent) {
@@ -99,7 +100,7 @@ module entityframework
         }
 
         get viewFile():string {
-            return "entityeditor";
+            return "entityeditor/entityeditor";
         }
     }
 }

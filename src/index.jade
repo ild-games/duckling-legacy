@@ -12,13 +12,16 @@ html
         script(type='text/javascript').
             $(document).ready(function() {
                 var context = new framework.Context(views.templates, window);
+                var selectedEntity = new entityframework.core.SelectedEntity();
+                context.setSharedObjectByKey("selectedEntity", selectedEntity);
                 var es = new entityframework.EntitySystem();
                 es.addComponentType(new entityframework.components.PhysicsComponentFactory());
+                es.addComponentType(new entityframework.components.drawing.DrawableComponentFactory());
 
                 var canvasVM = (new editorcanvas.CanvasVM()).init(
                         context,
                         document.getElementById("canvas-view-container"),
-                        {text: "Hello World!"}
+                        es
                 );
 
                 var entityVM = (new entityframework.EntityEditorVM()).init(

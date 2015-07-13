@@ -6,7 +6,8 @@ module framework {
      * with information from the model.
      */
     export class ViewModel<T> {
-        protected _children : ViewModel<any>[];
+        protected _attached : boolean = false;
+        protected _children : {[id : string]:ViewModel<any>} = {};
         protected _context : framework.Context;
         protected _htmlRoot : HTMLElement;
         protected _rivetsBinding;
@@ -24,11 +25,31 @@ module framework {
          * @returns A reference to the ViewModel instance.
          */
         init(context: framework.Context, htmlRoot : HTMLElement, data : T) : ViewModel<T> {
-            this._context = context;
-            this._htmlRoot = htmlRoot;
-            this._data = data;
-            this.render();
+            this.setData(context, data);
+            this.attach(htmlRoot);
             return this;
+        }
+
+        /**
+         * Set the data and context used by the view model.
+         * @param context Context the view model belongs to.
+         * @param data Model object the view is bound to.
+         */
+        setData(context : Context, data : T) {
+            this._context = context;
+            this._data = data;
+            this.onDataReady();
+        }
+
+        /**
+         * Attach the ViewModel to an element on the page.
+         * @param htmlRoot HTML element that will act as a root for the view model.
+         */
+        attach(htmlRoot : HTMLElement) {
+            this._htmlRoot = htmlRoot;
+            this.render();
+            this.onViewReady();
+            this._attached = true;
         }
 
         /**
@@ -42,6 +63,11 @@ module framework {
             return this._id + base;
         }
 
+        /**
+         * Find the child element with the given id.  The id will be transformed using the ViewModel.id method.
+         * @param id Id describing the element to be retrieved.
+         * @returns Element with the given Id.
+         */
         findById(id : string) {
             return document.getElementById(this.id(id));
         }
@@ -49,32 +75,64 @@ module framework {
         /**
          * Renders the ViewModel's template and binds the model to the view.
          */
-        render() {
-            this._htmlRoot.innerHTML = this._context.Views.getTemplate(this.viewFile)(this);
-            this._rivetsBinding = this._context.Rivets.bind(this._htmlRoot, this);
-            this.onReady();
+        private render() {
+            this._htmlRoot.innerHTML = this._context.views.getTemplate(this.viewFile).call(this, this);
+            this._rivetsBinding = this._context.rivets.bind(this._htmlRoot, this);
+
+            for(var childID in this._children) {
+                var child : ViewModel<any> = this._children[childID];
+                child.attach(this.findById(childID))
+            }
+        }
+
+
+        /**
+         * Render the template described by the given name and return it. The viewmodel will be available as the template's
+         * this variable.
+         * @param id The ID of the element the template should be inserted into
+         * @param templateName The name of the template to be rendered.
+         * @param locals An object available to the template.
+         * @returns Returns the formatted HTML string.
+         */
+        renderTemplate(templateName : string, locals) {
+            return this._context.views.getTemplate(templateName).call(this, locals);
         }
 
         /**
          * Detach the ViewModel and then render it again.
          */
         reset() {
-            this.detach();
-            this.render();
+            if (this._attached) {
+                this.detach();
+                this.render();
+            }
         }
 
         /**
          * Remove the ViewModel from the page.
          */
         detach() {
-            this._rivetsBinding.unbind();
-            this._htmlRoot.innerHTML = "";
+            if (this._attached) {
+                this._attached = false;
+                for(var childKey in this._children) {
+                    this._children[childKey].detach();
+                }
+                this._rivetsBinding.unbind();
+                this._htmlRoot.innerHTML = "";
+            }
         }
 
         /**
          * Called when the HTML for the view model is rendered and ready for dom manipulation.
          */
-        onReady() {
+        onViewReady() {
+
+        }
+
+        /**
+         * Called when the view model's data object is ready to be accessed.
+         */
+        onDataReady() {
 
         }
 
@@ -118,15 +176,40 @@ module framework {
         }
 
         /**
-         * Add a child viewmodel to the viewmodel. The child will be initialized and attached to the html hierarchy.
-         * @param child ViewModel that is bound to a sub element of this ViewModel's html hierarchy.
-         * @param element Element the view will be bound to.
+         * Add a child view to the view.
+         * @param id Id of the element the child view is bound to.
+         * @param vm ViewModel that will be bound to a sub element of this ViewModel's html hierarchy.iewmodel of the child view.
          * @param data Model object the ViewModel is rendering.
          */
-        addChild<T>(child : ViewModel<T>, element : HTMLElement, data : T) {
-            this._children.push(child);
-            child.init(this._context, element, data);
+        addChildView(id : string, vm: ViewModel<any>, data : any) {
+            this._children[id] = vm;
+            vm.setData(this._context, data);
+
+            if (this._attached) {
+                vm.attach(this.findById(id));
+            }
         }
+
+        /**
+         * Return the child bound to the element with the given Id.
+         * @param id Id of the element the child is bound to.
+         */
+        getChildView(id : string) {
+            return this._children[id] || null;
+        }
+
+        /**
+         * Call to remove all child views.  Should only be called if the view is detached.
+         */
+        protected removeChildViews() {
+            if (this._attached) {
+                for(var childKey in this._children) {
+                    this._children[childKey].detach();
+                }
+            }
+            this._children = {};
+        }
+
 
         //region Getters and Setters
         get data() {

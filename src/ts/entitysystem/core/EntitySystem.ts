@@ -9,6 +9,7 @@ module entityframework
     {
         private _entities : framework.observe.ObservableMap<Entity>;
         private _componentFactories : {[key:string]:ComponentFactory} = {};
+        private _nextId : number = 0;
 
         /**
          * Create an empty EntitySystem
@@ -94,6 +95,13 @@ module entityframework
             for(var key in this._componentFactories) {
                 func(this._componentFactories[key], key);
             }
+        }
+
+        /**
+         * Generates the next available unique key for the entity system.
+         */
+        nextKey() {
+            return ++this._nextId + "";
         }
     }
 }

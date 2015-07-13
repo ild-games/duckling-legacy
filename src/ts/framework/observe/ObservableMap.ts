@@ -41,6 +41,7 @@ module framework.observe {
         remove(key : string) : T {
             var object = this._data[key];
             if (object) {
+                delete this._data[key];
                 object.stopListening(key, this);
                 this.dataChanged("Removed", object);
             }

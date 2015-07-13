@@ -8,6 +8,7 @@ module framework {
         private _commandQueue : framework.command.CommandQueue;
         private _window : Window;
         private _rivets;
+        private _sharedObjects : {} = {};
 
         /**
          * Construct a new context.
@@ -20,23 +21,52 @@ module framework {
             this._window = window;
             this._rivets = window["rivets"];
 
-            framework.dependencies.ConfigureRivets(this._rivets);
+            framework.dependencies.ConfigureRivets(window, this._rivets, this._commandQueue);
+            this.onEnterContext();
+        }
+
+        /**
+         * Called when a user switches to the context. EX: They have two windows open
+         * and they move from one window to the other.  Each window could have its own
+         * context.
+         */
+        onEnterContext() {
+            dependencies.setupMouestrapBindings(this.window, this);
+        }
+
+        /**
+         * Retrieve a shared object from the context.
+         * @param key Key describing a shared object.
+         * @returns {any}
+         */
+        getSharedObjectByKey(key : string) {
+            return this._sharedObjects[key];
+        }
+
+        /**
+         * Store a shared object on the context.  Any ViewModel that shares the context
+         * will have access to the object.
+         * @param key Key describing the shared object.
+         * @param obj Object that is being stored on the context.
+         */
+        setSharedObjectByKey(key : string, obj : {}) {
+            this._sharedObjects[key] = obj;
         }
 
         //region Getters and Setters
-        get Views() : framework.Views {
+        get views() : framework.Views {
             return this._views;
         }
 
-        get CommandQueue() : framework.command.CommandQueue {
+        get commandQueue() : framework.command.CommandQueue {
             return this._commandQueue;
         }
 
-        get Window() : Window {
+        get window() : Window {
             return this._window;
         }
 
-        get Rivets() {
+        get rivets() {
             return this._rivets;
         }
         //endregion

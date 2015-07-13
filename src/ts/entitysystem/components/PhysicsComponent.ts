@@ -2,6 +2,10 @@
 ///<reference path="../../framework/observe/Observable.ts"/>
 ///<reference path="../../framework/ViewModel.ts"/>
 module entityframework.components {
+
+    /**
+     * Contains information about the entity's location and velocity.
+     */
     class PhysicsInfo extends framework.observe.Observable {
         private _position : math.Vector;
         private _velocity : math.Vector;
@@ -17,8 +21,8 @@ module entityframework.components {
             this._position = position || new math.Vector();
             this._velocity = velocity || new math.Vector();
 
-            this._position.listenForChanges("Position", this);
-            this._velocity.listenForChanges("Velocity", this);
+            this._position.listenForChanges("position", this);
+            this._velocity.listenForChanges("velocity", this);
         }
 
         //region Getters and Setters
@@ -32,16 +36,17 @@ module entityframework.components {
         //endregion
     }
 
-    class PhysicsComponent extends Component {
-        private _info : PhysicsInfo;
+    export class PhysicsComponent extends Component {
+        _info : PhysicsInfo;
 
         constructor (position? : math.Vector, velocity? : math.Vector) {
             super();
             this._info = new PhysicsInfo(position, velocity);
+            this._info.listenForChanges("info", this);
         }
 
         get info() {
-            return this.info;
+            return this._info;
         }
     }
 

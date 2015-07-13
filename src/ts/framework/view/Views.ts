@@ -7,7 +7,7 @@ module framework {
         private _templates;
 
         /**
-         * Initialize the Views object.
+         * Initialize the views object.
          * @param templateObject The object containing all of the jade templates.
          */
         constructor(templateObject) {
