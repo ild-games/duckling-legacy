@@ -1,3 +1,154 @@
+$dark-primary-color: #FFA000;
+$primary-color: #FFC107;
+$light-primary-color: #FFECB3;
+$text-icon-color: #212121;
+$accent-color: #9E9E9E;
+$primary-text-color: #212121;
+$secondary-text-color: #727272;
+$divider-color:#B6B6B6;
+$shadow-color: $secondary-text-color;
+
+$padding-base-vertical: 6px;
+$padding-base-horizontal: 12px;
+
+$padding-large-vertical: 10px;
+$padding-large-horizontal: 16px;
+
+$padding-small-vertical: 5px;
+$padding-small-horizontal: 10px;
+
+$padding-xs-vertical: 1px;
+$padding-xs-horizontal: 5px;
+
+$line-height-large: 1.33;
+$line-height-small: 1.5;
+
+$border-radius-base: 4px;
+$border-radius-large: 6px;
+$border-radius-small: 3px;
+
+$component-active-color: #fff;
+$component-active-bg: $primary-color;
+
+$caret-width-base:         4px;
+$caret-width-large:        5px;
+
+$padding-form-horizontal: 0.5em;
+$padding-form-vertical: 0.5em;
+
+html,body
+{
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+div {
+  -webkit-user-select: none;
+}
+
+@mixin layout-box {
+  box-sizing: border-box;
+}
+
+@mixin fill {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+@mixin shadow {
+  box-shadow: $border-radius-small $border-radius-small $border-radius-small/2 $shadow-color;
+}
+
 #entity-canvas {
   border: 2px solid red;
 }
+
+#container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+
+#canvas-view-container {
+  @include layout-box;
+  float: left;
+  border: medium solid blue;
+  height: 100%;
+  width: 65%;
+  overflow: scroll;
+}
+
+#entity-editor-container {
+  @include layout-box;
+  float: left;
+  border: medium solid green;
+  height: 100%;
+  width: 35%;
+}
+
+.entity-editor {
+  position: relative;
+
+  .selector {
+    div.dropdown, button[type=button] {
+      @include fill;
+    }
+
+    @include layout-box;
+    position: relative;
+    top: 0;
+    height: 40px;
+    background-color:gold;
+    width:100%;
+  }
+
+  .forms {
+    @include layout-box;
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    width: 100%;
+
+    .list-element {
+      @include shadow;
+      margin: 0.5em;
+      border: 1px solid $divider-color;
+      border-radius: $border-radius-base;
+    }
+
+    .component-header {
+      background-color: $primary-color;
+      color: $light-primary-color;
+      overflow: auto;
+      padding-left: $padding-form-horizontal;
+    }
+
+    .component-wrapper {
+      padding: $padding-base-vertical $padding-form-horizontal;
+    }
+
+    .component-footer {
+      height: 0.25em;
+      background-color: $accent-color;
+    }
+
+  }
+
+  .component-adder {
+    @include layout-box;
+    position: absolute;
+    bottom: 0;
+    height: 40px;
+    width:100%;
+    background-color: purple;
+  }
+}
+

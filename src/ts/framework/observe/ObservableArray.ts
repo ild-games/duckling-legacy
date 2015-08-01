@@ -1,3 +1,4 @@
+///<reference path="Observable.ts"/>
 module framework.observe {
 
     /**

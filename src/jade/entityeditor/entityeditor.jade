@@ -1,0 +1,14 @@
+div.selector(id=this.id("entity-selector"))
+    div.dropdown
+        button(id=this.id("selector-dropdown"), type="button", data-toggle="dropdown",
+            aria-haspopup="true", aria-expanded="false")
+            span { currentEntityName }
+            span.caret
+        ul.dropdown-menu(aria-labelledby=this.id("selector-dropdown"))
+            li(rv-each-entity="entityNames") { entity }
+div.forms(id=this.id("entity-form-container"))
+    div(id=this.id("entity-form-list"))
+
+
+div.component-adder(id=this.id("add-component-button"))
+    p Control to add components will go here!

@@ -39,5 +39,16 @@ module framework.command {
                 cmd.execute();
             }
         }
+
+        /**
+         * Peek at the command that is at the front of the undo queue.
+         */
+        peekUndo() {
+            if (this._commands.length) {
+                return this._commands[this._commands.length -1];
+            }
+            return null;
+        }
+
     }
 }
