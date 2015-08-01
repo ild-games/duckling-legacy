@@ -49,11 +49,10 @@ module editorcanvas {
 
         private selectRectangle(mousePos : math.Vector) {
             this.data.forEach((entity : entityframework.Entity, key : string) => {
-                var position = (<comp.PhysicsComponent>entity.getComponent("Physics")).info.position;
-                var shape = (<draw.ShapeDrawable>(<draw.DrawableComponent>entity.getComponent("Drawable")).drawables.get("rectangle")).shape;
+                var position = entity.getComponent<comp.PhysicsComponent>("Physics").info.position;
+                var shape = entity.getComponent<draw.DrawableComponent>("Drawable").getDrawable<draw.ShapeDrawable>("rectangle").shape;
                 if (shape.contains(mousePos, position)) {
                     this._selectedEntity.entityKey = key;
-                    return false;
                 }
             });
         }
@@ -105,9 +104,9 @@ module editorcanvas {
         private redrawCanvas() {
             var newRectangles : Array<drawing.Rectangle> = [];
             this.data.forEach(function(entity, key) {
-                var posComp : comp.PhysicsComponent = <any>entity.getComponent("Physics");
-                var drawComp : draw.DrawableComponent = <any>entity.getComponent("Drawable");
-                var shape : draw.RectangleShape = <any>(<draw.ShapeDrawable>drawComp.drawables.get("rectangle")).shape;
+                var posComp = entity.getComponent<comp.PhysicsComponent>("Physics");
+                var drawComp  = entity.getComponent<draw.DrawableComponent>("Drawable");
+                var shape  = <draw.RectangleShape>(drawComp.getDrawable<draw.ShapeDrawable>("rectangle").shape);
 
                 var leftPoint = new drawing.CanvasPoint(
                     posComp.info.position.x,posComp.info.position.y);

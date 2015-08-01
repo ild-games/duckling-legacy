@@ -38,8 +38,8 @@ module entityframework {
          * Return the component if the entity has one.
          * @param name The name of the component type.
          */
-        getComponent(name : string) : Component {
-            return this._components.get(name);
+        getComponent<T extends Component>(name : string) : T {
+            return <T>this._components.get(name);
         }
     }
 }

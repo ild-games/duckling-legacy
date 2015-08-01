@@ -10,7 +10,7 @@ module framework.observe {
         /**
          * Registers the observer with the object.  Whenever the data changes onDataChanged will
          * be called on the observer.
-         * @param key Key describing the observer.
+         * @param key Key describing the object from the observers perspective.
          * @param observer Object that is listening for changes.
          */
         listenForChanges(key: string, observer: Observer) {

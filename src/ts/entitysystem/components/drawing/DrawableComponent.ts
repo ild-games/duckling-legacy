@@ -10,6 +10,11 @@ module entityframework.components.drawing {
             this._drawables.listenForChanges("drawables", this);
         }
 
+        getDrawable<T extends Drawable>(key:string) : T {
+            return <T>this.drawables.get(key);
+
+        }
+
         get camEntity():string {
             this.dataChanged("camEntity", this);
             return this._camEntity;
@@ -18,6 +23,7 @@ module entityframework.components.drawing {
         set camEntity(value:string) {
             this._camEntity = value;
         }
+
 
         get drawables() {
             return this._drawables;
