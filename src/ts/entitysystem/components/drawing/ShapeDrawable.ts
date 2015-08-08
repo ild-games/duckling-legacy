@@ -1,9 +1,11 @@
+///<reference path="../../../util/JsonLoader.ts"/>
 module entityframework.components.drawing {
 
     /**
      * Represents a shape that can be drawn in the game.
      */
     export class ShapeDrawable extends Drawable {
+        @util.JsonKey("shape")
         private _shape : Shape;
 
         constructor(shape : entityframework.components.drawing.Shape) {

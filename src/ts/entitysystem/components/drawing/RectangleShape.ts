@@ -1,10 +1,12 @@
 ///<reference path="../../../math/Vector.ts"/>
 ///<reference path="Shape.ts"/>
+///<reference path="../../../util/JsonLoader.ts"/>
 module entityframework.components.drawing {
     /**
      * A shape that represents a rectangle.
      */
     export class RectangleShape extends Shape {
+        @util.JsonKey("dimension")
         private _dimension : math.Vector;
 
         constructor(dimension : math.Vector) {

@@ -37,14 +37,15 @@ module editorcanvas {
         private _canvas : HTMLCanvasElement;
         private _canvasContext : CanvasRenderingContext2D;
         private _selectedEntity : entityframework.core.SelectedEntity;
+        private _project : framework.Project;
+        private _systemLoader : entityframework.SystemLoader;
 
         constructor() {
             super();
             this.registerCallback("on-click", this.onClick);
             this.registerCallback("undo", this.undo);
             this.registerCallback("redo", this.redo);
-            this.registerCallback("clear", this.clear);
-
+            this.registerCallback("save", this.save);
         }
 
         private selectRectangle(mousePos : math.Vector) {
@@ -93,12 +94,20 @@ module editorcanvas {
             this._canvasContext.beginPath();
         }
 
+        private save() {
+            this._systemLoader.saveMap("testmap", this.data);
+        }
+
         onViewReady() {
             this._canvas = <HTMLCanvasElement>document.getElementById("entity-canvas");
             this._canvasContext = <CanvasRenderingContext2D>this._canvas.getContext("2d");
             this.data.listenForChanges("data", this);
             this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this._selectedEntity.listenForChanges("selectedEntity", this);
+
+            this._project = this._context.getSharedObject(framework.Project);
+            this._systemLoader =
+                new entityframework.SystemLoader(this._project, new util.JsonLoader());
         }
 
         private redrawCanvas() {
@@ -115,7 +124,6 @@ module editorcanvas {
 
                 newRectangles.push(new drawing.Rectangle(leftPoint, rightPoint));
             });
-            this.clear();
             newRectangles.forEach((rectangle) => rectangle.draw(this._canvasContext));
             this._canvasContext.stroke();
         }

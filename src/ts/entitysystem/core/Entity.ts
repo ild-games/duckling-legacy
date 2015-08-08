@@ -41,5 +41,14 @@ module entityframework {
         getComponent<T extends Component>(name : string) : T {
             return <T>this._components.get(name);
         }
+
+        /**
+         * Iterate over the components attached to the entity.
+         * @param func Function that is called for each component.  The first argument
+         * is the component and the second argument is the component's key.
+         */
+        forEach(func : (component : Component, key : string) => void) {
+            this._components.forEach(func);
+        }
     }
 }

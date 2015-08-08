@@ -1,8 +1,11 @@
 ///<reference path="../../core/Component.ts"/>
 module entityframework.components.drawing {
     export class DrawableComponent extends Component {
+        @util.JsonKey("camEntity")
         private _camEntity : string;
-        _drawables : framework.observe.ObservableMap<Drawable>;
+
+        @util.JsonKey("drawables")
+        private _drawables : framework.observe.ObservableMap<Drawable>;
 
         constructor() {
             super();
