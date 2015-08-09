@@ -1,0 +1,4 @@
+mixin enumSelect(rvValue, enumType, rvEachType)
+    div
+        select.selectpicker(rv-value=rvValue + " | formatEnum '" + enumType + "'")
+            option(rv-each-type=rvEachType + " | formatEnumVals '" + enumType + "'") { type }

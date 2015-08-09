@@ -62,13 +62,18 @@ module editorcanvas {
             var rectEntity = new entityframework.Entity();
             var physComp = new comp.PhysicsComponent();
             var drawComp = new draw.DrawableComponent();
+            var collisionComp = new comp.CollisionComponent();
             rectEntity.addComponent("physics", physComp);
             rectEntity.addComponent("drawable", drawComp);
+            rectEntity.addComponent("collision", collisionComp);
             physComp.info.position.x = mousePos.x;
             physComp.info.position.y = mousePos.y;
+
             drawComp.drawables.put(
                 "rectangle",
                 new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "rectangle"));
+            collisionComp.info.dimensions.x = 15;
+            collisionComp.info.dimensions.y = 15;
             this._context.commandQueue.pushCommand(new AddEntityCommand(this.data, rectEntity));
         }
 
@@ -111,6 +116,17 @@ module editorcanvas {
         }
 
         private redrawCanvas() {
+            var toDraw : Array<drawing.CanvasDrawnElement> = [];
+            toDraw = toDraw
+                .concat(this.collectDrawables())
+                .concat(this.collectCollisionBoundingBoxDrawables());
+
+            this.clear();
+            toDraw.forEach((drawnElement) => drawnElement.draw(this._canvasContext));
+            this._canvasContext.stroke();
+        }
+
+        private collectDrawables() : Array<drawing.Rectangle> {
             var newRectangles : Array<drawing.Rectangle> = [];
             this.data.forEach(function(entity, key) {
                 var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
@@ -118,14 +134,45 @@ module editorcanvas {
                 var shape  = <draw.RectangleShape>(drawComp.getDrawable<draw.ShapeDrawable>("rectangle").shape);
 
                 var leftPoint = new drawing.CanvasPoint(
-                    posComp.info.position.x,posComp.info.position.y);
+                    posComp.info.position.x - (shape.dimension.x / 2),
+                    posComp.info.position.y - (shape.dimension.y /2));
                 var rightPoint = new drawing.CanvasPoint(
-                    leftPoint.x + shape.dimension.x, leftPoint.y - shape.dimension.y);
+                    leftPoint.x + shape.dimension.x, leftPoint.y + shape.dimension.y);
 
                 newRectangles.push(new drawing.Rectangle(leftPoint, rightPoint));
             });
-            newRectangles.forEach((rectangle) => rectangle.draw(this._canvasContext));
-            this._canvasContext.stroke();
+            return newRectangles;
+        }
+
+        private collectCollisionBoundingBoxDrawables() : Array<drawing.BoundingBox> {
+            var newBoundingBoxes : Array<drawing.BoundingBox> = [];
+            this.data.forEach(function(entity, key) {
+                var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
+                var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
+
+                var leftPoint = new drawing.CanvasPoint(
+                    posComp.info.position.x - (collisionComp.info.dimensions.x / 2),
+                    posComp.info.position.y - (collisionComp.info.dimensions.y / 2));
+                var rightPoint = new drawing.CanvasPoint(
+                    leftPoint.x + collisionComp.info.dimensions.x, leftPoint.y + collisionComp.info.dimensions.y);
+
+                var color = "#000000";
+                switch (collisionComp.info.bodyType)
+                {
+                    case entityframework.components.CollisionBodyType.None:
+                        color = "#0000ff"
+                        break;
+                    case entityframework.components.CollisionBodyType.Environment:
+                        color = "#009900"
+                        break;
+                    case entityframework.components.CollisionBodyType.Solid:
+                        color = "#ff0000"
+                        break;
+                }
+
+                newBoundingBoxes.push(new drawing.BoundingBox(leftPoint, rightPoint, color));
+            });
+            return newBoundingBoxes;
         }
 
         onDataChanged(key:string, event:framework.observe.DataChangeEvent) {

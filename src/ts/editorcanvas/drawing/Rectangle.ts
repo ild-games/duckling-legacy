@@ -4,7 +4,7 @@ module editorcanvas.drawing {
     /**
      * A rectangle that can be drawn on the canvas.
      */
-    export class Rectangle extends framework.observe.Observable {
+    export class Rectangle extends framework.observe.Observable implements CanvasDrawnElement {
         private _topLeft : CanvasPoint;
         private _bottomRight : CanvasPoint;
 
@@ -67,7 +67,7 @@ module editorcanvas.drawing {
         }
 
         get height() : number {
-            return this._topLeft.y - this._bottomRight.y;
+            return this._bottomRight.y - this._topLeft.y;
         }
         //endregion
     }
