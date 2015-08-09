@@ -63,7 +63,7 @@ module entityframework.components {
     export class PhysicsComponentFactory implements ComponentFactory {
 
         get name() {
-            return "Physics"
+            return "physics"
         }
 
         createFormVM():framework.ViewModel<any> {

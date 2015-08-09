@@ -41,7 +41,7 @@ module entityframework.components.drawing {
 
     export class DrawableComponentFactory implements ComponentFactory {
         get name() {
-            return "Drawable";
+            return "drawable";
         }
 
         createFormVM():framework.ViewModel<any> {

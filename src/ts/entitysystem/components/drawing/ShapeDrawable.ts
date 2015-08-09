@@ -8,8 +8,8 @@ module entityframework.components.drawing {
         @util.JsonKey("shape")
         private _shape : Shape;
 
-        constructor(shape : entityframework.components.drawing.Shape) {
-            super();
+        constructor(shape : entityframework.components.drawing.Shape, key : string) {
+            super(key);
             this.shape = shape;
         }
 
@@ -29,6 +29,7 @@ module entityframework.components.drawing {
                 value.listenForChanges("shape", this)
             }
         }
+
         //endregion
     }
 

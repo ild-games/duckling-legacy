@@ -50,8 +50,8 @@ module editorcanvas {
 
         private selectRectangle(mousePos : math.Vector) {
             this.data.forEach((entity : entityframework.Entity, key : string) => {
-                var position = entity.getComponent<comp.PhysicsComponent>("Physics").info.position;
-                var shape = entity.getComponent<draw.DrawableComponent>("Drawable").getDrawable<draw.ShapeDrawable>("rectangle").shape;
+                var position = entity.getComponent<comp.PhysicsComponent>("physics").info.position;
+                var shape = entity.getComponent<draw.DrawableComponent>("drawable").getDrawable<draw.ShapeDrawable>("rectangle").shape;
                 if (shape.contains(mousePos, position)) {
                     this._selectedEntity.entityKey = key;
                 }
@@ -62,13 +62,13 @@ module editorcanvas {
             var rectEntity = new entityframework.Entity();
             var physComp = new comp.PhysicsComponent();
             var drawComp = new draw.DrawableComponent();
-            rectEntity.addComponent("Physics", physComp);
-            rectEntity.addComponent("Drawable", drawComp);
+            rectEntity.addComponent("physics", physComp);
+            rectEntity.addComponent("drawable", drawComp);
             physComp.info.position.x = mousePos.x;
             physComp.info.position.y = mousePos.y;
             drawComp.drawables.put(
                 "rectangle",
-                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20))));
+                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "rectangle"));
             this._context.commandQueue.pushCommand(new AddEntityCommand(this.data, rectEntity));
         }
 
@@ -113,8 +113,8 @@ module editorcanvas {
         private redrawCanvas() {
             var newRectangles : Array<drawing.Rectangle> = [];
             this.data.forEach(function(entity, key) {
-                var posComp = entity.getComponent<comp.PhysicsComponent>("Physics");
-                var drawComp  = entity.getComponent<draw.DrawableComponent>("Drawable");
+                var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
+                var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
                 var shape  = <draw.RectangleShape>(drawComp.getDrawable<draw.ShapeDrawable>("rectangle").shape);
 
                 var leftPoint = new drawing.CanvasPoint(

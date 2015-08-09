@@ -23,9 +23,9 @@ module entityframework.components.drawing {
         @util.JsonKey("key")
         private _key : string;
 
-        constructor() {
+        constructor(key : string) {
             super();
-
+            this._key = key;
             this._positionOffset.listenForChanges("positionOffset", this);
         }
 
