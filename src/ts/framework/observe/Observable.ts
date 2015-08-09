@@ -1,12 +1,15 @@
 ///<reference path="../../util/JsonLoader.ts"/>
 module framework.observe {
+
+    import serialize = util.serialize;
+
     /**
      * Base class for Observable objects.  Objects implementing the Observer interface can
      * listen to changes in the observable object.  Observable objects are themselves observers.
      * This allows data changed events to populate up a chain of observers.
      */
     export class Observable implements Observer {
-        @util.JsonIgnore
+        @serialize.Ignore
         private _listener : { [key:string]:Observer[] } = {};
 
         /**

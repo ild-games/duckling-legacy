@@ -1,26 +1,28 @@
 ///<reference path="../../../framework/observe/Observable.ts"/>
 module entityframework.components.drawing {
 
+    import serialize = util.serialize;
+
     /**
      * Represents an object that can be drawn in the game.
      */
     export class Drawable extends framework.observe.Observable {
-        @util.JsonKey("renderPriority")
+        @serialize.Key("renderPriority")
         private _renderPriority : number;
 
-        @util.JsonKey("priorityOffset")
+        @serialize.Key("priorityOffset")
         private _priorityOffset : number;
 
-        @util.JsonKey("rotation")
+        @serialize.Key("rotation")
         private _rotation : number;
 
-        @util.JsonKey("positionOffset")
+        @serialize.Key("positionOffset")
         private _positionOffset : math.Vector = new math.Vector();
 
-        @util.JsonKey("inactive")
+        @serialize.Key("inactive")
         private _inactive : boolean;
 
-        @util.JsonKey("key")
+        @serialize.Key("key")
         private _key : string;
 
         constructor(key : string) {

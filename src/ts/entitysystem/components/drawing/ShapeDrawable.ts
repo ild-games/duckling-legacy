@@ -1,11 +1,13 @@
 ///<reference path="../../../util/JsonLoader.ts"/>
 module entityframework.components.drawing {
 
+    import serialize = util.serialize;
+
     /**
      * Represents a shape that can be drawn in the game.
      */
     export class ShapeDrawable extends Drawable {
-        @util.JsonKey("shape")
+        @serialize.Key("shape")
         private _shape : Shape;
 
         constructor(shape : entityframework.components.drawing.Shape, key : string) {

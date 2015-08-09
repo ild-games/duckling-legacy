@@ -46,7 +46,7 @@ module entityframework {
                 });
             });
 
-            var mapString = JSON.stringify(saveMap, util.replacer, 4);
+            var mapString = util.serialize.serialize(saveMap);
             var mapPath = this._project.getMapPath(mapName);
 
             return this._jsonLoader.saveJsonToPath(mapPath, mapString);

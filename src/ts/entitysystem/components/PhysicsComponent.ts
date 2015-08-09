@@ -4,13 +4,15 @@
 ///<reference path="../../util/JsonLoader.ts"/>
 module entityframework.components {
 
+    import serialize = util.serialize;
+
     /**
      * Contains information about the entity's location and velocity.
      */
     class PhysicsInfo extends framework.observe.Observable {
-        @util.JsonKey("position")
+        @serialize.Key("position")
         private _position : math.Vector;
-        @util.JsonKey("velocity")
+        @serialize.Key("velocity")
         private _velocity : math.Vector;
 
         /**
@@ -40,7 +42,7 @@ module entityframework.components {
     }
 
     export class PhysicsComponent extends Component {
-        @util.JsonKey("info")
+        @serialize.Key("info")
         _info : PhysicsInfo;
 
         constructor (position? : math.Vector, velocity? : math.Vector) {

@@ -2,11 +2,14 @@
 ///<reference path="Shape.ts"/>
 ///<reference path="../../../util/JsonLoader.ts"/>
 module entityframework.components.drawing {
+
+    import serialize = util.serialize;
+
     /**
      * A shape that represents a rectangle.
      */
     export class RectangleShape extends Shape {
-        @util.JsonKey("dimension")
+        @serialize.Key("dimension")
         private _dimension : math.Vector;
 
         constructor(dimension : math.Vector) {
