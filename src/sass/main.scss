@@ -58,6 +58,10 @@ div {
   left: 0;
 }
 
+@mixin input-group-addon($width) {
+  min-width: $width;
+}
+
 @mixin shadow {
   box-shadow: $border-radius-small $border-radius-small $border-radius-small/2 $shadow-color;
 }
@@ -152,3 +156,10 @@ div {
   }
 }
 
+.width-height-input-group {
+  @include input-group-addon(70)
+}
+
+.x-y-input-group {
+  @include input-group-addon(35)
+}

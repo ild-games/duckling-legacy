@@ -13,10 +13,10 @@ module entityframework.components.drawing {
         }
 
         public contains(point : math.Vector, shapePosition : math.Vector) {
-            return  point.x > shapePosition.x &&
-                    point.x < shapePosition.x + this.dimension.x &&
-                    point.y > shapePosition.y &&
-                    point.y < shapePosition.y + this.dimension.y;
+            return  point.x > shapePosition.x - (this.dimension.x / 2) &&
+                    point.x < shapePosition.x + (this.dimension.x / 2) &&
+                    point.y > shapePosition.y - (this.dimension.y / 2) &&
+                    point.y < shapePosition.y + (this.dimension.y / 2);
         }
 
         public get dimension():math.Vector {

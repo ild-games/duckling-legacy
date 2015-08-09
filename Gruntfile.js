@@ -29,13 +29,17 @@ module.exports = function(grunt) {
                     'node_modules/sightglass/index.js',
                     'node_modules/rivets/dist/rivets.js',
                     'node_modules/bootstrap/dist/js/bootstrap.js',
+                    'node_modules/bootstrap-select/dist/js/bootstrap-select.js',
                     'node_modules/jade/runtime.js',
                     'node_modules/mousetrap/mousetrap.js'
                 ],
                 dest: 'build/dependencies/dependencies.js'
             },
             cssdepend: {
-                src: ['node_modules/bootstrap/dist/css/bootstrap.css'],
+                src: [
+                    'node_modules/bootstrap/dist/css/bootstrap.css',
+                    'node_modules/bootstrap-select/dist/css/bootstrap-select.css'
+                ],
                 dest: 'build/dependencies/dependencies.css'
             }
         },

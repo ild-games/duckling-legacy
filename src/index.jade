@@ -17,6 +17,7 @@ html
                 var es = new entityframework.EntitySystem();
                 es.addComponentType(new entityframework.components.PhysicsComponentFactory());
                 es.addComponentType(new entityframework.components.drawing.DrawableComponentFactory());
+                es.addComponentType(new entityframework.components.CollisionComponentFactory());
 
                 var canvasVM = (new editorcanvas.CanvasVM()).init(
                         context,
