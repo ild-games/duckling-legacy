@@ -52,7 +52,6 @@ module framework.dependencies {
                 return obj[keypath];
             },
             set: function(obj,keypath,value){
-                obj[keypath] = value;
                 var command = new dependencies.RivetInputCommand(obj,keypath,value);
                 var prevCommand = commandQueue.peekUndo();
 
