@@ -41,6 +41,7 @@ module entityframework.components {
         //endregion
     }
 
+    @serialize.ProvideClass(PhysicsComponent, "ild::PlatformPhysicsComponent")
     export class PhysicsComponent extends Component {
         @serialize.Key("info")
         _info : PhysicsInfo;

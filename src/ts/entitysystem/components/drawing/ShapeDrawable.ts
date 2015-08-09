@@ -6,6 +6,7 @@ module entityframework.components.drawing {
     /**
      * Represents a shape that can be drawn in the game.
      */
+    @serialize.ProvideClass(Drawable, "ild::ShapeDrawable")
     export class ShapeDrawable extends Drawable {
         @serialize.Key("shape")
         private _shape : Shape;

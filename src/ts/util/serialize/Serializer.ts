@@ -24,6 +24,10 @@ module util.serialize {
             }
         }
 
+        if (getTypeName(value)) {
+            replacement["__cpp_type"] = getTypeName(value);
+        }
+
         copySymbols(value, replacement);
 
         return replacement;

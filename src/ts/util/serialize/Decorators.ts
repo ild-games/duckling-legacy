@@ -17,6 +17,7 @@ module util.serialize {
             }
             baseClass[classProvidedSymbol][name] = classObject;
             classObject[classTypenameSymbol] = name;
+            return classObject;
         }
     }
 
@@ -59,5 +60,19 @@ module util.serialize {
         if (source[ignoreSymbol]) {
             destination[ignoreSymbol] = source[ignoreSymbol];
         }
+    }
+
+    export function getClass(providedClass : Object, typeName : string) {
+        if (!providedClass[classProvidedSymbol]) {
+            return null;
+        }
+        return providedClass[classProvidedSymbol][typeName] || null;
+    }
+
+    export function getTypeName(classInstance : Object) {
+        if (!classInstance.constructor[classTypenameSymbol]) {
+            return null;
+        }
+        return classInstance.constructor[classTypenameSymbol] || null;
     }
 }

@@ -8,6 +8,7 @@ module entityframework.components.drawing {
     /**
      * A shape that represents a rectangle.
      */
+    @serialize.ProvideClass(RectangleShape, "sf::RectangleShape")
     export class RectangleShape extends Shape {
         @serialize.Key("dimension")
         private _dimension : math.Vector;
