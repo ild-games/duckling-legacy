@@ -1,14 +1,12 @@
+include ../mixins/select_control
+
 form
     label Collision Type:&nbsp;
-    div
-        select.selectpicker(rv-value="data.info.type | formatEnum 'entityframework.components.CollisionType'")
-            option(rv-each-type="typeVals | formatEnumVals 'entityframework.components.CollisionType'") { type }
+    +enumSelect('data.info.type', 'entityframework.components.CollisionType', 'typeVals')
     br
 
     label Body Type:&nbsp;
-    div
-        select.selectpicker(rv-value="data.info.bodyType | formatEnum 'entityframework.components.CollisionBodyType'")
-            option(rv-each-type="bodyTypeVals | formatEnumVals 'entityframework.components.CollisionBodyType'") { type }
+    +enumSelect('data.info.bodyType', 'entityframework.components.CollisionBodyType', 'bodyTypeVals')
     br
 
     label Collision Dimensions

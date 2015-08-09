@@ -5,8 +5,8 @@ module editorcanvas.drawing {
      * A collision bounding box that can be drawn on the canvas.
      */
     export class BoundingBox extends framework.observe.Observable implements CanvasDrawnElement {
-        _rectangle : Rectangle;
-        _color: string;
+        private _rectangle : Rectangle;
+        private _color: string;
 
         constructor(topLeft : CanvasPoint, bottomRight : CanvasPoint, color : string) {
             super();

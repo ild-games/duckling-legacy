@@ -13,6 +13,8 @@ module framework.dependencies {
      * @param commandQueue The command queue that two-way bindings use to undo changes.
      */
     export function ConfigureRivets(window, rivets, commandQueue : framework.command.CommandQueue) {
+        framework.view.CreateFormatters(window, rivets);
+
         var symbolMap = {};
 
         function getSymbolForEvent(event : string) {
@@ -108,5 +110,4 @@ module framework.dependencies {
             }
         };
     }
-
 }
