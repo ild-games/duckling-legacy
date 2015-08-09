@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         typescript: {
             duckling: {
-                src: ['src/ts/**/*.ts'],
+                src: ['src/bootstrap.ts','src/ts/**/*.ts'],
                 dest: 'build/scripts/duckling.js',
                 options: {
                     module: 'commonjs',

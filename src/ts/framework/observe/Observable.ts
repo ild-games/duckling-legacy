@@ -1,3 +1,4 @@
+///<reference path="../../util/JsonLoader.ts"/>
 module framework.observe {
     /**
      * Base class for Observable objects.  Objects implementing the Observer interface can
@@ -5,6 +6,7 @@ module framework.observe {
      * This allows data changed events to populate up a chain of observers.
      */
     export class Observable implements Observer {
+        @util.JsonIgnore
         private _listener : { [key:string]:Observer[] } = {};
 
         /**

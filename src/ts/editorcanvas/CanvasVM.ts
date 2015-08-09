@@ -37,20 +37,21 @@ module editorcanvas {
         private _canvas : HTMLCanvasElement;
         private _canvasContext : CanvasRenderingContext2D;
         private _selectedEntity : entityframework.core.SelectedEntity;
+        private _project : framework.Project;
+        private _systemLoader : entityframework.SystemLoader;
 
         constructor() {
             super();
             this.registerCallback("on-click", this.onClick);
             this.registerCallback("undo", this.undo);
             this.registerCallback("redo", this.redo);
-            this.registerCallback("clear", this.clear);
-
+            this.registerCallback("save", this.save);
         }
 
         private selectRectangle(mousePos : math.Vector) {
             this.data.forEach((entity : entityframework.Entity, key : string) => {
-                var position = entity.getComponent<comp.PhysicsComponent>("Physics").info.position;
-                var shape = entity.getComponent<draw.DrawableComponent>("Drawable").getDrawable<draw.ShapeDrawable>("rectangle").shape;
+                var position = entity.getComponent<comp.PhysicsComponent>("physics").info.position;
+                var shape = entity.getComponent<draw.DrawableComponent>("drawable").getDrawable<draw.ShapeDrawable>("rectangle").shape;
                 if (shape.contains(mousePos, position)) {
                     this._selectedEntity.entityKey = key;
                 }
@@ -61,13 +62,13 @@ module editorcanvas {
             var rectEntity = new entityframework.Entity();
             var physComp = new comp.PhysicsComponent();
             var drawComp = new draw.DrawableComponent();
-            rectEntity.addComponent("Physics", physComp);
-            rectEntity.addComponent("Drawable", drawComp);
+            rectEntity.addComponent("physics", physComp);
+            rectEntity.addComponent("drawable", drawComp);
             physComp.info.position.x = mousePos.x;
             physComp.info.position.y = mousePos.y;
             drawComp.drawables.put(
                 "rectangle",
-                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20))));
+                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "rectangle"));
             this._context.commandQueue.pushCommand(new AddEntityCommand(this.data, rectEntity));
         }
 
@@ -93,19 +94,27 @@ module editorcanvas {
             this._canvasContext.beginPath();
         }
 
+        private save() {
+            this._systemLoader.saveMap("testmap", this.data);
+        }
+
         onViewReady() {
             this._canvas = <HTMLCanvasElement>document.getElementById("entity-canvas");
             this._canvasContext = <CanvasRenderingContext2D>this._canvas.getContext("2d");
             this.data.listenForChanges("data", this);
             this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this._selectedEntity.listenForChanges("selectedEntity", this);
+
+            this._project = this._context.getSharedObject(framework.Project);
+            this._systemLoader =
+                new entityframework.SystemLoader(this._project, new util.JsonLoader());
         }
 
         private redrawCanvas() {
             var newRectangles : Array<drawing.Rectangle> = [];
             this.data.forEach(function(entity, key) {
-                var posComp = entity.getComponent<comp.PhysicsComponent>("Physics");
-                var drawComp  = entity.getComponent<draw.DrawableComponent>("Drawable");
+                var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
+                var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
                 var shape  = <draw.RectangleShape>(drawComp.getDrawable<draw.ShapeDrawable>("rectangle").shape);
 
                 var leftPoint = new drawing.CanvasPoint(
@@ -115,7 +124,6 @@ module editorcanvas {
 
                 newRectangles.push(new drawing.Rectangle(leftPoint, rightPoint));
             });
-            this.clear();
             newRectangles.forEach((rectangle) => rectangle.draw(this._canvasContext));
             this._canvasContext.stroke();
         }

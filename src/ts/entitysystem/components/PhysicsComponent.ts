@@ -1,13 +1,16 @@
 ///<reference path="../core/Component.ts"/>
 ///<reference path="../../framework/observe/Observable.ts"/>
 ///<reference path="../../framework/ViewModel.ts"/>
+///<reference path="../../util/JsonLoader.ts"/>
 module entityframework.components {
 
     /**
      * Contains information about the entity's location and velocity.
      */
     class PhysicsInfo extends framework.observe.Observable {
+        @util.JsonKey("position")
         private _position : math.Vector;
+        @util.JsonKey("velocity")
         private _velocity : math.Vector;
 
         /**
@@ -37,6 +40,7 @@ module entityframework.components {
     }
 
     export class PhysicsComponent extends Component {
+        @util.JsonKey("info")
         _info : PhysicsInfo;
 
         constructor (position? : math.Vector, velocity? : math.Vector) {
@@ -59,7 +63,7 @@ module entityframework.components {
     export class PhysicsComponentFactory implements ComponentFactory {
 
         get name() {
-            return "Physics"
+            return "physics"
         }
 
         createFormVM():framework.ViewModel<any> {

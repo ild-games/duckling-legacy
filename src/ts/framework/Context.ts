@@ -1,5 +1,17 @@
 module framework {
 
+    var contextKeySymbol = Symbol("ContextKey");
+
+    /**
+     * Class decorator that allows the object to be retrieved from the context.
+     * @param key Key the object can be retrieved by.
+     */
+    export function ContextKey(key) {
+        return function(target : any) {
+            target[contextKeySymbol] = key;
+        }
+    }
+
     /**
      * The context holds objects shared between different parts of the application.
      */
@@ -37,10 +49,19 @@ module framework {
         /**
          * Retrieve a shared object from the context.
          * @param key Key describing a shared object.
-         * @returns {any}
+         * @returns The shared object if it exists or null.
          */
         getSharedObjectByKey(key : string) {
-            return this._sharedObjects[key];
+            return this._sharedObjects[key] || null;
+        }
+
+        /**
+         * Get the shared object that provides an instance of the given class.
+         * @param sharedClass The class of the object that is being retrieved.
+         * @returns An instance of the shared class if it exists.  Null if it doesn't.
+         */
+        getSharedObject(sharedClass) {
+            return this.getSharedObjectByKey(sharedClass[contextKeySymbol]);
         }
 
         /**

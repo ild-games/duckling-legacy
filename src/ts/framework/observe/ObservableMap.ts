@@ -61,5 +61,8 @@ module framework.observe {
             }
         }
 
+        private toJSON() {
+            return this._data;
+        }
     }
 }

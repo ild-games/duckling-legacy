@@ -14,6 +14,7 @@ html
                 var context = new framework.Context(views.templates, window);
                 var selectedEntity = new entityframework.core.SelectedEntity();
                 context.setSharedObjectByKey("selectedEntity", selectedEntity);
+                context.setSharedObjectByKey("Project", new framework.Project("."));
                 var es = new entityframework.EntitySystem();
                 es.addComponentType(new entityframework.components.PhysicsComponentFactory());
                 es.addComponentType(new entityframework.components.drawing.DrawableComponentFactory());
