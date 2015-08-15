@@ -72,8 +72,8 @@ module editorcanvas {
             drawComp.drawables.put(
                 "rectangle",
                 new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "rectangle"));
-            collisionComp.info.dimensions.x = 15;
-            collisionComp.info.dimensions.y = 15;
+            collisionComp.info.dimension.x = 15;
+            collisionComp.info.dimension.y = 15;
             this._context.commandQueue.pushCommand(new AddEntityCommand(this.data, rectEntity));
         }
 
@@ -151,13 +151,13 @@ module editorcanvas {
                 var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
 
                 var leftPoint = new drawing.CanvasPoint(
-                    posComp.info.position.x - (collisionComp.info.dimensions.x / 2),
-                    posComp.info.position.y - (collisionComp.info.dimensions.y / 2));
+                    posComp.info.position.x - (collisionComp.info.dimension.x / 2),
+                    posComp.info.position.y - (collisionComp.info.dimension.y / 2));
                 var rightPoint = new drawing.CanvasPoint(
-                    leftPoint.x + collisionComp.info.dimensions.x, leftPoint.y + collisionComp.info.dimensions.y);
+                    leftPoint.x + collisionComp.info.dimension.x, leftPoint.y + collisionComp.info.dimension.y);
 
                 var color = "#000000";
-                switch (collisionComp.info.bodyType)
+                switch (collisionComp.bodyType)
                 {
                     case entityframework.components.CollisionBodyType.None:
                         color = "#0000ff"

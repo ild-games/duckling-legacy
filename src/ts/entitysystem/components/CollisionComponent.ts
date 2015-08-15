@@ -36,54 +36,29 @@ module entityframework.components {
     /**
      * Holds the bindable info for a CollisionComponent.
      */
-    class CollisionInfo extends framework.observe.Observable {
+    class CollisionShapeInfo extends framework.observe.Observable {
         /**
          * Width and height for the collision's bounding box.
          */
-        private _dimensions : math.Vector;
-        /**
-         * CollisionBodyType for the component.
-         */
-        private _bodyType : CollisionBodyType;
-        /**
-         * ColllisionType for the component.
-         */
-        private _type : CollisionType;
+        @util.JsonKey("dimension")
+        private _dimension : math.Vector;
 
         /**
          * Constructs a new CollisionInfo object.
          *
          * @param dimensions Width and height for the collision's bounding box, default value is {0,0}
-         * @param bodyType CollisionBodyType for the component, default value is CollisionBodyType.None
-         * @param type CollisionType for the component, default value is CollisionType.None
          */
-        constructor(dimensions? : math.Vector, bodyType? : CollisionBodyType, type? : CollisionType) {
+        constructor(dimensions? : math.Vector) {
             super();
 
-            this._dimensions = dimensions || new math.Vector();
-            this._bodyType = bodyType || CollisionBodyType.None;
-            this._type = type || CollisionType.None;
+            this._dimension = dimensions || new math.Vector();
 
-            this._dimensions.listenForChanges("dimensions", this);
+            this._dimension.listenForChanges("dimension", this);
         }
 
         //region Getters and Setters
-        get dimensions() {
-            return this._dimensions;
-        }
-        get bodyType() {
-            return this._bodyType;
-        }
-        set bodyType(val : CollisionBodyType) {
-            this._bodyType = val;
-            this.dataChanged("bodyType", val);
-        }
-        get type() {
-            return this._type;
-        }
-        set type(val : CollisionType) {
-            this._type = val;
-            this.dataChanged("type", val);
+        get dimension() {
+            return this._dimension;
         }
         //endregion
     }
@@ -95,23 +70,55 @@ module entityframework.components {
         /**
          * Info instance holding the bindable properties.
          */
-        _info : CollisionInfo;
+        @util.JsonKey("dimension")
+        _info : CollisionShapeInfo;
+        /**
+         * CollisionBodyType for the component.
+         */
+        @util.JsonKey("bodyType")
+        private _bodyType : CollisionBodyType;
+        /**
+         * ColllisionType for the component.
+         */
+        @util.JsonKey("collisionType")
+        private _type : CollisionType;
 
         /**
          * Constructs a new CollisionComponent.
          *
          * @param dimensions Width and height of the bounding box, defaults to {0,0}
+         * @param bodyType CollisionBodyType for the component, default value is CollisionBodyType.None
+         * @param type CollisionType for the component, default value is CollisionType.None
          */
-        constructor (dimensions? : math.Vector) {
+        constructor (dimensions? : math.Vector, bodyType? : CollisionBodyType, type? : CollisionType) {
             super();
 
-            this._info = new CollisionInfo(dimensions);
+            this._info = new CollisionShapeInfo(dimensions);
+            this._bodyType = bodyType || CollisionBodyType.None;
+            this._type = type || CollisionType.None;
+
             this._info.listenForChanges("info", this);
         }
 
         //region Getters and Settings
+        @util.JsonIgnore
         get info() {
             return this._info;
+        }
+        get bodyType() {
+            return this._bodyType;
+        }
+        set bodyType(val : CollisionBodyType) {
+            this._bodyType = val;
+            this.dataChanged("bodyType", val);
+        }
+        @util.JsonIgnore
+        get type() {
+            return this._type;
+        }
+        set type(val : CollisionType) {
+            this._type = val;
+            this.dataChanged("type", val);
         }
         //endregion
     }
@@ -186,7 +193,7 @@ module entityframework.components {
          *
          * @returns new instance of CollisionViewModel
          */
-        createFormVM():framework.ViewModel<any> {
+        createFormVM() : framework.ViewModel<any> {
             return new CollisionViewModel();
         }
 
@@ -195,7 +202,7 @@ module entityframework.components {
          *
          * @returns new instance of CollisionComponent
          */
-        createComponent():entityframework.Component {
+        createComponent() : entityframework.Component {
             return new CollisionComponent();
         }
 
