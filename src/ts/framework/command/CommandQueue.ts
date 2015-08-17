@@ -50,5 +50,13 @@ module framework.command {
             return null;
         }
 
+        /**
+         * Clear the command queue. Should be used after state is changed by an non-undoable action.
+         */
+        clear() {
+            this._commands = [];
+            this._undone = [];
+        }
+
     }
 }

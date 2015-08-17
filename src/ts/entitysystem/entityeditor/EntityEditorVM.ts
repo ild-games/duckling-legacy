@@ -79,16 +79,22 @@ module entityframework
         }
 
         selectEntity(name : string) {
-            this.currentEntity = this.data.getEntity(name);
-            this.currentEntityName = name;
-
             this._components = [];
-            this.data.forEachType((factory : ComponentFactory, type : string) => {
-                this._components.push({
-                    name : type,
-                    vm : factory.createFormVM()
+
+            if (name && name !== "") {
+                this.currentEntity = this.data.getEntity(name);
+                this.currentEntityName = name;
+
+                this.data.forEachType((factory : ComponentFactory, type : string) => {
+                    if (this.currentEntity.getComponent(type)) {
+                        this._components.push({
+                            name : type,
+                            vm : factory.createFormVM()
+                        });
+                    }
                 });
-            });
+            }
+
             this._listVM.dataChanged();
         }
 

@@ -46,6 +46,7 @@ module editorcanvas {
             this.registerCallback("undo", this.undo);
             this.registerCallback("redo", this.redo);
             this.registerCallback("save", this.save);
+            this.registerCallback("load", this.load);
         }
 
         private selectRectangle(mousePos : math.Vector) {
@@ -101,6 +102,21 @@ module editorcanvas {
 
         private save() {
             this._systemLoader.saveMap("testmap", this.data);
+        }
+
+        private load() {
+            this._systemLoader.loadMap("testmap", this.data.getEmptyClone())
+                .then((entitySystem : entityframework.EntitySystem) => {
+                    this.changeData(entitySystem);
+                });
+        }
+
+        private changeData(newData : entityframework.EntitySystem) {
+            this._context.commandQueue.clear();
+            this._selectedEntity.entityKey = "";
+            this.data.move(newData);
+            this.clear();
+            this.redrawCanvas();
         }
 
         onViewReady() {

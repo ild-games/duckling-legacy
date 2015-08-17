@@ -3,6 +3,9 @@ module entityframework.components.drawing {
 
     import serialize = util.serialize;
 
+    //TODO: Remove the ProvideClass decorator since Drawable components are not
+    //polymorphic
+    @serialize.ProvideClass(DrawableComponent, "ild::DrawableComponent")
     export class DrawableComponent extends Component {
         @serialize.Key("camEntity")
         private _camEntity : string;

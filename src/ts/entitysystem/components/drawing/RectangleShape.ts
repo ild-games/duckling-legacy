@@ -13,9 +13,9 @@ module entityframework.components.drawing {
         @serialize.Key("dimension")
         private _dimension : math.Vector;
 
-        constructor(dimension : math.Vector) {
+        constructor(dimension? : math.Vector) {
             super();
-            this.dimension = dimension;
+            this.dimension = dimension || new math.Vector();
         }
 
         public contains(point : math.Vector, shapePosition : math.Vector) {

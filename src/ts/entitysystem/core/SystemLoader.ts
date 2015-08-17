@@ -22,8 +22,31 @@ module entityframework {
          * @param mapName Name of the map to load the EntitySystem from.
          * @returns A promise that resolves to the EntitySystem.
          */
-        loadMap(mapName : string) : Promise<EntitySystem> {
-            return null;
+        loadMap(mapName : string, emptySystem : EntitySystem) : Promise<EntitySystem> {
+            return this._jsonLoader.getJsonFromPath(this._project.getMapPath(mapName))
+                .then((mapJson : string) => {
+                    var nextID = 0;
+
+                    var loadedMap : map.GameMap = <any>util.serialize.deserialize(mapJson);
+
+                    loadedMap.entities.forEach((entityName : string) => {
+                        emptySystem.addEntity(entityName, new Entity());
+
+                        if (Number(entityName) > nextID) {
+                            nextID = Number(entityName) + 1;
+                        }
+                    });
+
+                    for(var systemName in loadedMap.systems) {
+                        var components = loadedMap.systems[systemName]["components"];
+                        for(var entityName in components) {
+                            emptySystem.getEntity(entityName).addComponent(systemName, components[entityName]);
+                        }
+                    }
+
+                    emptySystem.seedNextKey(nextID);
+                    return emptySystem;
+                });
         }
 
         /**
