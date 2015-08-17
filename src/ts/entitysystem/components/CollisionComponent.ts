@@ -101,7 +101,6 @@ module entityframework.components {
         }
 
         //region Getters and Settings
-        @util.JsonIgnore
         get info() {
             return this._info;
         }
@@ -112,7 +111,6 @@ module entityframework.components {
             this._bodyType = val;
             this.dataChanged("bodyType", val);
         }
-        @util.JsonIgnore
         get type() {
             return this._type;
         }
