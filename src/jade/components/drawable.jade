@@ -1,1 +1,18 @@
-div The entity has a drawable component!
+div.form-element
+    label Drawables
+    br
+    div.associated-form-element.form-group.input-group(role="group")
+        select.selectpicker.form-element.input-group-picker(id=this.id("drawableSelect"))
+            option(rv-each-drawable="data.drawables%_data | formatObjectToKeys") { drawable }
+        button.btn.btn-success.no-radius(id=this.id("addDrawableButton"), type="button", rv-command-add-drawable)
+            span &nbsp;
+            i.fa.fa-plus
+            span &nbsp;
+
+        button.btn.btn-default.no-left-radius(id=this.id("delDrawableButton"), type="button", rv-command-delete-drawable)
+            span &nbsp;
+            i.fa.fa-minus-circle
+            span &nbsp;
+
+
+div(id=this.id("drawableVM"))

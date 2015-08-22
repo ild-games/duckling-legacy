@@ -2,9 +2,9 @@
 module entityframework
 {
     interface ComponentType {
-        name : string,
-        displayName : string,
-        vm : framework.ViewModel<any>
+        name : string;
+        displayName : string;
+        vm : framework.ViewModel<any>;
     }
 
     export class EntityEditorVM extends  framework.ViewModel<EntitySystem> implements framework.observe.Observer, framework.listvm.ListAdapter<Component> {
@@ -186,6 +186,10 @@ module entityframework
 
         get componentsNotOnEntity() : Array<string> {
             return this._componentsNotOnEntity;
+        }
+
+        get isAddComponentEnabled() : boolean {
+            return this._componentsNotOnEntity.length > 0;
         }
     }
 

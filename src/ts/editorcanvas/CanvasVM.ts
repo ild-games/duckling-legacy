@@ -36,7 +36,7 @@ module editorcanvas {
     export class CanvasVM extends framework.ViewModel<entityframework.EntitySystem> implements framework.observe.Observer {
         private _canvas : HTMLCanvasElement;
         private _canvasContext : CanvasRenderingContext2D;
-        private _selectedEntity : entityframework.core.SelectedEntity;
+        private _selectedEntity : entityframework.core.SelectedEntity
         private _project : framework.Project;
         private _systemLoader : entityframework.SystemLoader;
 
@@ -53,13 +53,12 @@ module editorcanvas {
                 var position = entity.getComponent<comp.PhysicsComponent>("physics").info.position;
                 var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
                 if (position && drawable) {
-                    var shapeDrawable = drawable.getDrawable<draw.ShapeDrawable>("rectangle");
-                    if (shapeDrawable) {
-                        var shape = shapeDrawable.shape;
-                        if (shape.contains(mousePos, position)) {
+                    drawable.drawables.forEach((obj, drawableKey) => {
+                        if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
                             this._selectedEntity.entityKey = key;
+                            return;
                         }
-                    }
+                    });
                 }
             });
         }
@@ -76,8 +75,8 @@ module editorcanvas {
             physComp.info.position.y = mousePos.y;
 
             drawComp.drawables.put(
-                "rectangle",
-                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "rectangle"));
+                "Rect0",
+                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "Rect1"));
             collisionComp.info.dimension.x = 15;
             collisionComp.info.dimension.y = 15;
             this._context.commandQueue.pushCommand(new AddEntityCommand(this.data, rectEntity));
@@ -151,25 +150,30 @@ module editorcanvas {
 
         private collectDrawables() : Array<drawing.Rectangle> {
             var newRectangles : Array<drawing.Rectangle> = [];
-            this.data.forEach(function(entity, key) {
-                var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
+            this.data.forEach((entity, key) => {
                 var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
+                var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
+
                 if (drawComp && posComp) {
-                    var shapeDrawable = drawComp.getDrawable<draw.ShapeDrawable>("rectangle");
-                    if (shapeDrawable) {
-                        var shape  = <draw.RectangleShape>shapeDrawable.shape;
-
-                        var leftPoint = new drawing.CanvasPoint(
-                            posComp.info.position.x - (shape.dimension.x / 2),
-                            posComp.info.position.y - (shape.dimension.y /2));
-                        var rightPoint = new drawing.CanvasPoint(
-                            leftPoint.x + shape.dimension.x, leftPoint.y + shape.dimension.y);
-
-                        newRectangles.push(new drawing.Rectangle(leftPoint, rightPoint));
-                    }
+                    drawComp.drawables.forEach((drawable, key) => {
+                        var rect : drawing.Rectangle = this.makeCanvasRectangle(
+                            posComp,
+                            <draw.RectangleShape>(<draw.ShapeDrawable>(drawable)).shape);
+                        newRectangles.push(rect);
+                    });
                 }
             });
             return newRectangles;
+        }
+
+        private makeCanvasRectangle(posComp : comp.PhysicsComponent, rect : draw.RectangleShape) : drawing.Rectangle {
+            var leftPoint = new drawing.CanvasPoint(
+                posComp.info.position.x - (rect.dimension.x / 2),
+                posComp.info.position.y - (rect.dimension.y /2));
+            var rightPoint = new drawing.CanvasPoint(
+                leftPoint.x + rect.dimension.x, leftPoint.y + rect.dimension.y);
+
+            return new drawing.Rectangle(leftPoint, rightPoint);
         }
 
         private collectCollisionBoundingBoxDrawables() : Array<drawing.BoundingBox> {
