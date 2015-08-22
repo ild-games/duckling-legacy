@@ -5,6 +5,7 @@
 
 //region Symbol Interface
 declare var Symbol : (key : String) => any;
+declare var require : (key : string) => any;
 //endregion
 
 //region Promise Interface

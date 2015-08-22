@@ -56,11 +56,19 @@ div {
   box-sizing: border-box;
 }
 
+@mixin action {
+  &:hover {
+    cursor: pointer;
+    color: $project-action-color;
+  }
+}
+
 @mixin fill {
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
+  position: absolute;
 }
 
 @mixin input-group-addon($width) {
@@ -97,7 +105,8 @@ div {
 }
 
 
-#canvas-view-container {
+
+.canvas-view {
   @include layout-box;
   display: flex;
   justify-content: center;
@@ -107,7 +116,7 @@ div {
   overflow: auto;
 }
 
-#entity-editor-container {
+.entity-editor {
   @include layout-box;
   float: left;
   height: 100%;
@@ -119,10 +128,6 @@ div {
   border-left: solid 1px $dark-primary-color;
 
   .selector {
-    div.dropdown, button[type=button] {
-      @include fill;
-    }
-
     @include layout-box;
     position: relative;
     top: 0;
@@ -215,6 +220,9 @@ div {
 
 }
 
+.gone {
+  display: none;
+}
 
 .width-height-input-group {
   @include input-group-addon(70)
@@ -263,3 +271,5 @@ div.form-group .input-group:not(:last-child):not(:first-child) .input-group-addo
 div.form-group input:focus {
   z-index: 3;
 }
+
+@import '_splash_screen';

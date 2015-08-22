@@ -1,7 +1,5 @@
 module util {
-    declare var require;
     var fs = require('fs');
-
 
     /**
      * Describes the result of saving a json object.
@@ -18,8 +16,6 @@ module util {
         writable : boolean
     }
 
-
-
     /**
      * JsonLoader is used to retrieve json strings using a provided path.
      */
@@ -30,7 +26,7 @@ module util {
          * @returns Promise resolving to the string.
          */
         getJsonFromPath(path : string) : Promise<string> {
-            var promise = new Promise<string>(function (resolve, reject) {
+            return new Promise<string>(function (resolve, reject) {
                 fs.readFile(path, function(err, data) {
                     if (err) {
                         reject("");
@@ -39,7 +35,6 @@ module util {
                     }
                 });
             });
-            return promise;
         }
 
         /**
@@ -49,16 +44,18 @@ module util {
          * @returns Promise that resolves to a SaveResult describing the result of the save action.
          */
         saveJsonToPath(path : string, json : string) : Promise<SaveResult> {
-            var promise = new Promise<SaveResult>(function (resolve, reject) {
-                fs.writeFile(path,json, function (err) {
-                    if (err) {
-                        reject({isSuccess : false, error : err});
-                    } else {
-                        resolve({isSuccess : true, error : null});
-                    }
+            var dirname = util.path.dirname(path);
+            return util.path.makedirs(dirname).then(function() {
+                return new Promise<SaveResult>(function (resolve, reject) {
+                    fs.writeFile(path,json, function (err) {
+                        if (err) {
+                            reject({isSuccess : false, error : err});
+                        } else {
+                            resolve({isSuccess : true, error : null});
+                        }
+                    });
                 });
             });
-            return promise;
         }
     }
 }

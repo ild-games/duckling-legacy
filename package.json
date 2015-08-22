@@ -4,8 +4,8 @@
   "version ": "0.0.1",
   "main": "index.html",
   "window": {
-    "width": 1920,
-    "height": 1080
+    "width": 945,
+    "height": 645
   },
   "repository": {
     "type": "git",
