@@ -1,6 +1,7 @@
-$dark-primary-color: #FFA000;
-$primary-color: #FFC107;
-$light-primary-color: #FFECB3;
+$dark-primary-color: #232323;
+$primary-color: #717171;
+$light-primary-color: #b7b7b7;
+$ultra-light-primary-color: #ececec;
 $text-icon-color: #212121;
 $accent-color: #9E9E9E;
 $primary-text-color: #212121;
@@ -66,12 +67,17 @@ div {
   box-shadow: $border-radius-small $border-radius-small $border-radius-small/2 $shadow-color;
 }
 
+#canvas-div {
+  align-self: center;
+}
+
 #entity-canvas {
-  border: 2px solid red;
+  background-color: white;
 }
 
 #container {
   position: absolute;
+  background-color: $primary-color;
   width: 100%;
   height: 100%;
   top: 0;
@@ -83,23 +89,24 @@ div {
 
 #canvas-view-container {
   @include layout-box;
+  display: flex;
+  justify-content: center;
   float: left;
-  border: medium solid blue;
   height: 100%;
   width: 65%;
-  overflow: scroll;
+  overflow: auto;
 }
 
 #entity-editor-container {
   @include layout-box;
   float: left;
-  border: medium solid green;
   height: 100%;
   width: 35%;
 }
 
 .entity-editor {
   position: relative;
+  border-left: solid 1px $dark-primary-color;
 
   .selector {
     div.dropdown, button[type=button] {
@@ -110,8 +117,10 @@ div {
     position: relative;
     top: 0;
     height: 40px;
-    background-color:gold;
+    background-color: $primary-color;
     width:100%;
+    color: white;
+    padding: 3px;
   }
 
   .forms {
@@ -120,17 +129,36 @@ div {
     top: 40px;
     bottom: 40px;
     width: 100%;
+    overflow-y: auto;
+    background-color: $light-primary-color;
+
+    .entity-form-list {
+      z-index: 10;
+      position: relative;
+    }
+
+    .the-duck-bg-img {
+      position: absolute;
+      width: 300px;
+      height: 350px;
+      bottom: 0;
+      right: 0;
+      background: url(../resources/duck.svg) no-repeat;
+    }
 
     .list-element {
       @include shadow;
       margin: 0.5em;
       border: 1px solid $divider-color;
       border-radius: $border-radius-base;
+      background-color: white;
     }
 
     .component-header {
       background-color: $primary-color;
-      color: $light-primary-color;
+      color: white;
+      border-top-left-radius: $border-radius-base;
+      border-top-right-radius: $border-radius-base;
       overflow: auto;
       padding-left: $padding-form-horizontal;
     }
@@ -152,7 +180,9 @@ div {
     bottom: 0;
     height: 40px;
     width:100%;
-    background-color: purple;
+    padding: $padding-base-vertical $padding-base-horizontal;
+    background-color: $primary-color;
+    color: $ultra-light-primary-color;
   }
 }
 

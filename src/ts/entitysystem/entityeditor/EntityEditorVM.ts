@@ -8,17 +8,17 @@ module entityframework
 
     export class EntityEditorVM extends  framework.ViewModel<EntitySystem> implements framework.observe.Observer, framework.listvm.ListAdapter<Component> {
         //Field that exist for rivets bindings
-        private currentEntityName : string = "Select Entity";
-        private currentEntity : Entity;
-        private entityNames : string[] = [];
+        private _currentEntityName : string = "Select Entity";
+        private _currentEntity : Entity;
+        private _entityNames : Array<string> = [];
         private _components : ComponentType[] = [];
-        private adapter : framework.listvm.ListAdapter<Component>;
+        private _adapter : framework.listvm.ListAdapter<Component>;
         private _selectedEntity : entityframework.core.SelectedEntity;
         private _listVM : framework.listvm.ListVM;
 
         constructor() {
             super();
-            this.adapter = this;
+            this._adapter = this;
         }
 
         onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
@@ -34,14 +34,16 @@ module entityframework
 
         onDataReady() {
             this._listVM = new framework.listvm.ListVM("entityeditor/componentwrapper");
-            this.addChildView("entity-form-list", this._listVM , this.adapter);
+            this.addChildView("entity-form-list", this._listVM , this._adapter);
             this.onSystemChange(null);
             this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this._selectedEntity.listenForChanges("selectedEntity", this);
+            this.data.listenForChanges("data", this);
         }
 
         onViewReady() {
             super.onViewReady();
+            $(this._htmlRoot).find(".selectpicker").selectpicker();
         }
 
         get length() {
@@ -50,25 +52,25 @@ module entityframework
 
         getItemVM(index:number) {
             var info = this._components[index];
-            info.vm.setData(this._context, this.currentEntity.getComponent(info.name));
+            info.vm.setData(this._context, this._currentEntity.getComponent(info.name));
             return info.vm;
         }
 
         getItem(index:number) {
-            return this.currentEntity.getComponent(this._components[index].name);
+            return this._currentEntity.getComponent(this._components[index].name);
         }
 
         getComponents() {
-            if (!this.currentEntity) {
+            if (!this._currentEntity) {
                 return [];
             }
 
             var components = [];
 
             this.data.forEachType(function(factory : ComponentFactory, name : String) {
-                if (this.currentEntity.getComponent(name)) {
+                if (this._currentEntity.getComponent(name)) {
                     components.push({
-                        data : this.currentEntity.getComponent(name),
+                        data : this._currentEntity.getComponent(name),
                         vm : factory.createFormVM(),
                         name : name
                     });
@@ -79,8 +81,8 @@ module entityframework
         }
 
         selectEntity(name : string) {
-            this.currentEntity = this.data.getEntity(name);
-            this.currentEntityName = name;
+            this._currentEntity = this.data.getEntity(name);
+            this._currentEntityName = name;
 
             this._components = [];
             this.data.forEachType((factory : ComponentFactory, type : string) => {
@@ -93,14 +95,22 @@ module entityframework
         }
 
         onSystemChange(event : framework.observe.DataChangeEvent) {
-            this.entityNames = [];
+            this._entityNames.length = 0;
             this.data.forEach((entity : Entity, key : string) => {
-                this.entityNames.push(key);
+                this._entityNames.push(key);
             });
         }
 
         get viewFile():string {
             return "entityeditor/entityeditor";
+        }
+
+        get currentEntityName() : string {
+            return this._currentEntityName;
+        }
+
+        get entityNames() : Array<string> {
+            return this._entityNames;
         }
     }
 }

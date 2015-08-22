@@ -1,14 +1,22 @@
 div.selector(id=this.id("entity-selector"))
-    div.dropdown
+    div.dropdown(style="color: black")
         button(id=this.id("selector-dropdown"), type="button", data-toggle="dropdown",
             aria-haspopup="true", aria-expanded="false")
             span { currentEntityName }
             span.caret
         ul.dropdown-menu(aria-labelledby=this.id("selector-dropdown"))
             li(rv-each-entity="entityNames") { entity }
+
+//div.selector
+//    label Entity:&nbsp
+//    select.selectpicker(rv-value="_currentEntityName")
+//        option(rv-each-entity="entityNames") { entity }
+
 div.forms(id=this.id("entity-form-container"))
-    div(id=this.id("entity-form-list"))
+    div.entity-form-list(id=this.id("entity-form-list"))
+    div.the-duck-bg-img
 
 
 div.component-adder(id=this.id("add-component-button"))
     p Control to add components will go here!
+
