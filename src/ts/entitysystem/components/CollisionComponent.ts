@@ -1,3 +1,4 @@
+///<reference path="../core/Component.ts"/>
 declare var $;
 
 module entityframework.components {
