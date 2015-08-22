@@ -25,6 +25,7 @@ module entityframework
             switch (key) {
                 case "data":
                     this.onSystemChange(event);
+                    setTimeout(() => $(this._htmlRoot).find('.selectpicker').selectpicker('refresh'));
                     break;
                 case "selectedEntity":
                     this.selectEntity(this._selectedEntity.entityKey);
@@ -95,7 +96,7 @@ module entityframework
         }
 
         onSystemChange(event : framework.observe.DataChangeEvent) {
-            this._entityNames.length = 0;
+            this._entityNames = [];
             this.data.forEach((entity : Entity, key : string) => {
                 this._entityNames.push(key);
             });

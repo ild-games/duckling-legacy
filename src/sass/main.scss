@@ -7,6 +7,7 @@ $accent-color: #9E9E9E;
 $primary-text-color: #212121;
 $secondary-text-color: #727272;
 $divider-color:#B6B6B6;
+$secondary-color: #526cfc;
 $shadow-color: $secondary-text-color;
 
 $padding-base-vertical: 6px;
@@ -155,7 +156,7 @@ div {
     }
 
     .component-header {
-      background-color: $primary-color;
+      background-color: $secondary-color;
       color: white;
       border-top-left-radius: $border-radius-base;
       border-top-right-radius: $border-radius-base;
@@ -193,3 +194,40 @@ div {
 .x-y-input-group {
   @include input-group-addon(35)
 }
+
+/* Form Group UI improvements */
+div.form-group .input-group:first-child .form-control:last-child {
+  border-bottom: 0;
+  border-bottom-right-radius: 0;
+}
+
+div.form-group .input-group:first-child .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+}
+
+div.form-group .input-group:last-child .form-control:last-child {
+  border-top-right-radius: 0;
+}
+
+div.form-group .input-group:last-child .input-group-addon:first-child {
+  border-top-left-radius: 0;
+}
+
+div.form-group .input-group:first-child .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+}
+
+div.form-group .input-group:not(:last-child):not(:first-child) .form-control:last-child {
+  border-bottom: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+div.form-group .input-group:not(:last-child):not(:first-child) .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+

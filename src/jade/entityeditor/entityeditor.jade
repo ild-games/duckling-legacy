@@ -1,16 +1,7 @@
-div.selector(id=this.id("entity-selector"))
-    div.dropdown(style="color: black")
-        button(id=this.id("selector-dropdown"), type="button", data-toggle="dropdown",
-            aria-haspopup="true", aria-expanded="false")
-            span { currentEntityName }
-            span.caret
-        ul.dropdown-menu(aria-labelledby=this.id("selector-dropdown"))
-            li(rv-each-entity="entityNames") { entity }
-
-//div.selector
-//    label Entity:&nbsp
-//    select.selectpicker(rv-value="_currentEntityName")
-//        option(rv-each-entity="entityNames") { entity }
+div.selector
+    label Entity:&nbsp
+    select.selectpicker
+        option(rv-each-entity="entityNames | formatTest") { entity }
 
 div.forms(id=this.id("entity-form-container"))
     div.entity-form-list(id=this.id("entity-form-list"))
