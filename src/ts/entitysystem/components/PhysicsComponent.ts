@@ -44,7 +44,7 @@ module entityframework.components {
     @serialize.ProvideClass(PhysicsComponent, "ild::PlatformPhysicsComponent")
     export class PhysicsComponent extends Component {
         @serialize.Key("info")
-        _info : PhysicsInfo;
+        private _info : PhysicsInfo;
 
         constructor (position? : math.Vector, velocity? : math.Vector) {
             super();

@@ -14,10 +14,7 @@ module util.serialize {
      */
     export function ProvideClass(baseClass,name) {
         return function(classObject) {
-            if(!baseClass[classProvidedSymbol]) {
-                baseClass[classProvidedSymbol] = {};
-            }
-            baseClass[classProvidedSymbol][name] = classObject;
+            symbol.getSymbolMapForClass(baseClass,classProvidedSymbol)[name] = classObject;
             classObject[classTypenameSymbol] = name;
             classTypes[name] = classObject;
             return classObject;
@@ -27,11 +24,8 @@ module util.serialize {
     /**
      * Decorator that signifies the property should be ignored in the serialization process.
      */
-    export function Ignore(object : any, propertyKey : string | symbol) {
-        if (!object[ignoreSymbol]) {
-            object[ignoreSymbol] = {};
-        }
-        object[ignoreSymbol][propertyKey] = true;
+    export function Ignore(classObject : any, propertyKey : string | symbol) {
+        symbol.getSymbolMapForClass(classObject, ignoreSymbol)[propertyKey] = true;
     }
 
     /**
@@ -39,11 +33,8 @@ module util.serialize {
      * @param key String key that will be used in the resulting json.
      */
     export function Key(key : string) {
-        return function(object : any, propertyKey : string | symbol) {
-            if (!object[keySymbol]) {
-                object[keySymbol] = {};
-            }
-            object[keySymbol][propertyKey] = key;
+        return function(classObject : any, propertyKey : string | symbol) {
+            symbol.getSymbolMapForClass(classObject,keySymbol)[propertyKey] = key;
         }
     }
 
@@ -54,7 +45,8 @@ module util.serialize {
      * @returns True if the key should be ignored, false if it should be included in the serialziation process.
      */
     export function shouldIgnore(object : Object, key : string) {
-        return object[ignoreSymbol] && object[ignoreSymbol][key];
+        var symbolMap = symbol.getSymbolFromObject(object, ignoreSymbol);
+        return symbolMap && symbolMap[key];
     }
 
     /**
@@ -64,7 +56,8 @@ module util.serialize {
      * @returns True if the key was overridden, false otherwise.
      */
     export function isKeyOverridden(object : Object, key : string) {
-        return object[keySymbol] && (key in object[keySymbol]);
+        var symbolMap = symbol.getSymbolFromObject(object,keySymbol);
+        return symbolMap && (key in symbolMap);
     }
 
     /**
@@ -74,7 +67,7 @@ module util.serialize {
      * @returns The string key that should be used.
      */
     export function getKeyOverride(object : Object, key : string) {
-        return object[keySymbol][key];
+        return symbol.getSymbolFromObject(object,keySymbol)[key];
     }
 
     /**
@@ -83,9 +76,7 @@ module util.serialize {
      * @param destination Object that symbols are being copied to.
      */
     export function copySymbols(source : Object, destination : Object) {
-        if (source[ignoreSymbol]) {
-            destination[ignoreSymbol] = source[ignoreSymbol];
-        }
+        symbol.copySymbolMap(source, destination, ignoreSymbol);
     }
 
     /**
