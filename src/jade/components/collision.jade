@@ -2,11 +2,11 @@ include ../mixins/select_control
 
 form
     label Collision Type:&nbsp;
-    +enumSelect('data.info.type', 'entityframework.components.CollisionType', 'typeVals')
+    +enumSelect('data.type', 'entityframework.components.CollisionType', 'typeVals')
     br
 
     label Body Type:&nbsp;
-    +enumSelect('data.info.bodyType', 'entityframework.components.CollisionBodyType', 'bodyTypeVals')
+    +enumSelect('data.bodyType', 'entityframework.components.CollisionBodyType', 'bodyTypeVals')
     br
 
     label Collision Dimensions
