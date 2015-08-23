@@ -71,7 +71,7 @@ module util.serialize {
 
     //region deserialize implementation
     /**
-     * When JSON is loaded from disk it returns an object tree of plain old javascirpt objects (pojo)
+     * When JSON is loaded from disk it returns an object tree of plain old javascript objects (pojo)
      * (I.E. Not instances of classes). This functions takes the pojo tree created
      * by parsing the JSON and the root instance of a class hierarchy.  It walks down the plain
      * old javascript object and sets the corresponding values on the tree of class instances.
@@ -83,11 +83,11 @@ module util.serialize {
      * @returns The rootResultObject after being initialized with the data in the pojo tree.
      */
     export function buildTypesFromObjects(plainObjectTree, rootResultObject?) {
-        var rootTypedObject = getRootTypedObject(plainObjectTree, rootResultObject);
-
-        if (!rootTypedObject) {
+        if (types.isPrimitive(plainObjectTree)) {
             return plainObjectTree;
         }
+
+        var rootTypedObject = getRootTypedObject(plainObjectTree, rootResultObject);
 
         if (Array.isArray(rootTypedObject)) {
             return buildTypedArray(plainObjectTree, rootTypedObject);
@@ -106,11 +106,11 @@ module util.serialize {
     function getRootTypedObject(plainObjectTree, rootTypedObject?) {
         if (rootTypedObject) {
             return rootTypedObject;
-        } else if (Array.isArray(plainObjectTree)) {
+        } else if (types.isArray(plainObjectTree)) {
             rootTypedObject = [];
         } else if (plainObjectTree[JSON_TYPE_KEY]) {
             rootTypedObject = new (getClassForName(plainObjectTree[JSON_TYPE_KEY]));
-        } else if (typeof plainObjectTree === typeof {}) {
+        } else if (types.isObject(plainObjectTree)) {
             rootTypedObject = {};
         } else {
             rootTypedObject = null;
@@ -149,12 +149,12 @@ module util.serialize {
 
             if (getCustomSerializer(typedValue)) {
                 getCustomSerializer(typedValue).fromJSON(buildTypesFromObjects(plainValue));
-            } else if (typeof typedValue === typeof {}) {
-                buildTypesFromObjects(plainObjectTree[key], typedValue)
-            } else if (typeof plainObjectTree[key] === typeof {}) {
-                rootTypedObject[key] = buildTypesFromObjects(plainValue);
+            } else if (typedValue) {
+                buildTypesFromObjects(plainValue, typedValue)
+            } else if (types.isPrimitive(plainValue)) {
+                rootTypedObject[key] = plainValue;
             } else {
-                rootTypedObject[key] = plainObjectTree[key]
+                rootTypedObject[key] = buildTypesFromObjects(plainValue);
             }
         }
         return rootTypedObject;

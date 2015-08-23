@@ -2,12 +2,12 @@ module util.symbol {
 
     /**
      * Check if the symbol is attached to the object. If it is not
-     * @param classObject
-     * @param symbol
-     * @returns {boolean}
+     * @param classInstance Instance of the a class to retrieve the classes symbols from.
+     * @param symbol Symbol the values should be retrieved for.
+     * @returns The object stored using the symbol on the object's class.
      */
-    export function getSymbolFromObject(classObject, symbol : symbol | string) {
-        return classObject[symbol] || null;
+    export function getSymbolFromObject(classInstance : Object, symbol : symbol | string) {
+        return classInstance[symbol] || null;
     }
 
     /**

@@ -20,6 +20,8 @@ module entityframework {
         /**
          * Load an EntitySystem from the map.
          * @param mapName Name of the map to load the EntitySystem from.
+         * @param emptySystem An empty entity system with the correct component types. The system will be
+         *           used to store the results of the loading process.
          * @returns A promise that resolves to the EntitySystem.
          */
         loadMap(mapName : string, emptySystem : EntitySystem) : Promise<EntitySystem> {
