@@ -88,11 +88,11 @@ module entityframework
             this._components = [];
 
             if (name && name !== "") {
-                this.currentEntity = this.data.getEntity(name);
-                this.currentEntityName = name;
+                this._currentEntity = this.data.getEntity(name);
+                this._currentEntityName = name;
 
                 this.data.forEachType((factory : ComponentFactory, type : string) => {
-                    if (this.currentEntity.getComponent(type)) {
+                    if (this._currentEntity.getComponent(type)) {
                         this._components.push({
                             name : type,
                             vm : factory.createFormVM()
