@@ -1,12 +1,17 @@
-$dark-primary-color: #FFA000;
-$primary-color: #FFC107;
-$light-primary-color: #FFECB3;
+$dark-primary-color: #232323;
+$primary-color: #717171;
+$light-primary-color: #b7b7b7;
+$ultra-light-primary-color: #ececec;
 $text-icon-color: #212121;
+$text-over-primary-color: white;
+$text-over-secondary-color: white;
 $accent-color: #9E9E9E;
 $primary-text-color: #212121;
 $secondary-text-color: #727272;
 $divider-color:#B6B6B6;
+$secondary-color: #526cfc;
 $shadow-color: $secondary-text-color;
+$control-background-color: white;
 
 $padding-base-vertical: 6px;
 $padding-base-horizontal: 12px;
@@ -66,12 +71,23 @@ div {
   box-shadow: $border-radius-small $border-radius-small $border-radius-small/2 $shadow-color;
 }
 
+.canvas-menu-btns {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.canvas-div {
+  align-self: center;
+}
+
 #entity-canvas {
-  border: 2px solid red;
+  background-color: white;
 }
 
 #container {
   position: absolute;
+  background-color: $primary-color;
   width: 100%;
   height: 100%;
   top: 0;
@@ -83,23 +99,24 @@ div {
 
 #canvas-view-container {
   @include layout-box;
+  display: flex;
+  justify-content: center;
   float: left;
-  border: medium solid blue;
   height: 100%;
   width: 65%;
-  overflow: scroll;
+  overflow: auto;
 }
 
 #entity-editor-container {
   @include layout-box;
   float: left;
-  border: medium solid green;
   height: 100%;
   width: 35%;
 }
 
 .entity-editor {
   position: relative;
+  border-left: solid 1px $dark-primary-color;
 
   .selector {
     div.dropdown, button[type=button] {
@@ -110,8 +127,10 @@ div {
     position: relative;
     top: 0;
     height: 40px;
-    background-color:gold;
+    background-color: $primary-color;
     width:100%;
+    color: $text-over-primary-color;
+    padding: 3px;
   }
 
   .forms {
@@ -120,17 +139,36 @@ div {
     top: 40px;
     bottom: 40px;
     width: 100%;
+    overflow-y: auto;
+    background-color: $light-primary-color;
+
+    .entity-form-list {
+      z-index: 10;
+      position: relative;
+    }
+
+    .the-duck-bg-img {
+      position: absolute;
+      width: 300px;
+      height: 350px;
+      bottom: 0;
+      right: 0;
+      background: url(../resources/entity-editor-duck-bg.svg) no-repeat;
+    }
 
     .list-element {
       @include shadow;
       margin: 0.5em;
       border: 1px solid $divider-color;
       border-radius: $border-radius-base;
+      background-color: $control-background-color;
     }
 
     .component-header {
-      background-color: $primary-color;
-      color: $light-primary-color;
+      background-color: $secondary-color;
+      color: $text-over-secondary-color;
+      border-top-left-radius: $border-radius-base;
+      border-top-right-radius: $border-radius-base;
       overflow: auto;
       padding-left: $padding-form-horizontal;
     }
@@ -152,7 +190,9 @@ div {
     bottom: 0;
     height: 40px;
     width:100%;
-    background-color: purple;
+    padding: $padding-base-vertical $padding-base-horizontal;
+    background-color: $primary-color;
+    color: $ultra-light-primary-color;
   }
 }
 
@@ -163,3 +203,44 @@ div {
 .x-y-input-group {
   @include input-group-addon(35)
 }
+
+/* Form Group UI improvements */
+div.form-group .input-group:first-child .form-control:last-child {
+  border-bottom: 0;
+  border-bottom-right-radius: 0;
+}
+
+div.form-group .input-group:first-child .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+}
+
+div.form-group .input-group:last-child .form-control:last-child {
+  border-top-right-radius: 0;
+}
+
+div.form-group .input-group:last-child .input-group-addon:first-child {
+  border-top-left-radius: 0;
+}
+
+div.form-group .input-group:first-child .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+}
+
+div.form-group .input-group:not(:last-child):not(:first-child) .form-control:last-child {
+  border-bottom: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+div.form-group .input-group:not(:last-child):not(:first-child) .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+div.form-group input:focus {
+  z-index: 3;
+}
+

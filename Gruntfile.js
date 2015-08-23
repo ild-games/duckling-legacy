@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-image');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -50,6 +51,16 @@ module.exports = function(grunt) {
                 }
             }
         },
+        image: {
+            dynamic: {
+                files: [{
+                    expand: true,
+                    cwd: 'resources',
+                    src: ['**/*.{png,jpg,gif,svg}'],
+                    dest: 'build/resources'
+                }]
+            }
+        },
         copy: {
             package: {
                 files: [
@@ -78,5 +89,5 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['typescript','concat','copy','jade', 'sass']);
+    grunt.registerTask('default', ['typescript','concat','copy','jade', 'sass', 'image']);
 }

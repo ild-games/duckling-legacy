@@ -171,7 +171,7 @@ module entityframework.components {
          * Sets up the select html tags.
          */
         private initializeSelectPicker() {
-            $(".selectpicker").selectpicker();
+            $(this._htmlRoot).find(".selectpicker").selectpicker();
         }
 
         //region Getters and Setters
