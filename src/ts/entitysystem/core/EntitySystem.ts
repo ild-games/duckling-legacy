@@ -103,5 +103,45 @@ module entityframework
         nextKey() {
             return ++this._nextId + "";
         }
+
+        /**
+         * Set the number that can be used to generate unique identifiers.
+         * @param next Number that will be used as the next ID.
+         */
+        seedNextKey(next : number) {
+            this._nextId = next;
+        }
+
+
+        /**
+         * Get an empty clone of the EntitySystem.  The clone will have all of the
+         * same system, but it will contain no components or entities.
+         * @returns A new empty EntitySystem.
+         */
+        getEmptyClone() {
+            var clone = new EntitySystem();
+            for(var key in this._componentFactories) {
+                clone.addComponentType(this._componentFactories[key])
+            }
+            return clone;
+        }
+
+        /**
+         * Move the contents of the argument entity system into this system.  After
+         * the move the argument entity system should not be used.
+         * @param entitySystem
+         */
+        move(entitySystem : EntitySystem) {
+            this._entities.stopListening("Entities", this);
+            entitySystem._entities.stopListening("Entities", entitySystem);
+
+            this._componentFactories = entitySystem._componentFactories;
+            this._entities = entitySystem._entities;
+            this._nextId = entitySystem._nextId;
+
+            this._entities.listenForChanges("Entities", this);
+
+            this.dataChanged("replaced", null);
+        }
     }
 }

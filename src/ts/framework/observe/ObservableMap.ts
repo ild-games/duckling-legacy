@@ -1,9 +1,13 @@
 module framework.observe {
+
+    import CustomSerializer = util.serialize.CustomSerializer;
+
     /**
      * Map of observable objects.  Changes to objects contained in the map will be
      * propagated to any object listening to the map.
      */
-    export class ObservableMap<T extends Observable> extends Observable {
+    @util.serialize.HasCustomSerializer
+    export class ObservableMap<T extends Observable> extends Observable implements CustomSerializer {
         private _data : { [key:string]: T} = {};
 
         /**
@@ -61,8 +65,23 @@ module framework.observe {
             }
         }
 
-        private toJSON() {
+        //region CustomSerializer implementation
+        /**
+         * @see util.serialize.CustomSerializer.toJSON
+         */
+        toJSON() {
             return this._data;
         }
+
+        /**
+         * @see util.serialize.CustomSerializer.fromJSON
+         */
+        fromJSON(object):any {
+            for (var key in object) {
+                this.put(key, object[key]);
+            }
+            return this;
+        }
+        //endregion
     }
 }

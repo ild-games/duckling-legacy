@@ -20,10 +20,35 @@ module entityframework {
         /**
          * Load an EntitySystem from the map.
          * @param mapName Name of the map to load the EntitySystem from.
+         * @param emptySystem An empty entity system with the correct component types. The system will be
+         *           used to store the results of the loading process.
          * @returns A promise that resolves to the EntitySystem.
          */
-        loadMap(mapName : string) : Promise<EntitySystem> {
-            return null;
+        loadMap(mapName : string, emptySystem : EntitySystem) : Promise<EntitySystem> {
+            return this._jsonLoader.getJsonFromPath(this._project.getMapPath(mapName))
+                .then((mapJson : string) => {
+                    var nextID = 0;
+
+                    var loadedMap : map.GameMap = <any>util.serialize.deserialize(mapJson);
+
+                    loadedMap.entities.forEach((entityName : string) => {
+                        emptySystem.addEntity(entityName, new Entity());
+
+                        if (Number(entityName) > nextID) {
+                            nextID = Number(entityName) + 1;
+                        }
+                    });
+
+                    for(var systemName in loadedMap.systems) {
+                        var components = loadedMap.systems[systemName]["components"];
+                        for(var entityName in components) {
+                            emptySystem.getEntity(entityName).addComponent(systemName, components[entityName]);
+                        }
+                    }
+
+                    emptySystem.seedNextKey(nextID);
+                    return emptySystem;
+                });
         }
 
         /**
@@ -46,7 +71,7 @@ module entityframework {
                 });
             });
 
-            var mapString = JSON.stringify(saveMap, util.replacer, 4);
+            var mapString = util.serialize.serialize(saveMap);
             var mapPath = this._project.getMapPath(mapName);
 
             return this._jsonLoader.saveJsonToPath(mapPath, mapString);

@@ -2,8 +2,6 @@ module util {
     declare var require;
     var fs = require('fs');
 
-    var ignoreSymbol = Symbol("IgnoreWhenSerializing");
-    var keySymbol = Symbol("JsonKey");
 
     /**
      * Describes the result of saving a json object.
@@ -13,7 +11,6 @@ module util {
         error : any;
     }
 
-
     interface PropertDescriptor {
         value : any,
         enumerable : boolean,
@@ -21,59 +18,7 @@ module util {
         writable : boolean
     }
 
-    /**
-     * Decorator that signifies the property should be ignored in the serialization process.
-     */
-    export function JsonIgnore(object : any, propertyKey : string | symbol) {
-        if (!object[ignoreSymbol]) {
-            object[ignoreSymbol] = {};
-        }
-        object[ignoreSymbol][propertyKey] = true;
-    }
 
-    /**
-     * Decorator that can be used to change the JsonKey of a property.
-     * @param key String key that will be used in the resulting json.
-     */
-    export function JsonKey(key : string) {
-        return function(object : any, propertyKey : string | symbol) {
-            if (!object[keySymbol]) {
-                object[keySymbol] = {};
-            }
-            object[keySymbol][propertyKey] = key;
-        }
-    }
-
-    /**
-     * Function that can be used as a replacer during serialization to respect the JsonKey and
-     * Ignore decorators.
-     * @param key The key on the object that is being serialized.
-     * @param value The object being serialized.
-     */
-    export function replacer(key, value) {
-        if (this[ignoreSymbol] && this[ignoreSymbol][key]) {
-            return undefined;
-        }
-
-        if (value && value[keySymbol]) {
-            var replacement = {};
-            for (var propKey in value) {
-                if (propKey in value[keySymbol]) {
-                    replacement[value[keySymbol][propKey]] = value[propKey];
-                } else {
-                    replacement[propKey] = value[propKey];
-                }
-            }
-
-            if(value[ignoreSymbol]) {
-                replacement[ignoreSymbol] = value[ignoreSymbol];
-            }
-
-            return replacement;
-        }
-
-        return value;
-    }
 
     /**
      * JsonLoader is used to retrieve json strings using a provided path.

@@ -1,10 +1,14 @@
 ///<reference path="../../core/Component.ts"/>
 module entityframework.components.drawing {
+
+    import serialize = util.serialize;
+
+    @serialize.ProvideClass(DrawableComponent, "ild::DrawableComponent")
     export class DrawableComponent extends Component {
-        @util.JsonKey("camEntity")
+        @serialize.Key("camEntity")
         private _camEntity : string;
 
-        @util.JsonKey("drawables")
+        @serialize.Key("drawables")
         private _drawables : framework.observe.ObservableMap<Drawable>;
 
         constructor() {

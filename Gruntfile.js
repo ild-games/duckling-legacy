@@ -1,3 +1,18 @@
+/**
+ * Function that defines the order to include directories for typescript compilation. The
+ * purpose is to enforce a strict dependency chain and reduce the number of required
+ * references.
+ */
+function getTSDirs() {
+    var directories = ["src/bootstrap.ts"];
+
+    for (var i = 0; i < arguments.length; i++) {
+        directories.push("src/ts/" + arguments[i] + "/**/*.ts");
+    }
+
+    return directories;
+}
+
 module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-typescript');
     grunt.loadNpmTasks('grunt-image');
@@ -11,7 +26,13 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         typescript: {
             duckling: {
-                src: ['src/bootstrap.ts','src/ts/**/*.ts'],
+                src: getTSDirs(
+                    "util",
+                    "framework",
+                    "math",
+                    "entitysystem",
+                    "editorcanvas"
+                ),
                 dest: 'build/scripts/duckling.js',
                 options: {
                     module: 'commonjs',

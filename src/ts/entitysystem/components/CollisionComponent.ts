@@ -1,6 +1,9 @@
+///<reference path="../core/Component.ts"/>
 declare var $;
 
 module entityframework.components {
+
+    import serialize = util.serialize;
 
     /**
      * The body types for a CollisionComponent.
@@ -40,7 +43,7 @@ module entityframework.components {
         /**
          * Width and height for the collision's bounding box.
          */
-        @util.JsonKey("dimension")
+        @serialize.Key("dimension")
         private _dimension : math.Vector;
 
         /**
@@ -66,21 +69,22 @@ module entityframework.components {
     /**
      * Component class for an entity's collision information.
      */
+    @serialize.ProvideClass(CollisionComponent, "ild::CollisionComponent")
     export class CollisionComponent extends Component {
         /**
          * Info instance holding the bindable properties.
          */
-        @util.JsonKey("dimension")
+        @serialize.Key("dimension")
         _info : CollisionShapeInfo;
         /**
          * CollisionBodyType for the component.
          */
-        @util.JsonKey("bodyType")
+        @serialize.Key("bodyType")
         private _bodyType : CollisionBodyType;
         /**
          * ColllisionType for the component.
          */
-        @util.JsonKey("collisionType")
+        @serialize.Key("collisionType")
         private _type : CollisionType;
 
         /**

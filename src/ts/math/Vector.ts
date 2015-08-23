@@ -1,13 +1,15 @@
 ///<reference path="../util/JsonLoader.ts"/>
 module math {
+    import serialize = util.serialize;
+
     /**
      * A 2D vector.
      */
     export class Vector extends framework.observe.Observable {
-        @util.JsonKey("x")
+        @serialize.Key("x")
         private _x : number;
 
-        @util.JsonKey("y")
+        @serialize.Key("y")
         private _y : number;
 
         /**
