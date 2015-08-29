@@ -3,6 +3,7 @@ module entityframework
 {
     interface ComponentType {
         name : string,
+        displayName : string,
         vm : framework.ViewModel<any>
     }
 
@@ -61,6 +62,10 @@ module entityframework
             return this._currentEntity.getComponent(this._components[index].name);
         }
 
+        getItemExtras(index : number) {
+            return this._components[index];
+        }
+
         getComponents() {
             if (!this._currentEntity) {
                 return [];
@@ -95,6 +100,7 @@ module entityframework
                     if (this._currentEntity.getComponent(type)) {
                         this._components.push({
                             name : type,
+                            displayName : factory.displayName,
                             vm : factory.createFormVM()
                         });
                     }

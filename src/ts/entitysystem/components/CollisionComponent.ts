@@ -212,6 +212,10 @@ module entityframework.components {
         get name() {
             return "collision";
         }
+
+        get displayName() {
+            return "Collision";
+        }
         //endregion
     }
 }

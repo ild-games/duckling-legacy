@@ -65,6 +65,10 @@ module entityframework.components {
 
     export class PhysicsComponentFactory implements ComponentFactory {
 
+        get displayName() {
+            return "Physics";
+        }
+
         get name() {
             return "physics";
         }
