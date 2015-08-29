@@ -127,6 +127,15 @@ module entityframework
         }
 
         /**
+         * Get the factory for a given component.
+         * @param componentName Name of the component to get the factory for.
+         * @returns The factory used to create new instances of the component.
+         */
+        getComponentFactory(componentName : string) {
+            return this._componentFactories[componentName];
+        }
+
+        /**
          * Move the contents of the argument entity system into this system.  After
          * the move the argument entity system should not be used.
          * @param entitySystem

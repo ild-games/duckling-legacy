@@ -173,6 +173,19 @@ div {
       padding-left: $padding-form-horizontal;
     }
 
+    .component-header-content {
+      width: 100%;
+    }
+
+    .component-close-container {
+      text-align: right;
+      padding-right: 15px;
+    }
+
+    .component-close-btn {
+      cursor: pointer;
+    }
+
     .component-wrapper {
       padding: $padding-base-vertical $padding-form-horizontal;
     }
@@ -188,13 +201,20 @@ div {
     @include layout-box;
     position: absolute;
     bottom: 0;
-    height: 40px;
+    height: 46px;
     width:100%;
     padding: $padding-base-vertical $padding-base-horizontal;
     background-color: $primary-color;
     color: $ultra-light-primary-color;
   }
+
+  .add-component-select {
+    width: 100%;
+    margin-right: 7px;
+  }
+
 }
+
 
 .width-height-input-group {
   @include input-group-addon(70)
@@ -243,4 +263,3 @@ div.form-group .input-group:not(:last-child):not(:first-child) .input-group-addo
 div.form-group input:focus {
   z-index: 3;
 }
-
