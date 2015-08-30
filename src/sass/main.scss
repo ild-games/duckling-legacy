@@ -143,7 +143,6 @@ div {
     background-color: $light-primary-color;
 
     .entity-form-list {
-      z-index: 10;
       position: relative;
     }
 
@@ -199,6 +198,7 @@ div {
 
   .component-adder {
     @include layout-box;
+    z-index: 10;
     position: absolute;
     bottom: 0;
     height: 46px;

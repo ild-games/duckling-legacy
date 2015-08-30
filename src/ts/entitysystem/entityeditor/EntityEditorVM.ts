@@ -17,6 +17,7 @@ module entityframework
         private _adapter : framework.listvm.ListAdapter<Component>;
         private _selectedEntity : entityframework.core.SelectedEntity;
         private _listVM : framework.listvm.ListVM;
+        private _addComponentPicker : HTMLSelectElement;
 
         constructor() {
             super();
@@ -58,10 +59,11 @@ module entityframework
         onViewReady() {
             super.onViewReady();
             $(this._htmlRoot).find(".selectpicker").selectpicker();
+            this._addComponentPicker = <HTMLSelectElement>this.findById("componentsToAddPicker");
         }
 
         addComponentFromSelect() {
-            var pickerVal = $(this.findById("componentsToAddPicker")).val();
+            var pickerVal = this._addComponentPicker.value;
             if (pickerVal && this._currentEntity) {
                 this._context.commandQueue.pushCommand(new AddComponentCommand(
                     this._currentEntity,
@@ -144,6 +146,7 @@ module entityframework
             this._currentEntityName = name;
 
             this._components = [];
+            this._componentsNotOnEntity = [];
 
             if (name && name !== "") {
                 this._currentEntity = this.data.getEntity(name);

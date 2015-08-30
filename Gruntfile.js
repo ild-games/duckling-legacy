@@ -42,10 +42,10 @@ module.exports = function(grunt) {
             }
         },
         concat: {
-            options: {
-                separator: ';'
-            },
             jsdepend: {
+                options: {
+                    separator: ';'
+                },
                 src: [
                     'node_modules/jquery/dist/jquery.js',
                     'node_modules/sightglass/index.js',
