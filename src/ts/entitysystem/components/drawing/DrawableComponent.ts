@@ -44,6 +44,11 @@ module entityframework.components.drawing {
     }
 
     export class DrawableComponentFactory implements ComponentFactory {
+
+        get displayName() {
+            return "Drawable";
+        }
+
         get name() {
             return "drawable";
         }

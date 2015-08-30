@@ -8,6 +8,7 @@ module framework.listvm {
      */
     export class ListVM extends ViewModel<ListAdapter<any>> {
         private _ids : string[];
+        private _indexes : {[id:string] : number};
         private _nextID : number = 0;
         private _itemTemplate :string = null;
 
@@ -29,9 +30,13 @@ module framework.listvm {
 
         get ids() : string[] {
             if (!this._ids) {
+                var id;
                 this._ids = [];
+                this._indexes = {};
                 for(var i = 0; i < this.data.length; i++) {
-                   this._ids.push("element-" + this._nextID++);
+                    id = "element-" + this._nextID++;
+                    this._indexes[id] = i;
+                    this._ids.push(id);
                 }
             }
             return this._ids;
@@ -40,8 +45,12 @@ module framework.listvm {
         renderItem(id : string) {
             if (this._itemTemplate) {
                 return '<div class="list-element">' +
-                    this.renderTemplate(this._itemTemplate, {id : this.id(id)}) +
-                    "</div>";
+                    this.renderTemplate(this._itemTemplate,
+                        {
+                            id : this.id(id),
+                            extras : this.getExtras(id)
+                        }) +
+                    '</div>';
             } else {
                 return '<div id="' + this.id(id) + '"></div>';
             }
@@ -83,6 +92,18 @@ module framework.listvm {
         detach() {
             super.detach();
             this.clearList();
+        }
+
+        private getIndex(id : string) {
+            return this._indexes[id];
+        }
+
+        private getExtras(id : string) {
+            if (this.data.getItemExtras) {
+                return this.data.getItemExtras(this.getIndex(id));
+            } else {
+                return null;
+            }
         }
     }
 }

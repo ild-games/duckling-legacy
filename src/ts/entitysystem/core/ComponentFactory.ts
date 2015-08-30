@@ -5,6 +5,7 @@ module entityframework {
      */
     export interface ComponentFactory {
         name : string;
+        displayName : string;
 
         /**
          * Create a ViewModel that represents a form capable of editing the
