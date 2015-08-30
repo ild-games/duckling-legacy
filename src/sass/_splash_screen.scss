@@ -21,6 +21,7 @@ $splash-small-font: 1em;
       width: 375px;
       padding: 0;
       overflow-y: auto;
+      overflow-x: hidden;
 
       li {
         list-style-type: none;
@@ -52,16 +53,16 @@ $splash-small-font: 1em;
       border: 1em;
 
       .title {
+        @include one-line-ellipsis;
         font-size: $splash-medium-font;
         margin: 0;
         padding: 0;
       }
 
       .path {
+        @include one-line-ellipsis;
         font-size: $splash-small-font;
-        text-overflow: ellipsis;
         white-space: nowrap;
-        overflow: hidden;
       }
     }
 

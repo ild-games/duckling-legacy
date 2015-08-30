@@ -27,6 +27,10 @@ module entityframework {
         loadMap(mapName : string, emptySystem : EntitySystem) : Promise<EntitySystem> {
             return this._jsonLoader.getJsonFromPath(this._project.getMapPath(mapName))
                 .then((mapJson : string) => {
+                    if (!mapJson) {
+                        return emptySystem;
+                    }
+
                     var nextID = 0;
 
                     var loadedMap : map.GameMap = <any>util.serialize.deserialize(mapJson);

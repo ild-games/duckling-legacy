@@ -23,17 +23,23 @@ module util {
         /**
          * Return a promise that resolves to a json string containing the contents of the path.
          * @param path Path to retrieve data from.
-         * @returns Promise resolving to the string.
+         * @returns Promise resolving to the json string if it exists or null if it does not.
          */
         getJsonFromPath(path : string) : Promise<string> {
-            return new Promise<string>(function (resolve, reject) {
-                fs.readFile(path, function(err, data) {
-                    if (err) {
-                        reject("");
-                    } else {
-                        resolve(data);
-                    }
-                });
+            return util.path.pathExists(path).then(function (exists) {
+                if (exists) {
+                    return new Promise<string>(function (resolve, reject) {
+                        fs.readFile(path, function(err, data) {
+                            if (err) {
+                                reject({ error : true});
+                            } else {
+                                resolve(data);
+                            }
+                        });
+                    });
+                } else {
+                    return null;
+                }
             });
         }
 

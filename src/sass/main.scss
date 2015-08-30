@@ -79,6 +79,11 @@ div {
   box-shadow: $border-radius-small $border-radius-small $border-radius-small/2 $shadow-color;
 }
 
+@mixin one-line-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .canvas-menu-btns {
   position: absolute;
   left: 0;

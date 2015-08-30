@@ -36,7 +36,7 @@ module splashscreen {
         }
 
         loadProject() {
-            this.jsonLoader.getJsonFromPath(this.projecListPath).then((json) => {
+            this.jsonLoader.getJsonFromPath(this.projectListPath).then((json) => {
                 this.projects = JSON.parse(json);
             },(error) => {
                 this.projects = [];
@@ -44,10 +44,10 @@ module splashscreen {
         }
 
         saveProjects() {
-            this.jsonLoader.saveJsonToPath(this.projecListPath, JSON.stringify(this.projects));
+            this.jsonLoader.saveJsonToPath(this.projectListPath, JSON.stringify(this.projects));
         }
 
-        get projecListPath() {
+        get projectListPath() {
             return util.path.join(util.path.home(),".duckling","recent_projects.json");
         }
 
