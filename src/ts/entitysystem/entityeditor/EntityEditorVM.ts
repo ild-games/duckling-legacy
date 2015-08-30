@@ -75,8 +75,8 @@ module entityframework
         reflectAddedComponents() {
             this.data.forEachType((factory, name) => {
                 if (this._currentEntity.getComponent(name)) {
-                    var compInList = this._components.filter((obj) => { return obj.name === name});
-                    if (compInList.length === 0) {
+                    var compInList = this._components.some((obj) => obj.name === name);
+                    if (!compInList) {
                         this._components.push({
                             data : this._currentEntity.getComponent(name),
                             vm : factory.createFormVM(),
