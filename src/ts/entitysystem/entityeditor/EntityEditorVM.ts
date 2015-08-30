@@ -116,16 +116,13 @@ module entityframework
         }
 
         selectEntity(name : string) {
-            this._currentEntity = this.data.getEntity(name);
-            this._currentEntity.listenForChanges("currentEntity", this);
-            this._currentEntityName = name;
-
             this._components = [];
             this._componentsNotOnEntity = [];
 
             if (name && name !== "") {
                 this._currentEntity = this.data.getEntity(name);
                 this._currentEntityName = name;
+                this._currentEntity.listenForChanges("currentEntity", this);
 
                 this.data.forEachType((factory : ComponentFactory, type : string) => {
                     this._componentsNotOnEntity.push(type);
