@@ -11,6 +11,8 @@ html
             div.entity-editor(id="entity-editor-container")
         script(type='text/javascript').
             $(document).ready(function() {
+                framework.error.startListener(window);
+
                 var context = new framework.Context(views.templates, window);
                 var selectedEntity = new entityframework.core.SelectedEntity();
                 context.setSharedObjectByKey("selectedEntity", selectedEntity);
