@@ -52,9 +52,15 @@ module editorcanvas {
         private selectRectangle(mousePos : math.Vector) {
             this.data.forEach((entity : entityframework.Entity, key : string) => {
                 var position = entity.getComponent<comp.PhysicsComponent>("physics").info.position;
-                var shape = entity.getComponent<draw.DrawableComponent>("drawable").getDrawable<draw.ShapeDrawable>("rectangle").shape;
-                if (shape.contains(mousePos, position)) {
-                    this._selectedEntity.entityKey = key;
+                var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
+                if (position && drawable) {
+                    var shapeDrawable = drawable.getDrawable<draw.ShapeDrawable>("rectangle");
+                    if (shapeDrawable) {
+                        var shape = shapeDrawable.shape;
+                        if (shape.contains(mousePos, position)) {
+                            this._selectedEntity.entityKey = key;
+                        }
+                    }
                 }
             });
         }
@@ -145,17 +151,22 @@ module editorcanvas {
         private collectDrawables() : Array<drawing.Rectangle> {
             var newRectangles : Array<drawing.Rectangle> = [];
             this.data.forEach(function(entity, key) {
-                var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
                 var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
-                var shape  = <draw.RectangleShape>(drawComp.getDrawable<draw.ShapeDrawable>("rectangle").shape);
+                var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
+                if (drawComp && posComp) {
+                    var shapeDrawable = drawComp.getDrawable<draw.ShapeDrawable>("rectangle");
+                    if (shapeDrawable) {
+                        var shape  = <draw.RectangleShape>shapeDrawable.shape;
 
-                var leftPoint = new drawing.CanvasPoint(
-                    posComp.info.position.x - (shape.dimension.x / 2),
-                    posComp.info.position.y - (shape.dimension.y /2));
-                var rightPoint = new drawing.CanvasPoint(
-                    leftPoint.x + shape.dimension.x, leftPoint.y + shape.dimension.y);
+                        var leftPoint = new drawing.CanvasPoint(
+                            posComp.info.position.x - (shape.dimension.x / 2),
+                            posComp.info.position.y - (shape.dimension.y /2));
+                        var rightPoint = new drawing.CanvasPoint(
+                            leftPoint.x + shape.dimension.x, leftPoint.y + shape.dimension.y);
 
-                newRectangles.push(new drawing.Rectangle(leftPoint, rightPoint));
+                        newRectangles.push(new drawing.Rectangle(leftPoint, rightPoint));
+                    }
+                }
             });
             return newRectangles;
         }
@@ -165,28 +176,29 @@ module editorcanvas {
             this.data.forEach(function(entity, key) {
                 var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
                 var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
+                if (collisionComp && posComp) {
+                    var leftPoint = new drawing.CanvasPoint(
+                        posComp.info.position.x - (collisionComp.info.dimension.x / 2),
+                        posComp.info.position.y - (collisionComp.info.dimension.y / 2));
+                    var rightPoint = new drawing.CanvasPoint(
+                        leftPoint.x + collisionComp.info.dimension.x, leftPoint.y + collisionComp.info.dimension.y);
 
-                var leftPoint = new drawing.CanvasPoint(
-                    posComp.info.position.x - (collisionComp.info.dimension.x / 2),
-                    posComp.info.position.y - (collisionComp.info.dimension.y / 2));
-                var rightPoint = new drawing.CanvasPoint(
-                    leftPoint.x + collisionComp.info.dimension.x, leftPoint.y + collisionComp.info.dimension.y);
+                    var color = "#000000";
+                    switch (collisionComp.bodyType)
+                    {
+                        case entityframework.components.CollisionBodyType.None:
+                            color = "#0000ff"
+                            break;
+                        case entityframework.components.CollisionBodyType.Environment:
+                            color = "#009900"
+                            break;
+                        case entityframework.components.CollisionBodyType.Solid:
+                            color = "#ff0000"
+                            break;
+                    }
 
-                var color = "#000000";
-                switch (collisionComp.bodyType)
-                {
-                    case entityframework.components.CollisionBodyType.None:
-                        color = "#0000ff"
-                        break;
-                    case entityframework.components.CollisionBodyType.Environment:
-                        color = "#009900"
-                        break;
-                    case entityframework.components.CollisionBodyType.Solid:
-                        color = "#ff0000"
-                        break;
+                    newBoundingBoxes.push(new drawing.BoundingBox(leftPoint, rightPoint, color));
                 }
-
-                newBoundingBoxes.push(new drawing.BoundingBox(leftPoint, rightPoint, color));
             });
             return newBoundingBoxes;
         }

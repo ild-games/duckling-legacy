@@ -1,4 +1,10 @@
 div.component-header
-    h4 #{extras.displayName}
+    table.component-header-content
+        tr
+            td
+                h4 #{extras.displayName}
+            td
+                div.component-close-container
+                    i.fa.fa-minus-circle.component-close-btn(id=id + "-close")
 div.component-wrapper(id=id)
 div.component-footer

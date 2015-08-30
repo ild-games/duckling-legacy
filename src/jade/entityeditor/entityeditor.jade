@@ -1,13 +1,17 @@
 div.selector
     label Entity:&nbsp
     select.selectpicker
-        option(rv-each-entity="entityNames | formatTest") { entity }
+        option(rv-each-entity="entityNames") { entity }
 
 div.forms(id=this.id("entity-form-container"))
-    div.entity-form-list(id=this.id("entity-form-list"))
     div.the-duck-bg-img
+    div.entity-form-list(id=this.id("entity-form-list"))
 
 
 div.component-adder(id=this.id("add-component-button"))
-    p Control to add components will go here!
+    div.input-group
+        select.selectpicker.add-component-select(id=this.id("componentsToAddPicker"), title="Available Components")
+            option(rv-each-component="componentsNotOnEntity") { component }
+        span.input-group-btn(rv-command-add-component)
+            btn.btn.btn-success Add Component
 

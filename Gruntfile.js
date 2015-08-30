@@ -42,10 +42,10 @@ module.exports = function(grunt) {
             }
         },
         concat: {
-            options: {
-                separator: ';'
-            },
             jsdepend: {
+                options: {
+                    separator: ';'
+                },
                 src: [
                     'node_modules/jquery/dist/jquery.js',
                     'node_modules/sightglass/index.js',
@@ -60,7 +60,8 @@ module.exports = function(grunt) {
             cssdepend: {
                 src: [
                     'node_modules/bootstrap/dist/css/bootstrap.css',
-                    'node_modules/bootstrap-select/dist/css/bootstrap-select.css'
+                    'node_modules/bootstrap-select/dist/css/bootstrap-select.css',
+                    'node_modules/font-awesome/css/font-awesome.css'
                 ],
                 dest: 'build/dependencies/dependencies.css'
             }
@@ -85,7 +86,27 @@ module.exports = function(grunt) {
         copy: {
             package: {
                 files: [
-                    {expand: true, src: 'package.json', dest: 'build'}
+                    {
+                        expand: true,
+                        src: 'package.json',
+                        dest: 'build'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'node_modules/font-awesome/fonts',
+                        src: '**/*',
+                        dest: 'build/fonts',
+                        flatten: true,
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'node_modules/bootstrap/fonts',
+                        src: '**/*',
+                        dest: 'build/fonts',
+                        flatten: true,
+                        filter: 'isFile'
+                    }
                 ]
             }
         },
