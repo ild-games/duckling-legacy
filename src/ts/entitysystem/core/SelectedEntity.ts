@@ -1,5 +1,7 @@
 module entityframework.core {
 
+    import observe = framework.observe;
+
     /**
      * Object designed to be used as a shared object on the context.  It represents
      * the entity that is currently being worked on.  ViewModels should listen to
@@ -7,15 +9,7 @@ module entityframework.core {
      * by the user.
      */
     export class SelectedEntity extends framework.observe.Observable {
-        private _entityKey : string;
-
-        public get entityKey():string {
-            return this._entityKey;
-        }
-
-        public set entityKey(value:string) {
-            this._entityKey = value;
-            this.dataChanged("entityKey", value);
-        }
+        @observe.Primitive()
+        entityKey : string;
     }
 }

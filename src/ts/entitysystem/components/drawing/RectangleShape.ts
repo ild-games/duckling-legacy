@@ -4,14 +4,15 @@
 module entityframework.components.drawing {
 
     import serialize = util.serialize;
+    import observe = framework.observe;
 
     /**
      * A shape that represents a rectangle.
      */
     @serialize.ProvideClass(RectangleShape, "sf::RectangleShape")
     export class RectangleShape extends Shape {
-        @serialize.Key("dimension")
-        private _dimension : math.Vector;
+        @observe.Object()
+        dimension : math.Vector;
 
         constructor(dimension? : math.Vector) {
             super();
@@ -23,22 +24,6 @@ module entityframework.components.drawing {
                     point.x < shapePosition.x + (this.dimension.x / 2) &&
                     point.y > shapePosition.y - (this.dimension.y / 2) &&
                     point.y < shapePosition.y + (this.dimension.y / 2);
-        }
-
-        public get dimension():math.Vector {
-            return this._dimension;
-        }
-
-        public set dimension(value:math.Vector) {
-            if (this._dimension) {
-                this._dimension.stopListening("dimension", this);
-            }
-
-            this._dimension = value;
-
-            if (value) {
-                this._dimension.listenForChanges("dimension", this);
-            }
         }
     }
 }

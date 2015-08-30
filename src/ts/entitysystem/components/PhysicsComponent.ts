@@ -1,19 +1,18 @@
 ///<reference path="../core/Component.ts"/>
-///<reference path="../../framework/observe/Observable.ts"/>
-///<reference path="../../framework/ViewModel.ts"/>
-///<reference path="../../util/JsonLoader.ts"/>
 module entityframework.components {
 
+    import observe = framework.observe;
     import serialize = util.serialize;
 
     /**
      * Contains information about the entity's location and velocity.
      */
-    class PhysicsInfo extends framework.observe.Observable {
-        @serialize.Key("position")
-        private _position : math.Vector;
-        @serialize.Key("velocity")
-        private _velocity : math.Vector;
+    class PhysicsInfo extends observe.Observable {
+        @observe.Object()
+        position : math.Vector;
+
+        @observe.Object()
+        velocity : math.Vector;
 
         /**
          * Create the position info object.
@@ -23,37 +22,19 @@ module entityframework.components {
         constructor(position? : math.Vector, velocity? : math.Vector) {
             super();
 
-            this._position = position || new math.Vector();
-            this._velocity = velocity || new math.Vector();
-
-            this._position.listenForChanges("position", this);
-            this._velocity.listenForChanges("velocity", this);
+            this.position = position || new math.Vector();
+            this.velocity = velocity || new math.Vector();
         }
-
-        //region Getters and Setters
-        get position() {
-            return this._position;
-        }
-
-        get velocity() {
-            return this._velocity;
-        }
-        //endregion
     }
 
     @serialize.ProvideClass(PhysicsComponent, "ild::PlatformPhysicsComponent")
     export class PhysicsComponent extends Component {
-        @serialize.Key("info")
-        private _info : PhysicsInfo;
+        @observe.Object()
+        info : PhysicsInfo;
 
         constructor (position? : math.Vector, velocity? : math.Vector) {
             super();
-            this._info = new PhysicsInfo(position, velocity);
-            this._info.listenForChanges("info", this);
-        }
-
-        get info() {
-            return this._info;
+            this.info = new PhysicsInfo(position, velocity);
         }
     }
 

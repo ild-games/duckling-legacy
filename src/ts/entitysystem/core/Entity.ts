@@ -1,17 +1,20 @@
 module entityframework {
+
+    import observe = framework.observe;
+
     /**
      * Contains a collection of components and the meta data about them.
      */
     export class Entity extends framework.observe.Observable {
-        private _components : framework.observe.ObservableMap<Component>;
+        @observe.Object()
+        private components : framework.observe.ObservableMap<Component>;
 
         /**
          * Construct an empty entity.
          */
         constructor() {
             super();
-            this._components = new framework.observe.ObservableMap<Component>();
-            this._components.listenForChanges("Components", this);
+            this.components = new framework.observe.ObservableMap<Component>();
         }
 
         /**
@@ -22,7 +25,7 @@ module entityframework {
          * the component that is being replaced.
          */
         addComponent(name : string, component : Component) : Component {
-            return this._components.put(name, component);
+            return this.components.put(name, component);
         }
 
         /**
@@ -31,7 +34,7 @@ module entityframework {
          * @returns The component if it exists, otherwise null.
          */
         removeComponent(name : string) : Component {
-            return this._components.remove(name);
+            return this.components.remove(name);
         }
 
         /**
@@ -39,7 +42,7 @@ module entityframework {
          * @param name The name of the component type.
          */
         getComponent<T extends Component>(name : string) : T {
-            return <T>this._components.get(name);
+            return <T>this.components.get(name);
         }
 
         /**
@@ -48,7 +51,7 @@ module entityframework {
          * is the component and the second argument is the component's key.
          */
         forEach(func : (component : Component, key : string) => void) {
-            this._components.forEach(func);
+            this.components.forEach(func);
         }
     }
 }

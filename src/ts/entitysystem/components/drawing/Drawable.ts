@@ -8,7 +8,6 @@ module entityframework.components.drawing {
      * Represents an object that can be drawn in the game.
      */
     export class Drawable extends framework.observe.Observable {
-
         @observe.Primitive(Number)
         private renderPriority : number;
 
@@ -18,8 +17,8 @@ module entityframework.components.drawing {
         @observe.Primitive(Number)
         private rotation : number;
 
-        @serialize.Key("positionOffset")
-        private _positionOffset : math.Vector = new math.Vector();
+        @observe.Object()
+        private positionOffset : math.Vector = new math.Vector();
 
         @observe.Primitive(Boolean)
         private inactive : boolean;
@@ -30,18 +29,6 @@ module entityframework.components.drawing {
         constructor(key : string) {
             super();
             this.key = key;
-            this._positionOffset.listenForChanges("positionOffset", this);
         }
-
-        //region Getters and Setters
-        public get positionOffset():math.Vector {
-            return this._positionOffset;
-        }
-
-        public set positionOffset(value:math.Vector) {
-            this._positionOffset = value;
-        }
-        //endregion
     }
-
 }

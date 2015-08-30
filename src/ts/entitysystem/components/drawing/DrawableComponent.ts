@@ -7,23 +7,18 @@ module entityframework.components.drawing {
     @serialize.ProvideClass(DrawableComponent, "ild::DrawableComponent")
     export class DrawableComponent extends Component {
         @observe.Primitive()
-        private _camEntity : string;
+        private camEntity : string;
 
-        @serialize.Key("drawables")
-        private _drawables : framework.observe.ObservableMap<Drawable>;
+        @observe.Object()
+        drawables : framework.observe.ObservableMap<Drawable>;
 
         constructor() {
             super();
-            this._drawables = new framework.observe.ObservableMap<Drawable>();
-            this._drawables.listenForChanges("drawables", this);
+            this.drawables = new framework.observe.ObservableMap<Drawable>();
         }
 
         getDrawable<T extends Drawable>(key:string) : T {
             return <T>this.drawables.get(key);
-        }
-
-        get drawables() {
-            return this._drawables;
         }
     }
 

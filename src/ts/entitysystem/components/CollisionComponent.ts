@@ -44,8 +44,8 @@ module entityframework.components {
         /**
          * Width and height for the collision's bounding box.
          */
-        @serialize.Key("dimension")
-        private _dimension : math.Vector;
+        @observe.Object()
+        dimension : math.Vector;
 
         /**
          * Constructs a new CollisionInfo object.
@@ -55,16 +55,8 @@ module entityframework.components {
         constructor(dimensions? : math.Vector) {
             super();
 
-            this._dimension = dimensions || new math.Vector();
-
-            this._dimension.listenForChanges("dimension", this);
+            this.dimension = dimensions || new math.Vector();
         }
-
-        //region Getters and Setters
-        get dimension() {
-            return this._dimension;
-        }
-        //endregion
     }
 
     /**
@@ -76,7 +68,8 @@ module entityframework.components {
          * Info instance holding the bindable properties.
          */
         @serialize.Key("dimension")
-        _info : CollisionShapeInfo;
+        @observe.Object()
+        info : CollisionShapeInfo;
 
         /**
          * CollisionBodyType for the component.
@@ -85,11 +78,10 @@ module entityframework.components {
         bodyType : CollisionBodyType;
 
         /**
-         * ColllisionType for the component.
+         * CollisionType for the component.
          */
-        @serialize.Key("collisionType")
         @observe.Primitive()
-        private _type : CollisionType;
+        collisionType : CollisionType;
 
         /**
          * Constructs a new CollisionComponent.
@@ -101,16 +93,17 @@ module entityframework.components {
         constructor (dimensions? : math.Vector, bodyType? : CollisionBodyType, type? : CollisionType) {
             super();
 
-            this._info = new CollisionShapeInfo(dimensions);
+            this.info = new CollisionShapeInfo(dimensions);
             this.bodyType = bodyType || CollisionBodyType.None;
-            this._type = type || CollisionType.None;
-
-            this._info.listenForChanges("info", this);
+            this.collisionType = type || CollisionType.None;
         }
 
-        //region Getters and Settings
-        get info() {
-            return this._info;
+        //region Getters and Setters
+        set dimension(value) {
+            this.info = value;
+        }
+        get dimension() {
+            return this.info;
         }
         //endregion
     }
