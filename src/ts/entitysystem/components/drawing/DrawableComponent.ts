@@ -2,10 +2,11 @@
 module entityframework.components.drawing {
 
     import serialize = util.serialize;
+    import observe = framework.observe;
 
     @serialize.ProvideClass(DrawableComponent, "ild::DrawableComponent")
     export class DrawableComponent extends Component {
-        @serialize.Key("camEntity")
+        @observe.Primitive()
         private _camEntity : string;
 
         @serialize.Key("drawables")
@@ -19,18 +20,7 @@ module entityframework.components.drawing {
 
         getDrawable<T extends Drawable>(key:string) : T {
             return <T>this.drawables.get(key);
-
         }
-
-        get camEntity():string {
-            this.dataChanged("camEntity", this);
-            return this._camEntity;
-        }
-
-        set camEntity(value:string) {
-            this._camEntity = value;
-        }
-
 
         get drawables() {
             return this._drawables;

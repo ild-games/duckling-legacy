@@ -7,7 +7,6 @@ module environment {
 
         constructor() {
             super();
-
         }
 
     }

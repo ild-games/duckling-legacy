@@ -4,6 +4,7 @@ declare var $;
 module entityframework.components {
 
     import serialize = util.serialize;
+    import observe = framework.observe;
 
     /**
      * The body types for a CollisionComponent.
@@ -39,7 +40,7 @@ module entityframework.components {
     /**
      * Holds the bindable info for a CollisionComponent.
      */
-    class CollisionShapeInfo extends framework.observe.Observable {
+    class CollisionShapeInfo extends observe.Observable {
         /**
          * Width and height for the collision's bounding box.
          */
@@ -76,15 +77,18 @@ module entityframework.components {
          */
         @serialize.Key("dimension")
         _info : CollisionShapeInfo;
+
         /**
          * CollisionBodyType for the component.
          */
-        @serialize.Key("bodyType")
-        private _bodyType : CollisionBodyType;
+        @observe.Primitive()
+        bodyType : CollisionBodyType;
+
         /**
          * ColllisionType for the component.
          */
         @serialize.Key("collisionType")
+        @observe.Primitive()
         private _type : CollisionType;
 
         /**
@@ -98,7 +102,7 @@ module entityframework.components {
             super();
 
             this._info = new CollisionShapeInfo(dimensions);
-            this._bodyType = bodyType || CollisionBodyType.None;
+            this.bodyType = bodyType || CollisionBodyType.None;
             this._type = type || CollisionType.None;
 
             this._info.listenForChanges("info", this);
@@ -107,20 +111,6 @@ module entityframework.components {
         //region Getters and Settings
         get info() {
             return this._info;
-        }
-        get bodyType() {
-            return this._bodyType;
-        }
-        set bodyType(val : CollisionBodyType) {
-            this._bodyType = val;
-            this.dataChanged("bodyType", val);
-        }
-        get type() {
-            return this._type;
-        }
-        set type(val : CollisionType) {
-            this._type = val;
-            this.dataChanged("type", val);
         }
         //endregion
     }
