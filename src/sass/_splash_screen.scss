@@ -1,0 +1,100 @@
+$splash-background-color: $primary-text-color;
+$splash-over-background-text: #FFFFFF;
+$splash-over-background-text-second: $secondary-text-color;
+$project-background-color: $divider-color;
+$project-text-color:$primary-text-color;
+$project-action-color: #536dfe;
+
+$splash-large-font: 4.5em;
+$splash-medium-font: 1.5em;
+$splash-small-font: 1em;
+
+.splash-screen {
+  @include fill;
+  background-color: $splash-background-color;
+
+  .left-section {
+    float: left;
+    margin: 1em;
+
+    .project-list {
+      width: 375px;
+      padding: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      li {
+        list-style-type: none;
+        margin: 0;
+      }
+
+    }
+
+    .actions {
+      position: absolute;
+      bottom: 1em;
+      a {
+        @include action;
+        color: $splash-over-background-text;
+        text-decoration: none;
+        font-size: $splash-medium-font;
+        display: block;
+      }
+    }
+
+    .project {
+      @include action;
+
+      background-color: $project-background-color;
+      padding: 0.15em 0.5em;
+      margin: 0 0 1em 0;
+      border-radius: 0.25em;
+      color: $splash-background-color;
+      border: 1em;
+
+      .title {
+        @include one-line-ellipsis;
+        font-size: $splash-medium-font;
+        margin: 0;
+        padding: 0;
+      }
+
+      .path {
+        @include one-line-ellipsis;
+        font-size: $splash-small-font;
+        white-space: nowrap;
+      }
+    }
+
+  }
+
+  .right-section {
+    float: left;
+
+    .duckling-title {
+      padding-left:32px;
+
+      .duckling-name {
+        font-size: $splash-large-font;
+        color: $splash-over-background-text;
+      }
+
+      .duckling-version {
+        font-size: $splash-medium-font;
+        color: $splash-over-background-text-second;
+      }
+
+    }
+
+  }
+
+  .the-duck {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 545px;
+    height: 515px;
+    background: url(../resources/duckling_icon.svg);
+  }
+
+}

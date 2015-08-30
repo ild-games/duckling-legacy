@@ -1,7 +1,5 @@
 module util {
-    declare var require;
     var fs = require('fs');
-
 
     /**
      * Describes the result of saving a json object.
@@ -18,8 +16,6 @@ module util {
         writable : boolean
     }
 
-
-
     /**
      * JsonLoader is used to retrieve json strings using a provided path.
      */
@@ -27,19 +23,24 @@ module util {
         /**
          * Return a promise that resolves to a json string containing the contents of the path.
          * @param path Path to retrieve data from.
-         * @returns Promise resolving to the string.
+         * @returns Promise resolving to the json string if it exists or null if it does not.
          */
         getJsonFromPath(path : string) : Promise<string> {
-            var promise = new Promise<string>(function (resolve, reject) {
-                fs.readFile(path, function(err, data) {
-                    if (err) {
-                        reject("");
-                    } else {
-                        resolve(data);
-                    }
-                });
+            return util.path.pathExists(path).then(function (exists) {
+                if (exists) {
+                    return new Promise<string>(function (resolve, reject) {
+                        fs.readFile(path, function(err, data) {
+                            if (err) {
+                                reject({ error : true});
+                            } else {
+                                resolve(data);
+                            }
+                        });
+                    });
+                } else {
+                    return null;
+                }
             });
-            return promise;
         }
 
         /**
@@ -49,16 +50,18 @@ module util {
          * @returns Promise that resolves to a SaveResult describing the result of the save action.
          */
         saveJsonToPath(path : string, json : string) : Promise<SaveResult> {
-            var promise = new Promise<SaveResult>(function (resolve, reject) {
-                fs.writeFile(path,json, function (err) {
-                    if (err) {
-                        reject({isSuccess : false, error : err});
-                    } else {
-                        resolve({isSuccess : true, error : null});
-                    }
+            var dirname = util.path.dirname(path);
+            return util.path.makedirs(dirname).then(function() {
+                return new Promise<SaveResult>(function (resolve, reject) {
+                    fs.writeFile(path,json, function (err) {
+                        if (err) {
+                            reject({isSuccess : false, error : err});
+                        } else {
+                            resolve({isSuccess : true, error : null});
+                        }
+                    });
                 });
             });
-            return promise;
         }
     }
 }

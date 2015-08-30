@@ -94,8 +94,16 @@ module framework.dependencies {
 
         rivets.binders["command-*"] = {
             bind : function(el : HTMLElement) {
+
                 var type = getEventAndCommand(this);
-                var callback = (event) => this.view.models.handleCommand(type.command, event, (<any>this).getValue());
+                var callback = (event) => {
+                    var value = null;
+                    if (this.keypath) {
+                        var adapter = this.view.adapters[this.view.rootInterface];
+                        value = adapter.get(this.model, this.keypath);
+                    }
+                    this.view.models.handleCommand(type.command, event, value);
+                };
                 removeCommandCallback(el, type.event);
                 addCommandCallback(el, callback, type.event);
             },

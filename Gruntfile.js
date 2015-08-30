@@ -31,7 +31,8 @@ module.exports = function(grunt) {
                     "framework",
                     "math",
                     "entitysystem",
-                    "editorcanvas"
+                    "editorcanvas",
+                    "splash"
                 ),
                 dest: 'build/scripts/duckling.js',
                 options: {

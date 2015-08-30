@@ -21,6 +21,7 @@ module framework {
         private _window : Window;
         private _rivets;
         private _sharedObjects : {} = {};
+        private _systemWindow : util.SystemWindow = new util.SystemWindow();
 
         /**
          * Construct a new context.
@@ -60,7 +61,7 @@ module framework {
          * @param sharedClass The class of the object that is being retrieved.
          * @returns An instance of the shared class if it exists.  Null if it doesn't.
          */
-        getSharedObject(sharedClass) {
+        getSharedObject(sharedClass : Function) {
             return this.getSharedObjectByKey(sharedClass[contextKeySymbol]);
         }
 
@@ -85,6 +86,10 @@ module framework {
 
         get window() : Window {
             return this._window;
+        }
+
+        get systemWindow() : util.SystemWindow {
+            return this._systemWindow;
         }
 
         get rivets() {

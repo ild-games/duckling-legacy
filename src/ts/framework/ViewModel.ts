@@ -48,8 +48,8 @@ module framework {
         attach(htmlRoot : HTMLElement) {
             this._htmlRoot = htmlRoot;
             this.render();
-            this.onViewReady();
             this._attached = true;
+            this.onViewReady();
         }
 
         /**
@@ -210,6 +210,15 @@ module framework {
             this._children = {};
         }
 
+        /**
+         * Replace the current view with the view specified.
+         * @param replacement View model that will replace the current view.
+         * @param data Data the view model will be initialized with.
+         */
+        replaceWithView(replacement : ViewModel<any>, data) {
+            this.detach();
+            replacement.init(this._context, this._htmlRoot, data);
+        }
 
         //region Getters and Setters
         get data() {

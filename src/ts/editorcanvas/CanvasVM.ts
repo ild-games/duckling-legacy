@@ -46,7 +46,6 @@ module editorcanvas {
             this.registerCallback("undo", this.undo);
             this.registerCallback("redo", this.redo);
             this.registerCallback("save", this.save);
-            this.registerCallback("load", this.load);
         }
 
         private selectRectangle(mousePos : math.Vector) {
@@ -135,6 +134,8 @@ module editorcanvas {
             this._project = this._context.getSharedObject(framework.Project);
             this._systemLoader =
                 new entityframework.SystemLoader(this._project, new util.JsonLoader());
+
+            this.load();
         }
 
         private redrawCanvas() {
