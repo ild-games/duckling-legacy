@@ -77,12 +77,7 @@ module entityframework
                 if (this._currentEntity.getComponent(name)) {
                     var compInList = this._components.some((obj) => obj.name === name);
                     if (!compInList) {
-                        this._components.push({
-                            data : this._currentEntity.getComponent(name),
-                            vm : factory.createFormVM(),
-                            name : name
-                        });
-                        this._componentsNotOnEntity.splice(this.componentsNotOnEntity.indexOf(name), 1);
+                        this.constructVMComponent(name, factory);
                     }
                 }
             });
@@ -120,26 +115,6 @@ module entityframework
             return this._components[index];
         }
 
-        getComponents() {
-            if (!this._currentEntity) {
-                return [];
-            }
-
-            var components = [];
-
-            this.data.forEachType(function(factory : ComponentFactory, name : String) {
-                if (this._currentEntity.getComponent(name)) {
-                    components.push({
-                        data : this._currentEntity.getComponent(name),
-                        vm : factory.createFormVM(),
-                        name : name
-                    });
-                }
-            });
-
-            return components;
-        }
-
         selectEntity(name : string) {
             this._currentEntity = this.data.getEntity(name);
             this._currentEntity.listenForChanges("currentEntity", this);
@@ -155,18 +130,23 @@ module entityframework
                 this.data.forEachType((factory : ComponentFactory, type : string) => {
                     this._componentsNotOnEntity.push(type);
                     if (this._currentEntity.getComponent(type)) {
-                        this._components.push({
-                            name : type,
-                            displayName : factory.displayName,
-                            vm : factory.createFormVM()
-                        });
-                        this._componentsNotOnEntity.splice(this.componentsNotOnEntity.indexOf(type), 1);
+                        this.constructVMComponent(type, factory);
                     }
                 });
             }
 
             this._listVM.dataChanged();
             this.setupCloseComponentHandlers();
+        }
+
+        constructVMComponent(name : string, factory : ComponentFactory) {
+            this._components.push({
+                data: this._currentEntity.getComponent(name),
+                displayName: factory.displayName,
+                name : name,
+                vm : factory.createFormVM()
+            });
+            this._componentsNotOnEntity.splice(this.componentsNotOnEntity.indexOf(name), 1);
         }
 
         setupCloseComponentHandlers() {
