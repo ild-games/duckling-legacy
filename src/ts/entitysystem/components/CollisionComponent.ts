@@ -1,6 +1,4 @@
 ///<reference path="../core/Component.ts"/>
-declare var $;
-
 module entityframework.components {
 
     import serialize = util.serialize;

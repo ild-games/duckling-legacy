@@ -1,0 +1,25 @@
+{
+  "name": "duckling",
+  "version": "0.0.1",
+  "authors": [
+    "Jeff <jeffswenson@betterthannull.com>"
+  ],
+  "description": "The Game Editor for the Ancona Game Framework",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-select": "~1.7.3",
+    "bootstrap": "~3.3.5",
+    "font-awesome": "~4.4.0",
+    "jade": "~1.11.0",
+    "EaselJS": "~0.8.1",
+    "rivets": "~0.8.1",
+    "mousetrap": "~1.5.3"
+  }
+}
