@@ -1,9 +1,10 @@
+include ../mixins/select_control
+
 div.form-element
     label Drawables
     br
     div.associated-form-element.form-group.input-group(role="group")
-        select.selectpicker.form-element.input-group-picker(id=this.id("drawableSelect"))
-            option(rv-each-drawable="data.drawables%_data | formatObjectToKeys") { drawable }
+        +generalSelect(this.id("drawableSelect"), "", "formatObjectToKeys", "data.drawables%_data", "form-element input-group-picker")
         button.btn.btn-success.no-radius(id=this.id("addDrawableButton"), type="button", rv-command-add-drawable)
             span &nbsp;
             i.fa.fa-plus
