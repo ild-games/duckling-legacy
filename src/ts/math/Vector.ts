@@ -1,16 +1,17 @@
 ///<reference path="../util/JsonLoader.ts"/>
 module math {
     import serialize = util.serialize;
+    import observe = framework.observe;
 
     /**
      * A 2D vector.
      */
     export class Vector extends framework.observe.Observable {
-        @serialize.Key("x")
-        private _x : number;
+        @observe.Primitive(Number)
+        x : number;
 
-        @serialize.Key("y")
-        private _y : number;
+        @observe.Primitive(Number)
+        y : number;
 
         /**
          * Construct a new vector.
@@ -19,27 +20,8 @@ module math {
          */
         constructor(x? : number, y? : number) {
             super();
-            this._x = x || 0;
-            this._y = y || 0;
+            this.x = x || 0;
+            this.y = y || 0;
         }
-
-        //region Getters and Setters
-        get x() {
-            return this._x;
-        }
-        get y() {
-            return this._y;
-        }
-
-        set x(val : number) {
-            this._x = Number(val);
-            this.dataChanged("x", val);
-        }
-
-        set y(val : number) {
-            this._y = Number(val);
-            this.dataChanged("y", val);
-        }
-        //endregion
     }
 }

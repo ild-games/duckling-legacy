@@ -2,12 +2,17 @@
 
 module entityframework
 {
+
+    import observe = framework.observe;
+
     /**
      * Contains a collection of Entities and other meta data about them.
      */
     export class EntitySystem extends framework.observe.Observable
     {
-        private _entities : framework.observe.ObservableMap<Entity>;
+        @observe.Object()
+        private entities : framework.observe.ObservableMap<Entity>;
+
         private _componentFactories : {[key:string]:ComponentFactory} = {};
         private _nextId : number = 0;
 
@@ -16,8 +21,7 @@ module entityframework
          */
         constructor() {
             super();
-            this._entities = new framework.observe.ObservableMap<Entity>();
-            this._entities.listenForChanges("Entities", this);
+            this.entities = new framework.observe.ObservableMap<Entity>();
         }
 
         /**
@@ -45,7 +49,7 @@ module entityframework
          */
         createEntity(name : string) {
             var entity = new Entity();
-            this._entities.put(name, entity);
+            this.entities.put(name, entity);
             return entity;
         }
 
@@ -55,7 +59,7 @@ module entityframework
          * @returns The entity removed from the system.
          */
         removeEntity(name : string) {
-            return this._entities.remove(name);
+            return this.entities.remove(name);
         }
 
         /**
@@ -65,7 +69,7 @@ module entityframework
          * @returns {any|null}
          */
         getEntity(name : string) : Entity {
-            return this._entities.get(name) || null;
+            return this.entities.get(name) || null;
         }
 
         /**
@@ -76,7 +80,7 @@ module entityframework
          * if no such entity existed.
          */
         addEntity(name : string, entity : Entity) {
-            return this._entities.put(name, entity);
+            return this.entities.put(name, entity);
         }
 
         /**
@@ -84,7 +88,7 @@ module entityframework
          * @param func Function that will be called for each entity.
          */
         forEach(func : (entity : Entity, key? : string) => void) {
-            this._entities.forEach(func);
+            this.entities.forEach(func);
         }
 
         /**
@@ -141,14 +145,14 @@ module entityframework
          * @param entitySystem
          */
         move(entitySystem : EntitySystem) {
-            this._entities.stopListening("Entities", this);
-            entitySystem._entities.stopListening("Entities", entitySystem);
+            this.entities.stopListening("Entities", this);
+            entitySystem.entities.stopListening("Entities", entitySystem);
 
             this._componentFactories = entitySystem._componentFactories;
-            this._entities = entitySystem._entities;
+            this.entities = entitySystem.entities;
             this._nextId = entitySystem._nextId;
 
-            this._entities.listenForChanges("Entities", this);
+            this.entities.listenForChanges("Entities", this);
 
             this.dataChanged("replaced", null);
         }
