@@ -36,7 +36,7 @@ module editorcanvas {
     export class CanvasVM extends framework.ViewModel<entityframework.EntitySystem> implements framework.observe.Observer {
         private _canvas : HTMLCanvasElement;
         private _canvasContext : CanvasRenderingContext2D;
-        private _selectedEntity : entityframework.core.SelectedEntity
+        private _selectedEntity : entityframework.core.SelectedEntity;
         private _project : framework.Project;
         private _systemLoader : entityframework.SystemLoader;
 

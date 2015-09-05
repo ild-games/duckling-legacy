@@ -36,7 +36,7 @@ module entityframework.components.drawing {
         }
 
         deleteDrawableFromSelect() {
-            if (this.data.hasDrawable(this._drawablePicker.value)) {
+            if (this.data.getDrawable(this._drawablePicker.value)) {
                 this._context.commandQueue.pushCommand(
                     new DeleteDrawableCommand(this.data, this._drawablePicker.value));
             }

@@ -24,7 +24,7 @@ module entityframework.components.drawing {
         private inactive : boolean;
 
         @observe.Primitive()
-        private key : string;
+        public key : string;
 
         constructor(key : string) {
             super();
