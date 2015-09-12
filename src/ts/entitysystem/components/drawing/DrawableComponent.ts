@@ -75,27 +75,42 @@ module entityframework.components.drawing {
         onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
             switch (key) {
                 case "data":
-                    if (event.name === "ChildModified") {
-                        setTimeout(() => {
-                            $(this._htmlRoot).find('.selectpicker').selectpicker('refresh')
-                            if (event.child.name === "Removed") {
-                                this.removeChildViews();
-                                if (this.data.getDrawable(this._drawablePicker.value)) {
-                                    this.addSelectedDrawableVM(this._drawablePicker.value);
-                                }
-                            }
-
-                            if (event.child.name === "Added") {
-                                this.removeChildViews();
-                                var addedDrawable = (<Drawable> event.child.data).key;
-                                if (this.data.getDrawable(addedDrawable)) {
-                                    $(this._htmlRoot).find('.selectpicker').selectpicker('val', addedDrawable);
-                                    this.addSelectedDrawableVM(addedDrawable);
-                                }
-                            }
-                        });
-                    }
+                    this.onDataObjChanged(event);
                     break;
+            }
+        }
+
+        onDataObjChanged(event : framework.observe.DataChangeEvent) {
+            if (event.name === "ChildModified") {
+                setTimeout(() => this.onDataObjChildModified(event));
+            }
+        }
+
+        onDataObjChildModified(event : framework.observe.DataChangeEvent) {
+            $(this._htmlRoot).find('.selectpicker').selectpicker('refresh')
+
+            switch (event.child.name) {
+                case "Removed":
+                    this.onDrawableRemoved(this._drawablePicker.value);
+                    break;
+                case "Added":
+                    this.onDrawableAdded((<Drawable> event.child.data).key);
+                    break;
+            }
+        }
+
+        onDrawableRemoved(removedDrawableKey : string) {
+            this.removeChildViews();
+            if (this.data.getDrawable(removedDrawableKey)) {
+                this.addSelectedDrawableVM(removedDrawableKey);
+            }
+        }
+
+        onDrawableAdded(addedDrawableKey : string) {
+            this.removeChildViews();
+            if (this.data.getDrawable(addedDrawableKey)) {
+                $(this._htmlRoot).find('.selectpicker').selectpicker('val', addedDrawableKey);
+                this.addSelectedDrawableVM(addedDrawableKey);
             }
         }
 
