@@ -10,9 +10,9 @@ module util {
     }
 
     interface PropertDescriptor {
-        value : any,
-        enumerable : boolean,
-        configurable : boolean,
+        value : any;
+        enumerable : boolean;
+        configurable : boolean;
         writable : boolean
     }
 

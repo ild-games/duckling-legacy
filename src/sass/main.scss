@@ -276,5 +276,36 @@ div.form-group .input-group:not(:last-child):not(:first-child) .input-group-addo
 div.form-group input:focus {
   z-index: 3;
 }
+/* Form Elements for VMs */
+.form-element {
+  margin-bottom: 10px;
+}
+
+.associated-form-element {
+  margin-bottom: 5px;
+}
+
+.input-group-picker {
+  width: 220px;
+}
+
+.input-group-picker button {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.no-radius {
+  border-radius: 0px;
+}
+
+.no-right-radius {
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.no-left-radius {
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
 
 @import '_splash_screen';

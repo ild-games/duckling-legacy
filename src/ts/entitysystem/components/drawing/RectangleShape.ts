@@ -26,4 +26,10 @@ module entityframework.components.drawing {
                     point.y < shapePosition.y + (this.dimension.y / 2);
         }
     }
+
+    export class RectangleShapeViewModel extends framework.ViewModel<RectangleShape> {
+        get viewFile() : string {
+            return "drawables/rectangle_drawable";
+        }
+    }
 }

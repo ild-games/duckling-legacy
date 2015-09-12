@@ -1,6 +1,37 @@
 module framework.dependencies {
 
     declare var Symbol : any;
+
+    var callbackSymbol = Symbol("CallbackObserver");
+    class CallbackObserver implements observe.Observer {
+        private callback : Function;
+        private toObserve : observe.Observable;
+
+        constructor(callback : Function, toObserve : observe.Observable) {
+            if (callback[callbackSymbol]) {
+                throw "Unable to attach two CallbackObservers to the same object";
+            }
+            callback[callbackSymbol] = this;
+
+            this.callback = callback;
+            this.toObserve = toObserve;
+
+            toObserve.listenForChanges("toObserve", this);
+        }
+
+        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
+            this.callback();
+        }
+
+        unbind() {
+            this.toObserve.stopListening("toObserve",this);
+        }
+
+        static getObserver(callback : Function) {
+            return callback[callbackSymbol];
+        }
+    }
+
     /**
      * Configures rivets for the duckling editor.
      *
@@ -62,6 +93,25 @@ module framework.dependencies {
                 if (!prevCommand || !command.tryMerge(prevCommand)) {
                     commandQueue.pushCommand(command);
                 }
+            }
+        };
+
+        rivets.adapters["%"] = {
+            observe : function(obj, keypath, callback) {
+                new CallbackObserver(callback, obj);
+            },
+
+            unobserve : function(obj, keypath, callback) {
+                var observer = CallbackObserver.getObserver(callback);
+                observer.unbind();
+            },
+
+            get : function(obj, keypath) {
+                return obj[keypath];
+            },
+
+            set : function(obj, keypath, value) {
+                throw "Set should not be called on the Observer adapter.";
             }
         };
 
