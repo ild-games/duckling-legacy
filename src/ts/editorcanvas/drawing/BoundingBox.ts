@@ -14,26 +14,17 @@ module editorcanvas.drawing {
             this._color = color;
         }
 
-        draw(context: CanvasRenderingContext2D) {
-            var oldStrokeCol = context.strokeStyle;
-            var oldLineWidth = context.lineWidth;
-            context.closePath();
-            context.stroke();
-
-            context.strokeStyle = this._color;
-            context.lineWidth = 1;
-            context.beginPath();
-            this._rectangle.draw(context);
-            context.moveTo(this._rectangle.topLeft.x, this._rectangle.topLeft.y);
-            context.lineTo(this._rectangle.bottomRight.x, this._rectangle.bottomRight.y);
-            context.moveTo(this._rectangle.topRight.x, this._rectangle.topRight.y);
-            context.lineTo(this._rectangle.bottomLeft.x, this._rectangle.bottomLeft.y);
-            context.closePath();
-            context.stroke();
-
-            context.beginPath();
-            context.strokeStyle = oldStrokeCol;
-            context.lineWidth = oldLineWidth;
+        getDrawable() {
+            var box = new createjs.Shape();
+            var rec = this._rectangle;
+            box.graphics
+                .beginStroke(this._color)
+                .drawRect(rec.topLeft.x,rec.topRight.y,rec.width,rec.height)
+                .moveTo(rec.topLeft.x, rec.topLeft.y)
+                .lineTo(rec.bottomRight.x, rec.bottomRight.y)
+                .moveTo(rec.topRight.x, rec.topRight.y)
+                .lineTo(rec.bottomLeft.x, rec.bottomLeft.y);
+            return box;
         }
     }
 }

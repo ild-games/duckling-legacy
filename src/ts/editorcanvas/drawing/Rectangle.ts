@@ -19,8 +19,10 @@ module editorcanvas.drawing {
             this._topLeft = topLeft;
         }
 
-        draw(context: CanvasRenderingContext2D) {
-            context.rect(this.topLeft.x, this.topLeft.y, this.width, this.height);
+        getDrawable() {
+            var rec = new createjs.Shape();
+            rec.graphics.beginStroke("Black").drawRect(this.topLeft.x, this.topLeft.y, this.width, this.height);
+            return rec;
         }
 
         //region Getters and Setters

@@ -34,11 +34,10 @@ module editorcanvas {
      * ViewModel for the main canvas used to interact with entities.
      */
     export class CanvasVM extends framework.ViewModel<entityframework.EntitySystem> implements framework.observe.Observer {
-        private _canvas : HTMLCanvasElement;
-        private _canvasContext : CanvasRenderingContext2D;
         private _selectedEntity : entityframework.core.SelectedEntity;
         private _project : framework.Project;
         private _systemLoader : entityframework.SystemLoader;
+        private stage : createjs.Stage;
 
         constructor() {
             super();
@@ -100,8 +99,13 @@ module editorcanvas {
         }
 
         private clear() {
-            this._canvasContext.clearRect(0, 0, this._canvas.width, this._canvas.height);
-            this._canvasContext.beginPath();
+            this.stage.removeAllChildren();
+            var canvas = <HTMLCanvasElement>this.stage.canvas;
+            var background = new createjs.Shape();
+            background.graphics
+                .beginFill("White")
+                .drawRect(0,0,canvas.width,canvas.height);
+            this.stage.addChild(background);
         }
 
         private save() {
@@ -124,8 +128,6 @@ module editorcanvas {
         }
 
         onViewReady() {
-            this._canvas = <HTMLCanvasElement>document.getElementById("entity-canvas");
-            this._canvasContext = <CanvasRenderingContext2D>this._canvas.getContext("2d");
             this.data.listenForChanges("data", this);
             this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this._selectedEntity.listenForChanges("selectedEntity", this);
@@ -134,6 +136,8 @@ module editorcanvas {
             this._systemLoader =
                 new entityframework.SystemLoader(this._project, new util.JsonLoader());
 
+            this.stage = new createjs.Stage(this.id("entity-canvas"));
+            this.clear();
             this.load();
         }
 
@@ -144,8 +148,11 @@ module editorcanvas {
                 .concat(this.collectCollisionBoundingBoxDrawables());
 
             this.clear();
-            toDraw.forEach((drawnElement) => drawnElement.draw(this._canvasContext));
-            this._canvasContext.stroke();
+
+            toDraw.forEach((drawnElement) =>
+                this.stage.addChild(drawnElement.getDrawable()));
+
+            this.stage.update();
         }
 
         private collectDrawables() : Array<drawing.Rectangle> {

@@ -21,9 +21,26 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-jade');
+    grunt.loadNpmTasks("grunt-bower-task");
+    grunt.loadNpmTasks("grunt-tsd");
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        bower: {
+            install : {
+
+            }
+        },
+        tsd: {
+            refresh : {
+                options: {
+                    command: 'reinstall',
+                    latest: true,
+                    config: 'tsd.json',
+                }
+
+            }
+        },
         typescript: {
             duckling: {
                 src: getTSDirs(
@@ -38,7 +55,10 @@ module.exports = function(grunt) {
                 options: {
                     module: 'commonjs',
                     sourceMap: true,
-                    target: 'es5'
+                    target: 'es5',
+                    references: [
+                        "typings/tsd.d.ts"
+                    ]
                 }
             }
         },
@@ -48,21 +68,22 @@ module.exports = function(grunt) {
                     separator: ';'
                 },
                 src: [
-                    'node_modules/jquery/dist/jquery.js',
+                    'bower_components/jquery/dist/jquery.js',
                     'node_modules/sightglass/index.js',
-                    'node_modules/rivets/dist/rivets.js',
-                    'node_modules/bootstrap/dist/js/bootstrap.js',
-                    'node_modules/bootstrap-select/dist/js/bootstrap-select.js',
-                    'node_modules/jade/runtime.js',
-                    'node_modules/mousetrap/mousetrap.js'
+                    'bower_components/rivets/dist/rivets.js',
+                    'bower_components/bootstrap/dist/js/bootstrap.js',
+                    'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
+                    'bower_components/jade/runtime.js',
+                    'bower_components/mousetrap/mousetrap.js',
+                    'bower_components/EaselJS/lib/easeljs-0.8.1.combined.js'
                 ],
                 dest: 'build/dependencies/dependencies.js'
             },
             cssdepend: {
                 src: [
-                    'node_modules/bootstrap/dist/css/bootstrap.css',
-                    'node_modules/bootstrap-select/dist/css/bootstrap-select.css',
-                    'node_modules/font-awesome/css/font-awesome.css'
+                    'bower_components/bootstrap/dist/css/bootstrap.css',
+                    'bower_components/bootstrap-select/dist/css/bootstrap-select.css',
+                    'bower_components/font-awesome/css/font-awesome.css'
                 ],
                 dest: 'build/dependencies/dependencies.css'
             }
@@ -94,7 +115,7 @@ module.exports = function(grunt) {
                     },
                     {
                         expand: true,
-                        cwd: 'node_modules/font-awesome/fonts',
+                        cwd: 'bower_components/font-awesome/fonts',
                         src: '**/*',
                         dest: 'build/fonts',
                         flatten: true,
@@ -102,7 +123,7 @@ module.exports = function(grunt) {
                     },
                     {
                         expand: true,
-                        cwd: 'node_modules/bootstrap/fonts',
+                        cwd: 'bower_components/bootstrap/fonts',
                         src: '**/*',
                         dest: 'build/fonts',
                         flatten: true,
@@ -131,6 +152,6 @@ module.exports = function(grunt) {
             }
         }
     });
-
-    grunt.registerTask('default', ['typescript','concat','copy','jade', 'sass', 'image']);
-}
+    grunt.registerTask('default', ['typescript','concat','copy','jade','sass','image']);
+    grunt.registerTask('install', ['bower','tsd']);
+};

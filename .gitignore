@@ -1,5 +1,8 @@
 # Ignore build files and dependencies
+typings/
+bower_components/
 build/
+lib/
 node_modules/
 .sass-cache/
 

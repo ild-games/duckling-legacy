@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 if [ ! -d "node_modules" ]; then
     npm install
+    grunt install
 fi
 grunt
 (cd build; ../node_modules/nw/bin/nw build/package.json)
