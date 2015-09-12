@@ -150,6 +150,24 @@ module.exports = function(grunt) {
                     "build/scripts/duckling_views.js" : ["src/jade/**/*.jade"]
                 }
             }
+        },
+        watch: {
+            scripts : {
+                files: ['src/bootstrap.ts', 'src/ts/**/*.ts'],
+                tasks: ['typescript']
+            },
+            jade : {
+                files: ['src/index.jade', 'src/jade/**/.jade'],
+                tasks: ['jade']
+            },
+            styles : {
+                files: ['src/sass/**/*.scss'],
+                tasks: ['sass']
+            },
+            resources : {
+                files: ['resources/**'],
+                tasks: ['copy', 'image']
+            }
         }
     });
     grunt.registerTask('default', ['typescript','concat','copy','jade','sass','image']);
