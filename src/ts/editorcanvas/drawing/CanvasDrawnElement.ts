@@ -4,11 +4,9 @@ module editorcanvas.drawing {
      */
     export interface CanvasDrawnElement {
         /**
-         * Draws the element to the canvas context
-         *
-         * @param context Drawing context.
+         * Return an element that can be rendered on a stage.
          */
-        draw(context: CanvasRenderingContext2D);
+        getDrawable() : createjs.DisplayObject;
     }
 }
 
