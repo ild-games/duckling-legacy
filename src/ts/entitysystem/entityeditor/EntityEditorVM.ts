@@ -35,7 +35,7 @@ module entityframework
                     this.selectEntity(this._selectedEntity.entityKey);
                     break;
                 case "currentEntity":
-                    if (event.data.key === "Components") {
+                    if (event.data.key === "components") {
                         if (event.child.name === "Removed") {
                             this.reflectRemovedComponents();
                         }
