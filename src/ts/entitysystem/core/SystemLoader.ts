@@ -1,5 +1,8 @@
 ///<reference path="Map.ts"/>
 module entityframework {
+
+    import ObservableMap = framework.observe.ObservableMap;
+
     /**
      * Class used to load entity systems from maps and save entity systems to maps.
      */
@@ -31,29 +34,15 @@ module entityframework {
                         return emptySystem;
                     }
 
-                    var nextID = 0;
+                    var emptyMap = this.getEmptyMap(emptySystem);
+                    var loadedMap : map.GameMap = <any>util.serialize.deserialize(mapJson, emptyMap);
 
-                    var loadedMap : map.GameMap = <any>util.serialize.deserialize(mapJson);
+                    this.initEntitySystem(loadedMap,emptySystem);
 
-                    loadedMap.entities.forEach((entityName : string) => {
-                        emptySystem.addEntity(entityName, new Entity());
-
-                        if (Number(entityName) > nextID) {
-                            nextID = Number(entityName) + 1;
-                        }
-                    });
-
-                    for(var systemName in loadedMap.systems) {
-                        var components = loadedMap.systems[systemName]["components"];
-                        for(var entityName in components) {
-                            emptySystem.getEntity(entityName).addComponent(systemName, components[entityName]);
-                        }
-                    }
-
-                    emptySystem.seedNextKey(nextID);
                     return emptySystem;
                 });
         }
+
 
         /**
          * Save the EntitySystem to the map.
@@ -65,13 +54,13 @@ module entityframework {
             var saveMap:map.GameMap = new map.Map();
 
             system.forEachType(function (factory : ComponentFactory, key : string) {
-                saveMap.systems[key] = {components : {}};
+                saveMap.systems[key] = {components : new ObservableMap()};
             });
 
             system.forEach(function (entity : Entity, entityKey : string) {
                 saveMap.entities.push(entityKey);
                 entity.forEach(function (component : Component, componentKey : string) {
-                    saveMap.systems[componentKey].components[entityKey] = component;
+                    saveMap.systems[componentKey].components.put(entityKey, component);
                 });
             });
 
@@ -79,6 +68,40 @@ module entityframework {
             var mapPath = this._project.getMapPath(mapName);
 
             return this._jsonLoader.saveJsonToPath(mapPath, mapString);
+        }
+
+        private getEmptyMap(emptySystem : EntitySystem) {
+            var systems = {};
+            emptySystem.forEachType(function(factory : ComponentFactory) {
+                systems[factory.name] = {};
+                if (factory.componentConstructor) {
+                    systems[factory.name].components =
+                        new ObservableMap(factory.componentConstructor);
+                } else {
+                    systems[factory.name].components = new ObservableMap();
+                }
+            });
+            return {systems : systems};
+        }
+
+        private initEntitySystem(loadedMap : map.GameMap, emptySystem : EntitySystem) {
+            var nextID = 0;
+            loadedMap.entities.forEach((entityName : string) => {
+                emptySystem.addEntity(entityName, new Entity());
+
+                if (Number(entityName) > nextID) {
+                    nextID = Number(entityName) + 1;
+                }
+            });
+
+            for(var systemName in loadedMap.systems) {
+                var components = loadedMap.systems[systemName].components;
+                components.forEach((entity,name) => {
+                    emptySystem.getEntity(name).addComponent(systemName, components.get(name));
+                })
+            }
+
+            emptySystem.seedNextKey(nextID);
         }
 
     }

@@ -1,6 +1,7 @@
 module framework.observe {
 
-    import CustomSerializer = util.serialize.CustomSerializer;
+    import serialize = util.serialize;
+    import CustomSerializer = serialize.CustomSerializer;
 
     /**
      * Map of observable objects.  Changes to objects contained in the map will be
@@ -9,6 +10,18 @@ module framework.observe {
     @util.serialize.HasCustomSerializer
     export class ObservableMap<T extends Observable> extends Observable implements CustomSerializer {
         private _data : { [key:string]: T} = {};
+        private valueConstructor : any;
+
+        /**
+         * Produce an empty ObservableMap.
+         * @param valueConstructor A constructor that can be used to initialize one
+         * of the objects mapped to. Used during the deserialization process to
+         * produce objects of the correct type.
+         */
+        constructor(valueConstructor? : Function) {
+            super();
+            this.valueConstructor = valueConstructor;
+        }
 
         /**
          * Put an object in the map.
@@ -77,8 +90,14 @@ module framework.observe {
          * @see util.serialize.CustomSerializer.fromJSON
          */
         fromJSON(object):any {
+            var child;
             for (var key in object) {
-                this.put(key, object[key]);
+                if (this.valueConstructor) {
+                    child = serialize.buildTypesFromObjects(object[key],new this.valueConstructor());
+                } else {
+                    child = serialize.buildTypesFromObjects(object[key]);
+                }
+                this.put(key, child);
             }
             return this;
         }

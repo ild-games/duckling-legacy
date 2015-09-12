@@ -37,7 +37,11 @@ module splashscreen {
 
         loadProject() {
             this.jsonLoader.getJsonFromPath(this.projectListPath).then((json) => {
-                this.projects = JSON.parse(json);
+                if (json) {
+                    this.projects = JSON.parse(json);
+                } else {
+                    this.projects = [];
+                }
             },(error) => {
                 this.projects = [];
             });
