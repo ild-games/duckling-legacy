@@ -8,6 +8,11 @@ module entityframework {
         displayName : string;
 
         /**
+         * Property with the component's constructor.  Used during the serialization process.
+         */
+        componentConstructor? : Function;
+
+        /**
          * Create a ViewModel that represents a form capable of editing the
          * component.
          */

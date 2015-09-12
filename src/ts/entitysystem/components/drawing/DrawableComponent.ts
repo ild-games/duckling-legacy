@@ -6,7 +6,6 @@ module entityframework.components.drawing {
     import serialize = util.serialize;
     import observe = framework.observe;
 
-    @serialize.ProvideClass(DrawableComponent, "ild::DrawableComponent")
     export class DrawableComponent extends Component {
         @observe.Primitive()
         private camEntity : string;
@@ -139,6 +138,10 @@ module entityframework.components.drawing {
 
         get name() {
             return "drawable";
+        }
+
+        get componentConstructor() {
+            return DrawableComponent;
         }
 
         createFormVM():framework.ViewModel<any> {

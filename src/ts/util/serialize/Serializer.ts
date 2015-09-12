@@ -148,7 +148,7 @@ module util.serialize {
             var plainValue = plainObjectTree[key];
 
             if (getCustomSerializer(typedValue)) {
-                getCustomSerializer(typedValue).fromJSON(buildTypesFromObjects(plainValue));
+                getCustomSerializer(typedValue).fromJSON(plainValue);
             } else if (typedValue) {
                 buildTypesFromObjects(plainValue, typedValue)
             } else if (types.isPrimitive(plainValue)) {

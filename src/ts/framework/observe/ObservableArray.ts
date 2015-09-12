@@ -1,11 +1,26 @@
 ///<reference path="Observable.ts"/>
 module framework.observe {
 
+    import serialize = util.serialize;
+    import CustomSerializer = serialize.CustomSerializer;
+
     /**
      * An array that implements the observer interface.
      */
-    export class ObservableArray<T extends Observable> extends Observable {
+    export class ObservableArray<T extends Observable> extends Observable  implements CustomSerializer {
         private _data : T[] = [];
+        private valueConstructor : any;
+
+        /**
+         * Produce an empty ObservableMap.
+         * @param valueConstructor A constructor that can be used to initialize
+         * the objects stored in the array. Used during the deserialization process
+         * to produce objects of the correct type.
+         */
+        constructor(valueConstructor? : Function) {
+            super();
+            this.valueConstructor = valueConstructor;
+        }
 
         /**
          * Push the object onto the back of the array.
@@ -49,6 +64,29 @@ module framework.observe {
         //region Getters and Setters
         get length() {
             return this._data.length;
+        }
+
+        /**
+         * @see util.serialize.CustomSerializer.toJSON
+         */
+        toJSON() {
+            return this._data;
+        }
+
+        /**
+         * @see util.serialize.CustomSerializer.fromJSON
+         */
+        fromJSON(object) : any {
+            var child;
+            for (var index in object.size) {
+                if (this.valueConstructor) {
+                    child = serialize.buildTypesFromObjects(object[index],new this.valueConstructor());
+                } else {
+                    child = serialize.buildTypesFromObjects(object[index]);
+                }
+                this.push(child);
+            }
+            return this;
         }
         //endregion
     }

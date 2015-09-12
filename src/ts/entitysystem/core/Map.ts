@@ -12,7 +12,7 @@ module entityframework.map {
      * Represents a basic System that can be saved in a map file.
      */
     export interface System {
-        components : {[entityName : string] : any};
+        components : framework.observe.ObservableMap<any>;
     }
 
     /**

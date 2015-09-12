@@ -60,7 +60,6 @@ module entityframework.components {
     /**
      * Component class for an entity's collision information.
      */
-    @serialize.ProvideClass(CollisionComponent, "ild::CollisionComponent")
     export class CollisionComponent extends Component {
         /**
          * Info instance holding the bindable properties.
@@ -190,6 +189,10 @@ module entityframework.components {
         }
 
         //region Getters and Setters
+        get componentConstructor() {
+            return CollisionComponent;
+        }
+
         get name() {
             return "collision";
         }
