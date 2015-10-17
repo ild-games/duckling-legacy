@@ -18,3 +18,7 @@
 ###Hard Mode (Vim / Sublime / ... )
 1. Clone the git repository.
 2. Run the duckling script.
+
+###Running Unit Tests
+1. Run grunt to build everything.
+2. Run ./duckling test
