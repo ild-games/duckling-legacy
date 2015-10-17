@@ -23,6 +23,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jade');
     grunt.loadNpmTasks("grunt-bower-task");
     grunt.loadNpmTasks("grunt-tsd");
+    grunt.loadNpmTasks('grunt-contrib-coffee');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -130,6 +131,20 @@ module.exports = function(grunt) {
                         filter: 'isFile'
                     }
                 ]
+            },
+            spec: {
+                files : [
+                    {
+                        expand: true,
+                        src: 'spec/SpecRunner.html',
+                        dest: 'build'
+                    },
+                    {
+                        expand: true,
+                        src: 'spec/package.json',
+                        dest: 'build'
+                    }
+                ]
             }
         },
         jade: {
@@ -168,8 +183,15 @@ module.exports = function(grunt) {
                 files: ['resources/**'],
                 tasks: ['copy', 'image']
             }
+        },
+        coffee: {
+            spec: {
+                files: {
+                    'build/spec/specs.js' : 'spec/**/*.coffee'
+                }
+            }
         }
     });
-    grunt.registerTask('default', ['typescript','concat','copy','jade','sass','image']);
+    grunt.registerTask('default', ['typescript','concat','copy','jade','sass','image','coffee']);
     grunt.registerTask('install', ['bower','tsd']);
 };

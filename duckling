@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
+
+NW = ../node_modules/nw/bin/nw
+
 if [ ! -d "node_modules" ]; then
     npm install
     grunt install
 fi
-grunt
-(cd build; ../node_modules/nw/bin/nw build/package.json)
+
+if [ "$1" == "test" ]; then
+    echo Testing Duckling
+    grunt
+    (cd build/spec; ../../node_modules/nw/bin/nw build/spec/package.json)
+else
+    grunt
+    (cd build; ../node_modules/nw/bin/nw build/package.json)
+fi

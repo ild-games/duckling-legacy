@@ -1,0 +1,10 @@
+{
+  "name": "DucklingTests",
+  "description": "Tests for the duckling editor",
+  "version ": "0.0.1",
+  "main": "SpecRunner.html",
+  "window": {
+    "width": 945,
+    "height": 645
+  }
+}
