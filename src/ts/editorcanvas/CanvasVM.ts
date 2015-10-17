@@ -38,6 +38,7 @@ module editorcanvas {
         private _project : framework.Project;
         private _systemLoader : entityframework.SystemLoader;
         private stage : createjs.Stage;
+        private entityDrawerService : services.EntityDrawerService;
 
         constructor() {
             super();
@@ -129,6 +130,9 @@ module editorcanvas {
 
         onViewReady() {
             this.data.listenForChanges("data", this);
+
+            this.entityDrawerService = this._context.getSharedObject(services.EntityDrawerService);
+
             this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this._selectedEntity.listenForChanges("selectedEntity", this);
 
@@ -142,77 +146,18 @@ module editorcanvas {
         }
 
         private redrawCanvas() {
-            var toDraw : Array<drawing.CanvasDrawnElement> = [];
-            toDraw = toDraw
-                .concat(this.collectDrawables())
-                .concat(this.collectCollisionBoundingBoxDrawables());
+            var toDraw : Array<createjs.DisplayObject> = [];
+
+            this.data.forEach((entity) => {
+                toDraw.push(this.entityDrawerService.getEntityDisplayable(entity));
+            });
 
             this.clear();
 
             toDraw.forEach((drawnElement) =>
-                this.stage.addChild(drawnElement.getDrawable()));
+                this.stage.addChild(drawnElement));
 
             this.stage.update();
-        }
-
-        private collectDrawables() : Array<drawing.Rectangle> {
-            var newRectangles : Array<drawing.Rectangle> = [];
-            this.data.forEach((entity, key) => {
-                var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
-                var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
-
-                if (drawComp && posComp) {
-                    drawComp.drawables.forEach((drawable, key) => {
-                        var rect : drawing.Rectangle = this.makeCanvasRectangle(
-                            posComp,
-                            <draw.RectangleShape>(<draw.ShapeDrawable>(drawable)).shape);
-                        newRectangles.push(rect);
-                    });
-                }
-            });
-            return newRectangles;
-        }
-
-        private makeCanvasRectangle(posComp : comp.PhysicsComponent, rect : draw.RectangleShape) : drawing.Rectangle {
-            var leftPoint = new drawing.CanvasPoint(
-                posComp.info.position.x - (rect.dimension.x / 2),
-                posComp.info.position.y - (rect.dimension.y /2));
-            var rightPoint = new drawing.CanvasPoint(
-                leftPoint.x + rect.dimension.x, leftPoint.y + rect.dimension.y);
-
-            return new drawing.Rectangle(leftPoint, rightPoint);
-        }
-
-        private collectCollisionBoundingBoxDrawables() : Array<drawing.BoundingBox> {
-            var newBoundingBoxes : Array<drawing.BoundingBox> = [];
-            this.data.forEach(function(entity, key) {
-                var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
-                var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
-                if (collisionComp && posComp) {
-                    var leftPoint = new drawing.CanvasPoint(
-                        posComp.info.position.x - (collisionComp.info.dimension.x / 2),
-                        posComp.info.position.y - (collisionComp.info.dimension.y / 2));
-                    var rightPoint = new drawing.CanvasPoint(
-                        leftPoint.x + collisionComp.info.dimension.x, leftPoint.y + collisionComp.info.dimension.y);
-
-                    var color = "#000000";
-                    switch (collisionComp.bodyType)
-                    {
-                        case entityframework.components.CollisionBodyType.None:
-                            color = "#0000ff"
-                            break;
-                        case entityframework.components.CollisionBodyType.Environment:
-                            color = "#009900"
-                            break;
-                        case entityframework.components.CollisionBodyType.Solid:
-                            color = "#ff0000"
-                            break;
-                    }
-
-                    newBoundingBoxes.push(new drawing.BoundingBox(leftPoint, rightPoint, color));
-                }
-            });
-            return newBoundingBoxes;
         }
 
         onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
