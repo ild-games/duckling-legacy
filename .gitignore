@@ -12,3 +12,6 @@ node_modules/
 .idea/dictionaries
 .idea/libraries
 .settings/launch.json
+
+# Ingore Atom files
+tsconfig.json
