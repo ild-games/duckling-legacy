@@ -5,31 +5,35 @@ module editorcanvas.tools {
     import comp = entityframework.components;
 
     class AddEntityCommand implements framework.command.Command {
-        private _es : entityframework.EntitySystem;
-        private _entity : entityframework.Entity;
-        private _entityId : string;
+        private es : entityframework.EntitySystem;
+        private entity : entityframework.Entity;
+        private entityId : string;
 
         constructor(es : entityframework.EntitySystem, entity : entityframework.Entity) {
-            this._es = es;
-            this._entity = entity;
-            this._entityId = this._es.nextKey();
+            this.es = es;
+            this.entity = entity;
+            this.entityId = this.es.nextKey();
         }
 
         execute() {
-            this._es.addEntity(this._entityId, this._entity);
+            this.es.addEntity(this.entityId, this.entity);
         }
 
         undo() {
-            this._es.removeEntity(this._entityId);
+            this.es.removeEntity(this.entityId);
         }
     }
 
+    /**
+     * Tool used to create a new entity on the canvas. Defaults with
+     * basic Position, Collision, and Drawable components.
+     */
     export class EntityCreatorTool extends BaseTool {
         onLeftClick(position : math.Vector) {
-            this.createRectangle(position);
+            this.createBasicEntity(position);
         }
 
-        private createRectangle(mousePos : math.Vector) {
+        private createBasicEntity(mousePos : math.Vector) {
             var rectEntity = new entityframework.Entity();
             var physComp = new comp.PhysicsComponent();
             var drawComp = new draw.DrawableComponent();

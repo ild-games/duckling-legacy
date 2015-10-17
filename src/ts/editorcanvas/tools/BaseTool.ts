@@ -10,15 +10,39 @@ module editorcanvas.tools {
             this.entitySystem = context.getSharedObject(entityframework.EntitySystem);
         }
 
+        getDisplayObject() : createjs.DisplayObject {
+            return null;
+        }
+
         onEvent(event) {
             switch (event.type) {
                 case "click":
-                    this.onLeftClick(new math.Vector(event.stageX, event.stageY));
+                    if (event.nativeEvent.button === 0) {
+                        this.onLeftClick(new math.Vector(event.stageX, event.stageY));
+                    }
+                    break;
+                case "stagemousedown":
+                    this.onStageDown(new math.Vector(event.stageX, event.stageY));
+                    break;
+                case "stagemouseup":
+                    this.onStageUp(new math.Vector(event.stageX, event.stageY));
+                    break;
+                case "stagemousemove":
+                    this.onStageMove(new math.Vector(event.stageX, event.stageY));
                     break;
             }
         }
 
         onLeftClick(position : math.Vector) {
+        }
+
+        onStageDown(position : math.Vector) {
+        }
+
+        onStageUp(position : math.Vector) {
+        }
+
+        onStageMove(position : math.Vector) {
         }
     }
 }

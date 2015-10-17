@@ -29,6 +29,9 @@ module framework.observe {
                     return getBackingProperties(this)[propertyKey];
                 },
                 set: function (newValue) {
+                    (<any>__private.GlobalObject).getNotifier(this).performChange('update', function() {
+                        return {name: propertyKey};
+                    });
                     if (typeFunction) {
                         getBackingProperties(this)[propertyKey] = typeFunction(newValue);
                     } else {
@@ -53,6 +56,9 @@ module framework.observe {
                     return getBackingProperties(this)[propertyKey];
                 },
                 set : function(newValue) {
+                    (<any>__private.GlobalObject).getNotifier(this).performChange('update', function() {
+                        return {name: propertyKey};
+                    });
                     var backing = getBackingProperties(this);
                     var oldValue = backing[propertyKey];
 

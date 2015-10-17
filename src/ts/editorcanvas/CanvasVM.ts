@@ -5,7 +5,6 @@
 ///<reference path="../entitysystem/components/drawing/DrawableComponent.ts"/>
 ///<reference path="../entitysystem/components/drawing/RectangleShape.ts"/>
 ///<reference path="../editorcanvas/tools/Tool.ts"/>
-///<reference path="../editorcanvas/tools/EntityCreatorTool.ts"/>
 module editorcanvas {
 
     import draw = entityframework.components.drawing;
@@ -21,36 +20,33 @@ module editorcanvas {
         private _systemLoader : entityframework.SystemLoader;
         private stage : createjs.Stage;
         private curTool : editorcanvas.tools.Tool;
+        private createTool : editorcanvas.tools.EntityCreatorTool;
+        private moveTool : editorcanvas.tools.EntityDragTool;
+        private selectTool : editorcanvas.tools.EntitySelectTool;
 
         constructor() {
             super();
-            this.registerCallback("on-click", this.onClick);
             this.registerCallback("undo", this.undo);
             this.registerCallback("redo", this.redo);
             this.registerCallback("save", this.save);
 
-            this.curTool = new editorcanvas.tools.EntityCreatorTool();
+            this.createTool = new editorcanvas.tools.EntityCreatorTool();
+            this.moveTool = new editorcanvas.tools.EntityDragTool();
+            this.selectTool = new editorcanvas.tools.EntitySelectTool();
+            this.curTool = this.createTool;
         }
 
-        private selectRectangle(mousePos : math.Vector) {
-            this.data.forEach((entity : entityframework.Entity, key : string) => {
-                var position = entity.getComponent<comp.PhysicsComponent>("physics").info.position;
-                var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (position && drawable) {
-                    drawable.drawables.forEach((obj, drawableKey) => {
-                        if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
-                            this._selectedEntity.entityKey = key;
-                            return;
-                        }
-                    });
-                }
-            });
-        }
-
-        private onClick(event : MouseEvent, argument) {
-            var mousePos = new math.Vector(event.offsetX, event.offsetY)
-            if (event.ctrlKey || event.metaKey) {
-                this.selectRectangle(mousePos);
+        private changeTool() {
+            switch ($(this.findById("toolSelect")).val()) {
+                case "create":
+                    this.curTool = this.createTool;
+                    break;
+                case "move":
+                    this.curTool = this.moveTool;
+                    break;
+                case "select":
+                    this.curTool = this.selectTool;
+                    break;
             }
         }
 
@@ -102,17 +98,27 @@ module editorcanvas {
             this._context.setSharedObject(this.data);
 
             this.stage = new createjs.Stage(this.id("entity-canvas"));
-            this.curTool.onBind(this._context, this);
+            this.bindTools();
             this.subscribeToolEvents();
+            $(this.findById("toolSelect")).change(() => this.changeTool());
             this.clear();
             this.load();
         }
 
-        subscribeToolEvents() {
-            this.stage.on("click", (event) => this.curTool.onEvent(event));
+        private bindTools() {
+            this.createTool.onBind(this._context, this);
+            this.moveTool.onBind(this._context, this);
+            this.selectTool.onBind(this._context, this);
         }
 
-        private redrawCanvas() {
+        private subscribeToolEvents() {
+            this.stage.on("click", (event) => this.curTool.onEvent(event));
+            this.stage.on("stagemousedown", (event) => this.curTool.onEvent(event));
+            this.stage.on("stagemouseup", (event) => this.curTool.onEvent(event));
+            this.stage.on("stagemousemove", (event) => this.curTool.onEvent(event));
+        }
+
+        public redrawCanvas() {
             var toDraw : Array<drawing.CanvasDrawnElement> = [];
             toDraw = toDraw
                 .concat(this.collectDrawables())
@@ -122,6 +128,9 @@ module editorcanvas {
 
             toDraw.forEach((drawnElement) =>
                 this.stage.addChild(drawnElement.getDrawable()));
+            if (this.curTool.getDisplayObject()) {
+                this.stage.addChild(this.curTool.getDisplayObject());
+            }
 
             this.stage.update();
         }
