@@ -4,30 +4,12 @@
 ///<reference path="../framework/command/Command.ts"/>
 ///<reference path="../entitysystem/components/drawing/DrawableComponent.ts"/>
 ///<reference path="../entitysystem/components/drawing/RectangleShape.ts"/>
+///<reference path="../editorcanvas/tools/Tool.ts"/>
+///<reference path="../editorcanvas/tools/EntityCreatorTool.ts"/>
 module editorcanvas {
 
     import draw = entityframework.components.drawing;
     import comp = entityframework.components;
-
-    class AddEntityCommand implements framework.command.Command {
-        private _es : entityframework.EntitySystem;
-        private _entity : entityframework.Entity;
-        private _entityId : string;
-
-        constructor(es : entityframework.EntitySystem, entity : entityframework.Entity) {
-            this._es = es;
-            this._entity = entity;
-            this._entityId = this._es.nextKey();
-        }
-
-        execute() {
-            this._es.addEntity(this._entityId, this._entity);
-        }
-
-        undo() {
-            this._es.removeEntity(this._entityId);
-        }
-    }
 
 
     /**
@@ -38,6 +20,7 @@ module editorcanvas {
         private _project : framework.Project;
         private _systemLoader : entityframework.SystemLoader;
         private stage : createjs.Stage;
+        private curTool : editorcanvas.tools.Tool;
 
         constructor() {
             super();
@@ -45,6 +28,8 @@ module editorcanvas {
             this.registerCallback("undo", this.undo);
             this.registerCallback("redo", this.redo);
             this.registerCallback("save", this.save);
+
+            this.curTool = new editorcanvas.tools.EntityCreatorTool();
         }
 
         private selectRectangle(mousePos : math.Vector) {
@@ -62,31 +47,10 @@ module editorcanvas {
             });
         }
 
-        private createRectangle(mousePos : math.Vector) {
-            var rectEntity = new entityframework.Entity();
-            var physComp = new comp.PhysicsComponent();
-            var drawComp = new draw.DrawableComponent();
-            var collisionComp = new comp.CollisionComponent();
-            rectEntity.addComponent("physics", physComp);
-            rectEntity.addComponent("drawable", drawComp);
-            rectEntity.addComponent("collision", collisionComp);
-            physComp.info.position.x = mousePos.x;
-            physComp.info.position.y = mousePos.y;
-
-            drawComp.drawables.put(
-                "Rect0",
-                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "Rect1"));
-            collisionComp.info.dimension.x = 15;
-            collisionComp.info.dimension.y = 15;
-            this._context.commandQueue.pushCommand(new AddEntityCommand(this.data, rectEntity));
-        }
-
         private onClick(event : MouseEvent, argument) {
             var mousePos = new math.Vector(event.offsetX, event.offsetY)
             if (event.ctrlKey || event.metaKey) {
                 this.selectRectangle(mousePos);
-            } else {
-                this.createRectangle(mousePos);
             }
         }
 
@@ -135,10 +99,17 @@ module editorcanvas {
             this._project = this._context.getSharedObject(framework.Project);
             this._systemLoader =
                 new entityframework.SystemLoader(this._project, new util.JsonLoader());
+            this._context.setSharedObject(this.data);
 
             this.stage = new createjs.Stage(this.id("entity-canvas"));
+            this.curTool.onBind(this._context, this);
+            this.subscribeToolEvents();
             this.clear();
             this.load();
+        }
+
+        subscribeToolEvents() {
+            this.stage.on("click", (event) => this.curTool.onEvent(event));
         }
 
         private redrawCanvas() {

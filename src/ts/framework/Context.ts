@@ -75,6 +75,10 @@ module framework {
             this._sharedObjects[key] = obj;
         }
 
+        setSharedObject(sharedObject) {
+            this.setSharedObjectByKey(sharedObject.constructor[contextKeySymbol], sharedObject);
+        }
+
         //region Getters and Setters
         get views() : framework.Views {
             return this._views;
