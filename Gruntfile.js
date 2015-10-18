@@ -47,6 +47,7 @@ module.exports = function(grunt) {
                 src: getTSDirs(
                     "util",
                     "framework",
+                    "controls",
                     "math",
                     "entitysystem",
                     "editorcanvas",

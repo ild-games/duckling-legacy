@@ -118,6 +118,9 @@ module entityframework.components {
          */
         private typeVals : Array<number> = [];
 
+        private bodyPicker : controls.SelectControl;
+        private collisionTypePicker : controls.SelectControl;
+
         /**
          * Called by the view model when the data has been loaded.
          */
@@ -133,7 +136,8 @@ module entityframework.components {
          */
         onViewReady() {
             super.onViewReady();
-            this.initializeSelectPicker();
+            this.collisionTypePicker = new controls.SelectControl(this.findById("collisionPicker"));
+            this.bodyPicker = new controls.SelectControl(this.findById("bodyPicker"));
         }
 
         /**
@@ -149,13 +153,6 @@ module entityframework.components {
                 }
             }
             return values;
-        }
-
-        /**
-         * Sets up the select html tags.
-         */
-        private initializeSelectPicker() {
-            $(this._htmlRoot).find(".selectpicker").selectpicker();
         }
 
         //region Getters and Setters

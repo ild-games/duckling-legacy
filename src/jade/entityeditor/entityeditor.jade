@@ -2,8 +2,7 @@ include ../mixins/select_control
 
 div.selector
     label Entity:&nbsp
-    select.selectpicker
-        option(rv-each-entity="entityNames") { entity }
+    +generalSelect(this.id("entityNames"), "Selected Entity", "", "entityNames")
 
 div.forms(id=this.id("entity-form-container"))
     div.the-duck-bg-img
@@ -15,4 +14,3 @@ div.component-adder(id=this.id("add-component-button"))
         +generalSelect(this.id("componentsToAddPicker"), "Available Components", "", "componentsNotOnEntity", "add-component-select input-group-picker")
         span.input-group-btn(rv-command-add-component)
             button.btn.btn-success(type="button", rv-enabled="isAddComponentEnabled") Add Component
-

@@ -157,5 +157,17 @@ module entityframework
 
             this.dataChanged("replaced", null);
         }
+
+        isEntityRemovedEvent(event : framework.observe.DataChangeEvent) {
+            return event && event.child && event.child.name === "Removed";
+        }
+
+        isEntityAddedEvent(event : framework.observe.DataChangeEvent) {
+            return event && event.child && event.child.name === "Added";
+        }
+
+        isSystemMovedEvent(event : framework.observe.DataChangeEvent) {
+            return event && event.name === "replaced";    
+        }
     }
 }

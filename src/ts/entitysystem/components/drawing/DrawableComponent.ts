@@ -1,5 +1,4 @@
 ///<reference path="../../core/Component.ts"/>
-var lastRectAdded = 1;
 
 module entityframework.components.drawing {
 
@@ -26,7 +25,7 @@ module entityframework.components.drawing {
 
     class DrawableViewModel extends framework.ViewModel<DrawableComponent> implements framework.observe.Observer {
         private _curSelectedDrawable : string;
-        private _drawablePicker : HTMLSelectElement;
+        private drawablePicker : controls.SelectControl;
 
         constructor() {
             super();
@@ -35,22 +34,20 @@ module entityframework.components.drawing {
         }
 
         deleteDrawableFromSelect() {
-            if (this.data.getDrawable(this._drawablePicker.value)) {
+            if (this.data.getDrawable(this.drawablePicker.value)) {
                 this._context.commandQueue.pushCommand(
-                    new DeleteDrawableCommand(this.data, this._drawablePicker.value));
+                    new DeleteDrawableCommand(this.data, this.drawablePicker.value));
             }
         }
 
         addDrawableFromSelect() {
             this._context.commandQueue.pushCommand(
-                new AddDrawableCommand(this.data, "Rect" + lastRectAdded));
-            lastRectAdded++;
+                new AddDrawableCommand(this.data, this.nextKey()));
         }
 
         onViewReady() {
             $(this.findById("drawableSelect")).on("change",(event) => this.drawableChangeHandler(event));
-            $(this._htmlRoot).find(".selectpicker").selectpicker();
-            this._drawablePicker = <HTMLSelectElement>this.findById("drawableSelect");
+            this.drawablePicker = new controls.SelectControl(this.findById("drawableSelect"));
         }
 
         onDataReady() {
@@ -86,11 +83,11 @@ module entityframework.components.drawing {
         }
 
         onDataObjChildModified(event : framework.observe.DataChangeEvent) {
-            $(this._htmlRoot).find('.selectpicker').selectpicker('refresh')
+            this.drawablePicker.update();
 
             switch (event.child.name) {
                 case "Removed":
-                    this.onDrawableRemoved(this._drawablePicker.value);
+                    this.onDrawableRemoved(this.drawablePicker.value);
                     break;
                 case "Added":
                     this.onDrawableAdded((<Drawable> event.child.data).key);
@@ -108,7 +105,7 @@ module entityframework.components.drawing {
         onDrawableAdded(addedDrawableKey : string) {
             this.removeChildViews();
             if (this.data.getDrawable(addedDrawableKey)) {
-                $(this._htmlRoot).find('.selectpicker').selectpicker('val', addedDrawableKey);
+                this.drawablePicker.value = addedDrawableKey;;
                 this.addSelectedDrawableVM(addedDrawableKey);
             }
         }
@@ -127,6 +124,12 @@ module entityframework.components.drawing {
                 "drawableVM",
                 new RectangleShapeViewModel(),
                 this.data.getDrawable(rectName));
+        }
+
+        private nextKey() : string {
+            var key = 0;
+            while (this.data.getDrawable("Rect" + key)) key++;
+            return "Rect" + key;
         }
     }
 
