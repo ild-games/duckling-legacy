@@ -1,14 +1,2 @@
-mixin enumSelect(pickerId, rvValue, enumType, rvEachType)
-    select.selectpicker(id=pickerId, rv-value=rvValue + " | formatEnum '" + enumType + "'")
-        option(rv-each-type=rvEachType + " | formatEnumVals '" + enumType + "'") { type }
-
-
-mixin generalSelect(pickerId, pickerTitle, formatter, rvEachType, extraClasses)
+mixin select(pickerId, pickerTitle, extraClasses)
     select.selectpicker(id=pickerId, title=pickerTitle, class=extraClasses)
-        if formatter == ""
-            option(rv-each-type=rvEachType) { type }
-        else
-            option(rv-each-type=rvEachType + " | " + formatter) { type }
-
-mixin observableMapSelect(pickerId, pickerTitle, formatter, observableMapProperty, extraClasses)
-    +generalSelect(pickerId, pickerTitle, formatter, observableMapProperty + "%_data", extraClasses)

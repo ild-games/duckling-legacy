@@ -19,8 +19,8 @@ module entityframework
         private _listVM : framework.listvm.ListVM;
 
         //References to controls
-        private selectedEntityPicker : controls.SelectControl;;
-        private addComponentPicker : controls.SelectControl;;
+        private selectedEntityPicker : controls.SelectControl<String>;
+        private addComponentPicker : controls.SelectControl<String>;
 
         constructor() {
             super();
@@ -60,8 +60,8 @@ module entityframework
 
         onViewReady() {
             super.onViewReady();
-            this.selectedEntityPicker = new controls.SelectControl(this.findById("entityNames"));
-            this.addComponentPicker = new controls.SelectControl(this.findById("componentsToAddPicker"));
+            this.selectedEntityPicker = new controls.SelectControl(this, "entityNames", this.getEntities(), "");
+            this.addComponentPicker = new controls.SelectControl(this, "componentsToAddPicker",{},"");
         }
 
         addComponentFromSelect() {
@@ -174,8 +174,14 @@ module entityframework
                 || this.data.isSystemMovedEvent(event);
 
             if (this.selectedEntityPicker && shouldUpdatePicker) {
-                this.selectedEntityPicker.update();
+                this.selectedEntityPicker.values = this.getEntities();
             }
+        }
+
+        private getEntities() : {[s : string] : string} {
+            var entities : {[s : string] : string} = {};
+            this.data.forEach((entity, key) => entities[key] = key);
+            return entities;;
         }
 
         get length() {
@@ -207,7 +213,9 @@ module entityframework
             this.setupCloseComponentHandlers();
 
             if (this.addComponentPicker) {
-                this.addComponentPicker.update();
+                var values : {[s:string]:string} = {};
+                this._componentsNotOnEntity.forEach((name) => values[name] = name);
+                this.addComponentPicker.values = values;
             }
         }
     }

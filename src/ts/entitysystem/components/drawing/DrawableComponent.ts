@@ -24,67 +24,42 @@ module entityframework.components.drawing {
     }
 
     class DrawableViewModel extends framework.ViewModel<DrawableComponent> implements framework.observe.Observer {
-        private _curSelectedDrawable : string;
-        private drawablePicker : controls.SelectControl;
+        private drawablePicker : controls.SelectControl<Drawable>;
 
         constructor() {
             super();
-            this.registerCallback("delete-drawable", this.deleteDrawableFromSelect);
-            this.registerCallback("add-drawable", this.addDrawableFromSelect);
+            this.registerCallback("delete-drawable", this.deleteSelectedDrawable);
+            this.registerCallback("add-drawable", this.addDrawable);
         }
 
-        deleteDrawableFromSelect() {
+        deleteSelectedDrawable() {
             if (this.data.getDrawable(this.drawablePicker.value)) {
                 this._context.commandQueue.pushCommand(
                     new DeleteDrawableCommand(this.data, this.drawablePicker.value));
             }
         }
 
-        addDrawableFromSelect() {
+        addDrawable() {
             this._context.commandQueue.pushCommand(
                 new AddDrawableCommand(this.data, this.nextKey()));
         }
 
         onViewReady() {
-            $(this.findById("drawableSelect")).on("change",(event) => this.drawableChangeHandler(event));
-            this.drawablePicker = new controls.SelectControl(this.findById("drawableSelect"));
+            this.drawablePicker = new controls.SelectControl<Drawable>(this, "drawableSelect", this.getDrawables(), "");
+            this.drawablePicker.callback = (drawable) => this.addSelectedDrawableVM(drawable);
         }
 
         onDataReady() {
             this.data.listenForChanges("data", this);
-            this.addDrawableViewModelOnStart();
-        }
-
-        addDrawableViewModelOnStart() {
-            if (!this._curSelectedDrawable) {
-                var drawableKeys = [];
-                this.data.drawables.forEach((obj, key) => {
-                    drawableKeys.push(key);
-                });
-                if (drawableKeys.length > 0) {
-                    this._curSelectedDrawable = drawableKeys[0];
-                }
-            }
-            this.addSelectedDrawableVM(this._curSelectedDrawable);
         }
 
         onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
-            switch (key) {
-                case "data":
-                    this.onDataObjChanged(event);
-                    break;
-            }
-        }
-
-        onDataObjChanged(event : framework.observe.DataChangeEvent) {
-            if (event.name === "ChildModified") {
-                setTimeout(() => this.onDataObjChildModified(event));
+            if (key === "data") {
+                this.onDataObjChildModified(event);;
             }
         }
 
         onDataObjChildModified(event : framework.observe.DataChangeEvent) {
-            this.drawablePicker.update();
-
             switch (event.child.name) {
                 case "Removed":
                     this.onDrawableRemoved(this.drawablePicker.value);
@@ -97,16 +72,15 @@ module entityframework.components.drawing {
 
         onDrawableRemoved(removedDrawableKey : string) {
             this.removeChildViews();
-            if (this.data.getDrawable(removedDrawableKey)) {
-                this.addSelectedDrawableVM(removedDrawableKey);
-            }
+            this.updateDrawablePicker();
         }
 
         onDrawableAdded(addedDrawableKey : string) {
             this.removeChildViews();
             if (this.data.getDrawable(addedDrawableKey)) {
+                this.updateDrawablePicker();
+                this.addSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
                 this.drawablePicker.value = addedDrawableKey;;
-                this.addSelectedDrawableVM(addedDrawableKey);
             }
         }
 
@@ -114,22 +88,29 @@ module entityframework.components.drawing {
             return 'components/drawable';
         }
 
-        private drawableChangeHandler(event) {
-            this.addSelectedDrawableVM(event.target.value);
-        }
-
-        private addSelectedDrawableVM(rectName : string) {
-            this._curSelectedDrawable = rectName;
+        private addSelectedDrawableVM(drawable : Drawable) {
             this.addChildView(
                 "drawableVM",
                 new RectangleShapeViewModel(),
-                this.data.getDrawable(rectName));
+                drawable);
         }
 
         private nextKey() : string {
             var key = 0;
             while (this.data.getDrawable("Rect" + key)) key++;
             return "Rect" + key;
+        }
+
+        private updateDrawablePicker() {
+            this.drawablePicker.values = this.getDrawables();
+        }
+
+        private getDrawables() {
+            var drawables : {[s:string] : Drawable} = {};
+            this.data.drawables.forEach((drawable, name) => {
+                drawables[name] = drawable;
+            });
+            return drawables;;
         }
     }
 
