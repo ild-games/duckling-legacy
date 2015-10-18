@@ -4,7 +4,7 @@ div.form-element
     label Drawables
     br
     div.associated-form-element.form-group.input-group(role="group")
-        +observableMapSelect(this.id("drawableSelect"), "", "formatObjectToKeys", "data.drawables", "form-element input-group-picker")
+        +select(this.id("drawableSelect"), "Select Drawable", "form-element input-group-picker")
         button.btn.btn-success.no-radius(id=this.id("addDrawableButton"), type="button", rv-command-add-drawable)
             span &nbsp;
             i.fa.fa-plus

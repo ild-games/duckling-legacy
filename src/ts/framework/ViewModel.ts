@@ -53,6 +53,14 @@ module framework {
         }
 
         /**
+         * Push a command into the command queue.
+         * @param command Command to execute in the command queue.
+         */
+        pushCommand(command : framework.command.Command) {
+            this._context.commandQueue.pushCommand(command);
+        }
+
+        /**
          * Create an Id unique to the view. Calling id("string") will always produced the same result
          * for a specific view model, but it will produce different results for different view models.
          * Elements can be retrieved using the findById method.

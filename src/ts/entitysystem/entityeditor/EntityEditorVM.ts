@@ -17,7 +17,10 @@ module entityframework
         private _adapter : framework.listvm.ListAdapter<Component>;
         private _selectedEntity : entityframework.core.SelectedEntity;
         private _listVM : framework.listvm.ListVM;
-        private _addComponentPicker : HTMLSelectElement;
+
+        //References to controls
+        private selectedEntityPicker : controls.SelectControl<String>;
+        private addComponentPicker : controls.SelectControl<String>;
 
         constructor() {
             super();
@@ -26,7 +29,6 @@ module entityframework
         }
 
         onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
-            setTimeout(() => $(this._htmlRoot).find('.selectpicker').selectpicker('refresh'));
             switch (key) {
                 case "data":
                     this.onSystemChange(event);
@@ -58,12 +60,12 @@ module entityframework
 
         onViewReady() {
             super.onViewReady();
-            $(this._htmlRoot).find(".selectpicker").selectpicker();
-            this._addComponentPicker = <HTMLSelectElement>this.findById("componentsToAddPicker");
+            this.selectedEntityPicker = new controls.SelectControl(this, "entityNames", this.getEntities(), "");
+            this.addComponentPicker = new controls.SelectControl(this, "componentsToAddPicker",{},"");
         }
 
         addComponentFromSelect() {
-            var pickerVal = this._addComponentPicker.value;
+            var pickerVal = this.addComponentPicker.value;
             if (pickerVal && this._currentEntity) {
                 this._context.commandQueue.pushCommand(new AddComponentCommand(
                     this._currentEntity,
@@ -81,8 +83,8 @@ module entityframework
                     }
                 }
             });
-            this._listVM.dataChanged();
-            this.setupCloseComponentHandlers();
+
+            this.onComponentsChanged();
         }
 
         reflectRemovedComponents() {
@@ -97,8 +99,8 @@ module entityframework
                 this._componentsNotOnEntity.push(this._components[compsToRemove[i]].name);
                 this._components.splice(compsToRemove[i], 1);
             }
-            this._listVM.dataChanged();
-            this.setupCloseComponentHandlers();
+
+            this.onComponentsChanged();
         }
 
         getItemVM(index:number) {
@@ -132,8 +134,7 @@ module entityframework
                 });
             }
 
-            this._listVM.dataChanged();
-            this.setupCloseComponentHandlers();
+            this.onComponentsChanged();
         }
 
         constructVMComponent(name : string, factory : ComponentFactory) {
@@ -166,6 +167,21 @@ module entityframework
             this.data.forEach((entity : Entity, key : string) => {
                 this._entityNames.push(key);
             });
+
+            var shouldUpdatePicker = !event
+                || this.data.isEntityAddedEvent(event)
+                || this.data.isEntityRemovedEvent(event)
+                || this.data.isSystemMovedEvent(event);
+
+            if (this.selectedEntityPicker && shouldUpdatePicker) {
+                this.selectedEntityPicker.values = this.getEntities();
+            }
+        }
+
+        private getEntities() : {[s : string] : string} {
+            var entities : {[s : string] : string} = {};
+            this.data.forEach((entity, key) => entities[key] = key);
+            return entities;
         }
 
         get length() {
@@ -190,6 +206,17 @@ module entityframework
 
         get isAddComponentEnabled() : boolean {
             return this._componentsNotOnEntity.length > 0;
+        }
+
+        private onComponentsChanged() {
+            this._listVM.dataChanged();
+            this.setupCloseComponentHandlers();
+
+            if (this.addComponentPicker) {
+                var values : {[s:string]:string} = {};
+                this._componentsNotOnEntity.forEach((name) => values[name] = name);
+                this.addComponentPicker.values = values;
+            }
         }
     }
 

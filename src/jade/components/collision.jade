@@ -2,11 +2,13 @@ include ../mixins/select_control
 
 form
     label Collision Type:&nbsp;
-    +enumSelect('data.collisionType', 'entityframework.components.CollisionType', 'typeVals')
+    div 
+        +select(this.id('collisionPicker'))
     br
 
     label Body Type:&nbsp;
-    +enumSelect('data.bodyType', 'entityframework.components.CollisionBodyType', 'bodyTypeVals')
+    div 
+        +select(this.id('bodyPicker'))
     br
 
     label Collision Dimensions
