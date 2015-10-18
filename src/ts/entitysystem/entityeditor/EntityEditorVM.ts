@@ -181,7 +181,7 @@ module entityframework
         private getEntities() : {[s : string] : string} {
             var entities : {[s : string] : string} = {};
             this.data.forEach((entity, key) => entities[key] = key);
-            return entities;;
+            return entities;
         }
 
         get length() {

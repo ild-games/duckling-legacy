@@ -158,16 +158,29 @@ module entityframework
             this.dataChanged("replaced", null);
         }
 
+        /**
+         * Check if the data changed event is the result of an entity being removed.
+         * @param event Event recieved by an Observer.
+         */
         isEntityRemovedEvent(event : framework.observe.DataChangeEvent) {
             return event && event.child && event.child.name === "Removed";
         }
 
+        /**
+         * Check if the data changed event is the result of an entity being added.
+         * @param event Event recieved by an Observer.
+         */
         isEntityAddedEvent(event : framework.observe.DataChangeEvent) {
             return event && event.child && event.child.name === "Added";
         }
 
+        /**
+         * Check if the data changed event is the result of an entity system being moved
+         * into this system.
+         * @param event Event recieved by an Observer.
+         */
         isSystemMovedEvent(event : framework.observe.DataChangeEvent) {
-            return event && event.name === "replaced";    
+            return event && event.name === "replaced";
         }
     }
 }

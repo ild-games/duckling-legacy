@@ -3,7 +3,7 @@ module entityframework.components {
 
     import serialize = util.serialize;
     import observe = framework.observe;
-    import setter = framework.setter;;
+    import setter = framework.setter;
 
     /**
      * The body types for a CollisionComponent.
@@ -168,9 +168,7 @@ module entityframework.components {
         }
 
         /**
-         * Pulls out the number values from an enum into an array.
-         * @param enumType Enum to get values from.
-         * @returns Number values for the enum in an array
+         * Produces a map of enum names to enum values to use in the select controls.
          */
         private ValuesFromEnum(enumType) : any {
             var values = {};

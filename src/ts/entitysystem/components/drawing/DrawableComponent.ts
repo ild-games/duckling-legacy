@@ -55,7 +55,7 @@ module entityframework.components.drawing {
 
         onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
             if (key === "data") {
-                this.onDataObjChildModified(event);;
+                this.onDataObjChildModified(event);
             }
         }
 
@@ -80,7 +80,7 @@ module entityframework.components.drawing {
             if (this.data.getDrawable(addedDrawableKey)) {
                 this.updateDrawablePicker();
                 this.addSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
-                this.drawablePicker.value = addedDrawableKey;;
+                this.drawablePicker.value = addedDrawableKey;
             }
         }
 
@@ -110,7 +110,7 @@ module entityframework.components.drawing {
             this.data.drawables.forEach((drawable, name) => {
                 drawables[name] = drawable;
             });
-            return drawables;;
+            return drawables;
         }
     }
 
