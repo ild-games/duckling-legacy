@@ -43,10 +43,11 @@ module editorcanvas.tools {
         onStageDown(mousePos : math.Vector) {
             this.moveCommand = null;
             this.entitySystem.forEach((entity : entityframework.Entity, key : string) => {
-                var position = entity.getComponent<comp.PhysicsComponent>("physics").info.position;
+                var positionComp = entity.getComponent<comp.PhysicsComponent>("physics");
                 var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (position && drawable) {
-                    drawable.drawables.forEach((obj, drawableKey) => {
+                if (positionComp && drawable) {
+                    var position = positionComp.info.position;
+                    drawable.topDrawable.forEach((obj) => {
                         if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
                             this.moveCommand = new MoveEntityCommand(entity, position, mousePos);
                             var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");

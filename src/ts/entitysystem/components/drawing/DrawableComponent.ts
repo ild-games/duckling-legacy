@@ -6,19 +6,19 @@ module entityframework.components.drawing {
     import observe = framework.observe;
 
     export class DrawableComponent extends Component {
-        @observe.Primitive()
+        @observe.Primitive(String)
         private camEntity : string;
 
         @observe.Object()
-        drawables : framework.observe.ObservableMap<Drawable>;
+        topDrawable : drawing.ContainerDrawable;
 
         constructor() {
             super();
-            this.drawables = new framework.observe.ObservableMap<Drawable>();
+            this.topDrawable = new drawing.ContainerDrawable("topDrawable");
         }
 
-        getDrawable<T extends Drawable>(key:string) : T {
-            return <T>this.drawables.get(key);
+        getDrawable<T extends Drawable>(key : string) : T {
+            return <T>this.topDrawable.getDrawable(key);
         }
 
     }
@@ -50,6 +50,7 @@ module entityframework.components.drawing {
         }
 
         onDataReady() {
+            super.onDataReady();
             this.data.listenForChanges("data", this);
         }
 
@@ -60,13 +61,15 @@ module entityframework.components.drawing {
         }
 
         onDataObjChildModified(event : framework.observe.DataChangeEvent) {
-            switch (event.child.name) {
-                case "Removed":
-                    this.onDrawableRemoved(this.drawablePicker.value);
-                    break;
-                case "Added":
-                    this.onDrawableAdded((<Drawable> event.child.data).key);
-                    break;
+            if (event.child.child) {
+                switch (event.child.child.name) {
+                    case "Removed":
+                        this.onDrawableRemoved(this.drawablePicker.value);
+                        break;
+                    case "Added":
+                        this.onDrawableAdded((<Drawable> event.child.child.data).key);
+                        break;
+                }
             }
         }
 
@@ -107,8 +110,8 @@ module entityframework.components.drawing {
 
         private getDrawables() {
             var drawables : {[s:string] : Drawable} = {};
-            this.data.drawables.forEach((drawable, name) => {
-                drawables[name] = drawable;
+            this.data.topDrawable.forEach((drawable) => {
+                drawables[drawable.key] = drawable;
             });
             return drawables;
         }
@@ -149,11 +152,13 @@ module entityframework.components.drawing {
 
         execute() {
             this._drawable = this._drawableComp.getDrawable(this._drawableName);
-            this._drawableComp.drawables.remove(this._drawableName);
+            if (this._drawable) {
+                this._drawableComp.topDrawable.removeDrawable(this._drawable);
+            }
         }
 
         undo() {
-            this._drawableComp.drawables.put(this._drawableName, this._drawable);
+            this._drawableComp.topDrawable.addDrawable(this._drawable);
         }
     }
 
@@ -167,13 +172,12 @@ module entityframework.components.drawing {
         }
 
         execute() {
-            this._drawableComp.drawables.put(
-                this._drawableName,
+            this._drawableComp.topDrawable.addDrawable(
                 new ShapeDrawable(new RectangleShape(new math.Vector(5, 5)), this._drawableName));
         }
 
         undo() {
-            this._drawableComp.drawables.remove(this._drawableName);
+            this._drawableComp.topDrawable.removeDrawableByKey(this._drawableName);
         }
     }
 }

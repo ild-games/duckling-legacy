@@ -149,10 +149,10 @@ module util.serialize {
 
             if (getCustomSerializer(typedValue)) {
                 getCustomSerializer(typedValue).fromJSON(plainValue);
-            } else if (typedValue) {
-                buildTypesFromObjects(plainValue, typedValue)
             } else if (types.isPrimitive(plainValue)) {
                 rootTypedObject[key] = plainValue;
+            } else if (typedValue) {
+                buildTypesFromObjects(plainValue, typedValue)
             } else {
                 rootTypedObject[key] = buildTypesFromObjects(plainValue);
             }

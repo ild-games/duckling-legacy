@@ -7,6 +7,7 @@ module framework.observe {
     /**
      * An array that implements the observer interface.
      */
+    @util.serialize.HasCustomSerializer
     export class ObservableArray<T extends Observable> extends Observable  implements CustomSerializer {
         private _data : T[] = [];
         private valueConstructor : any;
@@ -54,6 +55,19 @@ module framework.observe {
         }
 
         /**
+         * Removes a specified object off the array.
+         * @param object The object to remove.
+         */
+        remove(object : T) {
+            var index = this._data.indexOf(object);
+            this._data.splice(index, 1);
+            if (index >= 0) {
+                object.stopListening(index.toString(), this);
+            }
+            this.dataChanged("Removed", object);
+        }
+
+        /**
          * Allows iterating over the objects in the array.
          * @param func
          */
@@ -78,14 +92,14 @@ module framework.observe {
          */
         fromJSON(object) : any {
             var child;
-            for (var index in object.size) {
+            object.forEach((element) => {
                 if (this.valueConstructor) {
-                    child = serialize.buildTypesFromObjects(object[index],new this.valueConstructor());
+                    child = serialize.buildTypesFromObjects(element, new this.valueConstructor());
                 } else {
-                    child = serialize.buildTypesFromObjects(object[index]);
+                    child = serialize.buildTypesFromObjects(element);
                 }
                 this.push(child);
-            }
+            });
             return this;
         }
         //endregion

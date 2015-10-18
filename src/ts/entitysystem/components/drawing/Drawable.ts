@@ -23,6 +23,9 @@ module entityframework.components.drawing {
         @observe.Primitive(Boolean)
         private inactive : boolean;
 
+        @observe.Object()
+        private scale : math.Vector = new math.Vector(1.0, 1.0);
+
         @observe.Primitive()
         key : string;
 

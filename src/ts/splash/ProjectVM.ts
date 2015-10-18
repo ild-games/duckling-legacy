@@ -31,6 +31,7 @@ module splashscreen {
             es.addComponentType(new components.PhysicsComponentFactory());
             es.addComponentType(new components.drawing.DrawableComponentFactory());
             es.addComponentType(new components.CollisionComponentFactory());
+            es.addComponentType(new components.CameraComponentFactory());
             return es;
         }
 

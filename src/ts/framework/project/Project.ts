@@ -20,7 +20,7 @@ module framework {
          * @param mapName Name of the map that a path is needed for.
          */
         getMapPath(mapName : string) {
-            return util.path.join(this.getRootPath(),"maps",mapName + ".map");
+            return util.path.join(this.getRootPath(),"Maps",mapName + ".map");
         }
 
         //region Getters and Setters

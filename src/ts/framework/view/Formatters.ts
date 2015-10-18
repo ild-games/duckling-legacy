@@ -1,3 +1,4 @@
+/// <reference path="../../entitysystem/components/drawing/Drawable.ts"/>
 module framework.view {
 
     /**
@@ -7,14 +8,13 @@ module framework.view {
      * @param rivets The object containing the rivets library.
      */
     export function CreateFormatters(window, rivets) {
-
         rivets.formatters.formatObjectToKeys = function(value : Object) : Array<string> {
             var shownToUsers : Array<string> = [];
             for (var key in value) {
                 shownToUsers.push(key);
             }
             return shownToUsers;
-        }
+        };
 
         rivets.formatters.formatEnum = {
             /**
