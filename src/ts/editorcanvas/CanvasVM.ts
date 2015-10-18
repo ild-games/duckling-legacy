@@ -4,32 +4,8 @@
 ///<reference path="../framework/command/Command.ts"/>
 ///<reference path="../entitysystem/components/drawing/DrawableComponent.ts"/>
 ///<reference path="../entitysystem/components/drawing/RectangleShape.ts"/>
+///<reference path="../editorcanvas/tools/Tool.ts"/>
 module editorcanvas {
-
-    import draw = entityframework.components.drawing;
-    import comp = entityframework.components;
-
-    class AddEntityCommand implements framework.command.Command {
-        private _es : entityframework.EntitySystem;
-        private _entity : entityframework.Entity;
-        private _entityId : string;
-
-        constructor(es : entityframework.EntitySystem, entity : entityframework.Entity) {
-            this._es = es;
-            this._entity = entity;
-            this._entityId = this._es.nextKey();
-        }
-
-        execute() {
-            this._es.addEntity(this._entityId, this._entity);
-        }
-
-        undo() {
-            this._es.removeEntity(this._entityId);
-        }
-    }
-
-
     /**
      * ViewModel for the main canvas used to interact with entities.
      */
@@ -39,55 +15,34 @@ module editorcanvas {
         private _systemLoader : entityframework.SystemLoader;
         private stage : createjs.Stage;
         private entityDrawerService : services.EntityDrawerService;
+        private curTool : editorcanvas.tools.Tool;
+        private createTool : editorcanvas.tools.EntityCreatorTool;
+        private moveTool : editorcanvas.tools.EntityDragTool;
+        private selectTool : editorcanvas.tools.EntitySelectTool;
 
         constructor() {
             super();
-            this.registerCallback("on-click", this.onClick);
             this.registerCallback("undo", this.undo);
             this.registerCallback("redo", this.redo);
             this.registerCallback("save", this.save);
+
+            this.createTool = new editorcanvas.tools.EntityCreatorTool();
+            this.moveTool = new editorcanvas.tools.EntityDragTool();
+            this.selectTool = new editorcanvas.tools.EntitySelectTool();
+            this.curTool = this.createTool;
         }
 
-        private selectRectangle(mousePos : math.Vector) {
-            this.data.forEach((entity : entityframework.Entity, key : string) => {
-                var position = entity.getComponent<comp.PhysicsComponent>("physics").info.position;
-                var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (position && drawable) {
-                    drawable.drawables.forEach((obj, drawableKey) => {
-                        if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
-                            this._selectedEntity.entityKey = key;
-                            return;
-                        }
-                    });
-                }
-            });
-        }
-
-        private createRectangle(mousePos : math.Vector) {
-            var rectEntity = new entityframework.Entity();
-            var physComp = new comp.PhysicsComponent();
-            var drawComp = new draw.DrawableComponent();
-            var collisionComp = new comp.CollisionComponent();
-            rectEntity.addComponent("physics", physComp);
-            rectEntity.addComponent("drawable", drawComp);
-            rectEntity.addComponent("collision", collisionComp);
-            physComp.info.position.x = mousePos.x;
-            physComp.info.position.y = mousePos.y;
-
-            drawComp.drawables.put(
-                "Rect0",
-                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "Rect1"));
-            collisionComp.info.dimension.x = 15;
-            collisionComp.info.dimension.y = 15;
-            this._context.commandQueue.pushCommand(new AddEntityCommand(this.data, rectEntity));
-        }
-
-        private onClick(event : MouseEvent, argument) {
-            var mousePos = new math.Vector(event.offsetX, event.offsetY)
-            if (event.ctrlKey || event.metaKey) {
-                this.selectRectangle(mousePos);
-            } else {
-                this.createRectangle(mousePos);
+        private changeTool() {
+            switch ($(this.findById("toolSelect")).val()) {
+                case "create":
+                    this.curTool = this.createTool;
+                    break;
+                case "move":
+                    this.curTool = this.moveTool;
+                    break;
+                case "select":
+                    this.curTool = this.selectTool;
+                    break;
             }
         }
 
@@ -139,13 +94,30 @@ module editorcanvas {
             this._project = this._context.getSharedObject(framework.Project);
             this._systemLoader =
                 new entityframework.SystemLoader(this._project, new util.JsonLoader());
+            this._context.setSharedObject(this.data);
 
             this.stage = new createjs.Stage(this.id("entity-canvas"));
+            this.bindTools();
+            this.subscribeToolEvents();
+            $(this.findById("toolSelect")).change(() => this.changeTool());
             this.clear();
             this.load();
         }
 
-        private redrawCanvas() {
+        private bindTools() {
+            this.createTool.onBind(this._context, this);
+            this.moveTool.onBind(this._context, this);
+            this.selectTool.onBind(this._context, this);
+        }
+
+        private subscribeToolEvents() {
+            this.stage.on("click", (event) => this.curTool.onEvent(event));
+            this.stage.on("stagemousedown", (event) => this.curTool.onEvent(event));
+            this.stage.on("stagemouseup", (event) => this.curTool.onEvent(event));
+            this.stage.on("stagemousemove", (event) => this.curTool.onEvent(event));
+        }
+
+        public redrawCanvas() {
             var toDraw : Array<createjs.DisplayObject> = [];
 
             this.data.forEach((entity) => {
@@ -156,6 +128,9 @@ module editorcanvas {
 
             toDraw.forEach((drawnElement) =>
                 this.stage.addChild(drawnElement));
+            if (this.curTool.getDisplayObject()) {
+                this.stage.addChild(this.curTool.getDisplayObject());
+            }
 
             this.stage.update();
         }

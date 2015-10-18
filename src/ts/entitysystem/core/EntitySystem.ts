@@ -8,6 +8,7 @@ module entityframework
     /**
      * Contains a collection of Entities and other meta data about them.
      */
+    @framework.ContextKey("entityframework.EntitySystem")
     export class EntitySystem extends framework.observe.Observable
     {
         @observe.Object()
