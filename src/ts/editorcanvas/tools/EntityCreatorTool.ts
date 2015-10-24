@@ -8,15 +8,20 @@ module editorcanvas.tools {
         private es : entityframework.EntitySystem;
         private entity : entityframework.Entity;
         private entityId : string;
+        private context : framework.Context;
 
-        constructor(es : entityframework.EntitySystem, entity : entityframework.Entity) {
+        constructor(es : entityframework.EntitySystem, entity : entityframework.Entity, context : framework.Context) {
             this.es = es;
             this.entity = entity;
+            this.context = context;
             this.entityId = this.es.nextKey();
         }
 
         execute() {
             this.es.addEntity(this.entityId, this.entity);
+            var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
+            selectedEntity.entityKey = this.entityId;
+            this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
         }
 
         undo() {
@@ -44,11 +49,12 @@ module editorcanvas.tools {
             physComp.position.x = mousePos.x;
             physComp.position.y = mousePos.y;
 
-            drawComp.topDrawable.addDrawable(
-                new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "Rect1"));
+            //drawComp.topDrawable.addDrawable(
+            //    new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "Rect1"));
             collisionComp.info.dimension.x = 15;
             collisionComp.info.dimension.y = 15;
-            this.context.commandQueue.pushCommand(new AddEntityCommand(this.entitySystem, rectEntity));
+            this.context.commandQueue.pushCommand(
+                new AddEntityCommand(this.entitySystem, rectEntity, this.context));
         }
 
     }

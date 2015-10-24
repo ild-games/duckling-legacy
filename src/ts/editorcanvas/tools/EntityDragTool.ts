@@ -45,17 +45,15 @@ module editorcanvas.tools {
             this.entitySystem.forEach((entity : entityframework.Entity, key : string) => {
                 var positionComp = entity.getComponent<comp.PositionComponent>("position");
                 var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (positionComp && drawable) {
+                if (positionComp && drawable && drawable.topDrawable) {
                     var position = positionComp.position;
-                    drawable.topDrawable.forEach((obj) => {
-                        if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
-                            this.moveCommand = new MoveEntityCommand(entity, position, mousePos);
-                            var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
-                            selectedEntity.entityKey = key;
-                            this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
-                            return;
-                        }
-                    });
+                    var contains = drawable.topDrawable.contains(mousePos, position);
+                    if (contains) {
+                        this.moveCommand = new MoveEntityCommand(entity, position, mousePos);
+                        var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
+                        selectedEntity.entityKey = key;
+                        this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
+                    }
                 }
             });
             if (this.moveCommand) {

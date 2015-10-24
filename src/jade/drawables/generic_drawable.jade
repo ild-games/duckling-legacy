@@ -1,0 +1,23 @@
+include ../mixins/coupled_form_groups
+
+block drawable_label
+
+label Render Priority
+div
+    input.form-control(type="text" placeholder="Render Priority" rv-value="data.renderPriority")
+br
+
+label Rotation
+div
+    input.form-control(type="text" placeholder="Rotation" rv-value="data.rotation")
+br
+
+label Position Offset
++x_y_form_group("Position Offset X", "Position Offset Y", "data.positionOffset.x", "data.positionOffset.y")
+br
+
+label Scale
++x_y_form_group("Scale X", "Scale Y", "data.scale.x", "data.scale.y")
+br
+
+block specific_drawable

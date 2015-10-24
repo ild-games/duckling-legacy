@@ -173,7 +173,7 @@ module.exports = function(grunt) {
                 tasks: ['typescript']
             },
             jade : {
-                files: ['src/index.jade', 'src/jade/**/.jade'],
+                files: ['src/index.jade', 'src/jade/**/*.jade'],
                 tasks: ['jade']
             },
             styles : {

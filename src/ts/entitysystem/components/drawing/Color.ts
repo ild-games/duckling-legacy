@@ -20,5 +20,9 @@ module entityframework.components.drawing {
             this.b = b;
             this.a = a;
         }
+
+        rgbaStringFormat() : string {
+            return "rgba(" + this.r + "," + this.g + "," + this.b + "," + (this.a / 255) + ")";
+        }
     }
 }

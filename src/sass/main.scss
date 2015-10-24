@@ -109,6 +109,14 @@ div {
   right: 0;
 }
 
+div.container-sel-drawable-vm {
+    border: 1px solid #bdbdbd;
+    background-color: white;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
 
 
 .canvas-view {
@@ -237,6 +245,14 @@ div {
   @include input-group-addon(35)
 }
 
+.r-g-b-a-input-group {
+  @include input-group-addon(36)
+}
+
+.form-group {
+    margin-bottom: 0px;
+}
+
 /* Form Group UI improvements */
 div.form-group .input-group:first-child .form-control:last-child {
   border-bottom: 0;
@@ -282,7 +298,6 @@ div.form-group input:focus {
 }
 
 .associated-form-element {
-  margin-bottom: 5px;
 }
 
 .input-group-picker {
@@ -307,5 +322,6 @@ div.form-group input:focus {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
 }
+
 
 @import '_splash_screen';

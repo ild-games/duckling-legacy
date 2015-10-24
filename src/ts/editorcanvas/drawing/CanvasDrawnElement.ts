@@ -6,7 +6,6 @@ module editorcanvas.drawing {
         /**
          * Return an element that can be rendered on a stage.
          */
-        getDrawable() : createjs.DisplayObject;
+        getDrawable(position : math.Vector) : createjs.DisplayObject;
     }
 }
-

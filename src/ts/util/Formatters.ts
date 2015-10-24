@@ -16,4 +16,22 @@ module util.formatters {
         }
         return words.join(' ');
     }
+
+    /**
+     * Produces a map of enum names to enum values to use in the select controls.
+     *
+     * @param enumType The enum object to get the values from.
+     *
+     * @returns Maps the enum entries to their respective number value.
+     */
+    export function valuesFromEnum(enumType) : any {
+        var values = {};
+        for (var val in enumType) {
+            if (!isNaN(val)) {
+                values[enumType[val]] = Number(val);
+            }
+        }
+        return values;
+    }
+
 }

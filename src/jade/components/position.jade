@@ -1,18 +1,7 @@
-form
-    label Position
-    div.form-group
-        div.input-group
-            div.input-group-addon.x-y-input-group X
-            input.form-control(type="text" placeholder="X Position" rv-value="data.position.x")
-        div.input-group
-            div.input-group-addon.x-y-input-group Y
-            input.form-control(type="text" placeholder="Y Position" rv-value="data.position.y")
+include ../mixins/coupled_form_groups
 
-    label Velocity
-    div.form-group
-        div.input-group
-            div.input-group-addon.x-y-input-group X
-            input.form-control(type="text" placeholder="X Velocity" rv-value="data.velocity.x")
-        div.input-group
-            div.input-group-addon.x-y-input-group Y
-            input.form-control(type="text" placeholder="Y Velocity" rv-value="data.velocity.y")
+label Position
++x_y_form_group("X Position", "Y Position", "data.position.x", "data.position.y")
+br
+label Velocity
++x_y_form_group("X Velocity", "Y Velocity", "data.velocity.x", "data.velocity.y")
