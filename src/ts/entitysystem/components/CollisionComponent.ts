@@ -130,7 +130,7 @@ module entityframework.components {
         onViewReady() {
             super.onViewReady();
 
-            var typeVals = this.ValuesFromEnum(CollisionType);
+            var typeVals = util.formatters.valuesFromEnum(CollisionType);
 
             this.collisionTypePicker = new controls.SelectControl<CollisionType>(
                 this,
@@ -168,19 +168,6 @@ module entityframework.components {
                 bodyTypes[external] = BodyType[key];
             }
             return bodyTypes;
-        }
-
-        /**
-         * Produces a map of enum names to enum values to use in the select controls.
-         */
-        private ValuesFromEnum(enumType) : any {
-            var values = {};
-            for (var val in enumType) {
-                if (!isNaN(val)) {
-                    values[enumType[val]] = Number(val);
-                }
-            }
-            return values;
         }
 
         private onBodySelected(component : CollisionComponent, bodyType : string) {

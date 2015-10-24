@@ -12,9 +12,37 @@ module entityframework.components.drawing {
         @observe.Object()
         shape : Shape;
 
-        constructor(shape : entityframework.components.drawing.Shape, key : string) {
+        constructor(key : string, shape? : entityframework.components.drawing.Shape) {
             super(key);
-            this.shape = shape;
+            this.shape = shape || null;
+        }
+
+        getCanvasDisplayObject() : createjs.DisplayObject {
+            return null;
+        }
+    }
+
+    export class ShapeDrawableViewModel extends framework.ViewModel<ShapeDrawable> implements framework.observe.Observer {
+        get viewFile() : string {
+            return 'drawables/shape_drawable';
+        }
+
+        onDataReady() {
+            super.onDataReady();
+            this.data.listenForChanges("data", this);
+        }
+
+        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
+        }
+    }
+
+    export class ShapeDrawableFactory implements DrawableFactory {
+        createFormVM() : framework.ViewModel<any> {
+            return new ShapeDrawableViewModel();
+        }
+
+        createDrawable(key : string) : Drawable {
+            return new ShapeDrawable(key);
         }
     }
 }

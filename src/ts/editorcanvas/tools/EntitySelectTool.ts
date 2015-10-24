@@ -16,16 +16,13 @@ module editorcanvas.tools {
             this.entitySystem.forEach((entity : entityframework.Entity, key : string) => {
                 var positionComp = entity.getComponent<comp.PhysicsComponent>("physics");
                 var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (positionComp && drawable) {
+                if (positionComp && drawable && drawable.topDrawable) {
                     var position = positionComp.info.position;
-                    drawable.topDrawable.forEach((obj) => {
-                        if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
-                            var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
-                            selectedEntity.entityKey = key;
-                            this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
-                            return;
-                        }
-                    });
+                    if (drawable.topDrawable.getBounds().contains(mousePos, position)) {
+                        var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
+                        selectedEntity.entityKey = key;
+                        this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
+                    }
                 }
             });
         }

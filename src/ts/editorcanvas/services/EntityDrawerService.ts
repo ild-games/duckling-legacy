@@ -35,13 +35,14 @@ module editorcanvas.services {
             var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
-            if (drawComp && posComp) {
-                drawComp.topDrawable.forEach((drawable) => {
-                    var rect : drawing.Rectangle = this.makeCanvasRectangle(
-                        posComp,
-                        <draw.RectangleShape>(<draw.ShapeDrawable>(drawable)).shape);
-                    container.addChild(rect.getDrawable());
-                });
+            if (drawComp && posComp && drawComp.topDrawable) {
+                container.addChild(drawComp.topDrawable.getCanvasDisplayObject());
+                //drawComp.topDrawable.forEach((drawable) => {
+                //    var rect : drawing.Rectangle = this.makeCanvasRectangle(
+                //        posComp,
+                //        <draw.RectangleShape>(<draw.ShapeDrawable>(drawable)).shape);
+                //    container.addChild(rect.getDrawable());
+                //});
             }
 
             if (container.children.length > 0) {

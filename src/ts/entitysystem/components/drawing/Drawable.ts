@@ -33,5 +33,13 @@ module entityframework.components.drawing {
             super();
             this.key = key;
         }
+
+        getCanvasDisplayObject() : createjs.DisplayObject {
+            throw new Error("This method is abstract");
+        }
+
+        getBounds() : drawing.Shape {
+            throw new Error("This method is abstract");
+        }
     }
 }

@@ -108,7 +108,7 @@ module util.serialize {
             return rootTypedObject;
         } else if (types.isArray(plainObjectTree)) {
             rootTypedObject = [];
-        } else if (plainObjectTree[JSON_TYPE_KEY]) {
+        } else if (plainObjectTree && plainObjectTree[JSON_TYPE_KEY]) {
             rootTypedObject = new (getClassForName(plainObjectTree[JSON_TYPE_KEY]));
         } else if (types.isObject(plainObjectTree)) {
             rootTypedObject = {};
