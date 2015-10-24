@@ -36,7 +36,7 @@ module editorcanvas.services {
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
             if (drawComp && posComp) {
-                drawComp.drawables.forEach((drawable, key) => {
+                drawComp.topDrawable.forEach((drawable) => {
                     var rect : drawing.Rectangle = this.makeCanvasRectangle(
                         posComp,
                         <draw.RectangleShape>(<draw.ShapeDrawable>(drawable)).shape);
@@ -73,13 +73,13 @@ module editorcanvas.services {
 
                 var color = "#000000";
                 switch (collisionComp.bodyType) {
-                    case entityframework.components.CollisionBodyType.None:
+                    case comp.BodyType.NONE:
                         color = "#0000ff";
                         break;
-                    case entityframework.components.CollisionBodyType.Environment:
+                    case comp.BodyType.ENVIRONMENT:
                         color = "#009900";
                         break;
-                    case entityframework.components.CollisionBodyType.Solid:
+                    case comp.BodyType.SOLID:
                         color = "#ff0000";
                         break;
                 }

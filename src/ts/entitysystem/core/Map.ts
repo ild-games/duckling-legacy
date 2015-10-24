@@ -19,6 +19,7 @@ module entityframework.map {
      * Represents the contents of a map file.
      */
     export interface GameMap {
+        key : string,
         assets : Asset[];
         entities : string[];
         systems : {[systemName : string]: System};
@@ -28,11 +29,13 @@ module entityframework.map {
      * GameMap is used to create a map for serializing.
      */
     export class Map implements GameMap {
+        key : string;
         assets : Asset[];
         entities : string[];
         systems : {[systemName : string]: System};
 
         constructor() {
+            this.key = "EditorTestMap";
             this.assets = [];
             this.entities = [];
             this.systems = {};

@@ -29,7 +29,7 @@ module editorcanvas {
             this.createTool = new editorcanvas.tools.EntityCreatorTool();
             this.moveTool = new editorcanvas.tools.EntityDragTool();
             this.selectTool = new editorcanvas.tools.EntitySelectTool();
-            this.curTool = this.createTool;
+            this.curTool = this.selectTool;
         }
 
         private changeTool() {
@@ -65,11 +65,11 @@ module editorcanvas {
         }
 
         private save() {
-            this._systemLoader.saveMap("testmap", this.data);
+            this._systemLoader.saveMap("EditorTestMap", this.data);
         }
 
         private load() {
-            this._systemLoader.loadMap("testmap", this.data.getEmptyClone())
+            this._systemLoader.loadMap("EditorTestMap", this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
                 });
@@ -81,6 +81,15 @@ module editorcanvas {
             this.data.move(newData);
             this.clear();
             this.redrawCanvas();
+
+            /* temp default camera */
+            if (!this.data.getEntity("screenCam")) {
+                var screenCamEntity = new entityframework.Entity();
+                screenCamEntity.addComponent("camera",
+                    new entityframework.components.CameraComponent(new math.Vector(800, 600), 1, 0, true));
+                this.data.addEntity("screenCam", screenCamEntity);
+            }
+
         }
 
         onViewReady() {
@@ -100,6 +109,7 @@ module editorcanvas {
             this.bindTools();
             this.subscribeToolEvents();
             $(this.findById("toolSelect")).change(() => this.changeTool());
+
             this.clear();
             this.load();
         }
