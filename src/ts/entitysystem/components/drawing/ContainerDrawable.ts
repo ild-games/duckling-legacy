@@ -122,7 +122,7 @@ module entityframework.components.drawing {
 
         private addSelectedDrawableVM(drawable : Drawable) {
             this.addChildView(
-                "drawableVM",
+                "selDrawableVM",
                 new RectangleShapeViewModel(),
                 drawable);
         }

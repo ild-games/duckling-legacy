@@ -60,11 +60,14 @@ module entityframework.components.drawing {
 
         private addDrawable() {
             $(this.findById("divDrawableType")).addClass("gone");
-            this.data.topDrawable = DrawableTypeToFactory[this.drawableTypePicker.value].createDrawable("TODO change");
-            this.addTopDrawableVM(DrawableTypeToFactory[this.drawableTypePicker.value]);
+            var drawableVM = DrawableTypeToFactory[this.drawableTypePicker.value];
+            if (drawableVM) {
+                this.data.topDrawable = drawableVM.createDrawable("topDrawable");
+                this.addTopDrawableVM(drawableVM);
+            }
         }
 
-        private addTopDrawableVM(drawableFactory : DrawableFactory) {
+        private addTopDrawableVM(drawableFactory : framework.VMFactory) {
             if (this.data.topDrawable) {
                 this.addChildView(
                     "drawableVM",

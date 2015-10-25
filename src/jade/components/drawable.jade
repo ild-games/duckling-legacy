@@ -1,11 +1,12 @@
 include ../mixins/select_control
 
-label Drawable: 
-div.associated-form-element.form-group.input-group.gone(id=this.id("divDrawableType"), role="group")
-    +select(this.id("selDrawableType"), "Drawable Type", "form-element input-group-picker")
-    button.btn.btn-success.no-left-radius(id=this.id("btnAddDrawable"), type="button", rv-command-add-drawable)
-        span &nbsp;
-        i.fa.fa-plus
-        span &nbsp;
+div.gone(id=this.id("divDrawableType"))
+    label Drawable
+    div.associated-form-element.form-group.input-group(role="group")
+        +select(this.id("selDrawableType"), "Drawable Type", "form-element input-group-picker")
+        button.btn.btn-success.no-left-radius(id=this.id("btnAddDrawable"), type="button", rv-command-add-drawable)
+            span &nbsp;
+            i.fa.fa-plus
+            span &nbsp;
         
 div(id=this.id("drawableVM"))

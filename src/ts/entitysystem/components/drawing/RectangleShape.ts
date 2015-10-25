@@ -29,7 +29,17 @@ module entityframework.components.drawing {
 
     export class RectangleShapeViewModel extends framework.ViewModel<RectangleShape> {
         get viewFile() : string {
-            return "drawables/rectangle_drawable";
+            return "drawables/rectangle_shape";
+        }
+    }
+
+    export class RectangleShapeFactory implements ShapeFactory {
+        createFormVM() : framework.ViewModel<any> {
+            return new RectangleShapeViewModel();
+        }
+
+        createShape() : Shape {
+            return new RectangleShape();
         }
     }
 }

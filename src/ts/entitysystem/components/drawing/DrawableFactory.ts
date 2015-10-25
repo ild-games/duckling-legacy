@@ -1,7 +1,5 @@
 module entityframework.components.drawing {
-    export interface DrawableFactory {
-        createFormVM() : framework.ViewModel<any>;
-
+    export interface DrawableFactory extends framework.VMFactory {
         createDrawable(key : string) : Drawable;
     }
 }
