@@ -10,17 +10,17 @@ module framework.observe {
     @util.serialize.HasCustomSerializer
     export class ObservableMap<T extends Observable> extends Observable implements CustomSerializer {
         private _data : { [key:string]: T} = {};
-        private valueConstructor : any;
+        private valueFactory : Function;
 
         /**
          * Produce an empty ObservableMap.
-         * @param valueConstructor A constructor that can be used to initialize one
+         * @param valueFactory A function that can be used to initialize one
          * of the objects mapped to. Used during the deserialization process to
          * produce objects of the correct type.
          */
-        constructor(valueConstructor? : Function) {
+        constructor(valueFactory? : Function) {
             super();
-            this.valueConstructor = valueConstructor;
+            this.valueFactory = valueFactory;
         }
 
         /**
@@ -92,8 +92,8 @@ module framework.observe {
         fromJSON(object):any {
             var child;
             for (var key in object) {
-                if (this.valueConstructor) {
-                    child = serialize.buildTypesFromObjects(object[key],new this.valueConstructor());
+                if (this.valueFactory) {
+                    child = serialize.buildTypesFromObjects(object[key], this.valueFactory());
                 } else {
                     child = serialize.buildTypesFromObjects(object[key]);
                 }

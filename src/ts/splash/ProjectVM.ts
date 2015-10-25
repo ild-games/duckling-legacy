@@ -28,7 +28,7 @@ module splashscreen {
 
         private getEmptyEntityFramework() {
             var es = new entityframework.EntitySystem();
-            es.addComponentType(new components.PhysicsComponentFactory());
+            es.addComponentType(new components.PositionComponentFactory());
             es.addComponentType(new components.drawing.DrawableComponentFactory());
             es.addComponentType(new components.CollisionComponentFactory());
             es.addComponentType(new components.CameraComponentFactory());

@@ -14,10 +14,10 @@ module editorcanvas.tools {
 
         private selectEntity(mousePos : math.Vector) {
             this.entitySystem.forEach((entity : entityframework.Entity, key : string) => {
-                var positionComp = entity.getComponent<comp.PhysicsComponent>("physics");
+                var positionComp = entity.getComponent<comp.PositionComponent>("position");
                 var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
                 if (positionComp && drawable) {
-                    var position = positionComp.info.position;
+                    var position = positionComp.position;
                     drawable.topDrawable.forEach((obj) => {
                         if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
                             var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");

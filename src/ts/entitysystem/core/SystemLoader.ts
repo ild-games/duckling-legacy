@@ -53,6 +53,8 @@ module entityframework {
         saveMap(mapName : string, system : EntitySystem) : Promise<util.SaveResult> {
             var saveMap:map.GameMap = new map.Map();
 
+            saveMap.key = mapName;
+
             system.forEachType(function (factory : ComponentFactory, key : string) {
                 saveMap.systems[key] = {components : new ObservableMap()};
             });
@@ -73,13 +75,15 @@ module entityframework {
         private getEmptyMap(emptySystem : EntitySystem) {
             var systems = {};
             emptySystem.forEachType(function(factory : ComponentFactory) {
-                systems[factory.name] = {};
-                if (factory.componentConstructor) {
-                    systems[factory.name].components =
-                        new ObservableMap(factory.componentConstructor);
+                var map;
+                if (factory.isPolymorphic) {
+                    map = new ObservableMap();
                 } else {
-                    systems[factory.name].components = new ObservableMap();
+                    map = new ObservableMap(() => factory.createComponent());
                 }
+                systems[factory.name] = {
+                    components : map
+                };
             });
             return {systems : systems};
         }

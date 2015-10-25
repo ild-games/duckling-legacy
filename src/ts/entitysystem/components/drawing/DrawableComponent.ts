@@ -127,10 +127,6 @@ module entityframework.components.drawing {
             return "drawable";
         }
 
-        get componentConstructor() {
-            return DrawableComponent;
-        }
-
         createFormVM():framework.ViewModel<any> {
             return new DrawableViewModel();
         }

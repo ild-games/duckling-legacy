@@ -6,13 +6,15 @@ module framework {
     @ContextKey("Project")
     export class Project {
         private _rootPath : string;
+        private _projectName : string;
 
         /**
          * Create a new project with the given root.
          * @param rootPath The root path of the project.
          */
-        constructor(rootPath : string) {
+        constructor(projectName : string, rootPath : string) {
             this._rootPath = rootPath;
+            this._projectName = projectName;
         }
 
         /**
@@ -20,12 +22,16 @@ module framework {
          * @param mapName Name of the map that a path is needed for.
          */
         getMapPath(mapName : string) {
-            return util.path.join(this.getRootPath(),"Maps",mapName + ".map");
+            return util.path.join(this.rootPath,"Maps",mapName + ".map");
         }
 
         //region Getters and Setters
-        getRootPath() {
+        get rootPath() {
             return this._rootPath;
+        }
+
+        get projectName() {
+            return this._projectName;
         }
         //endregion
     }

@@ -65,11 +65,11 @@ module editorcanvas {
         }
 
         private save() {
-            this._systemLoader.saveMap("EditorTestMap", this.data);
+            this._systemLoader.saveMap(this._project.projectName, this.data);
         }
 
         private load() {
-            this._systemLoader.loadMap("EditorTestMap", this.data.getEmptyClone())
+            this._systemLoader.loadMap(this._project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
                 });
@@ -89,7 +89,6 @@ module editorcanvas {
                     new entityframework.components.CameraComponent(new math.Vector(800, 600), 1, 0, true));
                 this.data.addEntity("screenCam", screenCamEntity);
             }
-
         }
 
         onViewReady() {
