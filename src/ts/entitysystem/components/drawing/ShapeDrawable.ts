@@ -22,6 +22,10 @@ module entityframework.components.drawing {
         getCanvasDisplayObject() : createjs.DisplayObject {
             return null;
         }
+
+        get type() : DrawableType {
+            return DrawableType.Shape;
+        }
     }
 
     export enum ShapeType {

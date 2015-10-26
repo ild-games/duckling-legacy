@@ -1,5 +1,6 @@
+///<reference path="./Drawable.ts"/>
+///<reference path="./ShapeDrawable.ts"/>
 ///<reference path="../../../util/JsonLoader.ts"/>
-///<reference path="Drawable.ts"/>
 module entityframework.components.drawing {
 
     import observe = framework.observe;
@@ -49,10 +50,15 @@ module entityframework.components.drawing {
         getCanvasDisplayObject() : createjs.DisplayObject {
             return null;
         }
+
+        get type() : DrawableType {
+            return DrawableType.Container;
+        }
     }
 
-    export class ContainerDrawableViewModel extends framework.ViewModel<ContainerDrawable> implements framework.observe.Observer {
+    export class ContainerDrawableViewModel extends BaseDrawableViewModel<ContainerDrawable> implements framework.observe.Observer {
         private drawablePicker : controls.SelectControl<Drawable>
+        private drawableTypeControl : controls.DrawableTypeControl;
 
         get viewFile() : string {
             return 'drawables/container_drawable';
@@ -61,13 +67,22 @@ module entityframework.components.drawing {
         constructor() {
             super();
             this.registerCallback("delete-drawable", this.deleteSelectedDrawable);
-            this.registerCallback("add-drawable", this.addDrawable);
         }
 
         onViewReady() {
             super.onViewReady();
+
+            this.drawableTypeControl = new controls.DrawableTypeControl(
+                this,
+                "selDrawableType",
+                this.addDrawable);
             this.drawablePicker = new controls.SelectControl<Drawable>(this, "drawableSelect", this.getDrawables(), "");
             this.drawablePicker.callback = (drawable) => this.addSelectedDrawableVM(drawable);
+
+            if (this.isWhite) {
+                var vmJqueryObject = $(this.findById("containerSelDrawableVM"));
+                vmJqueryObject.css("background-color", "#eaeaea");
+            }
         }
 
         onDataReady() {
@@ -82,13 +97,13 @@ module entityframework.components.drawing {
         }
 
         onDataObjChildModified(event : framework.observe.DataChangeEvent) {
-            if (event.child.child) {
-                switch (event.child.child.name) {
+            if (event.child) {
+                switch (event.child.name) {
                     case "Removed":
                         this.onDrawableRemoved(this.drawablePicker.value);
                         break;
                     case "Added":
-                        this.onDrawableAdded((<Drawable> event.child.child.data).key);
+                        this.onDrawableAdded((<Drawable> event.child.data).key);
                         break;
                 }
             }
@@ -97,6 +112,7 @@ module entityframework.components.drawing {
         onDrawableRemoved(removedDrawableKey : string) {
             this.removeChildViews();
             this.updateDrawablePicker();
+            $(this.findById("sectionSelDrawableVM")).addClass("gone");
         }
 
         onDrawableAdded(addedDrawableKey : string) {
@@ -105,6 +121,7 @@ module entityframework.components.drawing {
                 this.updateDrawablePicker();
                 this.addSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
                 this.drawablePicker.value = addedDrawableKey;
+                $(this.findById("sectionSelDrawableVM")).removeClass("gone");
             }
         }
 
@@ -116,21 +133,30 @@ module entityframework.components.drawing {
         }
 
         addDrawable() {
-            this._context.commandQueue.pushCommand(
-                new AddDrawableCommand(this.data, this.nextKey()));
+            var drawableFactory = DrawableTypeToFactory[this.drawableTypeControl.pickedDrawable];
+            if (drawableFactory) {
+                var nextKey = this.nextKey(this.drawableTypeControl.pickedDrawable);
+                this._context.commandQueue.pushCommand(
+                    new AddDrawableCommand(
+                        this.data,
+                        nextKey,
+                        drawableFactory.createDrawable(nextKey)));
+            }
         }
 
         private addSelectedDrawableVM(drawable : Drawable) {
+            var drawableVM = DrawableTypeToFactory[DrawableType[drawable.type]].createFormVM();
+            drawableVM.isWhite = !this.isWhite;
             this.addChildView(
                 "selDrawableVM",
-                new RectangleShapeViewModel(),
+                drawableVM,
                 drawable);
         }
 
-        private nextKey() : string {
+        private nextKey(drawableType : string) : string {
             var key = 0;
-            while (this.data.getDrawable("Rect" + key)) key++;
-            return "Rect" + key;
+            while (this.data.getDrawable(drawableType + key)) key++;
+            return drawableType + key;
         }
 
         private updateDrawablePicker() {
@@ -171,15 +197,16 @@ module entityframework.components.drawing {
     class AddDrawableCommand implements framework.command.Command {
         private _containerDrawable: ContainerDrawable;
         private _drawableName: string;
+        private _drawableToAdd : Drawable;
 
-        constructor(containerDrawable : ContainerDrawable, drawableName : string) {
+        constructor(containerDrawable : ContainerDrawable, drawableName : string, drawableToAdd : Drawable) {
             this._containerDrawable = containerDrawable;
             this._drawableName = drawableName;
+            this._drawableToAdd = drawableToAdd;
         }
 
         execute() {
-            this._containerDrawable.addDrawable(
-                new ShapeDrawable(this._drawableName, new RectangleShape(new math.Vector(5, 5))));
+            this._containerDrawable.addDrawable(this._drawableToAdd);
         }
 
         undo() {
@@ -196,4 +223,9 @@ module entityframework.components.drawing {
             return new ContainerDrawable(key);
         }
     }
+
+    export var DrawableTypeToFactory = {
+        Container: new ContainerDrawableFactory(),
+        Shape: new ShapeDrawableFactory()
+    };
 }

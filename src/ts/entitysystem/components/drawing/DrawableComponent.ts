@@ -1,6 +1,4 @@
 ///<reference path="../../core/Component.ts"/>
-/// <reference path="./ContainerDrawable.ts"/>
-/// <reference path="./ShapeDrawable.ts"/>
 
 module entityframework.components.drawing {
 
@@ -15,18 +13,8 @@ module entityframework.components.drawing {
         topDrawable : drawing.Drawable = null;
     }
 
-    export enum DrawableType {
-        Container,
-        Shape
-    }
-
-    var DrawableTypeToFactory = {
-        Container: new ContainerDrawableFactory(),
-        Shape: new ShapeDrawableFactory()
-    };
-
     class DrawableViewModel extends framework.ViewModel<DrawableComponent> implements framework.observe.Observer {
-        private drawableTypePicker : controls.SelectControl<DrawableType>;
+        private drawableTypeControl : controls.DrawableTypeControl;
 
         get viewFile() : string {
             return 'components/drawable';
@@ -34,7 +22,6 @@ module entityframework.components.drawing {
 
         constructor() {
             super();
-            this.registerCallback("add-drawable", this.addDrawable);
         }
 
         onDataReady() {
@@ -44,11 +31,10 @@ module entityframework.components.drawing {
 
         onViewReady() {
             super.onViewReady();
-            this.drawableTypePicker = new controls.SelectControl<DrawableType>(
+            this.drawableTypeControl = new controls.DrawableTypeControl(
                 this,
                 "selDrawableType",
-                util.formatters.valuesFromEnum(DrawableType),
-                DrawableType[DrawableType.Container]);
+                this.addDrawable);
 
             if (!this.data.topDrawable) {
                 $(this.findById("divDrawableType")).removeClass("gone");
@@ -60,10 +46,10 @@ module entityframework.components.drawing {
 
         private addDrawable() {
             $(this.findById("divDrawableType")).addClass("gone");
-            var drawableVM = DrawableTypeToFactory[this.drawableTypePicker.value];
-            if (drawableVM) {
-                this.data.topDrawable = drawableVM.createDrawable("topDrawable");
-                this.addTopDrawableVM(drawableVM);
+            var drawableFactory = DrawableTypeToFactory[this.drawableTypeControl.pickedDrawable];
+            if (drawableFactory) {
+                this.data.topDrawable = drawableFactory.createDrawable("topDrawable");
+                this.addTopDrawableVM(drawableFactory);
             }
         }
 

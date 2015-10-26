@@ -109,6 +109,14 @@ div {
   right: 0;
 }
 
+div.container-sel-drawable-vm {
+    border: 1px solid #bdbdbd;
+    background-color: white;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
 
 
 .canvas-view {
@@ -307,5 +315,6 @@ div.form-group input:focus {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
 }
+
 
 @import '_splash_screen';

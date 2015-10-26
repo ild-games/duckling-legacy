@@ -2,6 +2,9 @@ include ../mixins/select_control
 
 extends ./generic_drawable.jade
 
+block drawable_label
+    h4 Shape Drawable
+
 block specific_drawable
     div.gone(id=this.id("divShapeType"))
         label Shape

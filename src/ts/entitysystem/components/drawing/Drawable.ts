@@ -4,6 +4,11 @@ module entityframework.components.drawing {
     import serialize = util.serialize;
     import observe = framework.observe;
 
+    export enum DrawableType {
+        Container,
+        Shape
+    }
+
     /**
      * Represents an object that can be drawn in the game.
      */
@@ -39,6 +44,10 @@ module entityframework.components.drawing {
         }
 
         getBounds() : drawing.Shape {
+            throw new Error("This method is abstract");
+        }
+
+        get type() : DrawableType {
             throw new Error("This method is abstract");
         }
     }
