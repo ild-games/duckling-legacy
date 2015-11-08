@@ -245,6 +245,14 @@ div.container-sel-drawable-vm {
   @include input-group-addon(35)
 }
 
+.r-g-b-a-input-group {
+  @include input-group-addon(36)
+}
+
+.form-group {
+    margin-bottom: 0px;
+}
+
 /* Form Group UI improvements */
 div.form-group .input-group:first-child .form-control:last-child {
   border-bottom: 0;
@@ -290,7 +298,6 @@ div.form-group input:focus {
 }
 
 .associated-form-element {
-  margin-bottom: 5px;
 }
 
 .input-group-picker {

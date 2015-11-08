@@ -36,13 +36,7 @@ module editorcanvas.services {
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
             if (drawComp && posComp && drawComp.topDrawable) {
-                container.addChild(drawComp.topDrawable.getCanvasDisplayObject());
-                //drawComp.topDrawable.forEach((drawable) => {
-                //    var rect : drawing.Rectangle = this.makeCanvasRectangle(
-                //        posComp,
-                //        <draw.RectangleShape>(<draw.ShapeDrawable>(drawable)).shape);
-                //    container.addChild(rect.getDrawable());
-                //});
+                container.addChild(drawComp.topDrawable.getCanvasDisplayObject(posComp.info.position));
             }
 
             if (container.children.length > 0) {
@@ -52,26 +46,10 @@ module editorcanvas.services {
             }
         }
 
-        private makeCanvasRectangle(posComp : comp.PhysicsComponent, rect : draw.RectangleShape) : drawing.Rectangle {
-            var leftPoint = new drawing.CanvasPoint(
-                posComp.info.position.x - (rect.dimension.x / 2),
-                posComp.info.position.y - (rect.dimension.y /2));
-            var rightPoint = new drawing.CanvasPoint(
-                leftPoint.x + rect.dimension.x, leftPoint.y + rect.dimension.y);
-
-            return new drawing.Rectangle(leftPoint, rightPoint);
-        }
-
         private getCollisionDisplayable(entity :entityframework.Entity) {
             var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
             var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
             if (collisionComp && posComp) {
-                var leftPoint = new drawing.CanvasPoint(
-                    posComp.info.position.x - (collisionComp.info.dimension.x / 2),
-                    posComp.info.position.y - (collisionComp.info.dimension.y / 2));
-                var rightPoint = new drawing.CanvasPoint(
-                    leftPoint.x + collisionComp.info.dimension.x, leftPoint.y + collisionComp.info.dimension.y);
-
                 var color = "#000000";
                 switch (collisionComp.bodyType) {
                     case comp.BodyType.NONE:
@@ -85,8 +63,8 @@ module editorcanvas.services {
                         break;
                 }
 
-                var boundingBox = new drawing.BoundingBox(leftPoint, rightPoint, color);
-                return boundingBox.getDrawable()
+                var boundingBox = new drawing.BoundingBox(collisionComp.info.dimension, color);
+                return boundingBox.getDrawable(posComp.info.position);
             }
 
             return null;

@@ -38,6 +38,8 @@ module entityframework.components.drawing {
 
             if (!this.data.topDrawable) {
                 $(this.findById("divDrawableType")).removeClass("gone");
+            } else {
+                this.addTopDrawableVM(DrawableTypeToFactory[DrawableType[this.data.topDrawable.type]]);
             }
         }
 

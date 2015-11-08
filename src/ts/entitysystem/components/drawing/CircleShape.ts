@@ -7,7 +7,7 @@ module entityframework.components.drawing {
     import observe = framework.observe;
 
     @serialize.ProvideClass(CircleShape, "sf::CircleShape")
-    export class CircleShape extends Shape {
+    export class CircleShape extends Shape implements editorcanvas.drawing.CanvasDrawnElement {
         @observe.Primitive(Number)
         radius : number;
 
@@ -19,6 +19,16 @@ module entityframework.components.drawing {
         public contains(point : math.Vector, shapePosition : math.Vector) {
             var squareDist = Math.pow(shapePosition.x - point.x, 2) + Math.pow(shapePosition.y - point.y, 2);
             return squareDist <= Math.pow(this.radius, 2);
+        }
+
+        getDrawable(position : math.Vector) {
+            var easelCircle = new createjs.Shape();
+            easelCircle.graphics.beginFill(this.fillColor.rgbaStringFormat()).drawCircle(position.x, position.y, this.radius);
+            return easelCircle;
+        }
+
+        get type() : ShapeType {
+            return ShapeType.Circle;
         }
     }
 

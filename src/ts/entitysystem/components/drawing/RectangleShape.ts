@@ -10,7 +10,7 @@ module entityframework.components.drawing {
      * A shape that represents a rectangle.
      */
     @serialize.ProvideClass(RectangleShape, "sf::RectangleShape")
-    export class RectangleShape extends Shape {
+    export class RectangleShape extends Shape implements editorcanvas.drawing.CanvasDrawnElement {
         @observe.Object()
         dimension : math.Vector;
 
@@ -19,11 +19,26 @@ module entityframework.components.drawing {
             this.dimension = dimension || new math.Vector();
         }
 
-        public contains(point : math.Vector, shapePosition : math.Vector) {
-            return  point.x > shapePosition.x - (this.dimension.x / 2) &&
-                    point.x < shapePosition.x + (this.dimension.x / 2) &&
-                    point.y > shapePosition.y - (this.dimension.y / 2) &&
-                    point.y < shapePosition.y + (this.dimension.y / 2);
+        contains(point : math.Vector, shapePosition : math.Vector) {
+            //return  point.x > shapePosition.x - (this.dimension.x / 2) &&
+            //        point.x < shapePosition.x + (this.dimension.x / 2) &&
+            //        point.y > shapePosition.y - (this.dimension.y / 2) &&
+            //        point.y < shapePosition.y + (this.dimension.y / 2);
+        }
+
+        getDrawable(position : math.Vector) {
+            var rec = new createjs.Shape();
+            rec.graphics.beginFill(this.fillColor.rgbaStringFormat()).drawRect(
+                position.x - (this.dimension.x / 2),
+                position.y - (this.dimension.y / 2),
+                this.dimension.x,
+                this.dimension.y);
+            return rec;
+        }
+
+
+        get type() : ShapeType {
+            return ShapeType.Rectangle;
         }
     }
 

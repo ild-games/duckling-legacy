@@ -8,10 +8,25 @@ module entityframework.components.drawing {
      */
     export class Shape extends framework.observe.Observable {
         @observe.Object()
-        fillColor : Color = new Color(0, 0, 0, 255);
+        fillColor : Color;
 
-        public contains(point : math.Vector, shapePosition : math.Vector) {
+        constructor(fillColor? : Color) {
+            super();
+            this.fillColor = fillColor || new Color(0, 0, 0, 255);
+        }
+
+        getDrawable(position : math.Vector) : createjs.DisplayObject {
             throw new Error("This method is abstract");
+        }
+
+        @serialize.Ignore
+        get type() : ShapeType {
+            throw new Error("This method is abstract");
+        }
+
+        @serialize.Ignore
+        get factory() : ShapeFactory {
+            return ShapeTypeToFactory[ShapeType[this.type]];
         }
     }
 }

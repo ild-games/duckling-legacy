@@ -47,7 +47,8 @@ module editorcanvas.tools {
                 var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
                 if (positionComp && drawable && drawable.topDrawable) {
                     var position = positionComp.info.position;
-                    if (drawable.topDrawable.getBounds().contains(mousePos, position)) {
+                    var contains = drawable.topDrawable.contains(mousePos, position);
+                    if (contains) {
                         this.moveCommand = new MoveEntityCommand(entity, position, mousePos);
                         var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
                         selectedEntity.entityKey = key;

@@ -1,0 +1,61 @@
+mixin form_group(addonClass, addons)
+    div.form-group
+        each addon in addons
+            div.input-group
+                div.input-group-addon(class=addonClass)= addon.label
+                input.form-control(type="text" placeholder=addon.placeholder rv-value=addon.rvValue)
+        
+mixin x_y_form_group(xPlaceholder, yPlaceholder, xRvValue, yRvValue)
+    +form_group("x-y-input-group", 
+                [ 
+                    { 
+                        label: "X",
+                        placeholder: xPlaceholder,
+                        rvValue: xRvValue
+                    },
+                    { 
+                        label: "Y",
+                        placeholder: yPlaceholder,
+                        rvValue: yRvValue
+                    }
+                ])
+
+mixin width_height_form_group(widthPlaceholder, heightPlaceholder, widthRvValue, heightRvValue)
+    +form_group("width-height-input-group", 
+                [ 
+                    { 
+                        label: "Width",
+                        placeholder: widthPlaceholder,
+                        rvValue: widthRvValue
+                    },
+                    { 
+                        label: "Height",
+                        placeholder: heightPlaceholder,
+                        rvValue: heightRvValue
+                    }
+                ])
+
+mixin r_g_b_a_form_group(rPlaceholder, gPlaceholder, bPlaceholder, aPlaceholder, rRvValue, gRvValue, bRvValue, aRvValue)
+    +form_group("r-g-b-a-input-group", 
+                [ 
+                    { 
+                        label: "R",
+                        placeholder: rPlaceholder,
+                        rvValue: rRvValue
+                    },
+                    { 
+                        label: "G",
+                        placeholder: gPlaceholder,
+                        rvValue: gRvValue
+                    },
+                    { 
+                        label: "B",
+                        placeholder: bPlaceholder,
+                        rvValue: bRvValue
+                    },
+                    { 
+                        label: "A",
+                        placeholder: aPlaceholder,
+                        rvValue: aRvValue
+                    }
+                ])

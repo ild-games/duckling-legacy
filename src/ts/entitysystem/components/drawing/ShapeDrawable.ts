@@ -9,7 +9,7 @@ module entityframework.components.drawing {
     /**
      * Represents a shape that can be drawn in the game.
      */
-    @serialize.ProvideClass(Drawable, "ild::ShapeDrawable")
+    @serialize.ProvideClass(ShapeDrawable, "ild::ShapeDrawable")
     export class ShapeDrawable extends Drawable {
         @observe.Object()
         shape : Shape;
@@ -19,8 +19,12 @@ module entityframework.components.drawing {
             this.shape = shape || null;
         }
 
-        getCanvasDisplayObject() : createjs.DisplayObject {
-            return null;
+        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+            var displayShape = null;
+            if (this.shape) {
+                displayShape = this.shape.getDrawable(position);
+            }
+            return displayShape;
         }
 
         get type() : DrawableType {
@@ -33,7 +37,7 @@ module entityframework.components.drawing {
         Circle
     }
 
-    var ShapeTypeToFactory = {
+    export var ShapeTypeToFactory = {
         Rectangle: new RectangleShapeFactory(),
         Circle: new CircleShapeFactory()
     }
@@ -65,6 +69,8 @@ module entityframework.components.drawing {
 
             if (!this.data.shape) {
                 $(this.findById("divShapeType")).removeClass("gone");
+            } else {
+                this.addShapeVM(this.data.shape.factory);
             }
         }
 

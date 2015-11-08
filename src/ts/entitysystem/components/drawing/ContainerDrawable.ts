@@ -9,7 +9,7 @@ module entityframework.components.drawing {
     /**
      * Represents a drawable that can contain a collection of drawables.
      */
-    @serialize.ProvideClass(Drawable, "ild::ContainerDrawable")
+    @serialize.ProvideClass(ContainerDrawable, "ild::ContainerDrawable")
     export class ContainerDrawable extends Drawable {
         @observe.Object()
         private drawables : observe.ObservableArray<Drawable> = new observe.ObservableArray<Drawable>();
@@ -47,8 +47,19 @@ module entityframework.components.drawing {
             this.drawables.forEach(func);
         }
 
-        getCanvasDisplayObject() : createjs.DisplayObject {
-            return null;
+        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+            var container = null;
+            if (this.drawables.length > 0) {
+                container = new createjs.Container();
+                this.forEach((drawable) => {
+                    container.addChild(drawable.getCanvasDisplayObject(position));
+                });
+            }
+            return container;
+        }
+
+        get length() : number {
+            return this.drawables.length;
         }
 
         get type() : DrawableType {
@@ -121,7 +132,6 @@ module entityframework.components.drawing {
                 this.updateDrawablePicker();
                 this.addSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
                 this.drawablePicker.value = addedDrawableKey;
-                $(this.findById("sectionSelDrawableVM")).removeClass("gone");
             }
         }
 
@@ -145,8 +155,9 @@ module entityframework.components.drawing {
         }
 
         private addSelectedDrawableVM(drawable : Drawable) {
-            var drawableVM = DrawableTypeToFactory[DrawableType[drawable.type]].createFormVM();
+            var drawableVM : BaseDrawableViewModel<any> = <BaseDrawableViewModel<any>>drawable.factory.createFormVM();
             drawableVM.isWhite = !this.isWhite;
+            $(this.findById("sectionSelDrawableVM")).removeClass("gone");
             this.addChildView(
                 "selDrawableVM",
                 drawableVM,
