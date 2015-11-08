@@ -76,7 +76,7 @@ module splashscreen {
 
         private openProject(event, project : ProjectModel) {
             this._context.systemWindow.clearFixedSize();
-            var projectModel = new framework.Project(project.path);
+            var projectModel = new framework.Project(project.title, project.path);
             var projectVM = new ProjectVM();
             this.replaceWithView(projectVM, projectModel);
 

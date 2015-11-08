@@ -16,11 +16,11 @@ module editorcanvas.tools {
         }
 
         execute() {
-            this.selectedEntity.getComponent<comp.PhysicsComponent>("physics").info.position = this._endPosition;
+            this.selectedEntity.getComponent<comp.PositionComponent>("position").position = this._endPosition;
         }
 
         undo() {
-            this.selectedEntity.getComponent<comp.PhysicsComponent>("physics").info.position = this.startPosition;
+            this.selectedEntity.getComponent<comp.PositionComponent>("position").position = this.startPosition;
         }
 
         set endPosition(endPosition : math.Vector) {
@@ -43,10 +43,10 @@ module editorcanvas.tools {
         onStageDown(mousePos : math.Vector) {
             this.moveCommand = null;
             this.entitySystem.forEach((entity : entityframework.Entity, key : string) => {
-                var positionComp = entity.getComponent<comp.PhysicsComponent>("physics");
+                var positionComp = entity.getComponent<comp.PositionComponent>("position");
                 var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
                 if (positionComp && drawable) {
-                    var position = positionComp.info.position;
+                    var position = positionComp.position;
                     drawable.topDrawable.forEach((obj) => {
                         if (obj && (<draw.ShapeDrawable>obj).shape.contains(mousePos, position)) {
                             this.moveCommand = new MoveEntityCommand(entity, position, mousePos);

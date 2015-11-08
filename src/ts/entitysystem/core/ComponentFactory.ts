@@ -8,9 +8,10 @@ module entityframework {
         displayName : string;
 
         /**
-         * Property with the component's constructor.  Used during the serialization process.
+         * Property that is used to determine if the component is polymorphic.  Should
+         * only be used for falsy/truey checks.
          */
-        componentConstructor? : Function;
+        isPolymorphic? : boolean;
 
         /**
          * Create a ViewModel that represents a form capable of editing the

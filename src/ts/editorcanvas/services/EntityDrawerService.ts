@@ -32,7 +32,7 @@ module editorcanvas.services {
         private getDrawableDisplayable(entity : entityframework.Entity) {
             var container = new createjs.Container();
 
-            var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
+            var posComp = entity.getComponent<comp.PositionComponent>("position");
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
             if (drawComp && posComp) {
@@ -51,10 +51,10 @@ module editorcanvas.services {
             }
         }
 
-        private makeCanvasRectangle(posComp : comp.PhysicsComponent, rect : draw.RectangleShape) : drawing.Rectangle {
+        private makeCanvasRectangle(posComp : comp.PositionComponent, rect : draw.RectangleShape) : drawing.Rectangle {
             var leftPoint = new drawing.CanvasPoint(
-                posComp.info.position.x - (rect.dimension.x / 2),
-                posComp.info.position.y - (rect.dimension.y /2));
+                posComp.position.x - (rect.dimension.x / 2),
+                posComp.position.y - (rect.dimension.y /2));
             var rightPoint = new drawing.CanvasPoint(
                 leftPoint.x + rect.dimension.x, leftPoint.y + rect.dimension.y);
 
@@ -62,12 +62,12 @@ module editorcanvas.services {
         }
 
         private getCollisionDisplayable(entity :entityframework.Entity) {
-            var posComp = entity.getComponent<comp.PhysicsComponent>("physics");
+            var posComp = entity.getComponent<comp.PositionComponent>("position");
             var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
             if (collisionComp && posComp) {
                 var leftPoint = new drawing.CanvasPoint(
-                    posComp.info.position.x - (collisionComp.info.dimension.x / 2),
-                    posComp.info.position.y - (collisionComp.info.dimension.y / 2));
+                    posComp.position.x - (collisionComp.info.dimension.x / 2),
+                    posComp.position.y - (collisionComp.info.dimension.y / 2));
                 var rightPoint = new drawing.CanvasPoint(
                     leftPoint.x + collisionComp.info.dimension.x, leftPoint.y + collisionComp.info.dimension.y);
 

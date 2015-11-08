@@ -228,10 +228,6 @@ module entityframework.components {
         }
 
         //region Getters and Setters
-        get componentConstructor() {
-            return CollisionComponent;
-        }
-
         get name() {
             return "collision";
         }

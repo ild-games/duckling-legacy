@@ -35,14 +35,14 @@ module editorcanvas.tools {
 
         private createBasicEntity(mousePos : math.Vector) {
             var rectEntity = new entityframework.Entity();
-            var physComp = new comp.PhysicsComponent();
+            var physComp = new comp.PositionComponent();
             var drawComp = new draw.DrawableComponent();
             var collisionComp = new comp.CollisionComponent();
-            rectEntity.addComponent("physics", physComp);
+            rectEntity.addComponent("position", physComp);
             rectEntity.addComponent("drawable", drawComp);
             rectEntity.addComponent("collision", collisionComp);
-            physComp.info.position.x = mousePos.x;
-            physComp.info.position.y = mousePos.y;
+            physComp.position.x = mousePos.x;
+            physComp.position.y = mousePos.y;
 
             drawComp.topDrawable.addDrawable(
                 new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "Rect1"));

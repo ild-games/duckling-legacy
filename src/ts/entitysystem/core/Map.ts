@@ -35,7 +35,6 @@ module entityframework.map {
         systems : {[systemName : string]: System};
 
         constructor() {
-            this.key = "EditorTestMap";
             this.assets = [];
             this.entities = [];
             this.systems = {};
