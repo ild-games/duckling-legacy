@@ -16,11 +16,6 @@ module entityframework.components.drawing {
             this.radius = radius || 0;
         }
 
-        public contains(point : math.Vector, shapePosition : math.Vector) {
-            var squareDist = Math.pow(shapePosition.x - point.x, 2) + Math.pow(shapePosition.y - point.y, 2);
-            return squareDist <= Math.pow(this.radius, 2);
-        }
-
         getDrawable(position : math.Vector) {
             var easelCircle = new createjs.Shape();
             easelCircle.graphics.beginFill(this.fillColor.rgbaStringFormat()).drawCircle(position.x, position.y, this.radius);

@@ -19,13 +19,6 @@ module entityframework.components.drawing {
             this.dimension = dimension || new math.Vector();
         }
 
-        contains(point : math.Vector, shapePosition : math.Vector) {
-            //return  point.x > shapePosition.x - (this.dimension.x / 2) &&
-            //        point.x < shapePosition.x + (this.dimension.x / 2) &&
-            //        point.y > shapePosition.y - (this.dimension.y / 2) &&
-            //        point.y < shapePosition.y + (this.dimension.y / 2);
-        }
-
         getDrawable(position : math.Vector) {
             var rec = new createjs.Shape();
             rec.graphics.beginFill(this.fillColor.rgbaStringFormat()).drawRect(
