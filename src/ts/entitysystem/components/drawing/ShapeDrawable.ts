@@ -30,10 +30,6 @@ module entityframework.components.drawing {
         get type() : DrawableType {
             return DrawableType.Shape;
         }
-
-        get type() : DrawableType {
-            return DrawableType.Shape;
-        }
     }
 
     export enum ShapeType {

@@ -25,16 +25,6 @@ module entityframework.components.drawing {
         get type() : ShapeType {
             return ShapeType.Circle;
         }
-
-        getDrawable(position : math.Vector) {
-            var easelCircle = new createjs.Shape();
-            easelCircle.graphics.beginFill(this.fillColor.rgbaStringFormat()).drawCircle(position.x, position.y, this.radius);
-            return easelCircle;
-        }
-
-        get type() : ShapeType {
-            return ShapeType.Circle;
-        }
     }
 
     export class CircleShapeViewModel extends framework.ViewModel<CircleShape> {
