@@ -58,9 +58,14 @@ module editorcanvas {
             this.stage.removeAllChildren();
             var canvas = <HTMLCanvasElement>this.stage.canvas;
             var background = new createjs.Shape();
+            var originPoint = this.stage.globalToLocal(0, 0);
             background.graphics
                 .beginFill("White")
-                .drawRect(0,0,canvas.width,canvas.height);
+                .drawRect(
+                         originPoint.x,
+                         originPoint.y,
+                         canvas.width,
+                         canvas.height);
             this.stage.addChild(background);
         }
 
@@ -141,6 +146,8 @@ module editorcanvas {
                 this.stage.addChild(this.curTool.getDisplayObject());
             }
 
+            this.stage.x = 10;
+            this.stage.y = 10;
             this.stage.update();
         }
 
