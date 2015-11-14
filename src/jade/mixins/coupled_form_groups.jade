@@ -1,0 +1,61 @@
+mixin form_group(addonClass, addons)
+    div.form-group
+        each addon in addons
+            div.input-group
+                div.input-group-addon(class=addonClass)= addon.label
+                input.form-control(type="text" placeholder=addon.placeholder rv-value=addon.rvValue)
+        
+mixin x_y_control(xPlaceholder, yPlaceholder, xRvValue, yRvValue)
+    +form_group("x-y-input-group", 
+                [ 
+                    { 
+                        label: "X",
+                        placeholder: xPlaceholder,
+                        rvValue: xRvValue
+                    },
+                    { 
+                        label: "Y",
+                        placeholder: yPlaceholder,
+                        rvValue: yRvValue
+                    }
+                ])
+
+mixin width_height_control(widthPlaceholder, heightPlaceholder, widthRvValue, heightRvValue)
+    +form_group("width-height-input-group", 
+                [ 
+                    { 
+                        label: "Width",
+                        placeholder: widthPlaceholder,
+                        rvValue: widthRvValue
+                    },
+                    { 
+                        label: "Height",
+                        placeholder: heightPlaceholder,
+                        rvValue: heightRvValue
+                    }
+                ])
+
+mixin rgba_control(fillColor)
+    +form_group("r-g-b-a-input-group", 
+                [ 
+                    { 
+                        label: "R",
+                        placeholder: "Red",
+                        rvValue: fillColor + ".r"
+                    },
+                    { 
+                        label: "G",
+                        placeholder: "Green",
+                        rvValue: fillColor + ".g"
+                    },
+                    { 
+                        label: "B",
+                        placeholder: "Blue",
+                        rvValue: fillColor + ".b"
+                    },
+                    { 
+                        label: "A",
+                        placeholder: "Alpha",
+                        rvValue: fillColor + ".a"
+                    }
+                ])

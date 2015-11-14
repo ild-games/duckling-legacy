@@ -29,7 +29,7 @@ module editorcanvas {
             this.createTool = new editorcanvas.tools.EntityCreatorTool();
             this.moveTool = new editorcanvas.tools.EntityDragTool();
             this.selectTool = new editorcanvas.tools.EntitySelectTool();
-            this.curTool = this.selectTool;
+            this.curTool = this.createTool;
         }
 
         private changeTool() {

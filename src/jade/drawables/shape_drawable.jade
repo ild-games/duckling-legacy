@@ -1,0 +1,19 @@
+include ../mixins/select_control
+
+extends ./generic_drawable.jade
+
+block drawable_label
+    h4 Shape Drawable
+
+block specific_drawable
+    div.gone(id=this.id("divShapeType"))
+        label Shape
+        div.associated-form-element.form-group.input-group(role="group")
+            +select(this.id("selShapeType"), "Shape Type", "form-element input-group-picker")
+            button.btn.btn-success.no-left-radius(id=this.id("btnAddShape"), type="button", rv-command-add-shape)
+                span &nbsp;
+                i.fa.fa-plus
+                span &nbsp;
+        
+    
+    div(id=this.id("shapeVM"))

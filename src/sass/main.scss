@@ -12,6 +12,8 @@ $divider-color:#B6B6B6;
 $secondary-color: #526cfc;
 $shadow-color: $secondary-text-color;
 $control-background-color: white;
+$selected-drawable-vm-border-color: #BDBDBD;
+$selected-drawable-vm-non-white-bg-color: #EAEAEA;
 
 $padding-base-vertical: 6px;
 $padding-base-horizontal: 12px;
@@ -40,6 +42,8 @@ $caret-width-large:        5px;
 
 $padding-form-horizontal: 0.5em;
 $padding-form-vertical: 0.5em;
+
+$default-indented-box-padding: 5px;
 
 html,body
 {
@@ -84,6 +88,13 @@ div {
   overflow: hidden;
 }
 
+@mixin indented-box {
+    border-radius: $border-radius-base;
+    padding-left: $default-indented-box-padding * 2;
+    padding-right: $default-indented-box-padding;
+    padding-bottom: $default-indented-box-padding;
+}
+
 .canvas-menu-btns {
   position: absolute;
   left: 0;
@@ -109,6 +120,16 @@ div {
   right: 0;
 }
 
+div.container-sel-drawable-vm {
+    @include indented-box;
+    border: 1px solid $selected-drawable-vm-border-color;
+    background-color: white;
+}
+
+div.non-white-container-sel-drawable-vm {
+    @extend .container-sel-drawable-vm;
+    background-color: $selected-drawable-vm-non-white-bg-color;
+}
 
 
 .canvas-view {
@@ -237,6 +258,14 @@ div {
   @include input-group-addon(35)
 }
 
+.r-g-b-a-input-group {
+  @include input-group-addon(36)
+}
+
+.form-group {
+    margin-bottom: 0px;
+}
+
 /* Form Group UI improvements */
 div.form-group .input-group:first-child .form-control:last-child {
   border-bottom: 0;
@@ -281,10 +310,6 @@ div.form-group input:focus {
   margin-bottom: 10px;
 }
 
-.associated-form-element {
-  margin-bottom: 5px;
-}
-
 .input-group-picker {
   width: 220px;
 }
@@ -307,5 +332,6 @@ div.form-group input:focus {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
 }
+
 
 @import '_splash_screen';

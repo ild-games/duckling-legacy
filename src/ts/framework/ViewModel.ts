@@ -6,14 +6,16 @@ module framework {
      * with information from the model.
      */
     export class ViewModel<T> {
-        protected _attached : boolean = false;
         protected _children : {[id : string]:ViewModel<any>} = {};
+        protected _attached : boolean = false;
         protected _context : framework.Context;
         protected _htmlRoot : HTMLElement;
         protected _rivetsBinding;
         protected _commandCallbacks = {};
         protected _id = nextId++;
         private _data : T;
+
+        private logging : boolean = true;
 
         /**
          * Initialize the ViewModel. Using init instead of the constructor means that
@@ -38,6 +40,8 @@ module framework {
         setData(context : Context, data : T) {
             this._context = context;
             this._data = data;
+
+            this.log("Data Ready");
             this.onDataReady();
         }
 
@@ -46,9 +50,12 @@ module framework {
          * @param htmlRoot HTML element that will act as a root for the view model.
          */
         attach(htmlRoot : HTMLElement) {
+            this.log("Attached");
             this._htmlRoot = htmlRoot;
             this.render();
             this._attached = true;
+
+            this.log("View Ready");
             this.onViewReady();
         }
 
@@ -84,6 +91,11 @@ module framework {
          * Renders the ViewModel's template and binds the model to the view.
          */
         private render() {
+            if (!this._htmlRoot) {
+                debugger;;
+            }
+
+            this.log("Rendered");
             this._htmlRoot.innerHTML = this._context.views.getTemplate(this.viewFile).call(this, this);
             this._rivetsBinding = this._context.rivets.bind(this._htmlRoot, this);
 
@@ -127,8 +139,18 @@ module framework {
                 }
                 this._rivetsBinding.unbind();
                 this._htmlRoot.innerHTML = "";
+                this.log("Detach");
+                this.onDetach();
             }
         }
+
+        /**
+         * Destroy the ViewModel.  After this is called the view should never be reused.
+         */
+         destory() {
+             //TODO: Unbind all observers.
+             this.log("Destroyed");
+         }
 
         /**
          * Called when the HTML for the view model is rendered and ready for dom manipulation.
@@ -141,6 +163,21 @@ module framework {
          * Called when the view model's data object is ready to be accessed.
          */
         onDataReady() {
+
+        }
+
+        /**
+         * Called when the view get's detached from the tree.
+         */
+         onDetach() {
+
+         }
+
+        /**
+         * Called when the view is destroyed and should no longer access the model unless
+         * onDataReady is called again.
+         */
+        onDestroy() {
 
         }
 
@@ -212,7 +249,9 @@ module framework {
         protected removeChildViews() {
             if (this._attached) {
                 for(var childKey in this._children) {
-                    this._children[childKey].detach();
+                    var child = this._children[childKey];
+                    child.detach();
+                    child.destory();
                 }
             }
             this._children = {};
@@ -225,7 +264,18 @@ module framework {
          */
         replaceWithView(replacement : ViewModel<any>, data) {
             this.detach();
+            this.destory();
             replacement.init(this._context, this._htmlRoot, data);
+        }
+
+        /**
+         * Log a message for debugging purposes.
+         * @param message Message to be logged.
+         */
+        log(message : string) {
+            if (this.logging) {
+                this._context.window.console.log("[VM " + this.viewModelName + " " + this._id + "] " + message);
+            }
         }
 
         //region Getters and Setters
