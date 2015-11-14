@@ -9,7 +9,8 @@ module editorcanvas.tools {
      */
     export class EntitySelectTool extends BaseTool {
         onLeftClick(mousePos : math.Vector) {
-            this.selectEntity(mousePos);
+            var localCoords = this.canvas.getStage().globalToLocal(mousePos.x, mousePos.y);
+            this.selectEntity(new math.Vector(localCoords.x, localCoords.y));
         }
 
         private selectEntity(mousePos : math.Vector) {
