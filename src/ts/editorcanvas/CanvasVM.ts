@@ -19,6 +19,8 @@ module editorcanvas {
         private createTool : editorcanvas.tools.EntityCreatorTool;
         private moveTool : editorcanvas.tools.EntityDragTool;
         private selectTool : editorcanvas.tools.EntitySelectTool;
+        private _dimensions : math.Vector = new math.Vector();
+        private _scale : math.Vector = new math.Vector(0.75, 0.75);
 
         constructor() {
             super();
@@ -30,6 +32,7 @@ module editorcanvas {
             this.moveTool = new editorcanvas.tools.EntityDragTool();
             this.selectTool = new editorcanvas.tools.EntitySelectTool();
             this.curTool = this.selectTool;
+            this._dimensions = new math.Vector(7000, 1500);
         }
 
         private changeTool() {
@@ -64,8 +67,8 @@ module editorcanvas {
                 .drawRect(
                          originPoint.x,
                          originPoint.y,
-                         canvas.width,
-                         canvas.height);
+                         canvas.width / this.stage.scaleX,
+                         canvas.height / this.stage.scaleY);
             this.stage.addChild(background);
         }
 
@@ -146,8 +149,18 @@ module editorcanvas {
                 this.stage.addChild(this.curTool.getDisplayObject());
             }
 
-            this.stage.x = 10;
-            this.stage.y = 10;
+            // tjl debug
+            this.stage.scaleX = this._scale.x;
+            this.stage.scaleY = this._scale.y;
+            (<HTMLCanvasElement>this.stage.canvas).width = this._dimensions.x * this.stage.scaleX;
+            (<HTMLCanvasElement>this.stage.canvas).height = this._dimensions.y * this.stage.scaleY;
+            var stageOrigin = new math.Vector(
+                (<HTMLCanvasElement>this.stage.canvas).width / 2,
+                (<HTMLCanvasElement>this.stage.canvas).height / 2);
+            this.stage.x = stageOrigin.x;
+            this.stage.y = stageOrigin.y;
+            // end tjl debug
+
             this.stage.update();
         }
 
@@ -166,6 +179,10 @@ module editorcanvas {
          */
         get viewFile() : string {
             return "canvas";
+        }
+
+        getStage() : createjs.Stage {
+            return this.stage;
         }
     }
 }
