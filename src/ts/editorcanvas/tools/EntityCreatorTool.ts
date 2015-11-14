@@ -49,8 +49,6 @@ module editorcanvas.tools {
             physComp.position.x = mousePos.x;
             physComp.position.y = mousePos.y;
 
-            //drawComp.topDrawable.addDrawable(
-            //    new draw.ShapeDrawable(new draw.RectangleShape(new math.Vector(20, 20)), "Rect1"));
             collisionComp.info.dimension.x = 15;
             collisionComp.info.dimension.y = 15;
             this.context.commandQueue.pushCommand(

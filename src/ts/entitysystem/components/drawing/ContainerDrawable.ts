@@ -92,7 +92,8 @@ module entityframework.components.drawing {
 
             if (this.isWhite) {
                 var vmJqueryObject = $(this.findById("containerSelDrawableVM"));
-                vmJqueryObject.css("background-color", "#eaeaea");
+                vmJqueryObject.removeClass("container-sel-drawable-vm");
+                vmJqueryObject.addClass("non-white-container-sel-drawable-vm");
             }
         }
 

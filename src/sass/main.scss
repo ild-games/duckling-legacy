@@ -12,6 +12,8 @@ $divider-color:#B6B6B6;
 $secondary-color: #526cfc;
 $shadow-color: $secondary-text-color;
 $control-background-color: white;
+$selected-drawable-vm-border-color: #BDBDBD;
+$selected-drawable-vm-non-white-bg-color: #EAEAEA;
 
 $padding-base-vertical: 6px;
 $padding-base-horizontal: 12px;
@@ -40,6 +42,8 @@ $caret-width-large:        5px;
 
 $padding-form-horizontal: 0.5em;
 $padding-form-vertical: 0.5em;
+
+$default-indented-box-padding: 5px;
 
 html,body
 {
@@ -84,6 +88,13 @@ div {
   overflow: hidden;
 }
 
+@mixin indented-box {
+    border-radius: $border-radius-base;
+    padding-left: $default-indented-box-padding * 2;
+    padding-right: $default-indented-box-padding;
+    padding-bottom: $default-indented-box-padding;
+}
+
 .canvas-menu-btns {
   position: absolute;
   left: 0;
@@ -110,12 +121,14 @@ div {
 }
 
 div.container-sel-drawable-vm {
-    border: 1px solid #bdbdbd;
+    @include indented-box;
+    border: 1px solid $selected-drawable-vm-border-color;
     background-color: white;
-    border-radius: 5px;
-    padding-left: 10px;
-    padding-right: 5px;
-    padding-bottom: 5px;
+}
+
+div.non-white-container-sel-drawable-vm {
+    @extend .container-sel-drawable-vm;
+    background-color: $selected-drawable-vm-non-white-bg-color;
 }
 
 
@@ -295,9 +308,6 @@ div.form-group input:focus {
 /* Form Elements for VMs */
 .form-element {
   margin-bottom: 10px;
-}
-
-.associated-form-element {
 }
 
 .input-group-picker {

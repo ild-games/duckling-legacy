@@ -2,6 +2,9 @@ module controls {
 
     import drawing = entityframework.components.drawing;
 
+    /**
+     * A client control that allows for selecting and creating drawables.
+     */
     export class DrawableTypeControl {
         private view : framework.ViewModel<any>;
         private drawableTypePicker : controls.SelectControl<drawing.DrawableType>

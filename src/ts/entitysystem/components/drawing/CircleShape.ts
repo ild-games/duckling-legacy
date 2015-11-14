@@ -6,6 +6,9 @@ module entityframework.components.drawing {
     import serialize = util.serialize;
     import observe = framework.observe;
 
+    /**
+     * A shape that represents a circle.
+     */
     @serialize.ProvideClass(CircleShape, "sf::CircleShape")
     export class CircleShape extends Shape implements editorcanvas.drawing.CanvasDrawnElement {
         @observe.Primitive(Number)
