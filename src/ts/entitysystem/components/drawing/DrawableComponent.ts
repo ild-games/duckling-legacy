@@ -18,7 +18,7 @@ module entityframework.components.drawing {
         Shape: new ShapeDrawableFactory()
     };
 
-    class DrawableViewModel extends framework.ViewModel<DrawableComponent> implements framework.observe.Observer {
+    class DrawableViewModel extends framework.ViewModel<DrawableComponent> {
         private drawableTypeControl : controls.DrawableTypeControl;
 
         get viewFile() : string {
@@ -31,7 +31,6 @@ module entityframework.components.drawing {
 
         onDataReady() {
             super.onDataReady();
-            this.data.listenForChanges("data", this);
         }
 
         onViewReady() {
@@ -46,9 +45,6 @@ module entityframework.components.drawing {
             } else {
                 this.addTopDrawableVM(DrawableTypeToFactory[DrawableType[this.data.topDrawable.type]]);
             }
-        }
-
-        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
         }
 
         private addDrawable() {

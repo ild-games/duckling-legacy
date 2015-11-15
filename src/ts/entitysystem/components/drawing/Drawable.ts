@@ -12,7 +12,7 @@ module entityframework.components.drawing {
     /**
      * Represents an object that can be drawn in the game.
      */
-    export class Drawable extends framework.observe.Observable {
+    export class Drawable extends framework.observe.SimpleObservable {
         @observe.Primitive(Number)
         protected renderPriority : number = 0;
 

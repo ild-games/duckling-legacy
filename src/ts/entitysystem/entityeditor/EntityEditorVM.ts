@@ -2,12 +2,13 @@
 module entityframework
 {
     interface ComponentType {
+        data : Component;
         name : string;
         displayName : string;
         vm : framework.ViewModel<any>;
     }
 
-    export class EntityEditorVM extends  framework.ViewModel<EntitySystem> implements framework.observe.Observer, framework.listvm.ListAdapter<Component> {
+    export class EntityEditorVM extends  framework.ViewModel<EntitySystem> implements framework.listvm.ListAdapter<Component> {
         //Field that exist for rivets bindings
         private _currentEntityName : string = "Select Entity";
         private _currentEntity : Entity;
@@ -28,34 +29,19 @@ module entityframework
             this.registerCallback("add-component", this.addComponentFromSelect);
         }
 
-        onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
-            switch (key) {
-                case "data":
-                    this.onSystemChange(event);
-                    break;
-                case "selectedEntity":
-                    this.selectEntity(this._selectedEntity.entityKey);
-                    break;
-                case "currentEntity":
-                    if (event.data.key === "components") {
-                        if (event.child.name === "Removed") {
-                            this.reflectRemovedComponents();
-                        }
-                        else if (event.child.name === "Added") {
-                            this.reflectAddedComponents();
-                        }
-                    }
-                    break;
-            }
-        }
-
         onDataReady() {
             this._listVM = new framework.listvm.ListVM("entityeditor/componentwrapper");
             this.addChildView("entity-form-list", this._listVM , this._adapter);
             this.onSystemChange(null);
             this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
-            this._selectedEntity.listenForChanges("selectedEntity", this);
-            this.data.listenForChanges("data", this);
+
+            this.setChangeListener(this._selectedEntity,() => {
+                this.selectEntity(this._selectedEntity.entityKey);
+            });
+
+            this.setChangeListener(this.data, (event) => {
+                this.onSystemChange(event);
+            });
         }
 
         onViewReady() {
@@ -114,7 +100,7 @@ module entityframework
             return this._currentEntity.getComponent(this._components[index].name);
         }
 
-        getItemExtras(index : number) {
+        getItemExtras(index : number) : any {
             return this._components[index];
         }
 
@@ -123,9 +109,15 @@ module entityframework
             this._componentsNotOnEntity = [];
 
             if (name && name !== "") {
+                if (this._currentEntity) {
+                    this.removeChangeListener(this._currentEntity);
+                }
+
                 this._currentEntity = this.data.getEntity(name);
                 this._currentEntityName = name;
-                this._currentEntity.listenForChanges("currentEntity", this);
+                this.setChangeListener(this._currentEntity, (event) => {
+                    this.onEntityChange(event);
+                });
 
                 this.data.forEachType((factory : ComponentFactory, type : string) => {
                     this._componentsNotOnEntity.push(type);
@@ -163,19 +155,29 @@ module entityframework
                 new RemoveComponentCommand(this._currentEntity, removedCompName));
         }
 
-        onSystemChange(event : framework.observe.DataChangeEvent) {
+        onSystemChange(event : EntitySystemChanged) {
             this._entityNames = [];
             this.data.forEach((entity : Entity, key : string) => {
                 this._entityNames.push(key);
             });
 
             var shouldUpdatePicker = !event
-                || this.data.isEntityAddedEvent(event)
-                || this.data.isEntityRemovedEvent(event)
-                || this.data.isSystemMovedEvent(event);
+                || event.isEntityAdded
+                || event.isEntityRemoved
+                || event.isSystemMoved;
 
             if (this.selectedEntityPicker && shouldUpdatePicker) {
                 this.selectedEntityPicker.values = this.getEntities();
+            }
+        }
+
+        onEntityChange(event : EntityChanged) {
+            if (event.isComponentAdded) {
+                this.reflectAddedComponents();
+            }
+
+            if (event.isComponentRemoved) {
+                this.reflectRemovedComponents();
             }
         }
 

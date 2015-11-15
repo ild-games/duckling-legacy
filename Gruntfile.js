@@ -57,9 +57,23 @@ module.exports = function(grunt) {
                 options: {
                     module: 'commonjs',
                     sourceMap: true,
+                    declaration: true,
                     target: 'es5',
                     references: [
                         "typings/tsd.d.ts"
+                    ]
+                }
+            },
+            spec_helpers: {
+                src: "spec/helpers/**/*.ts",
+                dest: 'build/spec/tshelpers.js',
+                options: {
+                    module: 'commonjs',
+                    sourceMap: true,
+                    target: 'es5',
+                    references: [
+                        "typings/tsd.d.ts",
+                        "build/scripts/duckling.d.ts"
                     ]
                 }
             }
@@ -169,8 +183,12 @@ module.exports = function(grunt) {
         },
         watch: {
             scripts : {
-                files: ['src/bootstrap.ts', 'src/ts/**/*.ts'],
+                files: ['src/bootstrap.ts', 'src/ts/**/*.ts', 'spec/**/*.ts'],
                 tasks: ['typescript']
+            },
+            coffeescripts : {
+                files: ['spec/**/*.coffee'],
+                tasks: ['coffee']
             },
             jade : {
                 files: ['src/index.jade', 'src/jade/**/*.jade'],

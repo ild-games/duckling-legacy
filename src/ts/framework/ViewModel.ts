@@ -1,19 +1,26 @@
 module framework {
     var nextId : number = 0;
 
+    interface Observation {
+        object : observe.Observable<any>;
+        callback : observe.DataChangeCallback<any>;
+    }
+
     /**
      * A ViewModel is responsible for responding to user actions and population the view
      * with information from the model.
      */
     export class ViewModel<T> {
+        private dataChangeCallbacks : Observation [] = [];
+        private _data : T;
+
         protected _children : {[id : string]:ViewModel<any>} = {};
         protected _attached : boolean = false;
-        protected _context : framework.Context;
+        protected _context : Context;
         protected _htmlRoot : HTMLElement;
         protected _rivetsBinding;
         protected _commandCallbacks = {};
         protected _id = nextId++;
-        private _data : T;
 
         private logging : boolean = true;
 
@@ -26,7 +33,7 @@ module framework {
          * @param data The root of the ViewModel's data.
          * @returns A reference to the ViewModel instance.
          */
-        init(context: framework.Context, htmlRoot : HTMLElement, data : T) : ViewModel<T> {
+        init(context: Context, htmlRoot : HTMLElement, data : T) : ViewModel<T> {
             this.setData(context, data);
             this.attach(htmlRoot);
             return this;
@@ -63,7 +70,7 @@ module framework {
          * Push a command into the command queue.
          * @param command Command to execute in the command queue.
          */
-        pushCommand(command : framework.command.Command) {
+        pushCommand(command : command.Command) {
             this._context.commandQueue.pushCommand(command);
         }
 
@@ -91,17 +98,13 @@ module framework {
          * Renders the ViewModel's template and binds the model to the view.
          */
         private render() {
-            if (!this._htmlRoot) {
-                debugger;;
-            }
-
             this.log("Rendered");
             this._htmlRoot.innerHTML = this._context.views.getTemplate(this.viewFile).call(this, this);
             this._rivetsBinding = this._context.rivets.bind(this._htmlRoot, this);
 
             for(var childID in this._children) {
                 var child : ViewModel<any> = this._children[childID];
-                child.attach(this.findById(childID))
+                child.attach(this.findById(childID));
             }
         }
 
@@ -205,6 +208,51 @@ module framework {
         registerCallback(key : string, callback) {
             this._commandCallbacks[key] = (event, arg) => callback.call(this, event, arg);
         }
+
+        /**
+         * Add a change listner to the object. The change listner will automatically be cleaned up when the object is
+         * destroyed.
+         * @param object Object that will be observed.
+         * @param callback Callback that will be fired on data change.
+         */
+        setChangeListener<T extends observe.DataChangeEvent>(object : observe.Observable<T>, callback : observe.DataChangeCallback<T>) {
+            if (this.dataChangeCallbacks === null) {
+                this.dataChangeCallbacks = [];
+            }
+
+            this.dataChangeCallbacks.push({
+                object: object,
+                callback: callback
+            });
+
+            object.addChangeListener(callback);
+        }
+
+        /**
+         * Remove all of the attached change listeners.
+         */
+        protected removeChangeListeners() {
+            for (var i = 0; i < this.dataChangeCallbacks.length; i++) {
+                var observation = this.dataChangeCallbacks[i];
+                observation.object.removeChangeListener(observation.callback);
+            }
+            this.dataChangeCallbacks = [];
+        }
+
+        /**
+         * Remove any change listeners set on the object.
+         * @param object Object that is being listened to for chagnes by the view model.
+         */
+         protected removeChangeListener(object) {
+             for(var i = 0; i < this.dataChangeCallbacks.length; i++) {
+                 var observation = this.dataChangeCallbacks[i];
+                 if (observation.object === object) {
+                     this.dataChangeCallbacks.slice(i,1);
+                     observation.object.removeChangeListener(observation.callback);
+                     break;
+                 }
+             }
+         }
 
         /**
          * Called by rivets when a view command is fired.

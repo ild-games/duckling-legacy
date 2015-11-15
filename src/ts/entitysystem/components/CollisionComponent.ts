@@ -40,7 +40,7 @@ module entityframework.components {
     /**
      * Holds the bindable info for a CollisionComponent.
      */
-    class CollisionShapeInfo extends observe.Observable {
+    export class CollisionShapeInfo extends observe.SimpleObservable {
         /**
          * Width and height for the collision's bounding box.
          */
@@ -111,7 +111,7 @@ module entityframework.components {
     /**
      * View Model for the collision component.
      */
-    class CollisionViewModel extends framework.ViewModel<CollisionComponent> implements framework.observe.Observer {
+    class CollisionViewModel extends framework.ViewModel<CollisionComponent> {
         private typeVals : Array<number> = [];
         private bodyPicker : controls.SelectControl<string>;
         private collisionTypePicker : controls.SelectControl<CollisionType>;
@@ -121,7 +121,9 @@ module entityframework.components {
          */
         onDataReady() {
             super.onDataReady();
-            this.data.listenForChanges("data", this);
+            this.setChangeListener(this.data, () => {
+                this.updateCollisionType();
+            });
         }
 
         /**
@@ -149,11 +151,11 @@ module entityframework.components {
             this.bodyPicker.callback = (bodyType) => this.onBodySelected(this.data, bodyType);
         }
 
-        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
-            if (key === "data") {
-                if (event&& event.name == "collisionType") {
-                    this.collisionTypePicker.value = CollisionType[this.data.collisionType];
-                }
+        updateCollisionType() {
+            var pickerValue = this.collisionTypePicker.value;
+            var compValue = CollisionType[this.data.collisionType];
+            if (pickerValue !== compValue) {
+                this.collisionTypePicker.value = compValue;
             }
         }
 

@@ -8,7 +8,7 @@ module entityframework.core {
      * the object in order to show data related to the entity currently selected
      * by the user.
      */
-    export class SelectedEntity extends framework.observe.Observable {
+    export class SelectedEntity extends framework.observe.SimpleObservable {
         @observe.Primitive()
         entityKey : string;
     }

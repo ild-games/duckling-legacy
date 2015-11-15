@@ -3,11 +3,12 @@ module framework.dependencies {
     declare var Symbol : any;
 
     var callbackSymbol = Symbol("CallbackObserver");
-    class CallbackObserver implements observe.Observer {
+    class CallbackObserver {
         private callback : Function;
-        private toObserve : observe.Observable;
+        private observerCallback : observe.DataChangeCallback<any>;
+        private toObserve : observe.Observable<any>;
 
-        constructor(callback : Function, toObserve : observe.Observable) {
+        constructor(callback : Function, toObserve : observe.Observable<any>) {
             if (callback[callbackSymbol]) {
                 throw "Unable to attach two CallbackObservers to the same object";
             }
@@ -15,16 +16,15 @@ module framework.dependencies {
 
             this.callback = callback;
             this.toObserve = toObserve;
+            this.observerCallback = () => {
+                this.callback();
+            }
 
-            toObserve.listenForChanges("toObserve", this);
-        }
-
-        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
-            this.callback();
+            toObserve.addChangeListener(this.observerCallback);
         }
 
         unbind() {
-            this.toObserve.stopListening("toObserve",this);
+            this.toObserve.removeChangeListener(this.observerCallback);
         }
 
         static getObserver(callback : Function) {
@@ -97,11 +97,11 @@ module framework.dependencies {
         };
 
         rivets.adapters["%"] = {
-            observe : function(obj, keypath, callback) {
+            observe : function(obj : framework.observe.Observable<any>, keypath, callback) {
                 new CallbackObserver(callback, obj);
             },
 
-            unobserve : function(obj, keypath, callback) {
+            unobserve : function(obj : framework.observe.Observable<any>, keypath, callback) {
                 var observer = CallbackObserver.getObserver(callback);
                 observer.unbind();
             },

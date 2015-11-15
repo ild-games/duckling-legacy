@@ -67,7 +67,7 @@ module entityframework.components.drawing {
         }
     }
 
-    export class ContainerDrawableViewModel extends BaseDrawableViewModel<ContainerDrawable> implements framework.observe.Observer {
+    export class ContainerDrawableViewModel extends BaseDrawableViewModel<ContainerDrawable> {
         private drawablePicker : controls.SelectControl<Drawable>
         private drawableTypeControl : controls.DrawableTypeControl;
 
@@ -99,25 +99,22 @@ module entityframework.components.drawing {
 
         onDataReady() {
             super.onDataReady();
-            this.data.listenForChanges("data", this);
-        }
-
-        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
-            if (key === "data") {
+            this.setChangeListener(this.data, (event) => {
                 this.onDataObjChildModified(event);
-            }
+            });
         }
 
         onDataObjChildModified(event : framework.observe.DataChangeEvent) {
-            if (event.child) {
-                switch (event.child.name) {
-                    case "Removed":
-                        this.onDrawableRemoved(this.drawablePicker.value);
-                        break;
-                    case "Added":
-                        this.onDrawableAdded((<Drawable> event.child.data).key);
-                        break;
-                }
+            if (!event.child) {
+                return;
+            }
+
+            var drawablesEvent = <observe.ObservableArrayChanged<Drawable>>event.child;
+            if (drawablesEvent.isItemAdded) {
+                this.onDrawableRemoved(this.drawablePicker.value);
+            }
+            if (drawablesEvent.isItemAdded) {
+                this.onDrawableAdded(drawablesEvent.item.key);
             }
         }
 

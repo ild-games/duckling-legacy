@@ -3,14 +3,52 @@ module framework.observe {
     import serialize = util.serialize;
     import CustomSerializer = serialize.CustomSerializer;
 
+    const EVENT_CHILD_CHANGED = "ChildChanged";
+    const EVENT_CHILD_ADD = "Added";
+    const EVENT_CHILD_REMOVED = "Removed";
+
+    export class ObservableMapChanged<T extends Observable<any>> extends DataChangeEvent {
+        key : string;
+        item : T;
+
+        constructor(object : ObservableMap<T>, name : string, key : string, item? : T, child? : DataChangeEvent) {
+            super(name,  object, child);
+            this.key = key;
+            this.item = item;
+        }
+
+        /**
+         * Check the event to see if removing an item caused it.
+         */
+        get isItemRemoved() {
+            return this.name === EVENT_CHILD_REMOVED;
+        }
+
+        /**
+         * Check the event to see if adding an item caused it.
+         */
+        get isItemAdded() {
+            return this.name === EVENT_CHILD_ADD;
+        }
+
+        /**
+         * Check the event to see if changing an item in the map caused it.
+         */
+        get isItemChanged() {
+            return this.name === EVENT_CHILD_CHANGED;
+        }
+    }
+
     /**
      * Map of observable objects.  Changes to objects contained in the map will be
      * propagated to any object listening to the map.
      */
     @util.serialize.HasCustomSerializer
-    export class ObservableMap<T extends Observable> extends Observable implements CustomSerializer {
-        private _data : { [key:string]: T} = {};
+    export class ObservableMap<T extends Observable<any>> extends Observable<ObservableMapChanged<T>> implements CustomSerializer {
+        private data : { [key:string]: T} = {};
+        private callbacks : { [key:string] : DataChangeCallback<ObservableMapChanged<T>> } = {};
         private valueFactory : Function;
+
 
         /**
          * Produce an empty ObservableMap.
@@ -31,12 +69,17 @@ module framework.observe {
          */
         put(key : string, object : T) : T {
             var old;
-            if (this._data[key]) {
+            if (this.data[key]) {
                 old = this.remove(key);
             }
-            object.listenForChanges(key, this);
-            this._data[key] = object;
-            this.dataChanged("Added", object);
+
+            this.callbacks[key] = (event : DataChangeEvent) => {
+                this.publishDataChanged(new ObservableMapChanged(this, EVENT_CHILD_CHANGED, key, object, event));
+            };
+
+            object.addChangeListener(this.callbacks[key]);
+            this.data[key] = object;
+            this.publishDataChanged(new ObservableMapChanged(this, EVENT_CHILD_ADD, key, object));
             return old || null;
         }
 
@@ -45,8 +88,8 @@ module framework.observe {
          * @param key Key the object is stored under.
          * @returns The object if it exists.  Otherwise null.
          */
-        get(key : string) : T{
-            return this._data[key] || null;
+        get(key : string) : T {
+            return this.data[key] || null;
         }
 
         /**
@@ -56,11 +99,12 @@ module framework.observe {
          * was no object.
          */
         remove(key : string) : T {
-            var object = this._data[key];
+            var object = this.data[key];
             if (object) {
-                delete this._data[key];
-                object.stopListening(key, this);
-                this.dataChanged("Removed", object);
+                object.removeChangeListener(this.callbacks[key]);
+                delete this.data[key];
+                delete this.callbacks[key];
+                this.publishDataChanged(new ObservableMapChanged(this, EVENT_CHILD_REMOVED, key, object));
             }
             return object || null;
         }
@@ -70,20 +114,21 @@ module framework.observe {
          * @param func Function that will be called for all map entries.
          */
         forEach(func : (object : T, key? : string) => void) {
-            for(var key in this._data) {
-                var object = this._data[key];
+            for(var key in this.data) {
+                var object = this.data[key];
                 if (object) {
                     func(object, key);
                 }
             }
         }
 
+
         //region CustomSerializer implementation
         /**
          * @see util.serialize.CustomSerializer.toJSON
          */
         toJSON() {
-            return this._data;
+            return this.data;
         }
 
         /**

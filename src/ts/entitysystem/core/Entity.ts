@@ -2,12 +2,46 @@ module entityframework {
 
     import observe = framework.observe;
 
+    export class EntityChanged extends observe.DataChangeEvent {
+        constructor(name : string, object : Entity, child? : observe.DataChangeEvent) {
+            super(name, object, child)
+        }
+
+        /**
+        * Event describing how the entity was changed. Null if the event effects
+        * more than one entity.
+        */
+        get componentsEvent() : observe.ObservableMapChanged<Component> {
+            return <any>this.child;
+        }
+
+        /**
+        * Check if the data changed event is the result of an entity being modified.
+        */
+        get isComponentChanged() {
+            return this.componentsEvent;
+        }
+
+        /**
+        * Check if the data changed event is the result of an entity being removed.
+        */
+        get isComponentRemoved() {
+            return this.componentsEvent && this.componentsEvent.isItemRemoved;
+        }
+
+        /**
+        * Check if the data changed event is the result of an entity being added.
+        */
+        get isComponentAdded() {
+            return this.componentsEvent && this.componentsEvent.isItemAdded;
+        }
+    }
+
     /**
      * Contains a collection of components and the meta data about them.
      */
-    export class Entity extends framework.observe.Observable {
-        @observe.Object()
-        private components : framework.observe.ObservableMap<Component>;
+    export class Entity extends framework.observe.Observable<EntityChanged> {
+        private components : observe.ObservableMap<Component>;
 
         /**
          * Construct an empty entity.
@@ -15,6 +49,9 @@ module entityframework {
         constructor() {
             super();
             this.components = new framework.observe.ObservableMap<Component>();
+            this.components.addChangeListener((event) => {
+                this.publishDataChanged(new EntityChanged("components", this, event));
+            });
         }
 
         /**
