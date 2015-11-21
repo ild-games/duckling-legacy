@@ -6,6 +6,16 @@
 ///<reference path="../entitysystem/components/drawing/RectangleShape.ts"/>
 ///<reference path="../editorcanvas/tools/Tool.ts"/>
 module editorcanvas {
+    import observe = framework.observe;
+
+    class CanvasProperties extends observe.Observable {
+        @observe.Primitive(Number)
+        zoom : number = 100;
+
+        @observe.Object()
+        dimensions : math.Vector = new math.Vector();
+    }
+
     /**
      * ViewModel for the main canvas used to interact with entities.
      */
@@ -19,8 +29,10 @@ module editorcanvas {
         private createTool : editorcanvas.tools.EntityCreatorTool;
         private moveTool : editorcanvas.tools.EntityDragTool;
         private selectTool : editorcanvas.tools.EntitySelectTool;
-        private _dimensions : math.Vector = new math.Vector();
-        private _scale : math.Vector = new math.Vector(0.75, 0.75);
+        private mapMoveTool : editorcanvas.tools.MapDragTool;
+        private grid : editorcanvas.drawing.Grid;
+
+        private _properties : CanvasProperties = new CanvasProperties();
 
         constructor() {
             super();
@@ -31,8 +43,10 @@ module editorcanvas {
             this.createTool = new editorcanvas.tools.EntityCreatorTool();
             this.moveTool = new editorcanvas.tools.EntityDragTool();
             this.selectTool = new editorcanvas.tools.EntitySelectTool();
-            this.curTool = this.createTool;
-            this._dimensions = new math.Vector(7000, 1500);
+            this.mapMoveTool = new editorcanvas.tools.MapDragTool();
+            this.curTool = this.mapMoveTool;
+            this.properties.dimensions = new math.Vector(800, 500);
+            this.grid = new editorcanvas.drawing.Grid(new math.Vector(32, 32), new math.Vector(800, 500));
         }
 
         private changeTool() {
@@ -45,6 +59,9 @@ module editorcanvas {
                     break;
                 case "select":
                     this.curTool = this.selectTool;
+                    break;
+                case "mapMove":
+                    this.curTool = this.mapMoveTool;
                     break;
             }
         }
@@ -70,6 +87,7 @@ module editorcanvas {
                          canvas.width / this.stage.scaleX,
                          canvas.height / this.stage.scaleY);
             this.stage.addChild(background);
+            this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
         }
 
         private save() {
@@ -99,6 +117,11 @@ module editorcanvas {
             }
         }
 
+        onDataReady() {
+            super.onDataReady();
+            this.properties.listenForChanges("properties", this)
+        }
+
         onViewReady() {
             this.data.listenForChanges("data", this);
 
@@ -125,6 +148,8 @@ module editorcanvas {
             this.createTool.onBind(this._context, this);
             this.moveTool.onBind(this._context, this);
             this.selectTool.onBind(this._context, this);
+            this.mapMoveTool.onBind(this._context, this);
+            this.mapMoveTool.draggedElement = this.findById("canvas-div").parentElement;
         }
 
         private subscribeToolEvents() {
@@ -135,6 +160,18 @@ module editorcanvas {
         }
 
         public redrawCanvas() {
+            // tjl debug
+            this.stage.scaleX = 1 * (this.properties.zoom / 100);
+            this.stage.scaleY = 1 * (this.properties.zoom / 100);
+            (<HTMLCanvasElement>this.stage.canvas).width = this.properties.dimensions.x * this.stage.scaleX;
+            (<HTMLCanvasElement>this.stage.canvas).height = this.properties.dimensions.y * this.stage.scaleY;
+            var stageOrigin = new math.Vector(
+                (<HTMLCanvasElement>this.stage.canvas).width / 2,
+                (<HTMLCanvasElement>this.stage.canvas).height / 2);
+            this.stage.x = stageOrigin.x;
+            this.stage.y = stageOrigin.y;
+            // end tjl debug
+
             var toDraw : Array<createjs.DisplayObject> = [];
 
             this.data.forEach((entity) => {
@@ -149,18 +186,6 @@ module editorcanvas {
                 this.stage.addChild(this.curTool.getDisplayObject());
             }
 
-            // tjl debug
-            this.stage.scaleX = this._scale.x;
-            this.stage.scaleY = this._scale.y;
-            (<HTMLCanvasElement>this.stage.canvas).width = this._dimensions.x * this.stage.scaleX;
-            (<HTMLCanvasElement>this.stage.canvas).height = this._dimensions.y * this.stage.scaleY;
-            var stageOrigin = new math.Vector(
-                (<HTMLCanvasElement>this.stage.canvas).width / 2,
-                (<HTMLCanvasElement>this.stage.canvas).height / 2);
-            this.stage.x = stageOrigin.x;
-            this.stage.y = stageOrigin.y;
-            // end tjl debug
-
             this.stage.update();
         }
 
@@ -170,6 +195,9 @@ module editorcanvas {
                     this.redrawCanvas();
                     break;
                 case "selectedEntity":
+                    break;
+                case "properties":
+                    this.redrawCanvas();
                     break;
             }
         }
@@ -183,6 +211,10 @@ module editorcanvas {
 
         getStage() : createjs.Stage {
             return this.stage;
+        }
+
+        get properties() : CanvasProperties {
+            return this._properties;
         }
     }
 }

@@ -9,6 +9,7 @@ module splashscreen {
     export class ProjectVM extends framework.ViewModel<framework.Project> {
 
         private childrenAdded : boolean = false;
+        private canvas : editorcanvas.CanvasVM = null;
 
         onViewReady() {
             super.onViewReady();
@@ -43,7 +44,8 @@ module splashscreen {
 
         private createChildren() {
             var ef = this.getEmptyEntityFramework();
-            this.addChildView("canvas-view-container", new editorcanvas.CanvasVM(), ef);
+            this.canvas = new editorcanvas.CanvasVM();
+            this.addChildView("canvas-view-container", this.canvas, ef);
             this.addChildView("entity-editor-container", new entityframework.EntityEditorVM(), ef);
         }
     }
