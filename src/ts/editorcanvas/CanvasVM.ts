@@ -33,7 +33,6 @@ module editorcanvas {
         private grid : editorcanvas.drawing.Grid;
         private canvasDiv : HTMLDivElement;
         private scrollDiv : HTMLDivElement;
-
         private _properties : CanvasProperties = new CanvasProperties();
 
         constructor() {
