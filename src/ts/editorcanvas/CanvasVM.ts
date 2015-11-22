@@ -31,6 +31,8 @@ module editorcanvas {
         private selectTool : editorcanvas.tools.EntitySelectTool;
         private mapMoveTool : editorcanvas.tools.MapDragTool;
         private grid : editorcanvas.drawing.Grid;
+        private canvasDiv : HTMLDivElement;
+        private scrollDiv : HTMLDivElement;
 
         private _properties : CanvasProperties = new CanvasProperties();
 
@@ -46,7 +48,7 @@ module editorcanvas {
             this.mapMoveTool = new editorcanvas.tools.MapDragTool();
             this.curTool = this.mapMoveTool;
             this.properties.dimensions = new math.Vector(800, 500);
-            this.grid = new editorcanvas.drawing.Grid(new math.Vector(32, 32), new math.Vector(800, 500));
+            this.grid = new editorcanvas.drawing.Grid(32, new math.Vector(800, 500));
         }
 
         private changeTool() {
@@ -74,19 +76,18 @@ module editorcanvas {
             this._context.commandQueue.redo();
         }
 
+        private buildBackgroundChild() : createjs.DisplayObject {
+
+            var background = new createjs.Shape();
+            background.x = -(this.properties.dimensions.x / 2);
+            background.y = -(this.properties.dimensions.y / 2);
+            background.graphics.beginFill("White").drawRect(0, 0, this.properties.dimensions.x, this.properties.dimensions.y);
+            return background;
+        }
+
         private clear() {
             this.stage.removeAllChildren();
-            var canvas = <HTMLCanvasElement>this.stage.canvas;
-            var background = new createjs.Shape();
-            var originPoint = this.stage.globalToLocal(0, 0);
-            background.graphics
-                .beginFill("White")
-                .drawRect(
-                         originPoint.x,
-                         originPoint.y,
-                         canvas.width / this.stage.scaleX,
-                         canvas.height / this.stage.scaleY);
-            this.stage.addChild(background);
+            this.stage.addChild(this.buildBackgroundChild());
             this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
         }
 
@@ -119,7 +120,8 @@ module editorcanvas {
 
         onDataReady() {
             super.onDataReady();
-            this.properties.listenForChanges("properties", this)
+            this.properties.listenForChanges("properties", this);
+            this.grid.listenForChanges("grid", this);
         }
 
         onViewReady() {
@@ -139,9 +141,40 @@ module editorcanvas {
             this.bindTools();
             this.subscribeToolEvents();
             $(this.findById("toolSelect")).change(() => this.changeTool());
+            $(this.findById("canvas-view")).on("click mousedown mouseup mousemove", (event) => {
+                this.findById("entity-canvas").dispatchEvent(new MouseEvent(event.originalEvent.type, event.originalEvent));
+            });
+            $(this.findById("entity-canvas")).on("click mousedown mouseup mousemove", (event) => event.originalEvent.stopPropagation());
+            this.canvasDiv = <HTMLDivElement>this.findById("canvas-view");
+            this.scrollDiv = <HTMLDivElement>this.findById("canvas-scroll");
+            $(this.findById("canvas-view")).on("scroll", (event) => this.scrolled());
 
-            this.clear();
+            this._context.window.addEventListener("resize", () => this.windowResized());
+
+            this.redrawCanvas();
             this.load();
+        }
+
+        private scrolled() {
+            this.setStagePosition();
+            this.stage.update();
+        }
+
+        private windowResized() {
+            var canvas = <HTMLCanvasElement>this.stage.canvas;
+            canvas.width = this.canvasDiv.clientWidth;
+            canvas.height = this.canvasDiv.clientHeight;
+            this.updateGrid();
+            this.redrawCanvas();
+        }
+
+        private updateGrid() {
+            var newDimensions = new math.Vector(
+                Math.max(this.canvasDiv.clientWidth, this.properties.dimensions.x * (this.properties.zoom / 100)),
+                Math.max(this.canvasDiv.clientHeight, this.properties.dimensions.y * (this.properties.zoom / 100)));
+            if (!(newDimensions.x === this.grid.canvasDimensions.x && newDimensions.y === this.grid.canvasDimensions.y)) {
+                this.grid.canvasDimensions = newDimensions;
+            }
         }
 
         private bindTools() {
@@ -149,7 +182,7 @@ module editorcanvas {
             this.moveTool.onBind(this._context, this);
             this.selectTool.onBind(this._context, this);
             this.mapMoveTool.onBind(this._context, this);
-            this.mapMoveTool.draggedElement = this.findById("canvas-div").parentElement;
+            this.mapMoveTool.draggedElement = this.findById("canvas-view");
         }
 
         private subscribeToolEvents() {
@@ -159,18 +192,22 @@ module editorcanvas {
             this.stage.on("stagemousemove", (event) => this.curTool.onEvent(event));
         }
 
+        private setStagePosition() {
+            var newDimensions = new math.Vector(
+                this.properties.dimensions.x * this.stage.scaleX,
+                this.properties.dimensions.y * this.stage.scaleY);
+
+            this.scrollDiv.style.width = newDimensions.x + "px";
+            this.scrollDiv.style.height = newDimensions.y + "px";
+            this.stage.x = Math.max(newDimensions.x / 2, this.canvasDiv.clientWidth / 2) - this.canvasDiv.scrollLeft;
+            this.stage.y = Math.max(newDimensions.y / 2, this.canvasDiv.clientHeight / 2) - this.canvasDiv.scrollTop;
+        }
+
         public redrawCanvas() {
-            // tjl debug
             this.stage.scaleX = 1 * (this.properties.zoom / 100);
             this.stage.scaleY = 1 * (this.properties.zoom / 100);
-            (<HTMLCanvasElement>this.stage.canvas).width = this.properties.dimensions.x * this.stage.scaleX;
-            (<HTMLCanvasElement>this.stage.canvas).height = this.properties.dimensions.y * this.stage.scaleY;
-            var stageOrigin = new math.Vector(
-                (<HTMLCanvasElement>this.stage.canvas).width / 2,
-                (<HTMLCanvasElement>this.stage.canvas).height / 2);
-            this.stage.x = stageOrigin.x;
-            this.stage.y = stageOrigin.y;
-            // end tjl debug
+            this.setStagePosition();
+            this.updateGrid();
 
             var toDraw : Array<createjs.DisplayObject> = [];
 
@@ -189,6 +226,7 @@ module editorcanvas {
             this.stage.update();
         }
 
+
         onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
             switch (key) {
                 case "data":
@@ -197,6 +235,10 @@ module editorcanvas {
                 case "selectedEntity":
                     break;
                 case "properties":
+                    this.redrawCanvas();
+                    break;
+                case "grid":
+                    this.grid.constructGrid();
                     this.redrawCanvas();
                     break;
             }

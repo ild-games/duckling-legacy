@@ -1,10 +1,17 @@
 module editorcanvas.drawing {
-    export class Grid implements CanvasDrawnElement {
-        private _cellDimensions : math.Vector;
-        private _canvasDimensions : math.Vector;
+    import observe = framework.observe;
+
+    export class Grid extends observe.Observable implements CanvasDrawnElement {
+        @observe.Primitive(Number)
+        cellDimensions : number = 0;
+
+        @observe.Object()
+        canvasDimensions : math.Vector;
+        
         private _drawable : createjs.Shape;
 
-        constructor(cellDimensions : math.Vector, canvasDimensions : math.Vector) {
+        constructor(cellDimensions : number, canvasDimensions : math.Vector) {
+            super();
             this.cellDimensions = cellDimensions;
             this.canvasDimensions = canvasDimensions;
         }
@@ -17,43 +24,27 @@ module editorcanvas.drawing {
             return this._drawable;
         }
 
-        private constructGrid() {
+        public constructGrid() {
             if (this.cellDimensions && this.canvasDimensions) {
                 this._drawable = new createjs.Shape();
                 this._drawable.graphics.setStrokeDash([2, 2]);
                 this._drawable.graphics
                     .setStrokeStyle(1, 0, 0, 10, true)
                     .beginStroke("#000");
-                for (var x = -(this.canvasDimensions.x / 2); x < this.canvasDimensions.x / 2; x += this.cellDimensions.x) {
+                var xBound = this.cellDimensions * Math.ceil(this.canvasDimensions.x / this.cellDimensions);
+                var yBound = this.cellDimensions * Math.ceil(this.canvasDimensions.y / this.cellDimensions);
+                for (var x = -xBound; x <= xBound; x += this.cellDimensions) {
                     this._drawable.graphics
-                        .moveTo(x, -(this.canvasDimensions.y / 2))
-                        .lineTo(x, this.canvasDimensions.y / 2);
+                        .moveTo(x, -yBound)
+                        .lineTo(x, yBound);
                 }
-                for (var y = -(this.canvasDimensions.y / 2); y < this.canvasDimensions.y / 2; y += this.cellDimensions.y) {
+                for (var y = -yBound; y <= yBound; y += this.cellDimensions) {
                     this._drawable.graphics
-                        .moveTo(-(this.canvasDimensions.x / 2), y)
-                        .lineTo(this.canvasDimensions.x / 2, y);
+                        .moveTo(-xBound, y)
+                        .lineTo(xBound, y);
 
                 }
             }
-        }
-
-        get cellDimensions() : math.Vector {
-            return this._cellDimensions;
-        }
-
-        get canvasDimensions() : math.Vector {
-            return this._canvasDimensions;
-        }
-
-        set cellDimensions(cellDimensions : math.Vector) {
-            this._cellDimensions = cellDimensions;
-            this.constructGrid();
-        }
-
-        set canvasDimensions(canvasDimensions : math.Vector) {
-            this._canvasDimensions = canvasDimensions;
-            this.constructGrid();
         }
     }
 }
