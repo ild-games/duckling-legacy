@@ -14,6 +14,9 @@ module editorcanvas {
 
         @observe.Object()
         dimensions : math.Vector = new math.Vector();
+
+        @observe.Primitive(Boolean)
+        isGridVisible : boolean = true;
     }
 
     /**
@@ -87,7 +90,6 @@ module editorcanvas {
         private clear() {
             this.stage.removeAllChildren();
             this.stage.addChild(this.buildBackgroundChild());
-            this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
         }
 
         private save() {
@@ -220,6 +222,9 @@ module editorcanvas {
                 this.stage.addChild(drawnElement));
             if (this.curTool.getDisplayObject()) {
                 this.stage.addChild(this.curTool.getDisplayObject());
+            }
+            if (this.properties.isGridVisible) {
+                this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
             }
 
             this.stage.update();
