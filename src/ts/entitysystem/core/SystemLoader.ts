@@ -73,7 +73,7 @@ module entityframework {
         }
 
         private getEmptyMap(emptySystem : EntitySystem) {
-            var systems = {};
+            var emptyMap = new  map.Map();
             emptySystem.forEachType(function(factory : ComponentFactory) {
                 var map;
                 if (factory.isPolymorphic) {
@@ -81,11 +81,11 @@ module entityframework {
                 } else {
                     map = new ObservableMap(() => factory.createComponent());
                 }
-                systems[factory.name] = {
+                emptyMap.systems[factory.name] = {
                     components : map
                 };
             });
-            return {systems : systems};
+            return emptyMap;
         }
 
         private initEntitySystem(loadedMap : map.GameMap, emptySystem : EntitySystem) {
@@ -102,7 +102,7 @@ module entityframework {
                 var components = loadedMap.systems[systemName].components;
                 components.forEach((entity,name) => {
                     emptySystem.getEntity(name).addComponent(systemName, components.get(name));
-                })
+                });
             }
 
             emptySystem.seedNextKey(nextID);

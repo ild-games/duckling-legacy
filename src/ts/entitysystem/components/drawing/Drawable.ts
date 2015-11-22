@@ -26,15 +26,15 @@ module entityframework.components.drawing {
         protected positionOffset : math.Vector = new math.Vector();
 
         @observe.Primitive(Boolean)
-        protected inactive : boolean;
+        protected inactive : boolean = false;
 
         @observe.Object()
         protected scale : math.Vector = new math.Vector(1.0, 1.0);
 
         @observe.Primitive()
-        key : string;
+        key : string = "";
 
-        constructor(key : string) {
+        constructor(key : string = "") {
             super();
             this.key = key;
         }

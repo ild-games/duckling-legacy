@@ -2,12 +2,13 @@ module helpers {
 
     import observe = framework.observe;
 
+    @util.serialize.ProvideClass(SimpleObservableA, "helpers.SimpleObservableA")
     export class SimpleObservableA extends observe.SimpleObservable {
         @observe.Primitive(String)
-        stringValue;
+        stringValue = "";
 
         @observe.Object()
-        child : SimpleObservableA;
+        child : SimpleObservableA = null;
 
         constructor(child? : SimpleObservableA) {
             super();

@@ -121,20 +121,20 @@ module framework.observe {
         /**
          * @see util.serialize.CustomSerializer.toJSON
          */
-        toJSON() {
+        toJSON(context : serialize.SerializationContext) {
             return this.data;
         }
 
         /**
          * @see util.serialize.CustomSerializer.fromJSON
          */
-        fromJSON(object) : any {
+        fromJSON(object, context : serialize.SerializationContext) : any {
             var child;
-            object.forEach((element) => {
+            object.forEach((element, index) => {
                 if (this.valueConstructor) {
-                    child = serialize.buildTypesFromObjects(element, new this.valueConstructor());
+                    child = context.initInstance(element, new this.valueConstructor(), index);
                 } else {
-                    child = serialize.buildTypesFromObjects(element);
+                    child = context.initInstance(element, null, index);
                 }
                 this.push(child);
             });
