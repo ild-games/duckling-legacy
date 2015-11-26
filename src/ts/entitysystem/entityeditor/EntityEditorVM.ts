@@ -61,6 +61,7 @@ module entityframework
         onViewReady() {
             super.onViewReady();
             this.selectedEntityPicker = new controls.SelectControl(this, "entityNames", this.getEntities(), "");
+            this.selectedEntityPicker.callback = () => this._selectedEntity.entityKey = this.selectedEntityPicker.value;
             this.addComponentPicker = new controls.SelectControl(this, "componentsToAddPicker",{},"");
         }
 
