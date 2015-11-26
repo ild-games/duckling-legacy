@@ -8,6 +8,9 @@
 module editorcanvas {
     import observe = framework.observe;
 
+    /**
+     * Contains the editor specific properties of the canvas.
+     */
     class CanvasProperties extends observe.Observable {
         @observe.Primitive(Number)
         zoom : number = 100;
@@ -23,20 +26,18 @@ module editorcanvas {
      * ViewModel for the main canvas used to interact with entities.
      */
     export class CanvasVM extends framework.ViewModel<entityframework.EntitySystem> implements framework.observe.Observer {
-        private _selectedEntity : entityframework.core.SelectedEntity;
-        private _project : framework.Project;
-        private _systemLoader : entityframework.SystemLoader;
-        private stage : createjs.Stage;
+        private selectedEntity : entityframework.core.SelectedEntity;
+        private project : framework.Project;
+        private systemLoader : entityframework.SystemLoader;
+        private _stage : createjs.Stage;
         private entityDrawerService : services.EntityDrawerService;
         private curTool : editorcanvas.tools.Tool;
-        private createTool : editorcanvas.tools.EntityCreatorTool;
-        private moveTool : editorcanvas.tools.EntityDragTool;
-        private selectTool : editorcanvas.tools.EntitySelectTool;
-        private mapMoveTool : editorcanvas.tools.MapDragTool;
+        private tools : { [key : string] : editorcanvas.tools.BaseTool } = {};
         private grid : editorcanvas.drawing.Grid;
         private canvasDiv : HTMLDivElement;
         private scrollDiv : HTMLDivElement;
-        private _properties : CanvasProperties = new CanvasProperties();
+        private properties : CanvasProperties = new CanvasProperties();
+        private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
 
         constructor() {
             super();
@@ -44,30 +45,74 @@ module editorcanvas {
             this.registerCallback("redo", this.redo);
             this.registerCallback("save", this.save);
 
-            this.createTool = new editorcanvas.tools.EntityCreatorTool();
-            this.moveTool = new editorcanvas.tools.EntityDragTool();
-            this.selectTool = new editorcanvas.tools.EntitySelectTool();
-            this.mapMoveTool = new editorcanvas.tools.MapDragTool();
-            this.curTool = this.mapMoveTool;
             this.properties.dimensions = new math.Vector(800, 500);
             this.grid = new editorcanvas.drawing.Grid(32, new math.Vector(800, 500));
         }
 
-        private changeTool() {
-            switch ($(this.findById("toolSelect")).val()) {
-                case "create":
-                    this.curTool = this.createTool;
+        onDataReady() {
+            super.onDataReady();
+            this.data.listenForChanges("data", this);
+            this.properties.listenForChanges("properties", this);
+            this.grid.listenForChanges("grid", this);
+        }
+
+        onViewReady() {
+            super.onViewReady();
+            this.subscribeToServices();
+            this.setupDelegates();
+            this.setupSharedObjects();
+            this.addTools();
+            this.setupStage();
+            this.load();
+        }
+
+        onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
+            switch (key) {
+                case "data":
+                    this.redrawCanvas();
                     break;
-                case "move":
-                    this.curTool = this.moveTool;
+                case "selectedEntity":
                     break;
-                case "select":
-                    this.curTool = this.selectTool;
+                case "properties":
+                    this.redrawCanvas();
                     break;
-                case "mapMove":
-                    this.curTool = this.mapMoveTool;
+                case "grid":
+                    this.grid.constructGrid();
+                    this.redrawCanvas();
                     break;
             }
+        }
+
+        private setupSharedObjects() {
+            this.selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
+            this.selectedEntity.listenForChanges("selectedEntity", this);
+
+            this.project = this._context.getSharedObject(framework.Project);
+            this.systemLoader = new entityframework.SystemLoader(this.project, new util.JsonLoader());
+            this._context.setSharedObject(this.data);
+        }
+
+        private addTools() {
+            var createEntityTool = new editorcanvas.tools.EntityCreatorTool();
+            this.addTool(createEntityTool);
+
+            var selectEntityTool = new editorcanvas.tools.EntitySelectTool();
+            this.addTool(selectEntityTool);
+
+            var dragEntityTool = new editorcanvas.tools.EntityDragTool();
+            this.addTool(dragEntityTool);
+
+            var mapMoveTool = new editorcanvas.tools.MapDragTool();
+            mapMoveTool.draggedElement = this.findById("canvas-view");
+            this.addTool(mapMoveTool);
+
+            this.curTool = createEntityTool;
+        }
+
+        private addTool(tool : editorcanvas.tools.BaseTool) {
+            this.tools[tool.key] = tool;
+            tool.onBind(this._context, this);
+            util.jquery.addOptionToSelect($(this.findById("toolSelect")), tool.key, tool.label);
         }
 
         private undo() {
@@ -79,7 +124,6 @@ module editorcanvas {
         }
 
         private buildBackgroundChild() : createjs.DisplayObject {
-
             var background = new createjs.Shape();
             background.x = -(this.properties.dimensions.x / 2);
             background.y = -(this.properties.dimensions.y / 2);
@@ -93,11 +137,11 @@ module editorcanvas {
         }
 
         private save() {
-            this._systemLoader.saveMap(this._project.projectName, this.data);
+            this.systemLoader.saveMap(this.project.projectName, this.data);
         }
 
         private load() {
-            this._systemLoader.loadMap(this._project.projectName, this.data.getEmptyClone())
+            this.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
                 });
@@ -105,7 +149,7 @@ module editorcanvas {
 
         private changeData(newData : entityframework.EntitySystem) {
             this._context.commandQueue.clear();
-            this._selectedEntity.entityKey = "";
+            this.selectedEntity.entityKey = "";
             this.data.move(newData);
             this.clear();
             this.redrawCanvas();
@@ -119,41 +163,32 @@ module editorcanvas {
             }
         }
 
-        onDataReady() {
-            super.onDataReady();
-            this.properties.listenForChanges("properties", this);
-            this.grid.listenForChanges("grid", this);
-        }
-
-        onViewReady() {
-            this.data.listenForChanges("data", this);
-
-            this.entityDrawerService = this._context.getSharedObject(services.EntityDrawerService);
-
-            this._selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
-            this._selectedEntity.listenForChanges("selectedEntity", this);
-
-            this._project = this._context.getSharedObject(framework.Project);
-            this._systemLoader =
-                new entityframework.SystemLoader(this._project, new util.JsonLoader());
-            this._context.setSharedObject(this.data);
-
-            this.stage = new createjs.Stage(this.id("entity-canvas"));
-            this.bindTools();
+        private setupStage() {
+            this._stage = new createjs.Stage(this.id("entity-canvas"));
             this.subscribeToolEvents();
-            $(this.findById("toolSelect")).change(() => this.changeTool());
-            $(this.findById("canvas-view")).on("click mousedown mouseup mousemove", (event) => {
-                this.findById("entity-canvas").dispatchEvent(new MouseEvent(event.originalEvent.type, event.originalEvent));
-            });
-            $(this.findById("entity-canvas")).on("click mousedown mouseup mousemove", (event) => event.originalEvent.stopPropagation());
             this.canvasDiv = <HTMLDivElement>this.findById("canvas-view");
             this.scrollDiv = <HTMLDivElement>this.findById("canvas-scroll");
+            this.redrawCanvas();
+        }
+
+        private subscribeToServices() {
+            this.entityDrawerService = this._context.getSharedObject(services.EntityDrawerService);
+        }
+
+        private setupDelegates() {
+            $(this.findById("toolSelect")).change(() => this.curTool = this.tools[$(this.findById("toolSelect")).val()]);
+
+            $(this.findById("canvas-view")).on(
+                this.eventsGivenToCanvas,
+                (event) => util.html.passMouseEventToElement(event.originalEvent, this.findById("entity-canvas")));
+
+            $(this.findById("entity-canvas")).on(
+                this.eventsGivenToCanvas,
+                (event) => event.originalEvent.stopPropagation());
+
             $(this.findById("canvas-view")).on("scroll", (event) => this.scrolled());
 
             this._context.window.addEventListener("resize", () => this.windowResized());
-
-            this.redrawCanvas();
-            this.load();
         }
 
         private scrolled() {
@@ -176,14 +211,6 @@ module editorcanvas {
             if (!(newDimensions.x === this.grid.canvasDimensions.x && newDimensions.y === this.grid.canvasDimensions.y)) {
                 this.grid.canvasDimensions = newDimensions;
             }
-        }
-
-        private bindTools() {
-            this.createTool.onBind(this._context, this);
-            this.moveTool.onBind(this._context, this);
-            this.selectTool.onBind(this._context, this);
-            this.mapMoveTool.onBind(this._context, this);
-            this.mapMoveTool.draggedElement = this.findById("canvas-view");
         }
 
         private subscribeToolEvents() {
@@ -231,36 +258,12 @@ module editorcanvas {
         }
 
 
-        onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
-            switch (key) {
-                case "data":
-                    this.redrawCanvas();
-                    break;
-                case "selectedEntity":
-                    break;
-                case "properties":
-                    this.redrawCanvas();
-                    break;
-                case "grid":
-                    this.grid.constructGrid();
-                    this.redrawCanvas();
-                    break;
-            }
-        }
-
-        /**
-         * @see ViewModel.viewFile
-         */
         get viewFile() : string {
             return "canvas";
         }
 
-        getStage() : createjs.Stage {
-            return this.stage;
-        }
-
-        get properties() : CanvasProperties {
-            return this._properties;
+        get stage() : createjs.Stage {
+            return this._stage;
         }
     }
 }

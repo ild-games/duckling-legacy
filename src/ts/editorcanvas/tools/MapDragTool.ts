@@ -41,5 +41,13 @@ module editorcanvas.tools {
                 this.draggedElement.scrollTop = scrollToY;
             }
         }
+
+        get key() : string {
+            return "mapMove";
+        }
+
+        get label() : string {
+            return "Map Move";
+        }
     }
 }

@@ -41,7 +41,7 @@ module editorcanvas.tools {
         }
 
         onStageDown(mousePos : math.Vector) {
-            var localCoords = this.canvas.getStage().globalToLocal(mousePos.x, mousePos.y);
+            var localCoords = this.canvas.stage.globalToLocal(mousePos.x, mousePos.y);
             mousePos.x = localCoords.x;
             mousePos.y = localCoords.y;
             this.moveCommand = null;
@@ -85,7 +85,7 @@ module editorcanvas.tools {
 
         onStageMove(mousePos : math.Vector) {
             if (this.moveCommand && this.context.commandQueue.peekUndo() === this.moveCommand) {
-                var localCoords = this.canvas.getStage().globalToLocal(mousePos.x, mousePos.y);
+                var localCoords = this.canvas.stage.globalToLocal(mousePos.x, mousePos.y);
                 this.displayObject.x = localCoords.x;
                 this.displayObject.y = localCoords.y;
                 this.moveCommand.endPosition = new math.Vector(localCoords.x, localCoords.y);
@@ -93,6 +93,12 @@ module editorcanvas.tools {
             }
         }
 
-    }
+        get key() : string {
+            return "moveEntity";
+        }
 
+        get label() : string {
+            return "Move Entity";
+        }
+    }
 }

@@ -22,7 +22,6 @@ module framework {
         private _rivets;
         private _sharedObjects : {} = {};
         private _systemWindow : util.SystemWindow = new util.SystemWindow();
-        private _scrollbarWidth : number = 0;
 
         /**
          * Construct a new context.

@@ -35,7 +35,7 @@ module editorcanvas.tools {
      */
     export class EntityCreatorTool extends BaseTool {
         onLeftClick(position : math.Vector) {
-            var localCoords = this.canvas.getStage().globalToLocal(position.x, position.y);
+            var localCoords = this.canvas.stage.globalToLocal(position.x, position.y);
             this.createBasicEntity(new math.Vector(localCoords.x, localCoords.y));
         }
 
@@ -56,6 +56,13 @@ module editorcanvas.tools {
                 new AddEntityCommand(this.entitySystem, rectEntity, this.context));
         }
 
+        get key() : string {
+            return "createEntity";
+        }
+
+        get label() : string {
+            return "Create Entity";
+        }
     }
 
 }

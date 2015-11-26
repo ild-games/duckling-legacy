@@ -44,5 +44,13 @@ module editorcanvas.tools {
 
         onStageMove(position : math.Vector) {
         }
+
+        get key() : string {
+            throw new Error("Not yet implemented");
+        }
+
+        get label() : string {
+            throw new Error("Not yet implemented");
+        }
     }
 }
