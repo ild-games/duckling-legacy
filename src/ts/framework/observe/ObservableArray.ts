@@ -19,21 +19,21 @@ module framework.observe {
         /**
          * Check the event to see if removing an item caused it.
          */
-        isItemRemoved() {
+        get isItemRemoved() {
             return this.name === EVENT_CHILD_REMOVED;
         }
 
         /**
          * Check the event to see if adding an item caused it.
          */
-        isItemAdded() {
+        get isItemAdded() {
             return this.name === EVENT_CHILD_ADD;
         }
 
         /**
          * Check the event to see if changing an item in the map caused it.
          */
-        isItemChanged() {
+        get isItemChanged() {
             return this.name === EVENT_CHILD_CHANGED;
         }
     }

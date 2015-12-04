@@ -9,10 +9,9 @@ module framework.observe {
 
         /**
          * Initialize the event.
-         * @param data Data describing the event.
          * @param name Name of the data changed event. (EX: "ElementRemoved", "ElementModified")
-         * @param child Child event that triggered the event.
          * @param object Object that the event corresponds to.
+         * @param child Child event that triggered the event.
          */
         constructor(name : string, object : Observable<any>, child? : DataChangeEvent) {
             this.name = name;

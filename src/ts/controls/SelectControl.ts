@@ -64,7 +64,7 @@ module controls {
             this._values = nextValues;
             this.selectElement.innerHTML = this.createInnerHTML(Object.keys(nextValues));
 
-            if (!(this.value in this._values)) {
+            if (this.value && !(this.value in this._values)) {
                 this.selectJqueryObject.selectpicker('deselectAll');
             }
 

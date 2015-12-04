@@ -28,9 +28,10 @@ module framework.observe {
          * @param callback Function object that was registered with addChangeListener.
          */
         removeChangeListener(callback : DataChangeCallback<T>) {
-            this._callbacks.filter(function(fun) {
-                return fun === callback;
-            });
+            var index = this._callbacks.indexOf(callback);
+            if (index >= 0) {
+                this._callbacks.splice(index, 1);
+            }
         }
 
         /**

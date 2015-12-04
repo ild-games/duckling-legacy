@@ -6,25 +6,25 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "bootstrap/bootstrap.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "easeljs/easeljs.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "jquery/jquery.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "tweenjs/tweenjs.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "es6-promise/es6-promise.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "rivets/rivets.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "createjs-lib/createjs-lib.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     }
   }
 }

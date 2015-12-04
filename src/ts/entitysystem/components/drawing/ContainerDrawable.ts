@@ -88,7 +88,7 @@ module entityframework.components.drawing {
                 "selDrawableType",
                 this.addDrawable);
             this.drawablePicker = new controls.SelectControl<Drawable>(this, "drawableSelect", this.getDrawables(), "");
-            this.drawablePicker.callback = (drawable) => this.addSelectedDrawableVM(drawable);
+            this.drawablePicker.callback = (drawable) => this.attachSelectedDrawableVM(drawable);
 
             if (this.isWhite) {
                 var vmJqueryObject = $(this.findById("containerSelDrawableVM"));
@@ -110,7 +110,7 @@ module entityframework.components.drawing {
             }
 
             var drawablesEvent = <observe.ObservableArrayChanged<Drawable>>event.child;
-            if (drawablesEvent.isItemAdded) {
+            if (drawablesEvent.isItemRemoved) {
                 this.onDrawableRemoved(this.drawablePicker.value);
             }
             if (drawablesEvent.isItemAdded) {
@@ -128,7 +128,7 @@ module entityframework.components.drawing {
             this.removeChildViews();
             if (this.data.getDrawable(addedDrawableKey)) {
                 this.updateDrawablePicker();
-                this.addSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
+                this.attachSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
                 this.drawablePicker.value = addedDrawableKey;
             }
         }
@@ -152,10 +152,11 @@ module entityframework.components.drawing {
             }
         }
 
-        private addSelectedDrawableVM(drawable : Drawable) {
+        private attachSelectedDrawableVM(drawable : Drawable) {
             var drawableVM : BaseDrawableViewModel<any> = <BaseDrawableViewModel<any>>drawable.factory.createFormVM();
             drawableVM.isWhite = !this.isWhite;
             $(this.findById("sectionSelDrawableVM")).removeClass("gone");
+            this.removeChildViews();
             this.addChildView(
                 "selDrawableVM",
                 drawableVM,

@@ -18,7 +18,7 @@
     "bootstrap": "~3.3.5",
     "font-awesome": "~4.4.0",
     "jade": "~1.11.0",
-    "EaselJS": "~0.8.1",
+    "EaselJS": "~0.8.2",
     "rivets": "~0.8.1",
     "mousetrap": "~1.5.3"
   }

@@ -6,7 +6,7 @@ fromEmpty = (root) -> fromObject root, {}
 
 testUnsettable = (fieldName, typeName, value) ->
     it "throws an error when replaced with a #{typeName}", ->
-        error = serlib.errors.createInvalidJSONError "__root__.#{fieldName}, value, this.root[fieldName]
+        error = serlib.errors.createInvalidJSONError "__root__.#{fieldName}", value, this.root[fieldName]
         expect(=> fromObject this.root, "#{fieldName}" : value).toThrow(error)
 
 testTakeJSON = (fieldName, typeName, value) ->
@@ -14,11 +14,6 @@ testTakeJSON = (fieldName, typeName, value) ->
         result = fromObject this.root, "#{fieldName}" : value
         expect(result[fieldName]).toEqual value
 
-# TODO Test deserializing objects with __cpp_type into {}, [], null, and undefined
-# TODO Test custom serializers
-# TODO Test No Root
-# TODO Test Bootstrap an annotated custom serializer
-# TODO Test Deserializing an observalbe Map and observable Array
 describe "Deserialize", ->
     describe "with no root", ->
         testDeserialize = (typeName, typeValue) ->

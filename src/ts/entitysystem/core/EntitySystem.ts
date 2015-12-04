@@ -13,38 +13,38 @@ module entityframework
         }
 
         /**
-        * Event describing how the entity was changed. Null if the event effects
-        * more than one entity.
-        */
+         * Event describing how the entity was changed. Null if the event effects
+         * more than one entity.
+         */
         get entitiesEvent() : observe.ObservableMapChanged<Entity> {
             return <any>this.child;
         }
 
         /**
-        * Check if the data changed event is the result of an entity being modified.
-        */
+         * Check if the data changed event is the result of an entity being modified.
+         */
         get isEntityChanged() {
             return this.entitiesEvent;
         }
 
         /**
-        * Check if the data changed event is the result of an entity being removed.
-        */
+         * Check if the data changed event is the result of an entity being removed.
+         */
         get isEntityRemoved() {
             return this.entitiesEvent && this.entitiesEvent.isItemRemoved;
         }
 
         /**
-        * Check if the data changed event is the result of an entity being added.
-        */
+         * Check if the data changed event is the result of an entity being added.
+         */
         get isEntityAdded() {
             return this.entitiesEvent && this.entitiesEvent.isItemRemoved;
         }
 
         /**
-        * Check if the data changed event is the result of an entity system being moved
-        * into this system.
-        */
+         * Check if the data changed event is the result of an entity system being moved
+         * into this system.
+         */
         get isSystemMoved() {
             return this.name === EVENT_MOVED;
         }
