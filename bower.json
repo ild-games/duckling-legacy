@@ -20,6 +20,7 @@
     "jade": "~1.11.0",
     "EaselJS": "~0.8.2",
     "rivets": "~0.8.1",
-    "mousetrap": "~1.5.3"
+    "mousetrap": "~1.5.3",
+    "mjolnic-bootstrap-colorpicker": "~2.3.0"
   }
 }

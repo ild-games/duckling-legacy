@@ -91,6 +91,7 @@ module.exports = function(grunt) {
                     'bower_components/rivets/dist/rivets.js',
                     'bower_components/bootstrap/dist/js/bootstrap.js',
                     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
+                    'bower_components/mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js',
                     'bower_components/jade/runtime.js',
                     'bower_components/mousetrap/mousetrap.js',
                     'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js'
