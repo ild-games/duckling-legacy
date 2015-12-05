@@ -35,7 +35,6 @@ module editorcanvas.tools {
             if (this.isDown) {
                 var scrollToX = this.offset.x + (this.curPos.x - position.x);
                 var scrollToY = this.offset.y + (this.curPos.y - position.y);
-                console.log(scrollToX, scrollToY);
 
                 this.draggedElement.scrollLeft = scrollToX;
                 this.draggedElement.scrollTop = scrollToY;

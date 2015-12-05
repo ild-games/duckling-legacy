@@ -7,7 +7,7 @@ module editorcanvas.drawing {
 
         @observe.Object()
         canvasDimensions : math.Vector;
-        
+
         private _drawable : createjs.Shape;
 
         constructor(cellDimensions : number, canvasDimensions : math.Vector) {
@@ -27,10 +27,9 @@ module editorcanvas.drawing {
         public constructGrid() {
             if (this.cellDimensions && this.canvasDimensions) {
                 this._drawable = new createjs.Shape();
-                this._drawable.graphics.setStrokeDash([2, 2]);
                 this._drawable.graphics
                     .setStrokeStyle(1, 0, 0, 10, true)
-                    .beginStroke("#000");
+                    .beginStroke("#000000");
                 var xBound = this.cellDimensions * Math.ceil(this.canvasDimensions.x / this.cellDimensions);
                 var yBound = this.cellDimensions * Math.ceil(this.canvasDimensions.y / this.cellDimensions);
                 for (var x = -xBound; x <= xBound; x += this.cellDimensions) {

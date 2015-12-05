@@ -63,6 +63,8 @@ module editorcanvas {
             this.setupSharedObjects();
             this.addTools();
             this.setupStage();
+            this.onStagePropertiesChanged();
+            this.redrawCanvas();
             this.load();
         }
 
@@ -74,11 +76,13 @@ module editorcanvas {
                 case "selectedEntity":
                     break;
                 case "properties":
+                    this.onStagePropertiesChanged();
                     this.redrawCanvas();
                     break;
                 case "grid":
                     this.grid.constructGrid();
                     this.redrawCanvas();
+                    console.log("reconstruct grid");
                     break;
             }
         }
@@ -168,7 +172,6 @@ module editorcanvas {
             this.subscribeToolEvents();
             this.canvasDiv = <HTMLDivElement>this.findById("canvas-view");
             this.scrollDiv = <HTMLDivElement>this.findById("canvas-scroll");
-            this.redrawCanvas();
         }
 
         private subscribeToServices() {
@@ -192,7 +195,7 @@ module editorcanvas {
         }
 
         private scrolled() {
-            this.setStagePosition();
+            this.updateStagePosition();
             this.stage.update();
         }
 
@@ -200,7 +203,7 @@ module editorcanvas {
             var canvas = <HTMLCanvasElement>this.stage.canvas;
             canvas.width = this.canvasDiv.clientWidth;
             canvas.height = this.canvasDiv.clientHeight;
-            this.updateGrid();
+            this.onStagePropertiesChanged();
             this.redrawCanvas();
         }
 
@@ -220,22 +223,31 @@ module editorcanvas {
             this.stage.on("stagemousemove", (event) => this.curTool.onEvent(event));
         }
 
-        private setStagePosition() {
-            var newDimensions = new math.Vector(
-                this.properties.dimensions.x * this.stage.scaleX,
-                this.properties.dimensions.y * this.stage.scaleY);
+        private onStagePropertiesChanged() {
+            this.stage.scaleX = 1 * (this.properties.zoom / 100);
+            this.stage.scaleY = 1 * (this.properties.zoom / 100);
 
+            var newDimensions = this.calculateStageDimensions();
             this.scrollDiv.style.width = newDimensions.x + "px";
             this.scrollDiv.style.height = newDimensions.y + "px";
+
+            this.updateStagePosition();
+            this.updateGrid();
+        }
+
+        private calculateStageDimensions() {
+            return new math.Vector(
+                this.properties.dimensions.x * this.stage.scaleX,
+                this.properties.dimensions.y * this.stage.scaleY);
+        }
+
+        private updateStagePosition() {
+            var newDimensions = this.calculateStageDimensions();
             this.stage.x = Math.max(newDimensions.x / 2, this.canvasDiv.clientWidth / 2) - this.canvasDiv.scrollLeft;
             this.stage.y = Math.max(newDimensions.y / 2, this.canvasDiv.clientHeight / 2) - this.canvasDiv.scrollTop;
         }
 
         public redrawCanvas() {
-            this.stage.scaleX = 1 * (this.properties.zoom / 100);
-            this.stage.scaleY = 1 * (this.properties.zoom / 100);
-            this.setStagePosition();
-            this.updateGrid();
 
             var toDraw : Array<createjs.DisplayObject> = [];
 
