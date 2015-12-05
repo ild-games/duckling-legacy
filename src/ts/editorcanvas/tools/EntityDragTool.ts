@@ -41,6 +41,9 @@ module editorcanvas.tools {
         }
 
         onStageDown(mousePos : math.Vector) {
+            var localCoords = this.canvas.stage.globalToLocal(mousePos.x, mousePos.y);
+            mousePos.x = localCoords.x;
+            mousePos.y = localCoords.y;
             this.moveCommand = null;
             this.entitySystem.forEach((entity : entityframework.Entity, key : string) => {
                 var positionComp = entity.getComponent<comp.PositionComponent>("position");
@@ -82,14 +85,20 @@ module editorcanvas.tools {
 
         onStageMove(mousePos : math.Vector) {
             if (this.moveCommand && this.context.commandQueue.peekUndo() === this.moveCommand) {
-                var globalToLocalCoords = this.displayObject.globalToLocal(mousePos.x, mousePos.y);
-                this.displayObject.x = mousePos.x;
-                this.displayObject.y = mousePos.y;
-                this.moveCommand.endPosition = mousePos;
+                var localCoords = this.canvas.stage.globalToLocal(mousePos.x, mousePos.y);
+                this.displayObject.x = localCoords.x;
+                this.displayObject.y = localCoords.y;
+                this.moveCommand.endPosition = new math.Vector(localCoords.x, localCoords.y);
                 this.moveCommand.execute();
             }
         }
 
-    }
+        get key() : string {
+            return "moveEntity";
+        }
 
+        get label() : string {
+            return "Move Entity";
+        }
+    }
 }

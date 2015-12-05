@@ -9,7 +9,7 @@ module editorcanvas.drawing {
      */
     export class BoundingBox extends framework.observe.Observable implements CanvasDrawnElement {
         private _rectangle : es_drawing.RectangleShape;
-        private _color: string;
+        private _color : string;
 
         constructor(dimensions : math.Vector, color : string) {
             super();

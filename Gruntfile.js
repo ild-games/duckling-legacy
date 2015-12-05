@@ -77,7 +77,7 @@ module.exports = function(grunt) {
                     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
                     'bower_components/jade/runtime.js',
                     'bower_components/mousetrap/mousetrap.js',
-                    'bower_components/EaselJS/lib/easeljs-0.8.1.combined.js'
+                    'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js'
                 ],
                 dest: 'build/dependencies/dependencies.js'
             },

@@ -45,6 +45,8 @@ $padding-form-vertical: 0.5em;
 
 $default-indented-box-padding: 5px;
 
+$canvas-footer-height: 46px;
+
 html,body
 {
   border: 0;
@@ -96,22 +98,56 @@ div {
 }
 
 .canvas-menu-btns {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
 }
 
-.canvas-div {
-  align-self: center;
+.editor-container {
+    .editor-content {
+        height: 100%;
+        padding-bottom: $canvas-footer-height;
+    }
+
+    .editor-footer {
+        @include layout-box;
+        z-index: 10;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: $canvas-footer-height;
+        width:100%;
+        background-color: $light-primary-color;
+        border: 0px solid black;
+        border-top-width: 1px;
+        padding: $padding-base-vertical $padding-base-horizontal;
+    }
 }
 
-#entity-canvas {
-  background-color: white;
+.canvas-properties {
+    div.form-group {
+        padding-right: 5px;
+    }
+}
+
+.entity-canvas {
+  background-color: $primary-color;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.canvas-scroll {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 800px;
+  height: 500px;
 }
 
 #container {
   position: absolute;
-  background-color: $primary-color;
   width: 100%;
   height: 100%;
   top: 0;
@@ -134,12 +170,11 @@ div.non-white-container-sel-drawable-vm {
 
 .canvas-view {
   @include layout-box;
-  display: flex;
-  justify-content: center;
   float: left;
   height: 100%;
   width: 65%;
   overflow: auto;
+  position: relative;
 }
 
 .entity-editor {
@@ -332,6 +367,5 @@ div.form-group input:focus {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
 }
-
 
 @import '_splash_screen';
