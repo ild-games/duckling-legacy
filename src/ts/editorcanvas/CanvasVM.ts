@@ -82,7 +82,6 @@ module editorcanvas {
                 case "grid":
                     this.grid.constructGrid();
                     this.redrawCanvas();
-                    console.log("reconstruct grid");
                     break;
             }
         }
