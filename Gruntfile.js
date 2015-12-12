@@ -102,6 +102,7 @@ module.exports = function(grunt) {
                 src: [
                     'bower_components/bootstrap/dist/css/bootstrap.css',
                     'bower_components/bootstrap-select/dist/css/bootstrap-select.css',
+                    'bower_components/mjolnic-bootstrap-colorpicker/dist/css/bootstrap-colorpicker.css',
                     'bower_components/font-awesome/css/font-awesome.css'
                 ],
                 dest: 'build/dependencies/dependencies.css'
@@ -116,12 +117,20 @@ module.exports = function(grunt) {
         },
         image: {
             dynamic: {
-                files: [{
-                    expand: true,
-                    cwd: 'resources',
-                    src: ['**/*.{png,jpg,gif,svg}'],
-                    dest: 'build/resources'
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'resources',
+                        src: ['**/*.{png,jpg,gif,svg}'],
+                        dest: 'build/resources'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'bower_components/mjolnic-bootstrap-colorpicker/dist/img',
+                        src: ['**/*.{png,jpg,gif,svg}'],
+                        dest: 'build/img'
+                    }
+                ]
             }
         },
         copy: {

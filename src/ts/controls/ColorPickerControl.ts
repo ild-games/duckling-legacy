@@ -1,20 +1,29 @@
 module controls {
     export class ColorPickerControl {
+        private id : string = "";
         private view : framework.ViewModel<any>;
-        private jQueryObject;
+        private jQueryColorPicker;
+        private jQueryInputTag;
 
         constructor(view : framework.ViewModel<any>, id : string) {
-            var element = view.findById(id);
+            this.id = id;
             this.view = view;
-            this.jQueryObject = $(element);
+            this.jQueryColorPicker = $(view.findById(id));
+            this.jQueryInputTag = $(view.findById(id + "_inputTag"));
 
             this.init();
         }
 
         private init() {
-            this.jQueryObject.colorpicker({
-                format: 'rgba'
-            });
+            this.jQueryColorPicker.colorpicker({
+                format: 'rgba',
+                component: $(this.view.findById(this.id + "_component"))
+            })
+            this.jQueryColorPicker.on("changeColor.colorpicker", (event) => this.onColorChange());
+        }
+
+        private onColorChange() {
+            this.jQueryInputTag.trigger("input");
         }
     }
 }
