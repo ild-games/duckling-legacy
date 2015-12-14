@@ -42,7 +42,7 @@ module entityframework.components.drawing {
         Circle: new CircleShapeFactory()
     }
 
-    export class ShapeDrawableViewModel extends framework.ViewModel<ShapeDrawable> implements framework.observe.Observer {
+    export class ShapeDrawableViewModel extends framework.ViewModel<ShapeDrawable> {
         private shapeTypePicker : controls.SelectControl<ShapeType>;
 
         get viewFile() : string {
@@ -56,7 +56,6 @@ module entityframework.components.drawing {
 
         onDataReady() {
             super.onDataReady();
-            this.data.listenForChanges("data", this);
         }
 
         onViewReady() {
@@ -72,9 +71,6 @@ module entityframework.components.drawing {
             } else {
                 this.addShapeVM(this.data.shape.factory);
             }
-        }
-
-        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
         }
 
         private addShape() {

@@ -1,19 +1,26 @@
 module framework {
     var nextId : number = 0;
 
+    interface Observation {
+        object : observe.Observable<any>;
+        callback : observe.DataChangeCallback<any>;
+    }
+
     /**
      * A ViewModel is responsible for responding to user actions and population the view
      * with information from the model.
      */
     export class ViewModel<T> {
+        private dataObservations : Observation [] = [];
+        private _data : T;
+
         protected _children : {[id : string]:ViewModel<any>} = {};
         protected _attached : boolean = false;
-        protected _context : framework.Context;
+        protected _context : Context;
         protected _htmlRoot : HTMLElement;
         protected _rivetsBinding;
         protected _commandCallbacks = {};
         protected _id = nextId++;
-        private _data : T;
 
         private logging : boolean = true;
 
@@ -26,7 +33,7 @@ module framework {
          * @param data The root of the ViewModel's data.
          * @returns A reference to the ViewModel instance.
          */
-        init(context: framework.Context, htmlRoot : HTMLElement, data : T) : ViewModel<T> {
+        init(context: Context, htmlRoot : HTMLElement, data : T) : ViewModel<T> {
             this.setData(context, data);
             this.attach(htmlRoot);
             return this;
@@ -63,7 +70,7 @@ module framework {
          * Push a command into the command queue.
          * @param command Command to execute in the command queue.
          */
-        pushCommand(command : framework.command.Command) {
+        pushCommand(command : command.Command) {
             this._context.commandQueue.pushCommand(command);
         }
 
@@ -91,20 +98,14 @@ module framework {
          * Renders the ViewModel's template and binds the model to the view.
          */
         private render() {
-            if (!this._htmlRoot) {
-                debugger;;
-            }
-
             this.log("Rendered");
             this._htmlRoot.innerHTML = this._context.views.getTemplate(this.viewFile).call(this, this);
             this._rivetsBinding = this._context.rivets.bind(this._htmlRoot, this);
 
-            for(var childID in this._children) {
-                var child : ViewModel<any> = this._children[childID];
-                child.attach(this.findById(childID))
-            }
+            this.forEachChild((child, childID) => {
+                child.attach(this.findById(childID));
+            });
         }
-
 
         /**
          * Render the template described by the given name and return it. The viewmodel will be available as the template's
@@ -134,22 +135,22 @@ module framework {
         detach() {
             if (this._attached) {
                 this._attached = false;
-                for(var childKey in this._children) {
-                    this._children[childKey].detach();
-                }
+                this.forEachChild((child) => child.detach());
                 this._rivetsBinding.unbind();
                 this._htmlRoot.innerHTML = "";
                 this.log("Detach");
                 this.onDetach();
             }
-        }
+        };
 
         /**
          * Destroy the ViewModel.  After this is called the view should never be reused.
          */
-         destory() {
-             //TODO: Unbind all observers.
+         destroy() {
+             this.removeChildViews();
+             this.removeChangeListeners();
              this.log("Destroyed");
+             this.onDestroy();
          }
 
         /**
@@ -207,6 +208,51 @@ module framework {
         }
 
         /**
+         * Add a change listner to the object. The change listner will automatically be cleaned up when the object is
+         * destroyed.
+         * @param object Object that will be observed.
+         * @param callback Callback that will be fired on data change.
+         */
+        setChangeListener<T extends observe.DataChangeEvent>(object : observe.Observable<T>, callback : observe.DataChangeCallback<T>) {
+            if (this.dataObservations === null) {
+                this.dataObservations = [];
+            }
+
+            this.dataObservations.push({
+                object: object,
+                callback: callback
+            });
+
+            object.addChangeListener(callback);
+        }
+
+        /**
+         * Remove all of the attached change listeners.
+         */
+        protected removeChangeListeners() {
+            for (var i = 0; i < this.dataObservations.length; i++) {
+                var observation = this.dataObservations[i];
+                observation.object.removeChangeListener(observation.callback);
+            }
+            this.dataObservations= [];
+        }
+
+        /**
+         * Remove one change listener from the object.
+         * @param object Object that is being listened to for chagnes by the view model.
+         */
+         protected removeChangeListener(object) {
+             for(var i = 0; i < this.dataObservations.length; i++) {
+                 var observation = this.dataObservations[i];
+                 if (observation.object === object) {
+                     this.dataObservations.slice(i,1);
+                     observation.object.removeChangeListener(observation.callback);
+                     break;
+                 }
+             }
+         }
+
+        /**
          * Called by rivets when a view command is fired.
          * @param key Key that identifies the view command.
          * @param event The event that triggered the callback.  Usually an HTML event.
@@ -244,17 +290,24 @@ module framework {
         }
 
         /**
-         * Call to remove all child views.  Should only be called if the view is detached.
+         * Call to remove all child views.
          */
         protected removeChildViews() {
             if (this._attached) {
-                for(var childKey in this._children) {
-                    var child = this._children[childKey];
-                    child.detach();
-                    child.destory();
-                }
+                this.forEachChild((child) => child.detach());
             }
+            this.forEachChild((child) => child.destroy());
             this._children = {};
+        }
+
+        /**
+         * Iterate over the view's child views.
+         * @param callback Function called on each child view.
+         */
+        forEachChild(callback : (child : ViewModel<any>, key? : string) => void) {
+            for (var key in this._children) {
+                callback(this._children[key], key);
+            }
         }
 
         /**
@@ -264,7 +317,7 @@ module framework {
          */
         replaceWithView(replacement : ViewModel<any>, data) {
             this.detach();
-            this.destory();
+            this.destroy();
             replacement.init(this._context, this._htmlRoot, data);
         }
 

@@ -12,7 +12,7 @@ module entityframework.components.drawing {
     /**
      * Represents an object that can be drawn in the game.
      */
-    export class Drawable extends framework.observe.Observable {
+    export class Drawable extends framework.observe.SimpleObservable {
         @observe.Primitive(Number)
         protected renderPriority : number = 0;
 
@@ -26,15 +26,15 @@ module entityframework.components.drawing {
         protected positionOffset : math.Vector = new math.Vector();
 
         @observe.Primitive(Boolean)
-        protected inactive : boolean;
+        protected inactive : boolean = false;
 
         @observe.Object()
         protected scale : math.Vector = new math.Vector(1.0, 1.0);
 
         @observe.Primitive()
-        key : string;
+        key : string = "";
 
-        constructor(key : string) {
+        constructor(key : string = "") {
             super();
             this.key = key;
         }

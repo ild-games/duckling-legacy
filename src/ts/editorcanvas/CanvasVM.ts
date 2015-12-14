@@ -11,7 +11,7 @@ module editorcanvas {
     /**
      * Contains the editor specific properties of the canvas.
      */
-    class CanvasProperties extends observe.Observable {
+    class CanvasProperties extends observe.SimpleObservable {
         @observe.Primitive(Number)
         zoom : number = 100;
 
@@ -25,7 +25,7 @@ module editorcanvas {
     /**
      * ViewModel for the main canvas used to interact with entities.
      */
-    export class CanvasVM extends framework.ViewModel<entityframework.EntitySystem> implements framework.observe.Observer {
+    export class CanvasVM extends framework.ViewModel<entityframework.EntitySystem> {
         private selectedEntity : entityframework.core.SelectedEntity;
         private project : framework.Project;
         private systemLoader : entityframework.SystemLoader;
@@ -51,9 +51,15 @@ module editorcanvas {
 
         onDataReady() {
             super.onDataReady();
-            this.data.listenForChanges("data", this);
-            this.properties.listenForChanges("properties", this);
-            this.grid.listenForChanges("grid", this);
+            this.setChangeListener(this.data, () => this.redrawCanvas());
+            this.setChangeListener(this.properties, () => {
+                    this.onStagePropertiesChanged();
+                    this.redrawCanvas();
+            });
+            this.setChangeListener(this.grid, () => {
+                this.grid.constructGrid();
+                this.redrawCanvas();
+            });
         }
 
         onViewReady() {
@@ -68,28 +74,8 @@ module editorcanvas {
             this.load();
         }
 
-        onDataChanged(key:string, event:framework.observe.DataChangeEvent) {
-            switch (key) {
-                case "data":
-                    this.redrawCanvas();
-                    break;
-                case "selectedEntity":
-                    break;
-                case "properties":
-                    this.onStagePropertiesChanged();
-                    this.redrawCanvas();
-                    break;
-                case "grid":
-                    this.grid.constructGrid();
-                    this.redrawCanvas();
-                    break;
-            }
-        }
-
         private setupSharedObjects() {
             this.selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
-            this.selectedEntity.listenForChanges("selectedEntity", this);
-
             this.project = this._context.getSharedObject(framework.Project);
             this.systemLoader = new entityframework.SystemLoader(this.project, new util.JsonLoader());
             this._context.setSharedObject(this.data);
@@ -268,7 +254,9 @@ module editorcanvas {
             this.stage.update();
         }
 
-
+        /**
+         * @see ViewModel.viewFile
+         */
         get viewFile() : string {
             return "canvas";
         }

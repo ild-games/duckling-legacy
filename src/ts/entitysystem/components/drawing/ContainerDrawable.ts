@@ -67,7 +67,7 @@ module entityframework.components.drawing {
         }
     }
 
-    export class ContainerDrawableViewModel extends BaseDrawableViewModel<ContainerDrawable> implements framework.observe.Observer {
+    export class ContainerDrawableViewModel extends BaseDrawableViewModel<ContainerDrawable> {
         private drawablePicker : controls.SelectControl<Drawable>
         private drawableTypeControl : controls.DrawableTypeControl;
 
@@ -88,7 +88,7 @@ module entityframework.components.drawing {
                 "selDrawableType",
                 this.addDrawable);
             this.drawablePicker = new controls.SelectControl<Drawable>(this, "drawableSelect", this.getDrawables(), "");
-            this.drawablePicker.callback = (drawable) => this.addSelectedDrawableVM(drawable);
+            this.drawablePicker.callback = (drawable) => this.attachSelectedDrawableVM(drawable);
 
             if (this.isWhite) {
                 var vmJqueryObject = $(this.findById("containerSelDrawableVM"));
@@ -99,25 +99,22 @@ module entityframework.components.drawing {
 
         onDataReady() {
             super.onDataReady();
-            this.data.listenForChanges("data", this);
-        }
-
-        onDataChanged(key : string, event : framework.observe.DataChangeEvent) {
-            if (key === "data") {
+            this.setChangeListener(this.data, (event) => {
                 this.onDataObjChildModified(event);
-            }
+            });
         }
 
         onDataObjChildModified(event : framework.observe.DataChangeEvent) {
-            if (event.child) {
-                switch (event.child.name) {
-                    case "Removed":
-                        this.onDrawableRemoved(this.drawablePicker.value);
-                        break;
-                    case "Added":
-                        this.onDrawableAdded((<Drawable> event.child.data).key);
-                        break;
-                }
+            if (!event.child) {
+                return;
+            }
+
+            var drawablesEvent = <observe.ObservableArrayChanged<Drawable>>event.child;
+            if (drawablesEvent.isItemRemoved) {
+                this.onDrawableRemoved(this.drawablePicker.value);
+            }
+            if (drawablesEvent.isItemAdded) {
+                this.onDrawableAdded(drawablesEvent.item.key);
             }
         }
 
@@ -131,7 +128,7 @@ module entityframework.components.drawing {
             this.removeChildViews();
             if (this.data.getDrawable(addedDrawableKey)) {
                 this.updateDrawablePicker();
-                this.addSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
+                this.attachSelectedDrawableVM(this.data.getDrawable(addedDrawableKey));
                 this.drawablePicker.value = addedDrawableKey;
             }
         }
@@ -155,10 +152,11 @@ module entityframework.components.drawing {
             }
         }
 
-        private addSelectedDrawableVM(drawable : Drawable) {
+        private attachSelectedDrawableVM(drawable : Drawable) {
             var drawableVM : BaseDrawableViewModel<any> = <BaseDrawableViewModel<any>>drawable.factory.createFormVM();
             drawableVM.isWhite = !this.isWhite;
             $(this.findById("sectionSelDrawableVM")).removeClass("gone");
+            this.removeChildViews();
             this.addChildView(
                 "selDrawableVM",
                 drawableVM,

@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-NW = ../node_modules/nw/bin/nw
-
 if [ ! -d "node_modules" ]; then
     npm install
     grunt install

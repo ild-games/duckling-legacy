@@ -6,7 +6,7 @@ module math {
     /**
      * A 2D vector.
      */
-    export class Vector extends framework.observe.Observable {
+    export class Vector extends framework.observe.SimpleObservable {
         @observe.Primitive(Number)
         x : number;
 

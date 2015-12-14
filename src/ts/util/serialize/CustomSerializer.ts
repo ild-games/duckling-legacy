@@ -30,12 +30,12 @@ module util.serialize {
         /**
          * Return the object that should represent the object in JSON.
          */
-        toJSON() : any;
+        toJSON(context : SerializationContext) : any;
 
         /**
          * Takes the JSON representation of the object and produces
          * @param object
          */
-        fromJSON(object) : any;
+        fromJSON(object, conted : SerializationContext) : any;
     }
 }

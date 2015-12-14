@@ -5,24 +5,71 @@ module entityframework
 
     import observe = framework.observe;
 
+    const EVENT_MOVED = "Moved";
+
+    export class EntitySystemChanged extends observe.DataChangeEvent {
+        constructor(name : string, object : EntitySystem, child? : observe.DataChangeEvent) {
+            super(name, object, child)
+        }
+
+        /**
+         * Event describing how the entity was changed. Null if the event effects
+         * more than one entity.
+         */
+        get entitiesEvent() : observe.ObservableMapChanged<Entity> {
+            return <any>this.child;
+        }
+
+        /**
+         * Check if the data changed event is the result of an entity being modified.
+         */
+        get isEntityChanged() {
+            return this.entitiesEvent;
+        }
+
+        /**
+         * Check if the data changed event is the result of an entity being removed.
+         */
+        get isEntityRemoved() {
+            return this.entitiesEvent && this.entitiesEvent.isItemRemoved;
+        }
+
+        /**
+         * Check if the data changed event is the result of an entity being added.
+         */
+        get isEntityAdded() {
+            return this.entitiesEvent && this.entitiesEvent.isItemRemoved;
+        }
+
+        /**
+         * Check if the data changed event is the result of an entity system being moved
+         * into this system.
+         */
+        get isSystemMoved() {
+            return this.name === EVENT_MOVED;
+        }
+    }
+
     /**
      * Contains a collection of Entities and other meta data about them.
      */
     @framework.ContextKey("entityframework.EntitySystem")
-    export class EntitySystem extends framework.observe.Observable
+    export class EntitySystem extends framework.observe.Observable<EntitySystemChanged>
     {
-        @observe.Object()
         private entities : framework.observe.ObservableMap<Entity>;
-
-        private _componentFactories : {[key:string]:ComponentFactory} = {};
-        private _nextId : number = 0;
+        private componentFactories : {[key:string]:ComponentFactory} = {};
+        private nextId : number = 0;
+        private entityCallback : observe.DataChangeCallback<observe.ObservableMapChanged<Entity>>;
 
         /**
          * Create an empty EntitySystem
          */
         constructor() {
             super();
-            this.entities = new framework.observe.ObservableMap<Entity>();
+            this.entityCallback = (event) => {
+                this.publishDataChanged(new EntitySystemChanged("entities",this, event));
+            };
+            this.setEntities(new framework.observe.ObservableMap<Entity>());
         }
 
         /**
@@ -30,7 +77,7 @@ module entityframework
          * @param factory Factory that creates objects needed to support the component type.
          */
         addComponentType(factory : ComponentFactory) {
-            this._componentFactories[factory.name] = factory;
+            this.componentFactories[factory.name] = factory;
         }
 
         /**
@@ -39,7 +86,7 @@ module entityframework
          * @param componentTypeName Type of the component to add.
          */
         addComponent(entityName : string, componentTypeName : string) {
-            var component = this._componentFactories[componentTypeName].createComponent();
+            var component = this.componentFactories[componentTypeName].createComponent();
             this.getEntity(entityName).addComponent(componentTypeName, component);
         }
 
@@ -97,8 +144,8 @@ module entityframework
          * @param func Func that is called on each component.
          */
         forEachType(func : (factory : ComponentFactory, key? : string) => void) {
-            for(var key in this._componentFactories) {
-                func(this._componentFactories[key], key);
+            for(var key in this.componentFactories) {
+                func(this.componentFactories[key], key);
             }
         }
 
@@ -106,7 +153,7 @@ module entityframework
          * Generates the next available unique key for the entity system.
          */
         nextKey() {
-            return ++this._nextId + "";
+            return ++this.nextId + "";
         }
 
         /**
@@ -114,7 +161,7 @@ module entityframework
          * @param next Number that will be used as the next ID.
          */
         seedNextKey(next : number) {
-            this._nextId = next;
+            this.nextId = next;
         }
 
 
@@ -125,8 +172,8 @@ module entityframework
          */
         getEmptyClone() {
             var clone = new EntitySystem();
-            for(var key in this._componentFactories) {
-                clone.addComponentType(this._componentFactories[key])
+            for(var key in this.componentFactories) {
+                clone.addComponentType(this.componentFactories[key])
             }
             return clone;
         }
@@ -137,7 +184,7 @@ module entityframework
          * @returns The factory used to create new instances of the component.
          */
         getComponentFactory(componentName : string) {
-            return this._componentFactories[componentName];
+            return this.componentFactories[componentName];
         }
 
         /**
@@ -146,41 +193,22 @@ module entityframework
          * @param entitySystem
          */
         move(entitySystem : EntitySystem) {
-            this.entities.stopListening("Entities", this);
-            entitySystem.entities.stopListening("Entities", entitySystem);
-
-            this._componentFactories = entitySystem._componentFactories;
-            this.entities = entitySystem.entities;
-            this._nextId = entitySystem._nextId;
-
-            this.entities.listenForChanges("Entities", this);
-
-            this.dataChanged("replaced", null);
+            this.componentFactories = entitySystem.componentFactories;
+            this.setEntities(entitySystem.entities);
+            this.nextId = entitySystem.nextId;
+            this.publishDataChanged(new EntitySystemChanged(EVENT_MOVED, this));
         }
 
-        /**
-         * Check if the data changed event is the result of an entity being removed.
-         * @param event Event recieved by an Observer.
-         */
-        isEntityRemovedEvent(event : framework.observe.DataChangeEvent) {
-            return event && event.child && event.child.name === "Removed";
-        }
+        private setEntities(entities : observe.ObservableMap<Entity>) {
+            if (this.entities) {
+                this.entities.removeChangeListener(this.entityCallback);
+            }
 
-        /**
-         * Check if the data changed event is the result of an entity being added.
-         * @param event Event recieved by an Observer.
-         */
-        isEntityAddedEvent(event : framework.observe.DataChangeEvent) {
-            return event && event.child && event.child.name === "Added";
-        }
+            this.entities = entities;
 
-        /**
-         * Check if the data changed event is the result of an entity system being moved
-         * into this system.
-         * @param event Event recieved by an Observer.
-         */
-        isSystemMovedEvent(event : framework.observe.DataChangeEvent) {
-            return event && event.name === "replaced";
+            if (this.entities) {
+                this.entities.addChangeListener(this.entityCallback);
+            }
         }
     }
 }

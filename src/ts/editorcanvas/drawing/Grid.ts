@@ -1,7 +1,7 @@
 module editorcanvas.drawing {
     import observe = framework.observe;
 
-    export class Grid extends observe.Observable implements CanvasDrawnElement {
+    export class Grid extends observe.SimpleObservable implements CanvasDrawnElement {
         @observe.Primitive(Number)
         cellDimensions : number = 0;
 

@@ -1,13 +1,13 @@
 module framework {
 
-    interface Setter<T> {
+    export interface Setter<T> {
         (value : T) : any;
     }
 
     class SetterCommand<T> implements command.Command {
-        setter : Setter<T>;
-        newValue : T;
-        oldValue : T;
+        private setter : Setter<T>;
+        private newValue : T;
+        private oldValue : T;
 
         constructor(setter : Setter<T>, newValue : T, oldValue : T) {
             this.setter = setter;

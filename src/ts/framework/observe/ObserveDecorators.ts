@@ -7,13 +7,30 @@ module framework.observe {
 
     var backingProperties = Symbol("BackingProperties");
 
-    function getBackingProperties(object) {
+    interface Property {
+        value : any | SimpleObservable;
+        callback : DataChangeCallback<DataChangeEvent>;
+    }
+
+    function getBackingProperties(object) : { [key:string] : any } {
         var backing = object[backingProperties];
         if (!backing) {
             backing = {};
             object[backingProperties] = backing;
         }
         return backing;
+    }
+
+    function getBackingProperty(object : SimpleObservable, key) {
+        var backing = getBackingProperties(object);
+        var property : Property = backing[key];
+        if (!property) {
+            property = { value : null, callback : function (event) {
+                object.dataChanged(key, null, event);
+            }};
+            backing[key] = property;
+        }
+        return property;
     }
 
     /**
@@ -53,23 +70,23 @@ module framework.observe {
             var descriptor = {
                 enumerable : true,
                 get : function () {
-                    return getBackingProperties(this)[propertyKey];
+                    return getBackingProperty(this, propertyKey).value;
                 },
-                set : function(newValue) {
+                set : function(newValue : framework.observe.SimpleObservable) {
                     (<any>__private.GlobalObject).getNotifier(this).performChange('update', function() {
                         return {name: propertyKey};
                     });
-                    var backing = getBackingProperties(this);
-                    var oldValue = backing[propertyKey];
+                    var property = getBackingProperty(this, propertyKey);
+                    var oldValue = property.value;
 
                     if (oldValue) {
-                        oldValue.stopListening(propertyKey, this);
+                        oldValue.removeChangeListener(property.callback);
                     }
 
-                    backing[propertyKey] = newValue;
+                    property.value = newValue;
 
                     if (newValue) {
-                        newValue.listenForChanges(propertyKey, this);
+                        newValue.addChangeListener(property.callback);
                     }
 
                     this.dataChanged(propertyKey);
@@ -77,7 +94,5 @@ module framework.observe {
             };
             __private.GlobalObject.defineProperty(classObject, propertyKey, descriptor);
         }
-
-
     }
 }

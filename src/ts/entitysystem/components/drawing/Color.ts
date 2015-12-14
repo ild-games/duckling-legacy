@@ -2,7 +2,7 @@ module entityframework.components.drawing {
     import serialize = util.serialize;
     import observe = framework.observe;
 
-    export class Color extends framework.observe.Observable {
+    export class Color extends observe.SimpleObservable {
 
         @observe.Primitive(Number)
         r : number;
