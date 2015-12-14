@@ -17,6 +17,8 @@ html
                 context.setSharedObjectByKey("Project", new framework.Project("."));
                 context.setSharedObjectByKey("FileDialog", new util.FileDialog(window));
                 context.setSharedObjectByKey("editorcanvas.services.EntityDrawerService", new editorcanvas.services.EntityDrawerService());
+                context.setSharedObjectByKey("editorcanvas.services.EntitySelectService", new editorcanvas.services.EntitySelectService(context));
+                
 
                 var splashScreenVM = (new splashscreen.SplashScreenVM()).init(
                         context,

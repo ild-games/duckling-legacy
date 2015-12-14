@@ -35,6 +35,12 @@ module editorcanvas.tools {
     export class EntityDragTool extends BaseTool {
         private moveCommand : MoveEntityCommand;
         private displayObject : createjs.DisplayObject = null;
+        private selectService : editorcanvas.services.EntitySelectService = null;
+
+        onBind(context : framework.Context, canvas : editorcanvas.CanvasVM) {
+            super.onBind(context, canvas);
+            this.selectService = context.getSharedObject(services.EntitySelectService)
+        }
 
         getDisplayObject() : createjs.DisplayObject {
             return this.displayObject;
@@ -45,24 +51,24 @@ module editorcanvas.tools {
             mousePos.x = localCoords.x;
             mousePos.y = localCoords.y;
             this.moveCommand = null;
-            this.entitySystem.forEach((entity : entityframework.Entity, key : string) => {
-                var positionComp = entity.getComponent<comp.PositionComponent>("position");
-                var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (positionComp && drawable && drawable.topDrawable) {
-                    var position = positionComp.position;
-                    var contains = drawable.topDrawable.contains(mousePos, position);
-                    if (contains) {
-                        this.moveCommand = new MoveEntityCommand(entity, position, mousePos);
-                        var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
-                        selectedEntity.entityKey = key;
-                        this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
-                    }
-                }
-            });
-            if (this.moveCommand) {
+
+            var selectableEntityKey = this.selectService.findSelectableEntity(new math.Vector(localCoords.x, localCoords.y));
+            if (selectableEntityKey) {
+                this.selectService.selectEntity(selectableEntityKey);
+                this.setupMoveCommand(
+                    this.entitySystem.getEntity(selectableEntityKey),
+                    mousePos);
+            }
+        }
+
+        private setupMoveCommand(entity : entityframework.Entity, mousePos : math.Vector) {
+                var entityPositionComp = entity.getComponent<comp.PositionComponent>("position");
+                this.moveCommand = new MoveEntityCommand(
+                    entity,
+                    entityPositionComp.position,
+                    mousePos);
                 this.setupDisplayObject(mousePos);
                 this.context.commandQueue.pushCommand(this.moveCommand);
-            }
         }
 
         private setupDisplayObject(mousePos : math.Vector) {
