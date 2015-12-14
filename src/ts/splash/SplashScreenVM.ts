@@ -66,7 +66,7 @@ module splashscreen {
                     path : dirName,
                     title : util.path.basename(dirName)
                 });
-            });
+            }, framework.error.onPromiseError(this._context));
         }
 
         private reorderProject(openedProject) {
