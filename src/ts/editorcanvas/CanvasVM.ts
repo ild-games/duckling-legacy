@@ -72,7 +72,7 @@ module editorcanvas {
             this._systemLoader.loadMap(this._project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
-                });
+                }, framework.error.onPromiseError(this._context));
         }
 
         private changeData(newData : entityframework.EntitySystem) {
