@@ -6,7 +6,8 @@ module entityframework.components.drawing {
 
     export enum DrawableType {
         Container,
-        Shape
+        Shape,
+        Image
     }
 
     /**
@@ -39,8 +40,10 @@ module entityframework.components.drawing {
             this.key = key;
         }
 
-        contains(point : math.Vector, shapePosition : math.Vector) {
-            var canvasObj = this.getCanvasDisplayObject(shapePosition);
+        contains(point : math.Vector, position : math.Vector) {
+            var canvasObj = this.getCanvasDisplayObject(position);
+            canvasObj.x = position.x;
+            canvasObj.y = position.y;
             var localPoint = canvasObj.globalToLocal(point.x, point.y);
             return canvasObj.hitTest(localPoint.x, localPoint.y);
         }
@@ -57,10 +60,8 @@ module entityframework.components.drawing {
 
         private transformCanvasDisplayObject(displayObj : createjs.DisplayObject, position : math.Vector) : createjs.DisplayObject {
             if (displayObj) {
-                displayObj.regX = position.x;
-                displayObj.regY = position.y;
-                displayObj.x = position.x + this.positionOffset.x;
-                displayObj.y = position.y + this.positionOffset.y;
+                displayObj.x += this.positionOffset.x;
+                displayObj.y += this.positionOffset.y;
                 displayObj.scaleX = this.scale.x;
                 displayObj.scaleY = this.scale.y;
                 displayObj.rotation = this.rotation;

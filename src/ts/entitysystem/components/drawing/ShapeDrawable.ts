@@ -53,11 +53,7 @@ module entityframework.components.drawing {
             super();
             this.registerCallback("add-shape", this.addShape);
         }
-
-        onDataReady() {
-            super.onDataReady();
-        }
-
+        
         onViewReady() {
             super.onViewReady();
             this.shapeTypePicker = new controls.SelectControl<ShapeType>(

@@ -21,7 +21,8 @@ module entityframework.components.drawing {
 
         getDrawable(position : math.Vector) {
             var easelCircle = new createjs.Shape();
-            easelCircle.graphics.beginFill(this.fillColor.rgbaStringFormat()).drawCircle(position.x, position.y, this.radius);
+            easelCircle.graphics.beginFill(this.fillColor.rgbaStringFormat()).
+                drawCircle(0, 0, this.radius);
             return easelCircle;
         }
 

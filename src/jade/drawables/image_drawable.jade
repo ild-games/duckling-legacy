@@ -1,0 +1,14 @@
+extends ./generic_drawable.jade
+
+block drawable_label
+    h4 Image Drawable
+    
+block specific_drawable
+    label Image File
+    div.form-inline.text-ellipsis
+        button.btn.btn-default(type="button", rv-command-open-image-file) Browse
+        &nbsp;&nbsp;
+        strong
+            em
+                span(rv-text="data.imageFile") 
+        

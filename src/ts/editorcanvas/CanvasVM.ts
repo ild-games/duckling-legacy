@@ -154,6 +154,10 @@ module editorcanvas {
 
         private setupStage() {
             this._stage = new createjs.Stage(this.id("entity-canvas"));
+
+            var context : any = (<HTMLCanvasElement>this._stage.canvas).getContext("2d");
+            context.webkitImageSmoothingEnabled = context.mozImageSmoothingEnabled = true;
+
             this.subscribeToolEvents();
             this.canvasDiv = <HTMLDivElement>this.findById("canvas-view");
             this.scrollDiv = <HTMLDivElement>this.findById("canvas-scroll");

@@ -37,6 +37,8 @@ module editorcanvas.services {
 
             if (drawComp && posComp && drawComp.topDrawable) {
                 container.addChild(drawComp.topDrawable.getCanvasDisplayObject(posComp.position));
+                container.x = posComp.position.x;
+                container.y = posComp.position.y;
             }
 
             if (container.children.length > 0) {

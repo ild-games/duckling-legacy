@@ -1,5 +1,6 @@
 ///<reference path="./Drawable.ts"/>
 ///<reference path="./ShapeDrawable.ts"/>
+///<reference path="./ImageDrawable.ts"/>
 ///<reference path="../../../util/JsonLoader.ts"/>
 module entityframework.components.drawing {
 
@@ -236,6 +237,7 @@ module entityframework.components.drawing {
 
     export var DrawableTypeToFactory = {
         Container: new ContainerDrawableFactory(),
-        Shape: new ShapeDrawableFactory()
+        Shape: new ShapeDrawableFactory(),
+        Image: new ImageDrawableFactory()
     };
 }

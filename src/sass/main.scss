@@ -136,6 +136,7 @@ div {
   top: 0;
   left: 0;
   z-index: -1;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .canvas-scroll {
@@ -366,6 +367,12 @@ div.form-group input:focus {
 .no-left-radius {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
+}
+
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @import '_splash_screen';

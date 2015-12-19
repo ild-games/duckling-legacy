@@ -13,11 +13,6 @@ module entityframework.components.drawing {
         topDrawable : drawing.Drawable = null;
     }
 
-    var DrawableTypeToFactory = {
-        Container: new ContainerDrawableFactory(),
-        Shape: new ShapeDrawableFactory()
-    };
-
     class DrawableViewModel extends framework.ViewModel<DrawableComponent> {
         private drawableTypeControl : controls.DrawableTypeControl;
 
