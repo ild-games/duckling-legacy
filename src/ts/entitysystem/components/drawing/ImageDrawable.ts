@@ -13,10 +13,22 @@ module entityframework.components.drawing {
         @observe.Primitive(String)
         imageFile : string = "";
 
-        image : HTMLImageElement = null;
+        @observe.Primitive(String)
+        imageKey : string = "";
 
         @observe.Primitive(Boolean)
         private loaded : boolean = false;
+
+        @observe.Primitive(Boolean)
+        isPartialImage : boolean = false;
+
+        @observe.Object()
+        private partialImageCoords : math.Vector = new math.Vector(0, 0);
+
+        @observe.Object()
+        private partialImageDimensions : math.Vector = new math.Vector(-1, -1);
+
+        private image : HTMLImageElement = null;
 
         protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
             if (!this.imageFile) {
@@ -26,8 +38,17 @@ module entityframework.components.drawing {
             var bitmap = null;
             if (this.loaded) {
                 bitmap = new createjs.Bitmap(this.image);
-                bitmap.x = -(this.image.width / 2);
-                bitmap.y = -(this.image.height / 2);
+
+                if (this.isPartialImage) {
+                    bitmap.x = -(this.partialImageDimensions.x * this.scale.x / 2);
+                    bitmap.y = -(this.partialImageDimensions.y * this.scale.y / 2);
+                    bitmap.sourceRect = new createjs.Rectangle(
+                        this.partialImageCoords.x, this.partialImageCoords.y,
+                        this.partialImageDimensions.x, this.partialImageDimensions.y);
+                } else {
+                    bitmap.x = -(this.image.width * this.scale.x / 2);
+                    bitmap.y = -(this.image.height * this.scale.y / 2);
+                }
             } else {
                 this.loadImage();
             }
@@ -44,6 +65,10 @@ module entityframework.components.drawing {
 
         onImageLoaded() {
             this.loaded = true;
+            if (!this.isPartialImage && this.partialImageDimensions.x === -1) {
+                this.partialImageDimensions.x = this.image.width;
+                this.partialImageDimensions.y = this.image.height;
+            }
         }
 
         get type() : DrawableType {
@@ -62,7 +87,34 @@ module entityframework.components.drawing {
             this.registerCallback("open-image-file", this.openImageFile);
             this.data.loadImage();
             this.fileDialog = this._context.getSharedObjectByKey("FileDialog");
+
+            this.setChangeListener(this.data, (event) => {
+                this.togglePartialImgPanel(this.data.imageKey !== "", this.data.isPartialImage);
+            });
+
         }
+
+        onViewReady() {
+            $(this.findById("partialImgPanelHeader")).click((event) => {
+                this.data.isPartialImage = !this.data.isPartialImage;
+            });
+        }
+
+        private togglePartialImgPanel(visible : boolean, bodyVisible : boolean) {
+            if (visible) {
+                $(this.findById("partialImgPanel")).removeClass("gone");
+            } else {
+                $(this.findById("partialImgPanel")).addClass("gone");
+            }
+
+
+            if (bodyVisible) {
+                $(this.findById("partialImgPanelBody")).removeClass("gone");
+            } else {
+                $(this.findById("partialImgPanelBody")).addClass("gone");
+            }
+        }
+
 
         private openImageFile() {
             var startDir = this.getResourceDir();
@@ -73,6 +125,7 @@ module entityframework.components.drawing {
                         throw Error("Assets must be opened from directory: " + startDir);
                     } else {
                         this.data.imageFile = fileName;
+                        this.data.imageKey = fileName.replace(startDir, "");
                         this.data.loadImage();
                     }
                 }, framework.error.onPromiseError(this._context));
@@ -80,7 +133,7 @@ module entityframework.components.drawing {
 
         private isValidResourcePath(file : string) : boolean {
             var resourceDir = this.getResourceDir();
-            return file.substring(0, resourceDir.length) === resourceDir;
+            return file.length >= resourceDir.length && file.substring(0, resourceDir.length) === resourceDir;
         }
 
         private createResourcesDirectory(resDir : string) {

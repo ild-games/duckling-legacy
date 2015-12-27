@@ -10,5 +10,18 @@ block specific_drawable
         &nbsp;&nbsp;
         strong
             em
-                span(rv-text="data.imageFile") 
-        
+                span(rv-text="data.imageKey") 
+    
+    br
+    div.panel.panel-default.gone(id=this.id("partialImgPanel"))
+        div.panel-heading.form-inline(id=this.id("partialImgPanelHeader"))
+            div.form-group
+                label Partial Image? &nbsp;
+                input(type="checkbox" rv-checked="data.isPartialImage")
+        div.panel-body.gone(id=this.id("partialImgPanelBody"))
+            label Starting Coordinates
+            +x_y_control("Partial Image X", "Partial Image Y", "data.partialImageCoords.x", "data.partialImageCoords.y")
+            br
+            
+            label Dimensions
+            +width_height_control("Partial Image Width", "Partial Image Height", "data.partialImageDimensions.x", "data.partialImageDimensions.y")

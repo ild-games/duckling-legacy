@@ -155,9 +155,6 @@ module editorcanvas {
         private setupStage() {
             this._stage = new createjs.Stage(this.id("entity-canvas"));
 
-            var context : any = (<HTMLCanvasElement>this._stage.canvas).getContext("2d");
-            context.webkitImageSmoothingEnabled = context.mozImageSmoothingEnabled = true;
-
             this.subscribeToolEvents();
             this.canvasDiv = <HTMLDivElement>this.findById("canvas-view");
             this.scrollDiv = <HTMLDivElement>this.findById("canvas-scroll");
@@ -237,6 +234,18 @@ module editorcanvas {
         }
 
         public redrawCanvas() {
+
+            var context : any = (<HTMLCanvasElement>this._stage.canvas).getContext("2d");
+            context.mozImageSmoothingEnabled = false;
+            context.webkitImageSmoothingEnabled = false;
+            context.msImageSmoothingEnabled = false;
+            context.imageSmoothingEnabled = false;
+
+            console.log(context.mozImageSmoothingEnabled);
+            console.log(context.webkitImageSmoothingEnabled);
+            console.log(context.msImageSmoothingEnabled);
+            console.log(context.imageSmoothingEnabled);
+            console.log("");
 
             var toDraw : Array<createjs.DisplayObject> = [];
 

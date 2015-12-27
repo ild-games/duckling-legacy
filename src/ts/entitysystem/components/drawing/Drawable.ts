@@ -42,8 +42,9 @@ module entityframework.components.drawing {
 
         contains(point : math.Vector, position : math.Vector) {
             var canvasObj = this.getCanvasDisplayObject(position);
-            canvasObj.x = position.x;
-            canvasObj.y = position.y;
+            canvasObj.x += position.x;
+            canvasObj.y += position.y;
+            
             var localPoint = canvasObj.globalToLocal(point.x, point.y);
             return canvasObj.hitTest(localPoint.x, localPoint.y);
         }
