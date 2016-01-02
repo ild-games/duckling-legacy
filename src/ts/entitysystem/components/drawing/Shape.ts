@@ -15,7 +15,7 @@ module entityframework.components.drawing {
             this.fillColor = fillColor || new Color(0, 0, 0, 255);
         }
 
-        getDrawable(position : math.Vector) : createjs.DisplayObject {
+        getDrawable() : createjs.DisplayObject {
             throw new Error("This method is abstract");
         }
 

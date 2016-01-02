@@ -19,10 +19,10 @@ module entityframework.components.drawing {
             this.shape = shape || null;
         }
 
-        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+        protected generateCanvasDisplayObject() : createjs.DisplayObject {
             var displayShape = null;
             if (this.shape) {
-                displayShape = this.shape.getDrawable(position);
+                displayShape = this.shape.getDrawable();
             }
             return displayShape;
         }
@@ -53,7 +53,7 @@ module entityframework.components.drawing {
             super();
             this.registerCallback("add-shape", this.addShape);
         }
-        
+
         onViewReady() {
             super.onViewReady();
             this.shapeTypePicker = new controls.SelectControl<ShapeType>(

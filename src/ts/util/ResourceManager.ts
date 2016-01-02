@@ -21,4 +21,16 @@ module util.resource {
 
         return _resources[asset.type][asset.key];
     }
+
+    export function createAssetDOMElement(asset : entityframework.map.Asset, baseSrc : string) : HTMLElement {
+        var obj = null;
+        var src = baseSrc;
+        switch (asset.type) {
+            case "TexturePNG":
+                src += "/resources/" + asset.key + ".png";
+                obj = new entityframework.map.PNGAsset(asset.key).createDOMElement(src);
+                break;
+        }
+        return obj;
+    }
 }

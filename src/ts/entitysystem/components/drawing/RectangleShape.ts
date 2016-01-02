@@ -19,7 +19,7 @@ module entityframework.components.drawing {
             this.dimension = dimension || new math.Vector();
         }
 
-        getDrawable(position : math.Vector) {
+        getDrawable() {
             var rec = new createjs.Shape();
             rec.graphics.beginFill(this.fillColor.rgbaStringFormat()).drawRect(
                 -(this.dimension.x / 2),

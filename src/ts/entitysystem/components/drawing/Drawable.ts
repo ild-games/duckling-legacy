@@ -41,11 +41,11 @@ module entityframework.components.drawing {
         }
 
         contains(point : math.Vector, position : math.Vector) {
-            var canvasObj = this.getCanvasDisplayObject(position);
+            var canvasObj = this.getCanvasDisplayObject();
             if (!canvasObj) {
                 return false;
             }
-            
+
             canvasObj.x += position.x;
             canvasObj.y += position.y;
 
@@ -53,17 +53,15 @@ module entityframework.components.drawing {
             return canvasObj.hitTest(localPoint.x, localPoint.y);
         }
 
-        getCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
-            return this.transformCanvasDisplayObject(
-                this.generateCanvasDisplayObject(position),
-                position);
+        getCanvasDisplayObject() : createjs.DisplayObject {
+            return this.transformCanvasDisplayObject(this.generateCanvasDisplayObject());
         }
 
-        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+        protected generateCanvasDisplayObject() : createjs.DisplayObject {
             throw new Error("This method is abstract");
         }
 
-        private transformCanvasDisplayObject(displayObj : createjs.DisplayObject, position : math.Vector) : createjs.DisplayObject {
+        private transformCanvasDisplayObject(displayObj : createjs.DisplayObject) : createjs.DisplayObject {
             if (displayObj) {
                 displayObj.x += this.positionOffset.x;
                 displayObj.y += this.positionOffset.y;

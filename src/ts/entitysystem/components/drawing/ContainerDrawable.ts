@@ -48,12 +48,12 @@ module entityframework.components.drawing {
             this.drawables.forEach(func);
         }
 
-        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+        protected generateCanvasDisplayObject() : createjs.DisplayObject {
             var container = null;
             if (this.drawables.length > 0) {
                 container = new createjs.Container();
                 this.forEach((drawable) => {
-                    container.addChild(drawable.getCanvasDisplayObject(position));
+                    container.addChild(drawable.getCanvasDisplayObject());
                 });
             }
             return container;

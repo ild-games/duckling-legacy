@@ -31,7 +31,7 @@ module editorcanvas.services {
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
             if (drawComp && posComp && drawComp.topDrawable) {
-                container.addChild(drawComp.topDrawable.getCanvasDisplayObject(posComp.position));
+                container.addChild(drawComp.topDrawable.getCanvasDisplayObject());
                 container.x = posComp.position.x;
                 container.y = posComp.position.y;
             }

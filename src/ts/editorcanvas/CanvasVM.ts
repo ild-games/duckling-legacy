@@ -141,7 +141,7 @@ module editorcanvas {
         private loadAssets() {
             this.numAssetsToLoad = this.data.assets.length;
             this.data.assets.forEach((asset : entityframework.map.Asset) => {
-                var obj = this.createAssetDOMElement(asset, this._context.getSharedObjectByKey("Project").rootPath);
+                var obj = util.resource.createAssetDOMElement(asset, this._context.getSharedObjectByKey("Project").rootPath);
                 if (obj != null) {
                     obj.onload = () => { this.onAssetObjLoaded(); }
                     util.resource.addAsset(asset, obj);
@@ -154,18 +154,6 @@ module editorcanvas {
             if (this.areAllAssetsLoaded()) {
                 this.redrawCanvas();
             }
-        }
-
-        private createAssetDOMElement(asset : entityframework.map.Asset, baseSrc : string) : HTMLElement {
-            var obj = null;
-            var src = baseSrc;
-            switch (asset.type) {
-                case "TexturePNG":
-                    src += "/resources/" + asset.key + ".png";
-                    obj = new entityframework.map.PNGAsset(asset.key).createDOMElement(src);
-                    break;
-            }
-            return obj;
         }
 
         private changeData(newData : entityframework.EntitySystem) {

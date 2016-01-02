@@ -34,8 +34,6 @@ module util.serialize {
      * @param value The object being serialized.
      */
     function replacer(key, value) {
-        console.log("Replacing key: " + key);
-
         if (shouldIgnore(this, key)) {
             return undefined;
         }

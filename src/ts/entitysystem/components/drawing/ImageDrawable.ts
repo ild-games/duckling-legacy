@@ -30,7 +30,7 @@ module entityframework.components.drawing {
         @serialize.Ignore
         private _image : HTMLImageElement = null;
 
-        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+        protected generateCanvasDisplayObject() : createjs.DisplayObject {
             var bitmap = null;
             if (this.loaded) {
                 bitmap = new createjs.Bitmap(this._image);

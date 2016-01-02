@@ -1,5 +1,8 @@
 module util.datastructures {
 
+    /**
+     * A queue that stores elements sorted by priority numbers.
+     */
     export class PriorityQueue<T> {
         private sortedPriorities : Array<number> = [];
         private unsortedPriorityToContents : {[priority : number] : Array<T>} = {};
@@ -9,6 +12,12 @@ module util.datastructures {
             this.backwards = backwards || false;
         }
 
+        /**
+         * Pushes a new element onto the queue with a given priority.
+         *
+         * @param priority Priority of element.
+         * @param element Element to store.
+         */
         push(priority : number, element : T) {
             if (this.sortedPriorities.indexOf(priority) === -1) {
                 this.sortedPriorities.push(priority);
@@ -23,6 +32,12 @@ module util.datastructures {
             this.unsortedPriorityToContents[priority].push(element);
         }
 
+        /**
+         * Removes an element at the specified priority.
+         *
+         * @param priority Priority of element.
+         * @param element Element to remove.
+         */
         remove(priority : number, element : T) {
             var index = this.unsortedPriorityToContents[priority].indexOf(element);
             if (index >= 0) {
@@ -32,7 +47,8 @@ module util.datastructures {
 
         /**
          * Iterates over the objects in the Priority Queue.
-         * @param func
+         *
+         * @param func Function that passes the object being iterated over.
          */
         forEach(func : (object : T) => void) {
             this.sortedPriorities.forEach((priority) => {

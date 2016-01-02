@@ -59,29 +59,38 @@ module entityframework {
                 saveMap.systems[key] = {components : new ObservableMap()};
             });
 
-            system.forEach(function (entity : Entity, entityKey : string) {
+            system.forEach((entity : Entity, entityKey : string) => {
                 saveMap.entities.push(entityKey);
-                entity.forEach(function (component : Component, componentKey : string) {
+                entity.forEach((component : Component, componentKey : string) => {
                     saveMap.systems[componentKey].components.put(entityKey, component);
-                    component.collectAssets().forEach(function (asset : map.Asset) {
-                        var exists = false;
-                        saveMap.assets.forEach(function (existingAsset : map.Asset) {
-                            if (existingAsset.key === asset.key && existingAsset.type === asset.type) {
-                                exists = true;
-                            }
-                        });
-                        if (!exists) {
-                            saveMap.assets.push(asset);
-                        }
-                    });
+                    this.saveAssetsInComponent(component, saveMap);
                 });
             });
-
 
             var mapString = util.serialize.serialize(saveMap);
             var mapPath = this._project.getMapPath(mapName);
 
             return this._jsonLoader.saveJsonToPath(mapPath, mapString);
+        }
+
+        /**
+         * Saves the assets that are used in a given component onto the given GameMap.
+         *
+         * @param component Component which contains the assets that will be saved.
+         * @param saveMap GameMap to save the assets onto.
+         */
+        private saveAssetsInComponent(component : Component, saveMap : map.GameMap) {
+            component.collectAssets().forEach(function (asset : map.Asset) {
+                var exists = false;
+                saveMap.assets.forEach(function (existingAsset : map.Asset) {
+                    if (existingAsset.key === asset.key && existingAsset.type === asset.type) {
+                        exists = true;
+                    }
+                });
+                if (!exists) {
+                    saveMap.assets.push(asset);
+                }
+            });
         }
 
         private getEmptyMap(emptySystem : EntitySystem) {
