@@ -18,6 +18,7 @@ html
                 context.setSharedObjectByKey("FileDialog", new util.FileDialog(window));
                 context.setSharedObjectByKey("editorcanvas.services.EntityDrawerService", new editorcanvas.services.EntityDrawerService());
                 context.setSharedObjectByKey("editorcanvas.services.EntitySelectService", new editorcanvas.services.EntitySelectService(context));
+                context.setSharedObjectByKey("editorcanvas.services.EntityRenderSortService", new editorcanvas.services.EntityRenderSortService(context));
                 
 
                 var splashScreenVM = (new splashscreen.SplashScreenVM()).init(

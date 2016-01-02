@@ -2,7 +2,11 @@ module editorcanvas.services {
 
     import draw = entityframework.components.drawing;
     import comp = entityframework.components;
+    import datastructures = util.datastructures;
 
+    /**
+     * Service used to try and select an entity.
+     */
     @framework.ContextKey("editorcanvas.services.EntitySelectService")
     export class EntitySelectService {
         private context : framework.Context;
@@ -21,41 +25,37 @@ module editorcanvas.services {
          */
         findSelectableEntity(coords : math.Vector) : string {
             var selectableEntityKey = "";
-            var entitySystem = this.context.getSharedObject(entityframework.EntitySystem);
 
-            var entitiesByPriority : { [priority : number] : Array<{ entity : entityframework.Entity, key  : string}>} = {};
-            var priorities = [];
-            entitySystem.forEach((entity : entityframework.Entity, key : string) => {
-                var drawableComp = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (drawableComp && drawableComp.topDrawable) {
-                    var priority = drawableComp.topDrawable.renderPriority;
-                    priorities.push(priority);
-                    if (!entitiesByPriority[priority]) {
-                        entitiesByPriority[priority] = new Array<{ entity : entityframework.Entity, key : string}>();
-                    }
-                    entitiesByPriority[priority].push({
-                        entity: entity,
-                        key: key
-                    });
+            var entitiesByPriority = this.context.getSharedObject(services.EntityRenderSortService).getEntitiesByPriority(true);
+            entitiesByPriority.forEach((entityKey : string) => {
+                if (selectableEntityKey === "" && this.canSelectEntity(entityKey, coords)) {
+                    selectableEntityKey = entityKey;
                 }
             });
-            priorities.sort();
-            for (var i = priorities.length - 1; i >= 0; i--) {
-                var priority = priorities[i];
-                entitiesByPriority[priority].forEach((entityObj) => {
-                    if (selectableEntityKey === "") {
-                        var positionComp = entityObj.entity.getComponent<comp.PositionComponent>("position");
-                        if (positionComp) {
-                            var position = positionComp.position;
-                            var contains = entityObj.entity.getComponent<draw.DrawableComponent>("drawable").topDrawable.contains(coords, position);
-                            if (contains) {
-                                selectableEntityKey = entityObj.key;
-                            }
-                        }
-                    }
-                });
-            };
+
             return selectableEntityKey;
+        }
+
+        /**
+         * Determines if a given entity can be "selected" at the given coordinates.
+         *
+         * @param entityKey The key of the entity to check if can be selected.
+         * @param coords The coordinates used to check if any entity can be selected.
+         *
+         * @returns true if entity can be selected, otherwise false.
+         */
+        private canSelectEntity(entityKey : string, coords : math.Vector) : boolean {
+            var canSelect = false;
+            var entity : entityframework.Entity = this.context.getSharedObject(entityframework.EntitySystem).getEntity(entityKey);
+            var positionComp = entity.getComponent<comp.PositionComponent>("position");
+            if (positionComp) {
+                var position = positionComp.position;
+                var contains = entity.getComponent<draw.DrawableComponent>("drawable").topDrawable.contains(coords, position);
+                if (contains) {
+                    canSelect = true;
+                }
+            }
+            return canSelect;
         }
 
         /**

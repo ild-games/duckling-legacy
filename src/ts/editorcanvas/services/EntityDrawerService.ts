@@ -1,6 +1,7 @@
 module editorcanvas.services {
     import draw = entityframework.components.drawing;
     import comp = entityframework.components;
+    import datastructures = util.datastructures;
 
     /**
      * Used to retrieve display objects for entities.
@@ -13,20 +14,17 @@ module editorcanvas.services {
          * canvas.
          * @param entity The entity to get a DisplayObject for.
          */
-        getEntityDisplayable(entity : entityframework.Entity) : { [priority : number] : Array<createjs.DisplayObject> } {
-            var drawableObj = this.getDrawableDisplayable(entity);
+        getEntityDisplayable(entity : entityframework.Entity) : datastructures.PriorityQueue<createjs.DisplayObject> {
+            var drawablePriorityQueue = this.getDrawableDisplayable(entity);
             var collision = this.getCollisionDisplayable(entity);
             if (collision) {
-                if (!drawableObj[Number.MAX_VALUE]) {
-                    drawableObj[Number.MAX_VALUE] = [];
-                }
-                drawableObj[Number.MAX_VALUE].push(collision);
+                drawablePriorityQueue.push(Number.MAX_VALUE, collision);
             }
 
-            return drawableObj;
+            return drawablePriorityQueue;
         }
 
-        private getDrawableDisplayable(entity : entityframework.Entity) : { [priority : number] : Array<createjs.DisplayObject>} {
+        private getDrawableDisplayable(entity : entityframework.Entity) : datastructures.PriorityQueue<createjs.DisplayObject> {
             var container = new createjs.Container();
 
             var posComp = entity.getComponent<comp.PositionComponent>("position");
@@ -38,17 +36,17 @@ module editorcanvas.services {
                 container.y = posComp.position.y;
             }
 
-            var drawableToReturn : { [priority : number] : Array<createjs.DisplayObject>} = {};
+            var drawableToReturn = new datastructures.PriorityQueue<createjs.DisplayObject>();
             if (container.children.length > 0) {
-                drawableToReturn[drawComp.topDrawable.renderPriority] = [];
-                drawableToReturn[drawComp.topDrawable.renderPriority].push(container);
+                drawableToReturn.push(drawComp.topDrawable.renderPriority, container);
             }
             return drawableToReturn;
         }
 
-        private getCollisionDisplayable(entity :entityframework.Entity) {
+        private getCollisionDisplayable(entity :entityframework.Entity) : createjs.DisplayObject {
             var posComp = entity.getComponent<comp.PositionComponent>("position");
             var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
+            var collisionDrawable : createjs.DisplayObject = null;
             if (collisionComp && posComp) {
                 var color = "#000000";
                 switch (collisionComp.bodyType) {
@@ -64,10 +62,10 @@ module editorcanvas.services {
                 }
 
                 var boundingBox = new drawing.BoundingBox(collisionComp.info.dimension, color);
-                return boundingBox.getDrawable(posComp.position);
+                collisionDrawable = boundingBox.getDrawable(posComp.position);
             }
 
-            return null;
+            return collisionDrawable;
         }
     }
 }

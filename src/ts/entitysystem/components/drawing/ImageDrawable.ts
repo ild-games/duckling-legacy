@@ -62,9 +62,8 @@ module entityframework.components.drawing {
             }
 
             if (this.imageFile && !this._image) {
-                this._image = document.createElement("img");
+                this._image = <HTMLImageElement>asset.createDOMElement(this.imageFile);
                 this._image.onload = () => { this.onImageLoaded(asset); }
-                this._image.src = this.imageFile;
             }
         }
 
@@ -89,6 +88,7 @@ module entityframework.components.drawing {
             return DrawableType.Image;
         }
 
+        @serialize.Ignore
         get image() : HTMLImageElement {
             return this._image;
         }

@@ -73,7 +73,6 @@ module editorcanvas {
             this.setupStage();
             this.onStagePropertiesChanged();
             this.load();
-            //this.redrawCanvas();
         }
 
         private setupSharedObjects() {
@@ -142,13 +141,7 @@ module editorcanvas {
         private loadAssets() {
             this.numAssetsToLoad = this.data.assets.length;
             this.data.assets.forEach((asset : entityframework.map.Asset) => {
-                var obj = null;
-                switch (asset.type) {
-                    case "TexturePNG":
-                        obj = document.createElement("img");
-                        obj.src = this._context.getSharedObjectByKey("Project").rootPath + "/resources/" + asset.key + ".png";
-                        break;
-                }
+                var obj = this.createAssetDOMElement(asset, this._context.getSharedObjectByKey("Project").rootPath);
                 if (obj != null) {
                     obj.onload = () => { this.onAssetObjLoaded(); }
                     util.resource.addAsset(asset, obj);
@@ -161,6 +154,18 @@ module editorcanvas {
             if (this.areAllAssetsLoaded()) {
                 this.redrawCanvas();
             }
+        }
+
+        private createAssetDOMElement(asset : entityframework.map.Asset, baseSrc : string) : HTMLElement {
+            var obj = null;
+            var src = baseSrc;
+            switch (asset.type) {
+                case "TexturePNG":
+                    src += "/resources/" + asset.key + ".png";
+                    obj = new entityframework.map.PNGAsset(asset.key).createDOMElement(src);
+                    break;
+            }
+            return obj;
         }
 
         private changeData(newData : entityframework.EntitySystem) {
@@ -258,57 +263,62 @@ module editorcanvas {
             this.stage.y = Math.max(newDimensions.y / 2, this.canvasDiv.clientHeight / 2) - this.canvasDiv.scrollTop;
         }
 
-        private areAllAssetsLoaded() {
+        private areAllAssetsLoaded() : boolean {
             return this.numAssetsToLoad === this.numAssetsLoaded;
         }
 
-        public redrawCanvas() {
+        /**
+         * Called every time the canvas needs to be updated and redrawn.
+         */
+        redrawCanvas() {
             if (!this.areAllAssetsLoaded()) {
                 return;
             }
 
+            this.disableInterpolation();
+            this.clear();
+            this.addDrawnElementsToStage();
+            this.stage.update();
+        }
+
+        /**
+         * Disables interpolation so scaling is done via the nearest neighbor approach.
+         */
+        private disableInterpolation() {
             var context : any = (<HTMLCanvasElement>this._stage.canvas).getContext("2d");
             context.imageSmoothingEnabled = false;
+        }
 
+        /**
+         * Collect the entity's DrawableComponent's drawables into a flat array
+         * that is sorted by the render priorities of the drawables.
+         */
+        private collectEntityDrawables() : Array<createjs.DisplayObject> {
             var toDraw : Array<createjs.DisplayObject> = [];
-
-            var drawableObjs : { [priority : number] : Array<createjs.DisplayObject>} = {};
-            var priorities = [];
-            this.data.forEach((entity) => {
-                var drawableObj = this.entityDrawerService.getEntityDisplayable(entity);
-                if (drawableObj !== {}) {
-                    for (var priority in drawableObj) {
-                        priorities.push(priority);
-                        if (!drawableObjs[priority]) {
-                            drawableObjs[priority] = [];
-                        }
-                        drawableObj[priority].forEach((individualDisplayObj) => {
-                            drawableObjs[priority].push(individualDisplayObj);
-                        });
-                    }
-                }
-            });
-            priorities.sort();
-            priorities.forEach((priority) => {
-                drawableObjs[priority].forEach((toDisplay) => {
-                    if (toDisplay) {
-                        toDraw.push(toDisplay);
-                    }
+            var entitiesByPriority = this._context.getSharedObject(services.EntityRenderSortService).getEntitiesByPriority();
+            entitiesByPriority.forEach((entityKey : string) => {
+                this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey)).forEach((drawable) => {
+                    toDraw.push(drawable);
                 });
             });
+            return toDraw;
+        }
 
-            this.clear();
-
-            toDraw.forEach((drawnElement) =>
+        /**
+         * Adds the various elements that are drawn onto the canvas to the stage.
+         * This includes entity's DrawableComponent drawables, collision bounds,
+         * current tool graphical representation, etc.
+         */
+        private addDrawnElementsToStage() {
+            this.collectEntityDrawables().forEach((drawnElement) =>
                 this.stage.addChild(drawnElement));
+
             if (this.curTool.getDisplayObject()) {
                 this.stage.addChild(this.curTool.getDisplayObject());
             }
             if (this.properties.isGridVisible) {
                 this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
             }
-
-            this.stage.update();
         }
 
         /**

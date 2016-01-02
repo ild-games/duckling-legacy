@@ -6,6 +6,8 @@ module entityframework.map {
     export interface Asset {
         type : string,
         key : string,
+
+        createDOMElement(src : string) : HTMLElement;
     }
 
     export class GenericAsset implements Asset {
@@ -16,6 +18,10 @@ module entityframework.map {
             this.type = type;
             this.key = key;
         }
+
+        createDOMElement(src : string) : HTMLElement {
+            return null;
+        }
     }
 
     export class PNGAsset implements Asset {
@@ -24,6 +30,12 @@ module entityframework.map {
 
         constructor(key : string) {
             this.key = key;
+        }
+
+        createDOMElement(src : string) : HTMLElement {
+            var obj = document.createElement("img");
+            obj.src = src;
+            return obj;
         }
     }
 
