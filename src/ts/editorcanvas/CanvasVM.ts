@@ -268,8 +268,6 @@ module editorcanvas {
             }
 
             var context : any = (<HTMLCanvasElement>this._stage.canvas).getContext("2d");
-            //context.mozImageSmoothingEnabled = false;
-            //context.msImageSmoothingEnabled = false;
             context.imageSmoothingEnabled = false;
 
             var toDraw : Array<createjs.DisplayObject> = [];
