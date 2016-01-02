@@ -45,6 +45,10 @@ module util {
             element.setAttribute("nwworkingdir", "");
         }
 
+        clearFile() {
+            this.fileInputElement.value = null;
+        }
+
         setStartDir(element : HTMLInputElement, startDir : string) {
             element.setAttribute("nwworkingdir", startDir);
         }
@@ -64,6 +68,7 @@ module util {
         private clearElementSelectors(element : HTMLInputElement) {
             element.setAttribute("accept", "");
         }
+
 
         private getSelectionPromise(inputElement : HTMLInputElement) : Promise<string> {
             return new Promise(function(resolve, reject) {

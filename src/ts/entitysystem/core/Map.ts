@@ -8,6 +8,25 @@ module entityframework.map {
         key : string,
     }
 
+    export class GenericAsset implements Asset {
+        type : string = "";
+        key : string = "";
+
+        constructor(type : string, key : string) {
+            this.type = type;
+            this.key = key;
+        }
+    }
+
+    export class PNGAsset implements Asset {
+        type : string = "TexturePNG";
+        key : string = "";
+
+        constructor(key : string) {
+            this.key = key;
+        }
+    }
+
     /**
      * Represents a basic System that can be saved in a map file.
      */
@@ -20,7 +39,7 @@ module entityframework.map {
      */
     export interface GameMap {
         key : string,
-        assets : Asset[];
+        assets : Array<Asset>;
         entities : string[];
         systems : {[systemName : string]: System};
     }
@@ -30,7 +49,7 @@ module entityframework.map {
      */
     export class Map implements GameMap {
         key : string;
-        assets : Asset[];
+        assets : Array<Asset>;
         entities : string[];
         systems : {[systemName : string]: System};
 

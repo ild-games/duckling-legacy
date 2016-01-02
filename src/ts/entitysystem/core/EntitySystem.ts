@@ -60,6 +60,7 @@ module entityframework
         private componentFactories : {[key:string]:ComponentFactory} = {};
         private nextId : number = 0;
         private entityCallback : observe.DataChangeCallback<observe.ObservableMapChanged<Entity>>;
+        assets : Array<map.Asset> = [];
 
         /**
          * Create an empty EntitySystem
@@ -193,6 +194,7 @@ module entityframework
          * @param entitySystem
          */
         move(entitySystem : EntitySystem) {
+            this.assets = entitySystem.assets;
             this.componentFactories = entitySystem.componentFactories;
             this.setEntities(entitySystem.entities);
             this.nextId = entitySystem.nextId;

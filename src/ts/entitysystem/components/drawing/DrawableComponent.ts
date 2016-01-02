@@ -11,6 +11,14 @@ module entityframework.components.drawing {
 
         @observe.Object()
         topDrawable : drawing.Drawable = null;
+
+        collectAssets() : Array<map.Asset> {
+            var assets : Array<map.Asset> = [];
+            if (this.topDrawable !== null) {
+                assets = this.topDrawable.collectAssets();
+            }
+            return assets;
+        }
     }
 
     class DrawableViewModel extends framework.ViewModel<DrawableComponent> {

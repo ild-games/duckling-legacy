@@ -22,17 +22,39 @@ module editorcanvas.services {
         findSelectableEntity(coords : math.Vector) : string {
             var selectableEntityKey = "";
             var entitySystem = this.context.getSharedObject(entityframework.EntitySystem);
+
+            var entitiesByPriority : { [priority : number] : Array<{ entity : entityframework.Entity, key  : string}>} = {};
+            var priorities = [];
             entitySystem.forEach((entity : entityframework.Entity, key : string) => {
-                var positionComp = entity.getComponent<comp.PositionComponent>("position");
-                var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (positionComp && drawable && drawable.topDrawable) {
-                    var position = positionComp.position;
-                    var contains = drawable.topDrawable.contains(coords, position);
-                    if (contains) {
-                        selectableEntityKey = key;
+                var drawableComp = entity.getComponent<draw.DrawableComponent>("drawable");
+                if (drawableComp && drawableComp.topDrawable) {
+                    var priority = drawableComp.topDrawable.renderPriority;
+                    priorities.push(priority);
+                    if (!entitiesByPriority[priority]) {
+                        entitiesByPriority[priority] = new Array<{ entity : entityframework.Entity, key : string}>();
                     }
+                    entitiesByPriority[priority].push({
+                        entity: entity,
+                        key: key
+                    });
                 }
             });
+            priorities.sort();
+            for (var i = priorities.length - 1; i >= 0; i--) {
+                var priority = priorities[i];
+                entitiesByPriority[priority].forEach((entityObj) => {
+                    if (selectableEntityKey === "") {
+                        var positionComp = entityObj.entity.getComponent<comp.PositionComponent>("position");
+                        if (positionComp) {
+                            var position = positionComp.position;
+                            var contains = entityObj.entity.getComponent<draw.DrawableComponent>("drawable").topDrawable.contains(coords, position);
+                            if (contains) {
+                                selectableEntityKey = entityObj.key;
+                            }
+                        }
+                    }
+                });
+            };
             return selectableEntityKey;
         }
 

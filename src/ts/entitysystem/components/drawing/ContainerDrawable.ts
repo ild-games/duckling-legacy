@@ -59,6 +59,16 @@ module entityframework.components.drawing {
             return container;
         }
 
+        collectAssets() : Array<map.Asset> {
+            var assets : Array<map.Asset> = [];
+            this.forEach((drawable) => {
+                drawable.collectAssets().forEach((asset) => {
+                    assets.push(asset);
+                });
+            });
+            return assets;
+        }
+
         get length() : number {
             return this.drawables.length;
         }
