@@ -58,17 +58,9 @@ module util.serialize {
         var replacement = {};
         for (var propKey in value) {
             if (isKeyOverridden(value, propKey)) {
-                try {
-                    replacement[getKeyOverride(value, propKey)] = value[propKey];
-                } catch(e) {
-                    replacement[getKeyOverride(value, propKey)] = value.val()[propKey];
-                }
+                replacement[getKeyOverride(value, propKey)] = value[propKey];
             } else {
-                try {
-                    replacement[propKey] = value[propKey];
-                } catch(e) {
-                    replacement[propKey] = value.val()[propKey];
-                }
+                replacement[propKey] = value[propKey];
             }
         }
 

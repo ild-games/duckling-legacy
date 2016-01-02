@@ -13,23 +13,20 @@ module editorcanvas.services {
          * canvas.
          * @param entity The entity to get a DisplayObject for.
          */
-        getEntityDisplayable(entity : entityframework.Entity) : createjs.DisplayObject {
-            var container = new createjs.Container();
-
-            var drawable = this.getDrawableDisplayable(entity);
-            if (drawable) {
-                container.addChild(drawable);
-            }
-
+        getEntityDisplayable(entity : entityframework.Entity) : { [priority : number] : Array<createjs.DisplayObject> } {
+            var drawableObj = this.getDrawableDisplayable(entity);
             var collision = this.getCollisionDisplayable(entity);
             if (collision) {
-                container.addChild(collision);
+                if (!drawableObj[Number.MAX_VALUE]) {
+                    drawableObj[Number.MAX_VALUE] = [];
+                }
+                drawableObj[Number.MAX_VALUE].push(collision);
             }
 
-            return container;
+            return drawableObj;
         }
 
-        private getDrawableDisplayable(entity : entityframework.Entity) {
+        private getDrawableDisplayable(entity : entityframework.Entity) : { [priority : number] : Array<createjs.DisplayObject>} {
             var container = new createjs.Container();
 
             var posComp = entity.getComponent<comp.PositionComponent>("position");
@@ -41,11 +38,12 @@ module editorcanvas.services {
                 container.y = posComp.position.y;
             }
 
+            var drawableToReturn : { [priority : number] : Array<createjs.DisplayObject>} = {};
             if (container.children.length > 0) {
-                return container;
-            } else {
-                return null;
+                drawableToReturn[drawComp.topDrawable.renderPriority] = [];
+                drawableToReturn[drawComp.topDrawable.renderPriority].push(container);
             }
+            return drawableToReturn;
         }
 
         private getCollisionDisplayable(entity :entityframework.Entity) {

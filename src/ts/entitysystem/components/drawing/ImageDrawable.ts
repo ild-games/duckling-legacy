@@ -11,44 +11,43 @@ module entityframework.components.drawing {
     @serialize.ProvideClass(ImageDrawable, "ild::ImageDrawable")
     export class ImageDrawable extends Drawable {
         @observe.Primitive(String)
-        imageFile : string = "";
+        @serialize.Ignore
+        _imageFile : string = "";
 
         @observe.Primitive(String)
-        imageKey : string = "";
+        textureKey : string = "";
 
         @observe.Primitive(Boolean)
+        @serialize.Ignore
         private loaded : boolean = false;
 
         @observe.Primitive(Boolean)
-        isPartialImage : boolean = false;
+        isWholeImage : boolean = true;
 
         @observe.Object()
-        private partialImageCoords : math.Vector = new math.Vector(0, 0);
+        private textureRect : math.Rectangle = new math.Rectangle(0, 0, -1, -1);
 
-        @observe.Object()
-        private partialImageDimensions : math.Vector = new math.Vector(-1, -1);
-
-        private image : HTMLImageElement = null;
+        @serialize.Ignore
+        private _image : HTMLImageElement = null;
 
         protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
-            if (!this.imageFile) {
-                return null;
-            }
-
             var bitmap = null;
             if (this.loaded) {
-                bitmap = new createjs.Bitmap(this.image);
+                bitmap = new createjs.Bitmap(this._image);
 
-                if (this.isPartialImage) {
-                    bitmap.x = -(this.partialImageDimensions.x * this.scale.x / 2);
-                    bitmap.y = -(this.partialImageDimensions.y * this.scale.y / 2);
+                var dimensions = new math.Vector(0, 0);
+                if (!this.isWholeImage) {
+                    dimensions.x = this.textureRect.width;
+                    dimensions.y = this.textureRect.height;
                     bitmap.sourceRect = new createjs.Rectangle(
-                        this.partialImageCoords.x, this.partialImageCoords.y,
-                        this.partialImageDimensions.x, this.partialImageDimensions.y);
+                        this.textureRect.left, this.textureRect.top,
+                        this.textureRect.width, this.textureRect.height);
                 } else {
-                    bitmap.x = -(this.image.width * this.scale.x / 2);
-                    bitmap.y = -(this.image.height * this.scale.y / 2);
+                    dimensions.x = this._image.width;
+                    dimensions.y = this._image.height;
                 }
+                bitmap.regX = dimensions.x / 2;
+                bitmap.regY = dimensions.y / 2;
             } else {
                 this.loadImage();
             }
@@ -56,23 +55,52 @@ module entityframework.components.drawing {
         }
 
         loadImage() {
-            if (this.imageFile) {
-                this.image = document.createElement("img");
-                this.image.onload = () => { this.onImageLoaded(); }
-                this.image.src = this.imageFile;
+            var asset = new map.PNGAsset(this.textureKey);
+            if (util.resource.hasAsset(asset)) {
+                this._image = <HTMLImageElement>util.resource.getResource(asset);
+                this.loaded = true;
+            }
+
+            if (this.imageFile && !this._image) {
+                this._image = document.createElement("img");
+                this._image.onload = () => { this.onImageLoaded(asset); }
+                this._image.src = this.imageFile;
             }
         }
 
-        onImageLoaded() {
+        onImageLoaded(asset : map.PNGAsset) {
             this.loaded = true;
-            if (!this.isPartialImage && this.partialImageDimensions.x === -1) {
-                this.partialImageDimensions.x = this.image.width;
-                this.partialImageDimensions.y = this.image.height;
+            util.resource.addAsset(asset, this._image);
+            if (this.isWholeImage && this.textureRect.width === -1) {
+                this.textureRect.width = this._image.width;
+                this.textureRect.height = this._image.height;
             }
+        }
+
+        collectAssets() : Array<map.Asset> {
+            var assets : Array<map.Asset> = [];
+            if (this.textureKey !== "") {
+                assets.push(new map.PNGAsset(this.textureKey));
+            }
+            return assets;
         }
 
         get type() : DrawableType {
             return DrawableType.Image;
+        }
+
+        get image() : HTMLImageElement {
+            return this._image;
+        }
+
+        set imageFile(imageFile : string) {
+            this._imageFile = imageFile;
+            this.loaded = false;
+            this._image = null;
+        }
+
+        get imageFile() : string {
+            return this._imageFile;
         }
     }
 
@@ -89,14 +117,14 @@ module entityframework.components.drawing {
             this.fileDialog = this._context.getSharedObjectByKey("FileDialog");
 
             this.setChangeListener(this.data, (event) => {
-                this.togglePartialImgPanel(this.data.imageKey !== "", this.data.isPartialImage);
+                this.togglePartialImgPanel(this.data.image !== null, !this.data.isWholeImage);
             });
-
         }
 
         onViewReady() {
+            this.togglePartialImgPanel(this.data.image !== null, !this.data.isWholeImage);
             $(this.findById("partialImgPanelHeader")).click((event) => {
-                this.data.isPartialImage = !this.data.isPartialImage;
+                this.data.isWholeImage = !this.data.isWholeImage;
             });
         }
 
@@ -124,9 +152,12 @@ module entityframework.components.drawing {
                     if (!this.isValidResourcePath(fileName)) {
                         throw Error("Assets must be opened from directory: " + startDir);
                     } else {
+                        var trimmedFileName = fileName.replace(startDir, "");
+                        trimmedFileName = trimmedFileName.substring(0, trimmedFileName.length - ".png".length);
+                        this.data.textureKey = trimmedFileName;
                         this.data.imageFile = fileName;
-                        this.data.imageKey = fileName.replace(startDir, "");
                         this.data.loadImage();
+                        this.fileDialog.clearFile();
                     }
                 }, framework.error.onPromiseError(this._context));
         }

@@ -38,6 +38,8 @@ module editorcanvas {
         private scrollDiv : HTMLDivElement;
         private properties : CanvasProperties = new CanvasProperties();
         private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
+        private numAssetsToLoad : number = 0;
+        private numAssetsLoaded : number = 0;
 
         constructor() {
             super();
@@ -70,8 +72,8 @@ module editorcanvas {
             this.addTools();
             this.setupStage();
             this.onStagePropertiesChanged();
-            this.redrawCanvas();
             this.load();
+            //this.redrawCanvas();
         }
 
         private setupSharedObjects() {
@@ -82,11 +84,11 @@ module editorcanvas {
         }
 
         private addTools() {
-            var createEntityTool = new editorcanvas.tools.EntityCreatorTool();
-            this.addTool(createEntityTool);
-
             var selectEntityTool = new editorcanvas.tools.EntitySelectTool();
             this.addTool(selectEntityTool);
+
+            var createEntityTool = new editorcanvas.tools.EntityCreatorTool();
+            this.addTool(createEntityTool);
 
             var dragEntityTool = new editorcanvas.tools.EntityDragTool();
             this.addTool(dragEntityTool);
@@ -95,7 +97,7 @@ module editorcanvas {
             mapMoveTool.draggedElement = this.findById("canvas-view");
             this.addTool(mapMoveTool);
 
-            this.curTool = createEntityTool;
+            this.curTool = selectEntityTool;
         }
 
         private addTool(tool : editorcanvas.tools.BaseTool) {
@@ -133,15 +135,38 @@ module editorcanvas {
             this.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
+                    this.loadAssets();
                 }, framework.error.onPromiseError(this._context));
+        }
+
+        private loadAssets() {
+            this.numAssetsToLoad = this.data.assets.length;
+            this.data.assets.forEach((asset : entityframework.map.Asset) => {
+                var obj = null;
+                switch (asset.type) {
+                    case "TexturePNG":
+                        obj = document.createElement("img");
+                        obj.src = this._context.getSharedObjectByKey("Project").rootPath + "/resources/" + asset.key + ".png";
+                        break;
+                }
+                if (obj != null) {
+                    obj.onload = () => { this.onAssetObjLoaded(); }
+                    util.resource.addAsset(asset, obj);
+                }
+            });
+        }
+
+        private onAssetObjLoaded() {
+            this.numAssetsLoaded++;
+            if (this.areAllAssetsLoaded()) {
+                this.redrawCanvas();
+            }
         }
 
         private changeData(newData : entityframework.EntitySystem) {
             this._context.commandQueue.clear();
             this.selectedEntity.entityKey = "";
             this.data.move(newData);
-            this.clear();
-            this.redrawCanvas();
 
             /* temp default camera */
             if (!this.data.getEntity("screenCam")) {
@@ -233,7 +258,14 @@ module editorcanvas {
             this.stage.y = Math.max(newDimensions.y / 2, this.canvasDiv.clientHeight / 2) - this.canvasDiv.scrollTop;
         }
 
+        private areAllAssetsLoaded() {
+            return this.numAssetsToLoad === this.numAssetsLoaded;
+        }
+
         public redrawCanvas() {
+            if (!this.areAllAssetsLoaded()) {
+                return;
+            }
 
             var context : any = (<HTMLCanvasElement>this._stage.canvas).getContext("2d");
             context.mozImageSmoothingEnabled = false;
@@ -241,16 +273,31 @@ module editorcanvas {
             context.msImageSmoothingEnabled = false;
             context.imageSmoothingEnabled = false;
 
-            console.log(context.mozImageSmoothingEnabled);
-            console.log(context.webkitImageSmoothingEnabled);
-            console.log(context.msImageSmoothingEnabled);
-            console.log(context.imageSmoothingEnabled);
-            console.log("");
-
             var toDraw : Array<createjs.DisplayObject> = [];
 
+            var drawableObjs : { [priority : number] : Array<createjs.DisplayObject>} = {};
+            var priorities = [];
             this.data.forEach((entity) => {
-                toDraw.push(this.entityDrawerService.getEntityDisplayable(entity));
+                var drawableObj = this.entityDrawerService.getEntityDisplayable(entity);
+                if (drawableObj !== {}) {
+                    for (var priority in drawableObj) {
+                        priorities.push(priority);
+                        if (!drawableObjs[priority]) {
+                            drawableObjs[priority] = [];
+                        }
+                        drawableObj[priority].forEach((individualDisplayObj) => {
+                            drawableObjs[priority].push(individualDisplayObj);
+                        });
+                    }
+                }
+            });
+            priorities.sort();
+            priorities.forEach((priority) => {
+                drawableObjs[priority].forEach((toDisplay) => {
+                    if (toDisplay) {
+                        toDraw.push(toDisplay);
+                    }
+                });
             });
 
             this.clear();

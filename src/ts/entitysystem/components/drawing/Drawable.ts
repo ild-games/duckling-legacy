@@ -15,7 +15,7 @@ module entityframework.components.drawing {
      */
     export class Drawable extends framework.observe.SimpleObservable {
         @observe.Primitive(Number)
-        protected renderPriority : number = 0;
+        renderPriority : number = 0;
 
         @observe.Primitive(Number)
         protected priorityOffset : number = 0;
@@ -42,9 +42,13 @@ module entityframework.components.drawing {
 
         contains(point : math.Vector, position : math.Vector) {
             var canvasObj = this.getCanvasDisplayObject(position);
+            if (!canvasObj) {
+                return false;
+            }
+            
             canvasObj.x += position.x;
             canvasObj.y += position.y;
-            
+
             var localPoint = canvasObj.globalToLocal(point.x, point.y);
             return canvasObj.hitTest(localPoint.x, localPoint.y);
         }
@@ -65,9 +69,13 @@ module entityframework.components.drawing {
                 displayObj.y += this.positionOffset.y;
                 displayObj.scaleX = this.scale.x;
                 displayObj.scaleY = this.scale.y;
-                displayObj.rotation = this.rotation;
+                displayObj.rotation += this.rotation;
             }
             return displayObj;
+        }
+
+        collectAssets() : Array<map.Asset> {
+            return [];
         }
 
         @serialize.Ignore

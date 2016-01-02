@@ -59,7 +59,7 @@ canvas {
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: optimize-contrast;
-  -ms-interpolation-mode: nearest-neighbor;    
+  -ms-interpolation-mode: nearest-neighbor;
 }
 
 div {
@@ -381,6 +381,10 @@ div.form-group input:focus {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+div.panel {
+    margin-bottom: 0;
 }
 
 @import '_splash_screen';
