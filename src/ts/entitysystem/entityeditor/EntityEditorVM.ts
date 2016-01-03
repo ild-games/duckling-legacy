@@ -27,6 +27,8 @@ module entityframework
             super();
             this._adapter = this;
             this.registerCallback("add-component", this.addComponentFromSelect);
+            this.registerCallback("delete-entity", this.deleteEntityPopup);
+            this.registerCallback("delete-entity-confirm", this.deleteEntityConfirm);
         }
 
         onDataReady() {
@@ -49,6 +51,17 @@ module entityframework
             this.selectedEntityPicker = new controls.SelectControl(this, "entityNames", this.getEntities(), "");
             this.selectedEntityPicker.callback = () => this._selectedEntity.entityKey = this.selectedEntityPicker.value;
             this.addComponentPicker = new controls.SelectControl(this, "componentsToAddPicker",{},"");
+        }
+
+        private deleteEntityPopup() {
+            $(this.findById("deleteEntityModal")).modal();
+        }
+
+        private deleteEntityConfirm() {
+            this.selectEntity("");
+            this.data.removeEntity(this._selectedEntity.entityKey);
+            this._selectedEntity.entityKey = "";
+            $(this.findById("deleteEntityModal")).modal("hide");
         }
 
         addComponentFromSelect() {
@@ -107,6 +120,7 @@ module entityframework
         selectEntity(name : string) {
             this._components = [];
             this._componentsNotOnEntity = [];
+
 
             if (name && name !== "") {
                 this.selectedEntityPicker.value = name;
@@ -210,6 +224,10 @@ module entityframework
 
         get isAddComponentEnabled() : boolean {
             return this._componentsNotOnEntity.length > 0;
+        }
+
+        get isDeleteEntityEnabled() : boolean {
+            return this._selectedEntity && this._selectedEntity.entityKey !== "";
         }
 
         private onComponentsChanged() {
