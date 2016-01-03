@@ -58,18 +58,20 @@ module entityframework.components.drawing {
             var asset = new map.PNGAsset(this.textureKey);
             if (util.resource.hasAsset(asset)) {
                 this._image = <HTMLImageElement>util.resource.getResource(asset);
-                this.loaded = true;
+                this.onImageLoaded(asset);
             }
 
             if (this.imageFile && !this._image) {
                 this._image = <HTMLImageElement>asset.createDOMElement(this.imageFile);
-                this._image.onload = () => { this.onImageLoaded(asset); }
+                this._image.onload = () => {
+                    util.resource.addAsset(asset, this._image);
+                    this.onImageLoaded(asset);
+                }
             }
         }
 
         onImageLoaded(asset : map.PNGAsset) {
             this.loaded = true;
-            util.resource.addAsset(asset, this._image);
             if (this.isWholeImage && this.textureRect.width === -1) {
                 this.textureRect.width = this._image.width;
                 this.textureRect.height = this._image.height;
