@@ -109,6 +109,7 @@ module entityframework
             this._componentsNotOnEntity = [];
 
             if (name && name !== "") {
+                this.selectedEntityPicker.value = name;
                 if (this._currentEntity) {
                     this.removeChangeListener(this._currentEntity);
                 }
