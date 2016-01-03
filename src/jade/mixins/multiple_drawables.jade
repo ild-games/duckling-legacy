@@ -1,0 +1,23 @@
+include ../mixins/select_control
+include ../mixins/drawable_type_control
+
+mixin multiple_drawables(drawableName, drawableNamePlural, drawableTypeId, drawableSelectId, delBtnId, sectionSelectedDrawableVMId, containerSelectedDrawableVMId, selectedDrawableVMId)
+    label Add #{drawableName}
+    +drawable_type(drawableTypeId)
+    br
+    
+    label #{drawableNamePlural}
+    br
+    div.associated-form-element.form-group.input-group(role="group")
+        +select(drawableSelectId, "Select " + drawableName, "form-element input-group-picker")
+        button.btn.btn-default.no-left-radius(id=delBtnId, type="button", rv-command-delete-drawable)
+            span &nbsp;
+            i.fa.fa-minus-circle
+            span &nbsp;
+    
+    div.gone(id=sectionSelectedDrawableVMId)
+        br
+        label Selected #{drawableName}
+        div.container-sel-drawable-vm(id=containerSelectedDrawableVMId)
+            div(id=selectedDrawableVMId)
+    

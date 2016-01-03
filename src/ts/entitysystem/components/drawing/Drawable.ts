@@ -7,7 +7,8 @@ module entityframework.components.drawing {
     export enum DrawableType {
         Container,
         Shape,
-        Image
+        Image,
+        Animated
     }
 
     /**
@@ -76,6 +77,9 @@ module entityframework.components.drawing {
             return [];
         }
 
+        tick(delta : number) {
+        }
+
         @serialize.Ignore
         get type() : DrawableType {
             throw new Error("This method is abstract");
@@ -83,7 +87,7 @@ module entityframework.components.drawing {
 
         @serialize.Ignore
         get factory() : DrawableFactory {
-            return DrawableTypeToFactory[DrawableType[this.type]];
+            return drawableTypeToFactory(this.type);
         }
 
     }

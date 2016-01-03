@@ -54,6 +54,9 @@ module editorcanvas {
                 this.grid.constructGrid();
                 this.redrawCanvas();
             });
+
+            createjs.Ticker.on("tick", (event) => this.tick(event));
+            createjs.Ticker.setFPS(30);
         }
 
         onViewReady() {
@@ -116,6 +119,19 @@ module editorcanvas {
             this.subscribeToolEvents();
             this.canvasDiv = <HTMLDivElement>this.findById("canvas-view");
             this.scrollDiv = <HTMLDivElement>this.findById("canvas-scroll");
+        }
+
+        private tick(event) {
+            var delta = event.delta / 1000;
+
+            this.data.forEach((entity : entityframework.Entity) => {
+                var drawableComp = entity.getComponent<entityframework.components.drawing.DrawableComponent>("drawable");
+                if (drawableComp) {
+                    drawableComp.tick(delta);
+                }
+            });
+
+            this.stage.update(event);
         }
 
         private subscribeToServices() {
