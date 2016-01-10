@@ -38,7 +38,7 @@ module entityframework
          * Check if the data changed event is the result of an entity being added.
          */
         get isEntityAdded() {
-            return this.entitiesEvent && this.entitiesEvent.isItemRemoved;
+            return this.entitiesEvent && this.entitiesEvent.isItemAdded;
         }
 
         /**
