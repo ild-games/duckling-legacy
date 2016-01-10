@@ -15,15 +15,3 @@ div.component-adder(id=this.id("add-component-button"))
         +select(this.id("componentsToAddPicker"), "Available Components", "add-component-select input-group-picker")
         span.input-group-btn(rv-command-add-component)
             button.btn.btn-success(type="button", rv-enabled="isAddComponentEnabled") Add Component
-
-
-div.modal.fade(id=this.id("deleteEntityModal") tabindex="-1" role="dialog")
-    div.modal-dialog
-        div.modal-content
-            div.modal-header
-                h4 Delete Entity { _currentEntityName }?
-            div.modal-body
-                p Are you sure you want to delete entity { _currentEntityName}?
-            div.modal-footer
-                button.btn.btn-default(type="button" data-dismiss="modal") Close
-                button.btn.btn-primary(type="button" rv-command-delete-entity-confirm) OK
