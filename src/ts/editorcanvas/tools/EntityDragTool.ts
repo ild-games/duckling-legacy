@@ -37,8 +37,8 @@ module editorcanvas.tools {
         private displayObject : createjs.DisplayObject = null;
         private selectService : editorcanvas.services.EntitySelectService = null;
 
-        onBind(context : framework.Context, canvas : editorcanvas.CanvasVM) {
-            super.onBind(context, canvas);
+        onBind(context : framework.Context) {
+            super.onBind(context);
             this.selectService = context.getSharedObject(services.EntitySelectService);
         }
 
@@ -46,8 +46,8 @@ module editorcanvas.tools {
             return this.displayObject;
         }
 
-        onStageDown(mousePos : math.Vector) {
-            var localCoords = this.canvas.stage.globalToLocal(mousePos.x, mousePos.y);
+        onStageDown(mousePos : math.Vector, canvas : editorcanvas.CanvasVM) {
+            var localCoords = canvas.stage.globalToLocal(mousePos.x, mousePos.y);
             mousePos.x = localCoords.x;
             mousePos.y = localCoords.y;
             this.moveCommand = null;
@@ -56,7 +56,7 @@ module editorcanvas.tools {
             if (selectableEntityKey) {
                 this.selectService.selectEntity(selectableEntityKey);
                 this.setupMoveCommand(
-                    this.entitySystem.getEntity(selectableEntityKey),
+                    this.context.getSharedObject(entityframework.EntitySystem).getEntity(selectableEntityKey),
                     mousePos);
             }
         }
@@ -83,15 +83,15 @@ module editorcanvas.tools {
             this.displayObject.y = mousePos.y;
         }
 
-        onStageUp(mousePos : math.Vector) {
+        onStageUp(mousePos : math.Vector, canvas : editorcanvas.CanvasVM) {
             this.moveCommand = null;
             this.displayObject = null;
-            this.canvas.redrawCanvas();
+            canvas.redrawCanvas();
         }
 
-        onStageMove(mousePos : math.Vector) {
+        onStageMove(mousePos : math.Vector, canvas : editorcanvas.CanvasVM) {
             if (this.moveCommand && this.context.commandQueue.peekUndo() === this.moveCommand) {
-                var localCoords = this.canvas.stage.globalToLocal(mousePos.x, mousePos.y);
+                var localCoords = canvas.stage.globalToLocal(mousePos.x, mousePos.y);
                 this.displayObject.x = localCoords.x;
                 this.displayObject.y = localCoords.y;
                 this.moveCommand.endPosition = new math.Vector(localCoords.x, localCoords.y);

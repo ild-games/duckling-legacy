@@ -1,4 +1,21 @@
 div.editor-container
+
+    div.editor-header
+        button.btn.btn-primary.toolbar-btn(type="button", data-toggle="tooltip", data-placement="bottom", title="Save", rv-command-save) 
+            span &nbsp;
+            i.fa.fa-save
+            span &nbsp;
+        span.toolbar-separator
+        button.btn.btn-primary.toolbar-btn(type="button", data-toggle="tooltip", data-placement="bottom", title="Undo (#{util.html.getCtrlKeyRepresentation()} + Z)", rv-command-undo) 
+            span &nbsp;
+            i.fa.fa-undo
+            span &nbsp;
+        button.btn.btn-primary.toolbar-btn(type="button", data-toggle="tooltip", data-placement="bottom", title="Redo (#{util.html.getCtrlKeyRepresentation()} + Y)", rv-command-redo) 
+            span &nbsp;
+            i.fa.fa-repeat
+            span &nbsp;
+        span.toolbar-separator
+        select.toolbar-tool-select(id=this.id("toolSelect"))
         
     div.editor-content
         div(id=this.id("canvas-view-container"))

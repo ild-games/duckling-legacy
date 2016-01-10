@@ -284,8 +284,8 @@ module entityframework
         private entityId : string;
         private context : framework.Context;
 
-        constructor(es : entityframework.EntitySystem, entity : entityframework.Entity, context : framework.Context) {
-            this.es = es;
+        constructor(entity : entityframework.Entity, context : framework.Context) {
+            this.es = context.getSharedObject(entityframework.EntitySystem);
             this.entity = entity;
             this.context = context;
             this.entityId = this.es.nextKey();

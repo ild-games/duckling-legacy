@@ -4,7 +4,6 @@
 ///<reference path="../framework/command/Command.ts"/>
 ///<reference path="../entitysystem/components/drawing/DrawableComponent.ts"/>
 ///<reference path="../entitysystem/components/drawing/RectangleShape.ts"/>
-///<reference path="../editorcanvas/tools/Tool.ts"/>
 module editorcanvas {
     import observe = framework.observe;
 
@@ -28,11 +27,8 @@ module editorcanvas {
     export class CanvasVM extends framework.ViewModel<entityframework.EntitySystem> {
         private selectedEntity : entityframework.core.SelectedEntity;
         private project : framework.Project;
-        private systemLoader : entityframework.SystemLoader;
         private _stage : createjs.Stage;
         private entityDrawerService : services.EntityDrawerService;
-        private curTool : editorcanvas.tools.Tool;
-        private tools : { [key : string] : editorcanvas.tools.BaseTool } = {};
         private grid : editorcanvas.drawing.Grid;
         private canvasDiv : HTMLDivElement;
         private scrollDiv : HTMLDivElement;
@@ -41,9 +37,6 @@ module editorcanvas {
 
         constructor() {
             super();
-            this.registerCallback("undo", this.undo);
-            this.registerCallback("redo", this.redo);
-            this.registerCallback("save", this.save);
 
             this.properties.dimensions = new math.Vector(800, 500);
             this.grid = new editorcanvas.drawing.Grid(32, new math.Vector(800, 500));
@@ -67,7 +60,6 @@ module editorcanvas {
             this.subscribeToServices();
             this.setupDelegates();
             this.setupSharedObjects();
-            this.addTools();
             this.setupStage();
             this.onStagePropertiesChanged();
             this.load();
@@ -76,39 +68,7 @@ module editorcanvas {
         private setupSharedObjects() {
             this.selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this.project = this._context.getSharedObject(framework.Project);
-            this.systemLoader = new entityframework.SystemLoader(this.project, new util.JsonLoader());
             this._context.setSharedObject(this.data);
-        }
-
-        private addTools() {
-            var selectEntityTool = new editorcanvas.tools.EntitySelectTool();
-            this.addTool(selectEntityTool);
-
-            var createEntityTool = new editorcanvas.tools.EntityCreatorTool();
-            this.addTool(createEntityTool);
-
-            var dragEntityTool = new editorcanvas.tools.EntityDragTool();
-            this.addTool(dragEntityTool);
-
-            var mapMoveTool = new editorcanvas.tools.MapDragTool();
-            mapMoveTool.draggedElement = this.findById("canvas-view");
-            this.addTool(mapMoveTool);
-
-            this.curTool = selectEntityTool;
-        }
-
-        private addTool(tool : editorcanvas.tools.BaseTool) {
-            this.tools[tool.key] = tool;
-            tool.onBind(this._context, this);
-            util.jquery.addOptionToSelect($(this.findById("toolSelect")), tool.key, tool.label);
-        }
-
-        private undo() {
-            this._context.commandQueue.undo();
-        }
-
-        private redo() {
-            this._context.commandQueue.redo();
         }
 
         private buildBackgroundChild() : createjs.DisplayObject {
@@ -124,12 +84,8 @@ module editorcanvas {
             this.stage.addChild(this.buildBackgroundChild());
         }
 
-        private save() {
-            this.systemLoader.saveMap(this.project.projectName, this.data);
-        }
-
         private load() {
-            this.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
+            this._context.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
                     this._context.getSharedObject(util.resource.ResourceManager).loadAssets(
@@ -165,8 +121,6 @@ module editorcanvas {
         }
 
         private setupDelegates() {
-            $(this.findById("toolSelect")).change(() => this.curTool = this.tools[$(this.findById("toolSelect")).val()]);
-
             $(this.findById("canvas-view")).on(
                 this.eventsGivenToCanvas,
                 (event) => util.html.passMouseEventToElement(event.originalEvent, this.findById("entity-canvas")));
@@ -203,10 +157,10 @@ module editorcanvas {
         }
 
         private subscribeToolEvents() {
-            this.stage.on("click", (event) => this.curTool.onEvent(event));
-            this.stage.on("stagemousedown", (event) => this.curTool.onEvent(event));
-            this.stage.on("stagemouseup", (event) => this.curTool.onEvent(event));
-            this.stage.on("stagemousemove", (event) => this.curTool.onEvent(event));
+            this.stage.on("click", (event) => this._context.curTool.onEvent(event, this));
+            this.stage.on("stagemousedown", (event) => this._context.curTool.onEvent(event, this));
+            this.stage.on("stagemouseup", (event) => this._context.curTool.onEvent(event, this));
+            this.stage.on("stagemousemove", (event) => this._context.curTool.onEvent(event, this));
         }
 
         private onStagePropertiesChanged() {
@@ -277,9 +231,8 @@ module editorcanvas {
         private addDrawnElementsToStage() {
             this.collectEntityDrawables().forEach((drawnElement) =>
                 this.stage.addChild(drawnElement));
-
-            if (this.curTool.getDisplayObject()) {
-                this.stage.addChild(this.curTool.getDisplayObject());
+            if (this._context.curTool.getDisplayObject()) {
+                this.stage.addChild(this._context.curTool.getDisplayObject());
             }
             if (this.properties.isGridVisible) {
                 this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));

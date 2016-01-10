@@ -22,6 +22,10 @@ module framework {
         private _rivets;
         private _sharedObjects : {} = {};
         private _systemWindow : util.SystemWindow = new util.SystemWindow();
+        private _tools : { [key : string] : editorcanvas.tools.BaseTool } = {};
+
+        public systemLoader : entityframework.SystemLoader;
+        public curTool : editorcanvas.tools.Tool;
 
         /**
          * Construct a new context.
@@ -83,6 +87,25 @@ module framework {
          */
         setSharedObject(sharedObject : {}) {
             this.setSharedObjectByKey(sharedObject.constructor[contextKeySymbol], sharedObject);
+        }
+
+        /**
+         * Registers a tool that can be used by the context.
+         *
+         * @param tool Tool to be registered.
+         */
+        registerTool(tool : editorcanvas.tools.BaseTool) {
+            this._tools[tool.key] = tool;
+            tool.onBind(this);
+        }
+
+        /**
+         * Switches the current tool to the given tool based on the tool's name.
+         *
+         * @param toolName Name of the tool to switch to.
+         */
+        switchTool(toolName : string) {
+            this.curTool = this._tools[toolName];
         }
 
         //region Getters and Setters

@@ -7,14 +7,14 @@ module editorcanvas.tools {
      */
     export interface Tool {
         /**
-         * Hook to bind the context and canvas VM this tool is used with.
+         * Hook to bind the context this tool is used with.
          */
-        onBind(context : framework.Context, canvas : editorcanvas.CanvasVM);
+        onBind(context : framework.Context);
 
         /**
          * Hook to dispatch the events a tool cares about.
          */
-        onEvent(event);
+        onEvent(event, canvas : editorcanvas.CanvasVM);
 
         /**
          * Returns the EaselJS DisplayObject that represents this tool for the canvas.

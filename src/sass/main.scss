@@ -46,6 +46,7 @@ $padding-form-vertical: 0.5em;
 $default-indented-box-padding: 5px;
 
 $canvas-footer-height: 46px;
+$canvas-header-height: 46px;
 
 html,body
 {
@@ -97,16 +98,49 @@ div {
     padding-bottom: $default-indented-box-padding;
 }
 
-.canvas-menu-btns {
-  position: fixed;
-  left: 0;
-  top: 0;
+.toolbar-btn:not(:hover) {
+    -webkit-appearance: none;
+    outline: none;
+    color: black;
+    background: transparent;
+}
+
+.toolbar-btn {
+    border: 0;
+}
+
+.toolbar-separator {
+    width: 1px;
+    border: 1px solid gray;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.toolbar-tool-select {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .editor-container {
+
     .editor-content {
         height: 100%;
+        padding-top: $canvas-header-height;
         padding-bottom: $canvas-footer-height;
+    }
+
+    .editor-header {
+        @include layout-box;
+        z-index: 10;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: $canvas-header-height;
+        width: 100%;
+        background-color: $light-primary-color;
+        border: 0 solid black;
+        border-bottom-width: 1px;
+        padding: $padding-base-vertical $padding-base-vertical;
     }
 
     .editor-footer {
@@ -132,6 +166,7 @@ div {
 
 .entity-canvas {
   background-color: $primary-color;
+  padding-top: $canvas-header-height;
   position: fixed;
   top: 0;
   left: 0;

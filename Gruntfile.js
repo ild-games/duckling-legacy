@@ -58,6 +58,7 @@ module.exports = function(grunt) {
                     module: 'commonjs',
                     sourceMap: true,
                     declaration: true,
+                    experimentalDecorators: true,
                     target: 'es5',
                     references: [
                         "typings/tsd.d.ts"
@@ -71,6 +72,7 @@ module.exports = function(grunt) {
                     module: 'commonjs',
                     sourceMap: true,
                     target: 'es5',
+                    experimentalDecorators: true,
                     references: [
                         "typings/tsd.d.ts",
                         "build/scripts/duckling.d.ts"

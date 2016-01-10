@@ -7,13 +7,13 @@ module editorcanvas.tools {
     export class EntitySelectTool extends BaseTool {
         private selectService : editorcanvas.services.EntitySelectService = null;
 
-        onBind(context : framework.Context, canvas : editorcanvas.CanvasVM) {
-            super.onBind(context, canvas);
+        onBind(context : framework.Context) {
+            super.onBind(context);
             this.selectService = context.getSharedObject(services.EntitySelectService)
         }
 
-        onLeftClick(mousePos : math.Vector) {
-            var localCoords = this.canvas.stage.globalToLocal(mousePos.x, mousePos.y);
+        onLeftClick(mousePos : math.Vector, canvas : editorcanvas.CanvasVM) {
+            var localCoords = canvas.stage.globalToLocal(mousePos.x, mousePos.y);
             var selectableEntityKey = this.selectService.findSelectableEntity(new math.Vector(localCoords.x, localCoords.y));
             if (selectableEntityKey) {
                 this.selectService.selectEntity(selectableEntityKey);

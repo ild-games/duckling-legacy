@@ -1,6 +1,7 @@
 html
     head
         title="duckling"
+        meta(charset="UTF-8")
         each file in ["dependencies/dependencies.css","styles/duckling.css"]
             link(rel="stylesheet", type="text/css", href=file)
         each file in ["dependencies/dependencies.js", "scripts/duckling.js", "scripts/duckling_views.js"]
