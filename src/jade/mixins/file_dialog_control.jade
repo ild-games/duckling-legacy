@@ -1,0 +1,7 @@
+mixin file_selector(browseCommand, rvFileDisplayedText)
+    div.form-inline.text-ellipsis
+        button.btn.btn-default(type="button")&attributes(browseCommand) Browse
+        &nbsp;&nbsp;
+        strong
+            em
+                span(rv-text=rvFileDisplayedText)

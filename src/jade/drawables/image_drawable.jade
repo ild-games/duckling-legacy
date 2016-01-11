@@ -1,3 +1,5 @@
+include ../mixins/file_dialog_control
+
 extends ./generic_drawable.jade
 
 block drawable_label
@@ -5,17 +7,12 @@ block drawable_label
     
 block specific_drawable
     label Image File
-    div.form-inline.text-ellipsis
-        button.btn.btn-default(type="button", rv-command-open-image-file) Browse
-        &nbsp;&nbsp;
-        strong
-            em
-                span(rv-text="data.textureKey") 
+    +file_selector({"rv-command-open-image-file": "rv-command-open-image-file"}, "data.textureKey")
     
     div.gone(id=this.id("partialImgPanel"))
         br
         div.panel.panel-default
-            div.panel-heading.form-inline(id=this.id("partialImgPanelHeader"))
+            div.panel-heading.form-inline(id=this.id("partialImgPanelHeader"), rv-command-partial-header-click)
                 div.form-group
                     label Partial Image? &nbsp;
                     input(type="checkbox" rv-unchecked="data.isWholeImage")

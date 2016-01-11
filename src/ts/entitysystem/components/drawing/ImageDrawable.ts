@@ -10,30 +10,27 @@ module entityframework.components.drawing {
      */
     @serialize.ProvideClass(ImageDrawable, "ild::ImageDrawable")
     export class ImageDrawable extends Drawable {
-        @observe.Primitive(String)
+        @observe.Primitive(Boolean)
         @serialize.Ignore
-        _imageFile : string = "";
+        private _loaded : boolean = false;
+
+        @observe.Object()
+        private textureRect : math.Rectangle = new math.Rectangle(0, 0, -1, -1);
 
         @observe.Primitive(String)
         textureKey : string = "";
 
         @observe.Primitive(Boolean)
-        @serialize.Ignore
-        private loaded : boolean = false;
-
-        @observe.Primitive(Boolean)
         isWholeImage : boolean = true;
 
-        @observe.Object()
-        private textureRect : math.Rectangle = new math.Rectangle(0, 0, -1, -1);
+        constructor(key : string = "") {
+            super(key);
+        }
 
-        @serialize.Ignore
-        private _image : HTMLImageElement = null;
-
-        protected generateCanvasDisplayObject() : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             var bitmap = null;
             if (this.loaded) {
-                bitmap = new createjs.Bitmap(this._image);
+                bitmap = new createjs.Bitmap(resourceManager.getResource(new map.PNGAsset(this.textureKey)));
 
                 var dimensions = new math.Vector(0, 0);
                 if (!this.isWholeImage) {
@@ -43,38 +40,39 @@ module entityframework.components.drawing {
                         this.textureRect.left, this.textureRect.top,
                         this.textureRect.width, this.textureRect.height);
                 } else {
-                    dimensions.x = this._image.width;
-                    dimensions.y = this._image.height;
+                    dimensions.x = bitmap.image.width;
+                    dimensions.y = bitmap.image.height;
                 }
                 bitmap.regX = dimensions.x / 2;
                 bitmap.regY = dimensions.y / 2;
             } else {
-                this.loadImage();
+                this.loadImage("", resourceManager);
             }
             return bitmap;
         }
 
-        loadImage() {
+        loadImage(imageFile : string, resourceManager : util.resource.ResourceManager) {
             var asset = new map.PNGAsset(this.textureKey);
-            if (util.resource.hasAsset(asset)) {
-                this._image = <HTMLImageElement>util.resource.getResource(asset);
-                this.onImageLoaded(asset);
+            if (resourceManager.hasAsset(asset)) {
+                this.onImageLoaded(asset, new math.Vector(
+                    resourceManager.getResource(asset).width,
+                    resourceManager.getResource(asset).height));
             }
 
-            if (this.imageFile && !this._image) {
-                this._image = <HTMLImageElement>asset.createDOMElement(this.imageFile);
-                this._image.onload = () => {
-                    util.resource.addAsset(asset, this._image);
-                    this.onImageLoaded(asset);
+            if (imageFile) {
+                var image = <HTMLImageElement>asset.createDOMElement(imageFile);
+                image.onload = () => {
+                    resourceManager.addAsset(asset, image);
+                    this.onImageLoaded(asset, new math.Vector(image.width, image.height));
                 }
             }
         }
 
-        onImageLoaded(asset : map.PNGAsset) {
-            this.loaded = true;
+        onImageLoaded(asset : map.PNGAsset, dimensions : math.Vector) {
+            this._loaded = true;
             if (this.isWholeImage && this.textureRect.width === -1) {
-                this.textureRect.width = this._image.width;
-                this.textureRect.height = this._image.height;
+                this.textureRect.width = dimensions.x;
+                this.textureRect.height = dimensions.y;
             }
         }
 
@@ -90,19 +88,8 @@ module entityframework.components.drawing {
             return DrawableType.Image;
         }
 
-        @serialize.Ignore
-        get image() : HTMLImageElement {
-            return this._image;
-        }
-
-        set imageFile(imageFile : string) {
-            this._imageFile = imageFile;
-            this.loaded = false;
-            this._image = null;
-        }
-
-        get imageFile() : string {
-            return this._imageFile;
+        get loaded() : boolean {
+            return this._loaded;
         }
     }
 
@@ -113,21 +100,23 @@ module entityframework.components.drawing {
             return 'drawables/image_drawable';
         }
 
+        constructor() {
+            super();
+            this.registerCallback("partial-header-click", () => this.data.isWholeImage = !this.data.isWholeImage);
+        }
+
         onDataReady() {
             this.registerCallback("open-image-file", this.openImageFile);
-            this.data.loadImage();
+            this.data.loadImage("", this._context.getSharedObject(util.resource.ResourceManager));
             this.fileDialog = this._context.getSharedObjectByKey("FileDialog");
 
             this.setChangeListener(this.data, (event) => {
-                this.togglePartialImgPanel(this.data.image !== null, !this.data.isWholeImage);
+                this.togglePartialImgPanel(this.data.loaded, !this.data.isWholeImage);
             });
         }
 
         onViewReady() {
-            this.togglePartialImgPanel(this.data.image !== null, !this.data.isWholeImage);
-            $(this.findById("partialImgPanelHeader")).click((event) => {
-                this.data.isWholeImage = !this.data.isWholeImage;
-            });
+            this.togglePartialImgPanel(this.data.loaded, !this.data.isWholeImage);
         }
 
         private togglePartialImgPanel(visible : boolean, bodyVisible : boolean) {
@@ -145,32 +134,21 @@ module entityframework.components.drawing {
             }
         }
 
-
         private openImageFile() {
             var startDir = this.getResourceDir();
-            this.createResourcesDirectory(startDir);
+            util.path.makedirs(startDir);
             this.fileDialog.getFileName(startDir, [".png"])
                 .then((fileName : string) => {
-                    if (!this.isValidResourcePath(fileName)) {
+                    if (!util.path.isSubOfDir(fileName, this.getResourceDir())) {
                         throw Error("Assets must be opened from directory: " + startDir);
                     } else {
                         var trimmedFileName = fileName.replace(startDir, "");
                         trimmedFileName = trimmedFileName.substring(0, trimmedFileName.length - ".png".length);
                         this.data.textureKey = trimmedFileName;
-                        this.data.imageFile = fileName;
-                        this.data.loadImage();
+                        this.data.loadImage(fileName, this._context.getSharedObject(util.resource.ResourceManager));
                         this.fileDialog.clearFile();
                     }
                 }, framework.error.onPromiseError(this._context));
-        }
-
-        private isValidResourcePath(file : string) : boolean {
-            var resourceDir = this.getResourceDir();
-            return file.length >= resourceDir.length && file.substring(0, resourceDir.length) === resourceDir;
-        }
-
-        private createResourcesDirectory(resDir : string) {
-            util.path.makedirs(resDir);
         }
 
         private getResourceDir() : string {

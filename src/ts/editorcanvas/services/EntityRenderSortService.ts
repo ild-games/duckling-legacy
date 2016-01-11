@@ -1,6 +1,7 @@
 module editorcanvas.services {
 
-    import draw = entityframework.components.drawing;
+    import comp = entityframework.components;
+    import draw = comp.drawing;
     import datastructures = util.datastructures;
 
     /**
@@ -28,8 +29,12 @@ module editorcanvas.services {
             var entitySystem = this.context.getSharedObject(entityframework.EntitySystem);
             entitySystem.forEach((entity : entityframework.Entity, key : string) => {
                 var drawableComp = entity.getComponent<draw.DrawableComponent>("drawable");
+                var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
                 if (drawableComp && drawableComp.topDrawable) {
-                    priorityQueue.push(drawableComp.topDrawable.renderPriority, key);
+                    priorityQueue.push(drawableComp.topDrawable.renderPriority + drawableComp.topDrawable.priorityOffset, key);
+                }
+                if (collisionComp) {
+                    priorityQueue.push(Number.MAX_VALUE, key);
                 }
             });
             return priorityQueue;

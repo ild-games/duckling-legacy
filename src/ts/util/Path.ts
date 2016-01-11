@@ -56,6 +56,17 @@ module util.path {
     }
 
     /**
+     * Checks if a file or directory is a subfile / subdirectory of a given directory.
+     *
+     * @param subFileOrDir File or directory string to check if it is a subfile / subdirectory of the given parent directory.
+     * @param possibleParentDir Directory to check if the subFileOrDir is a subfile / subdirectory of.
+     * @returns True if the file / directory is contained in the parent directory.
+     */
+    export function isSubOfDir(subFileOrDir : string, possibleParentDir : string) : boolean {
+        return subFileOrDir.length >= possibleParentDir.length && subFileOrDir.substring(0, possibleParentDir.length) === possibleParentDir;
+    }
+
+    /**
      * Make a directory.
      * @param path Path to the directory.  The directory's parents must exist.
      * @returns An empty promise that evaluates once the directory has been created.

@@ -19,7 +19,7 @@ module entityframework.components.drawing {
             this.shape = shape || null;
         }
 
-        protected generateCanvasDisplayObject() : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             var displayShape = null;
             if (this.shape) {
                 displayShape = this.shape.getDrawable();

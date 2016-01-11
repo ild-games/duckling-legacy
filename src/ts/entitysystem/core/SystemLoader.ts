@@ -110,8 +110,6 @@ module entityframework {
         }
 
         private initEntitySystem(loadedMap : map.GameMap, emptySystem : EntitySystem) {
-            emptySystem.assets = loadedMap.assets;
-
             var nextID = 0;
             loadedMap.entities.forEach((entityName : string) => {
                 emptySystem.addEntity(entityName, new Entity());

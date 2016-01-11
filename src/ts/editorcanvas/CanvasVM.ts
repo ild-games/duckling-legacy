@@ -38,8 +38,6 @@ module editorcanvas {
         private scrollDiv : HTMLDivElement;
         private properties : CanvasProperties = new CanvasProperties();
         private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
-        private numAssetsToLoad : number = 0;
-        private numAssetsLoaded : number = 0;
 
         constructor() {
             super();
@@ -55,8 +53,8 @@ module editorcanvas {
             super.onDataReady();
             this.setChangeListener(this.data, () => this.redrawCanvas());
             this.setChangeListener(this.properties, () => {
-                    this.onStagePropertiesChanged();
-                    this.redrawCanvas();
+                this.onStagePropertiesChanged();
+                this.redrawCanvas();
             });
             this.setChangeListener(this.grid, () => {
                 this.grid.constructGrid();
@@ -134,26 +132,10 @@ module editorcanvas {
             this.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
-                    this.loadAssets();
+                    this._context.getSharedObject(util.resource.ResourceManager).loadAssets(
+                        this.data.collectAssets(),
+                        this._context.getSharedObjectByKey("Project").rootPath);
                 }, framework.error.onPromiseError(this._context));
-        }
-
-        private loadAssets() {
-            this.numAssetsToLoad = this.data.assets.length;
-            this.data.assets.forEach((asset : entityframework.map.Asset) => {
-                var obj = util.resource.createAssetDOMElement(asset, this._context.getSharedObjectByKey("Project").rootPath);
-                if (obj != null) {
-                    obj.onload = () => { this.onAssetObjLoaded(); }
-                    util.resource.addAsset(asset, obj);
-                }
-            });
-        }
-
-        private onAssetObjLoaded() {
-            this.numAssetsLoaded++;
-            if (this.areAllAssetsLoaded()) {
-                this.redrawCanvas();
-            }
         }
 
         private changeData(newData : entityframework.EntitySystem) {
@@ -251,15 +233,11 @@ module editorcanvas {
             this.stage.y = Math.max(newDimensions.y / 2, this.canvasDiv.clientHeight / 2) - this.canvasDiv.scrollTop;
         }
 
-        private areAllAssetsLoaded() : boolean {
-            return this.numAssetsToLoad === this.numAssetsLoaded;
-        }
-
         /**
          * Called every time the canvas needs to be updated and redrawn.
          */
         redrawCanvas() {
-            if (!this.areAllAssetsLoaded()) {
+            if (!this._context.getSharedObject(util.resource.ResourceManager).areAllAssetsLoaded()) {
                 return;
             }
 
@@ -285,7 +263,8 @@ module editorcanvas {
             var toDraw : Array<createjs.DisplayObject> = [];
             var entitiesByPriority = this._context.getSharedObject(services.EntityRenderSortService).getEntitiesByPriority();
             entitiesByPriority.forEach((entityKey : string) => {
-                this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey)).forEach((drawable) => {
+                var resourceManager = this._context.getSharedObject(util.resource.ResourceManager);
+                this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey), resourceManager).forEach((drawable) => {
                     toDraw.push(drawable);
                 });
             });

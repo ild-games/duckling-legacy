@@ -60,7 +60,6 @@ module entityframework
         private componentFactories : {[key:string]:ComponentFactory} = {};
         private nextId : number = 0;
         private entityCallback : observe.DataChangeCallback<observe.ObservableMapChanged<Entity>>;
-        assets : Array<map.Asset> = [];
 
         /**
          * Create an empty EntitySystem
@@ -194,11 +193,30 @@ module entityframework
          * @param entitySystem
          */
         move(entitySystem : EntitySystem) {
-            this.assets = entitySystem.assets;
             this.componentFactories = entitySystem.componentFactories;
             this.setEntities(entitySystem.entities);
             this.nextId = entitySystem.nextId;
             this.publishDataChanged(new EntitySystemChanged(EVENT_MOVED, this));
+        }
+
+        collectAssets() : Array<entityframework.map.Asset> {
+            var allAssets : Array<entityframework.map.Asset> = [];
+            this.forEach((entity) => {
+                entity.forEach((component) => {
+                    component.collectAssets().forEach((asset : entityframework.map.Asset) => {
+                        var contains = false;
+                        allAssets.forEach((existingAsset) => {
+                            if (asset.key === existingAsset.key && asset.type === existingAsset.type) {
+                                contains = true;
+                            }
+                        })
+                        if (!contains) {
+                            allAssets.push(asset);
+                        }
+                    });
+                });
+            })
+            return allAssets;
         }
 
         private setEntities(entities : observe.ObservableMap<Entity>) {

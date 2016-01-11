@@ -18,7 +18,7 @@ module entityframework.components.drawing {
         renderPriority : number = 0;
 
         @observe.Primitive(Number)
-        protected priorityOffset : number = 0;
+        priorityOffset : number = 0;
 
         @observe.Primitive(Number)
         protected rotation : number = 0;
@@ -40,8 +40,8 @@ module entityframework.components.drawing {
             this.key = key;
         }
 
-        contains(point : math.Vector, position : math.Vector) {
-            var canvasObj = this.getCanvasDisplayObject();
+        contains(point : math.Vector, position : math.Vector, resourceManager : util.resource.ResourceManager) {
+            var canvasObj = this.getCanvasDisplayObject(resourceManager);
             if (!canvasObj) {
                 return false;
             }
@@ -53,11 +53,11 @@ module entityframework.components.drawing {
             return canvasObj.hitTest(localPoint.x, localPoint.y);
         }
 
-        getCanvasDisplayObject() : createjs.DisplayObject {
-            return this.transformCanvasDisplayObject(this.generateCanvasDisplayObject());
+        getCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
+            return this.transformCanvasDisplayObject(this.generateCanvasDisplayObject(resourceManager));
         }
 
-        protected generateCanvasDisplayObject() : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             throw new Error("This method is abstract");
         }
 

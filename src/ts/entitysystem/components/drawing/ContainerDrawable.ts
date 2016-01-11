@@ -48,12 +48,12 @@ module entityframework.components.drawing {
             this.drawables.forEach(func);
         }
 
-        protected generateCanvasDisplayObject() : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             var container = null;
             if (this.drawables.length > 0) {
                 container = new createjs.Container();
                 this.forEach((drawable) => {
-                    container.addChild(drawable.getCanvasDisplayObject());
+                    container.addChild(drawable.getCanvasDisplayObject(resourceManager));
                 });
             }
             return container;

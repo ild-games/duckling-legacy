@@ -48,9 +48,13 @@ module editorcanvas.services {
             var canSelect = false;
             var entity : entityframework.Entity = this.context.getSharedObject(entityframework.EntitySystem).getEntity(entityKey);
             var positionComp = entity.getComponent<comp.PositionComponent>("position");
-            if (positionComp) {
+            var drawComp = entity.getComponent<draw.DrawableComponent>("drawable");
+            if (positionComp && drawComp) {
                 var position = positionComp.position;
-                var contains = entity.getComponent<draw.DrawableComponent>("drawable").topDrawable.contains(coords, position);
+                var contains = drawComp.topDrawable.contains(
+                    coords,
+                    position,
+                    this.context.getSharedObject(util.resource.ResourceManager));
                 if (contains) {
                     canSelect = true;
                 }

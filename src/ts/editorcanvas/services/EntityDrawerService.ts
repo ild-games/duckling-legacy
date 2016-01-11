@@ -14,8 +14,8 @@ module editorcanvas.services {
          * canvas.
          * @param entity The entity to get a DisplayObject for.
          */
-        getEntityDisplayable(entity : entityframework.Entity) : datastructures.PriorityQueue<createjs.DisplayObject> {
-            var drawablePriorityQueue = this.getDrawableDisplayable(entity);
+        getEntityDisplayable(entity : entityframework.Entity, resourceManager : util.resource.ResourceManager) : datastructures.PriorityQueue<createjs.DisplayObject> {
+            var drawablePriorityQueue = this.getDrawableDisplayable(entity, resourceManager);
             var collision = this.getCollisionDisplayable(entity);
             if (collision) {
                 drawablePriorityQueue.push(Number.MAX_VALUE, collision);
@@ -24,14 +24,14 @@ module editorcanvas.services {
             return drawablePriorityQueue;
         }
 
-        private getDrawableDisplayable(entity : entityframework.Entity) : datastructures.PriorityQueue<createjs.DisplayObject> {
+        private getDrawableDisplayable(entity : entityframework.Entity, resourceManager : util.resource.ResourceManager) : datastructures.PriorityQueue<createjs.DisplayObject> {
             var container = new createjs.Container();
 
             var posComp = entity.getComponent<comp.PositionComponent>("position");
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
             if (drawComp && posComp && drawComp.topDrawable) {
-                container.addChild(drawComp.topDrawable.getCanvasDisplayObject());
+                container.addChild(drawComp.topDrawable.getCanvasDisplayObject(resourceManager));
                 container.x = posComp.position.x;
                 container.y = posComp.position.y;
             }
