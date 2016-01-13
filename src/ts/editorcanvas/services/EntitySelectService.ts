@@ -49,7 +49,7 @@ module editorcanvas.services {
             var entity : entityframework.Entity = this.context.getSharedObject(entityframework.EntitySystem).getEntity(entityKey);
             var positionComp = entity.getComponent<comp.PositionComponent>("position");
             var drawComp = entity.getComponent<draw.DrawableComponent>("drawable");
-            if (positionComp && drawComp) {
+            if (positionComp && drawComp && drawComp.topDrawable) {
                 var position = positionComp.position;
                 var contains = drawComp.topDrawable.contains(
                     coords,
