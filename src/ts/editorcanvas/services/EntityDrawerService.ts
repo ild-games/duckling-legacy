@@ -18,7 +18,7 @@ module editorcanvas.services {
             var drawablePriorityQueue = this.getDrawableDisplayable(entity, resourceManager);
             var collision = this.getCollisionDisplayable(entity);
             if (collision) {
-                drawablePriorityQueue.push(Number.MAX_VALUE, collision);
+                drawablePriorityQueue.enqueue(Number.MAX_VALUE, collision);
             }
 
             return drawablePriorityQueue;
@@ -38,7 +38,7 @@ module editorcanvas.services {
 
             var drawableToReturn = new datastructures.PriorityQueue<createjs.DisplayObject>();
             if (container.children.length > 0) {
-                drawableToReturn.push(drawComp.topDrawable.renderPriority, container);
+                drawableToReturn.enqueue(drawComp.topDrawable.renderPriority, container);
             }
             return drawableToReturn;
         }

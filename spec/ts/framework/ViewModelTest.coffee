@@ -1,6 +1,7 @@
 describe "The ViewModel", ->
     beforeEach ->
         this.vm = new framework.ViewModel
+        this.vm.logging = false
         this.callbackSpy = jasmine.createSpy("callbackSpy")
         this.obsa = new helpers.SimpleObservableA
         spyOn this.vm, "render"

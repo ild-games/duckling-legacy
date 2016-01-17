@@ -31,10 +31,10 @@ module editorcanvas.services {
                 var drawableComp = entity.getComponent<draw.DrawableComponent>("drawable");
                 var collisionComp = entity.getComponent<comp.CollisionComponent>("collision");
                 if (drawableComp && drawableComp.topDrawable) {
-                    priorityQueue.push(drawableComp.topDrawable.renderPriority + drawableComp.topDrawable.priorityOffset, key);
+                    priorityQueue.enqueue(drawableComp.topDrawable.renderPriority + drawableComp.topDrawable.priorityOffset, key);
                 }
                 if (collisionComp) {
-                    priorityQueue.push(Number.MAX_VALUE, key);
+                    priorityQueue.enqueue(Number.MAX_VALUE, key);
                 }
             });
             return priorityQueue;

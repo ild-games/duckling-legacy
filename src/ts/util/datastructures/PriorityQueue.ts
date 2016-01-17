@@ -14,11 +14,10 @@ module util.datastructures {
 
         /**
          * Pushes a new element onto the queue with a given priority.
-         *
-         * @param priority Priority of element.
-         * @param element Element to store.
+         * @param  {number} priority Priority of the element.
+         * @param  {T}      element  Element to store.
          */
-        push(priority : number, element : T) {
+        enqueue(priority : number, element : T) {
             if (this.sortedPriorities.indexOf(priority) === -1) {
                 this.sortedPriorities.push(priority);
 
@@ -33,21 +32,51 @@ module util.datastructures {
         }
 
         /**
-         * Removes an element at the specified priority.
-         *
-         * @param priority Priority of element.
-         * @param element Element to remove.
+         * Removes the last element off the priority queue.
+         * @return {T} The removed element.
          */
-        remove(priority : number, element : T) {
-            var index = this.unsortedPriorityToContents[priority].indexOf(element);
-            if (index >= 0) {
-                this.unsortedPriorityToContents[priority].splice(index, 1);
+        dequeue() : T {
+            if (this.length === 0) {
+                return null;
+            }
+            var lastPriority = this.sortedPriorities[this.sortedPriorities.length - 1];
+            var lastPriorityArray = this.unsortedPriorityToContents[lastPriority];
+            var elementRemoved = lastPriorityArray.splice(lastPriorityArray.length - 1, 1);
+            if (lastPriorityArray.length === 0) {
+                delete this.unsortedPriorityToContents[lastPriority];
+                this.sortedPriorities.splice(this.sortedPriorities.length - 1, 1);
+            }
+
+            if (elementRemoved.length === 0) {
+                return null;
+            } else {
+                return elementRemoved[0];
             }
         }
 
         /**
-         * Iterates over the objects in the Priority Queue.
-         *
+         * Peeks at the element on the top of the queue.
+         * @return {T} Element at the top of the queue.
+         */
+        peek() : T {
+            if (this.length === 0) {
+                return null;
+            }
+            var lastPriority = this.unsortedPriorityToContents[this.sortedPriorities[this.sortedPriorities.length - 1]];
+            return lastPriority[lastPriority.length - 1];
+        }
+
+        /**
+         * Removes an element at the specified priority.
+         * @param  {number} priority Priority of the element.
+         * @param  {T}      element  Element to remove.
+         */
+        remove(priority : number, element : T) {
+            throw new Error("Currently unsupported.");
+        }
+
+        /**
+         * Iterates over the objects in the priority queue.
          * @param func Function that passes the object being iterated over.
          */
         forEach(func : (object : T) => void) {
