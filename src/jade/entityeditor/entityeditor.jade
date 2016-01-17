@@ -3,6 +3,8 @@ include ../mixins/select_control
 div.selector
     label Entity:&nbsp
     +select(this.id("entityNames"), "Selected Entity", "entityNames")
+    button.btn.btn-danger.btn-delete-entity(type="button" rv-command-delete-entity rv-enabled="isDeleteEntityEnabled") Delete
+
 
 div.forms(id=this.id("entity-form-container"))
     div.the-duck-bg-img

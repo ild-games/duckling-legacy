@@ -188,6 +188,10 @@ div.non-white-container-sel-drawable-vm {
   position: relative;
   border-left: solid 1px $dark-primary-color;
 
+  .btn-delete-entity {
+      float: right;
+  }
+
   .selector {
     @include layout-box;
     position: relative;

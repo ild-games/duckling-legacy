@@ -27,6 +27,7 @@ module entityframework
             super();
             this._adapter = this;
             this.registerCallback("add-component", this.addComponentFromSelect);
+            this.registerCallback("delete-entity", this.deleteEntity);
         }
 
         onDataReady() {
@@ -49,6 +50,14 @@ module entityframework
             this.selectedEntityPicker = new controls.SelectControl(this, "entityNames", this.getEntities(), "");
             this.selectedEntityPicker.callback = () => this._selectedEntity.entityKey = this.selectedEntityPicker.value;
             this.addComponentPicker = new controls.SelectControl(this, "componentsToAddPicker",{},"");
+        }
+
+        private deleteEntity() {
+            this._context.commandQueue.pushCommand(
+                new DeleteEntityCommand(this.data, this, this._selectedEntity.entityKey, this._currentEntity));
+            //this.selectEntity("");
+            //this.data.removeEntity(this._selectedEntity.entityKey);
+            //this._selectedEntity.entityKey = "";
         }
 
         addComponentFromSelect() {
@@ -107,6 +116,7 @@ module entityframework
         selectEntity(name : string) {
             this._components = [];
             this._componentsNotOnEntity = [];
+
 
             if (name && name !== "") {
                 this.selectedEntityPicker.value = name;
@@ -212,6 +222,10 @@ module entityframework
             return this._componentsNotOnEntity.length > 0;
         }
 
+        get isDeleteEntityEnabled() : boolean {
+            return this._selectedEntity && this._selectedEntity.entityKey !== "";
+        }
+
         private onComponentsChanged() {
             this._listVM.dataChanged();
             this.setupCloseComponentHandlers();
@@ -262,5 +276,58 @@ module entityframework
         undo() {
             this._entity.removeComponent(this._componentName);
         }
+    }
+
+    export class AddEntityCommand implements framework.command.Command {
+        private es : entityframework.EntitySystem;
+        private entity : entityframework.Entity;
+        private entityId : string;
+        private context : framework.Context;
+
+        constructor(es : entityframework.EntitySystem, entity : entityframework.Entity, context : framework.Context) {
+            this.es = es;
+            this.entity = entity;
+            this.context = context;
+            this.entityId = this.es.nextKey();
+        }
+
+        execute() {
+            this.es.addEntity(this.entityId, this.entity);
+            var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
+            selectedEntity.entityKey = this.entityId;
+            this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
+        }
+
+        undo() {
+            this.es.removeEntity(this.entityId);
+            var selectedEntity = this.context.getSharedObjectByKey("selectedEntity");
+            selectedEntity.entityKey = "";
+            this.context.setSharedObjectByKey("selectedEntity", selectedEntity);
+        }
+    }
+
+    class DeleteEntityCommand implements framework.command.Command {
+        private entitySystem : EntitySystem;
+        private entityEditorVM : EntityEditorVM;
+        private entityKey : string;
+        private entityToDelete : Entity;
+
+        constructor(entitySystem : EntitySystem, entityEditorVM : EntityEditorVM, entityKey : string, entityToDelete : Entity) {
+            this.entitySystem = entitySystem;
+            this.entityEditorVM = entityEditorVM;
+            this.entityKey = entityKey;
+            this.entityToDelete = entityToDelete;
+        }
+
+        execute() {
+            this.entityEditorVM.selectEntity("");
+            this.entitySystem.removeEntity(this.entityKey);
+        }
+
+        undo() {
+            this.entitySystem.addEntity(this.entityKey, this.entityToDelete);
+            this.entityEditorVM.selectEntity(this.entityKey);
+        }
+
     }
 }
