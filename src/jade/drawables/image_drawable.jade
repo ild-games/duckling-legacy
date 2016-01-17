@@ -7,7 +7,7 @@ block drawable_label
     
 block specific_drawable
     label Image File
-    +file_selector({"rv-command-open-image-file": "rv-command-open-image-file"}, "data.textureKey")
+    +file_selector("data.textureKey")(rv-command-open-image-file)
     
     div.gone(id=this.id("partialImgPanel"))
         br

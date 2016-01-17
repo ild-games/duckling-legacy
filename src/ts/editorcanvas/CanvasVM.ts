@@ -264,9 +264,7 @@ module editorcanvas {
             var entitiesByPriority = this._context.getSharedObject(services.EntityRenderSortService).getEntitiesByPriority();
             entitiesByPriority.forEach((entityKey : string) => {
                 var resourceManager = this._context.getSharedObject(util.resource.ResourceManager);
-                this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey), resourceManager).forEach((drawable) => {
-                    toDraw.push(drawable);
-                });
+                toDraw.push(this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey)));
             });
             return toDraw;
         }

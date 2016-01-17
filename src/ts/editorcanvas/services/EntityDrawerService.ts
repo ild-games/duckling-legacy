@@ -8,39 +8,38 @@ module editorcanvas.services {
      */
     @framework.ContextKey("editorcanvas.services.EntityDrawerService")
     export class EntityDrawerService {
+        private context : framework.Context;
+
+        constructor(context : framework.Context) {
+            this.context = context;
+        }
 
         /**
          * Gets a DisplayObject for the entity that can be used to represent it on the
          * canvas.
          * @param entity The entity to get a DisplayObject for.
          */
-        getEntityDisplayable(entity : entityframework.Entity, resourceManager : util.resource.ResourceManager) : datastructures.PriorityQueue<createjs.DisplayObject> {
-            var drawablePriorityQueue = this.getDrawableDisplayable(entity, resourceManager);
+        getEntityDisplayable(entity : entityframework.Entity) : createjs.Container {
+            var drawable : createjs.Container = this.getDrawableDisplayable(entity);
             var collision = this.getCollisionDisplayable(entity);
             if (collision) {
-                drawablePriorityQueue.enqueue(Number.MAX_VALUE, collision);
+                drawable.addChild(collision);
             }
-
-            return drawablePriorityQueue;
+            return drawable;
         }
 
-        private getDrawableDisplayable(entity : entityframework.Entity, resourceManager : util.resource.ResourceManager) : datastructures.PriorityQueue<createjs.DisplayObject> {
+        private getDrawableDisplayable(entity : entityframework.Entity) : createjs.Container {
             var container = new createjs.Container();
 
             var posComp = entity.getComponent<comp.PositionComponent>("position");
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
             if (drawComp && posComp && drawComp.topDrawable) {
-                container.addChild(drawComp.topDrawable.getCanvasDisplayObject(resourceManager));
+                container.addChild(drawComp.topDrawable.getCanvasDisplayObject(this.context.getSharedObject(util.resource.ResourceManager)));
                 container.x = posComp.position.x;
                 container.y = posComp.position.y;
             }
-
-            var drawableToReturn = new datastructures.PriorityQueue<createjs.DisplayObject>();
-            if (container.children.length > 0) {
-                drawableToReturn.enqueue(drawComp.topDrawable.renderPriority, container);
-            }
-            return drawableToReturn;
+            return container;
         }
 
         private getCollisionDisplayable(entity :entityframework.Entity) : createjs.DisplayObject {
