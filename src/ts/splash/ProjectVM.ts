@@ -28,7 +28,6 @@ module splashscreen {
 
         onViewReady() {
             super.onViewReady();
-            this.addTools();
             $(this.findById("toolSelect")).change(() => {
                 this._context.getSharedObject(editorcanvas.services.ToolService).switchTool($(this.findById("toolSelect")).val());
             });
@@ -39,8 +38,9 @@ module splashscreen {
                 this.createChildren();
                 this._context.systemWindow.makeFullscreen();
             }
-
             this.childrenAdded = true;
+
+            this.addTools();
         }
 
         private addTools() {
@@ -54,7 +54,7 @@ module splashscreen {
             this.addTool(dragEntityTool);
 
             var mapMoveTool = new editorcanvas.tools.MapDragTool();
-            mapMoveTool.draggedElement = this.findById("canvas-view");
+            mapMoveTool.draggedElement = this.canvas.findById("canvas-view");
             this.addTool(mapMoveTool);
 
             this._context.getSharedObject(editorcanvas.services.ToolService).currentTool = createEntityTool;

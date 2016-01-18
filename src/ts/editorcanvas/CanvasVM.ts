@@ -233,8 +233,11 @@ module editorcanvas {
         private addDrawnElementsToStage() {
             this.collectEntityDrawables().forEach((drawnElement) =>
                 this.stage.addChild(drawnElement));
-            if (this.toolService.currentTool.getDisplayObject()) {
-                this.stage.addChild(this.toolService.currentTool.getDisplayObject());
+            if (this.toolService.currentTool) {
+                var toolDrawable = this.toolService.currentTool.getDisplayObject();
+                if (toolDrawable) {
+                    this.stage.addChild(toolDrawable);
+                }
             }
             if (this.properties.isGridVisible) {
                 this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
