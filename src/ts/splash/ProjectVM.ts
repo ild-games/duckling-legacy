@@ -30,7 +30,7 @@ module splashscreen {
             super.onViewReady();
             this.addTools();
             $(this.findById("toolSelect")).change(() => {
-                this._context.switchTool($(this.findById("toolSelect")).val());
+                this._context.getSharedObject(editorcanvas.services.ToolService).switchTool($(this.findById("toolSelect")).val());
             });
             $('[data-toggle="tooltip"]').tooltip({html: true});
 
@@ -57,12 +57,12 @@ module splashscreen {
             mapMoveTool.draggedElement = this.findById("canvas-view");
             this.addTool(mapMoveTool);
 
-            this._context.curTool = createEntityTool;
+            this._context.getSharedObject(editorcanvas.services.ToolService).curTool = createEntityTool;
         }
 
         private addTool(tool : editorcanvas.tools.BaseTool) {
             util.jquery.addOptionToSelect($(this.findById("toolSelect")), tool.key, tool.label);
-            this._context.registerTool(tool);
+            this._context.getSharedObject(editorcanvas.services.ToolService).registerTool(tool);
         }
 
         private undo() {

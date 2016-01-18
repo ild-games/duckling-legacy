@@ -157,10 +157,11 @@ module editorcanvas {
         }
 
         private subscribeToolEvents() {
-            this.stage.on("click", (event) => this._context.curTool.onEvent(event, this));
-            this.stage.on("stagemousedown", (event) => this._context.curTool.onEvent(event, this));
-            this.stage.on("stagemouseup", (event) => this._context.curTool.onEvent(event, this));
-            this.stage.on("stagemousemove", (event) => this._context.curTool.onEvent(event, this));
+            var toolManager = this._context.getSharedObject(editorcanvas.services.ToolService);
+            this.stage.on("click", (event) => toolManager.curTool.onEvent(event, this));
+            this.stage.on("stagemousedown", (event) => toolManager.curTool.onEvent(event, this));
+            this.stage.on("stagemouseup", (event) => toolManager.curTool.onEvent(event, this));
+            this.stage.on("stagemousemove", (event) => toolManager.curTool.onEvent(event, this));
         }
 
         private onStagePropertiesChanged() {
@@ -231,8 +232,8 @@ module editorcanvas {
         private addDrawnElementsToStage() {
             this.collectEntityDrawables().forEach((drawnElement) =>
                 this.stage.addChild(drawnElement));
-            if (this._context.curTool.getDisplayObject()) {
-                this.stage.addChild(this._context.curTool.getDisplayObject());
+            if (this._context.getSharedObject(editorcanvas.services.ToolService).curTool.getDisplayObject()) {
+                this.stage.addChild(this._context.getSharedObject(editorcanvas.services.ToolService).curTool.getDisplayObject());
             }
             if (this.properties.isGridVisible) {
                 this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
