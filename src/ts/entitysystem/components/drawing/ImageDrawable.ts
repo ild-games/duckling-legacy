@@ -131,10 +131,10 @@ module entityframework.components.drawing {
 
             if (imageFile) {
                 var image = <HTMLImageElement>asset.createDOMElement(imageFile);
-                image.onload = () => {
-                    resourceManager.addAsset(asset, image);
+                image.onload = (() => {
+                    resourceManager.addResource(asset, image);
                     this.onImageLoaded(asset, new math.Vector(image.width, image.height));
-                }
+                });
             }
         }
 

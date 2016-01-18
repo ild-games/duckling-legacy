@@ -28,6 +28,9 @@
     },
     "es6-collections/es6-collections.d.ts": {
       "commit": "1ffc055e50f0df255da310485a7871c6f894e370"
+    },
+    "node/node.d.ts": {
+      "commit": "6eebd5e90a1cbd6b47b0705ba72dbcd5baf846f3"
     }
   }
 }

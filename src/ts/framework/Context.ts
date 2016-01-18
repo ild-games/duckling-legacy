@@ -23,6 +23,8 @@ module framework {
         private _sharedObjects : {} = {};
         private _systemWindow : util.SystemWindow = new util.SystemWindow();
 
+        public systemLoader : entityframework.SystemLoader;
+
         /**
          * Construct a new context.
          * @param templateContainer The object containing all of the jade templates.

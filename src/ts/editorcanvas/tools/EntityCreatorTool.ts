@@ -9,8 +9,8 @@ module editorcanvas.tools {
      * basic Position, Collision, and Drawable components.
      */
     export class EntityCreatorTool extends BaseTool {
-        onLeftClick(position : math.Vector) {
-            var localCoords = this.canvas.stage.globalToLocal(position.x, position.y);
+        onLeftClick(position : math.Vector, canvas : editorcanvas.CanvasVM) {
+            var localCoords = canvas.stage.globalToLocal(position.x, position.y);
             this.createBasicEntity(new math.Vector(localCoords.x, localCoords.y));
         }
 
@@ -28,7 +28,7 @@ module editorcanvas.tools {
             collisionComp.info.dimension.x = 15;
             collisionComp.info.dimension.y = 15;
             this.context.commandQueue.pushCommand(
-                new entityframework.AddEntityCommand(this.entitySystem, rectEntity, this.context));
+                new entityframework.AddEntityCommand(rectEntity, this.context));
         }
 
         get key() : string {

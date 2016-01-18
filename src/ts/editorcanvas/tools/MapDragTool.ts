@@ -24,7 +24,9 @@ module editorcanvas.tools {
         onMouseDown(position : math.Vector) {
             this.isDown = true;
             this.curPos = position;
-            this.offset = new math.Vector(this.draggedElement.scrollLeft, this.draggedElement.scrollTop);
+            if (this.draggedElement) {
+                this.offset = new math.Vector(this.draggedElement.scrollLeft, this.draggedElement.scrollTop);
+            }
         }
 
         onMouseUp() {
@@ -32,7 +34,7 @@ module editorcanvas.tools {
         }
 
         onMouseMove(position : math.Vector) {
-            if (this.isDown) {
+            if (this.isDown && this.draggedElement) {
                 var scrollToX = this.offset.x + (this.curPos.x - position.x);
                 var scrollToY = this.offset.y + (this.curPos.y - position.y);
 

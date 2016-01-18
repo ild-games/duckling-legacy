@@ -1,4 +1,14 @@
+include ../mixins/toolbar_button
+
 div.editor-container
+
+    div.editor-header
+        +toolbar_button("Save", "fa-save")(rv-command-save)
+        span.toolbar-separator
+        +toolbar_button("Undo (" + util.html.getCtrlKeyRepresentation() + " + Z)", "fa-undo")(rv-command-undo)
+        +toolbar_button("Redo (" + util.html.getCtrlKeyRepresentation() + " + Z)", "fa-repeat")(rv-command-redo)
+        span.toolbar-separator
+        select.toolbar-tool-select(id=this.id("toolSelect"))
         
     div.editor-content
         div(id=this.id("canvas-view-container"))
