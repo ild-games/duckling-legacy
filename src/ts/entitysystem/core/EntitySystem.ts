@@ -199,6 +199,31 @@ module entityframework
             this.publishDataChanged(new EntitySystemChanged(EVENT_MOVED, this));
         }
 
+        /**
+         * Collects all the assets used throughout the various components on the EntitySystem.
+         * @return {Array<entityframework.map.Asset>} Set of all the assets used by the Entity System.
+         */
+        collectAssets() : Array<entityframework.map.Asset> {
+            var allAssets = {};
+            this.forEach((entity) => {
+                entity.forEach((component) => {
+                    component.collectAssets().forEach((asset : entityframework.map.Asset) => {
+                        if (!allAssets[asset.type]) {
+                            allAssets[asset.type] = {};
+                        }
+                        allAssets[asset.type][asset.key] = true;
+                    });
+                });
+            });
+            var assetsArray : Array<entityframework.map.Asset> = [];
+            for (var assetType in allAssets) {
+                for (var assetKey in allAssets[assetType]) {
+                    assetsArray.push(new entityframework.map.GenericAsset(assetType, assetKey));
+                }
+            }
+            return assetsArray;
+        }
+
         private setEntities(entities : observe.ObservableMap<Entity>) {
             if (this.entities) {
                 this.entities.removeChangeListener(this.entityCallback);

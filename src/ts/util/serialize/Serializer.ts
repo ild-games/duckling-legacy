@@ -247,10 +247,8 @@ module util.serialize {
                     break;
                 case DeserializationAction.Error:
                     throw errors.createInvalidJSONError(this.keyStack.join("."), dataValue, instanceValue);
-                    break;
                 case DeserializationAction.Unknown:
                     throw Error("Unknown deserialization action");
-                    break;
             }
             this.popKey();
             return result;

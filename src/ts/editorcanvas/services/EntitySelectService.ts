@@ -2,7 +2,11 @@ module editorcanvas.services {
 
     import draw = entityframework.components.drawing;
     import comp = entityframework.components;
+    import datastructures = util.datastructures;
 
+    /**
+     * Service used to try and select an entity.
+     */
     @framework.ContextKey("editorcanvas.services.EntitySelectService")
     export class EntitySelectService {
         private context : framework.Context;
@@ -21,19 +25,41 @@ module editorcanvas.services {
          */
         findSelectableEntity(coords : math.Vector) : string {
             var selectableEntityKey = "";
-            var entitySystem = this.context.getSharedObject(entityframework.EntitySystem);
-            entitySystem.forEach((entity : entityframework.Entity, key : string) => {
-                var positionComp = entity.getComponent<comp.PositionComponent>("position");
-                var drawable = entity.getComponent<draw.DrawableComponent>("drawable");
-                if (positionComp && drawable && drawable.topDrawable) {
-                    var position = positionComp.position;
-                    var contains = drawable.topDrawable.contains(coords, position);
-                    if (contains) {
-                        selectableEntityKey = key;
-                    }
+
+            var entitiesByPriority = this.context.getSharedObject(services.EntityRenderSortService).getEntitiesByPriority(true);
+            entitiesByPriority.forEach((entityKey : string) => {
+                if (selectableEntityKey === "" && this.canSelectEntity(entityKey, coords)) {
+                    selectableEntityKey = entityKey;
                 }
             });
+
             return selectableEntityKey;
+        }
+
+        /**
+         * Determines if a given entity can be "selected" at the given coordinates.
+         *
+         * @param entityKey The key of the entity to check if can be selected.
+         * @param coords The coordinates used to check if any entity can be selected.
+         *
+         * @returns true if entity can be selected, otherwise false.
+         */
+        private canSelectEntity(entityKey : string, coords : math.Vector) : boolean {
+            var canSelect = false;
+            var entity : entityframework.Entity = this.context.getSharedObject(entityframework.EntitySystem).getEntity(entityKey);
+            var positionComp = entity.getComponent<comp.PositionComponent>("position");
+            var drawComp = entity.getComponent<draw.DrawableComponent>("drawable");
+            if (positionComp && drawComp && drawComp.topDrawable) {
+                var position = positionComp.position;
+                var contains = drawComp.topDrawable.contains(
+                    coords,
+                    position,
+                    this.context.getSharedObject(util.resource.ResourceManager));
+                if (contains) {
+                    canSelect = true;
+                }
+            }
+            return canSelect;
         }
 
         /**

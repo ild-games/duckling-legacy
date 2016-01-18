@@ -25,6 +25,9 @@
     },
     "createjs-lib/createjs-lib.d.ts": {
       "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+    },
+    "es6-collections/es6-collections.d.ts": {
+      "commit": "1ffc055e50f0df255da310485a7871c6f894e370"
     }
   }
 }

@@ -53,8 +53,8 @@ module editorcanvas {
             super.onDataReady();
             this.setChangeListener(this.data, () => this.redrawCanvas());
             this.setChangeListener(this.properties, () => {
-                    this.onStagePropertiesChanged();
-                    this.redrawCanvas();
+                this.onStagePropertiesChanged();
+                this.redrawCanvas();
             });
             this.setChangeListener(this.grid, () => {
                 this.grid.constructGrid();
@@ -70,7 +70,6 @@ module editorcanvas {
             this.addTools();
             this.setupStage();
             this.onStagePropertiesChanged();
-            this.redrawCanvas();
             this.load();
         }
 
@@ -82,11 +81,11 @@ module editorcanvas {
         }
 
         private addTools() {
-            var createEntityTool = new editorcanvas.tools.EntityCreatorTool();
-            this.addTool(createEntityTool);
-
             var selectEntityTool = new editorcanvas.tools.EntitySelectTool();
             this.addTool(selectEntityTool);
+
+            var createEntityTool = new editorcanvas.tools.EntityCreatorTool();
+            this.addTool(createEntityTool);
 
             var dragEntityTool = new editorcanvas.tools.EntityDragTool();
             this.addTool(dragEntityTool);
@@ -95,7 +94,7 @@ module editorcanvas {
             mapMoveTool.draggedElement = this.findById("canvas-view");
             this.addTool(mapMoveTool);
 
-            this.curTool = createEntityTool;
+            this.curTool = selectEntityTool;
         }
 
         private addTool(tool : editorcanvas.tools.BaseTool) {
@@ -133,6 +132,9 @@ module editorcanvas {
             this.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
+                    this._context.getSharedObject(util.resource.ResourceManager).loadAssets(
+                        this.data.collectAssets(),
+                        this._context.getSharedObjectByKey("Project").rootPath);
                 }, framework.error.onPromiseError(this._context));
         }
 
@@ -140,8 +142,6 @@ module editorcanvas {
             this._context.commandQueue.clear();
             this.selectedEntity.entityKey = "";
             this.data.move(newData);
-            this.clear();
-            this.redrawCanvas();
 
             /* temp default camera */
             if (!this.data.getEntity("screenCam")) {
@@ -154,6 +154,7 @@ module editorcanvas {
 
         private setupStage() {
             this._stage = new createjs.Stage(this.id("entity-canvas"));
+
             this.subscribeToolEvents();
             this.canvasDiv = <HTMLDivElement>this.findById("canvas-view");
             this.scrollDiv = <HTMLDivElement>this.findById("canvas-scroll");
@@ -232,26 +233,57 @@ module editorcanvas {
             this.stage.y = Math.max(newDimensions.y / 2, this.canvasDiv.clientHeight / 2) - this.canvasDiv.scrollTop;
         }
 
-        public redrawCanvas() {
+        /**
+         * Called every time the canvas needs to be updated and redrawn.
+         */
+        redrawCanvas() {
+            if (!this._context.getSharedObject(util.resource.ResourceManager).areAllResourcesLoaded()) {
+                return;
+            }
 
-            var toDraw : Array<createjs.DisplayObject> = [];
-
-            this.data.forEach((entity) => {
-                toDraw.push(this.entityDrawerService.getEntityDisplayable(entity));
-            });
-
+            this.disableInterpolation();
             this.clear();
+            this.addDrawnElementsToStage();
+            this.stage.update();
+        }
 
-            toDraw.forEach((drawnElement) =>
+        /**
+         * Disables interpolation so scaling is done via the nearest neighbor approach.
+         */
+        private disableInterpolation() {
+            var context : any = (<HTMLCanvasElement>this._stage.canvas).getContext("2d");
+            context.imageSmoothingEnabled = false;
+        }
+
+        /**
+         * Collect the entity's DrawableComponent's drawables into a flat array
+         * that is sorted by the render priorities of the drawables.
+         */
+        private collectEntityDrawables() : Array<createjs.DisplayObject> {
+            var toDraw : Array<createjs.DisplayObject> = [];
+            var entitiesByPriority = this._context.getSharedObject(services.EntityRenderSortService).getEntitiesByPriority();
+            entitiesByPriority.forEach((entityKey : string) => {
+                var resourceManager = this._context.getSharedObject(util.resource.ResourceManager);
+                toDraw.push(this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey)));
+            });
+            return toDraw;
+        }
+
+        /**
+         * Adds the various elements that are drawn onto the canvas to the stage.
+         * This includes entity's DrawableComponent drawables, collision bounds,
+         * current tool graphical representation, etc.
+         */
+        private addDrawnElementsToStage() {
+            this.collectEntityDrawables().forEach((drawnElement) =>
                 this.stage.addChild(drawnElement));
+
             if (this.curTool.getDisplayObject()) {
                 this.stage.addChild(this.curTool.getDisplayObject());
             }
             if (this.properties.isGridVisible) {
                 this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
             }
-
-            this.stage.update();
         }
 
         /**

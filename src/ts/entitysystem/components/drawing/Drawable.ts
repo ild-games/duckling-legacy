@@ -6,7 +6,8 @@ module entityframework.components.drawing {
 
     export enum DrawableType {
         Container,
-        Shape
+        Shape,
+        Image
     }
 
     /**
@@ -14,10 +15,10 @@ module entityframework.components.drawing {
      */
     export class Drawable extends framework.observe.SimpleObservable {
         @observe.Primitive(Number)
-        protected renderPriority : number = 0;
+        renderPriority : number = 0;
 
         @observe.Primitive(Number)
-        protected priorityOffset : number = 0;
+        priorityOffset : number = 0;
 
         @observe.Primitive(Number)
         protected rotation : number = 0;
@@ -39,33 +40,40 @@ module entityframework.components.drawing {
             this.key = key;
         }
 
-        contains(point : math.Vector, shapePosition : math.Vector) {
-            var canvasObj = this.getCanvasDisplayObject(shapePosition);
+        contains(point : math.Vector, position : math.Vector, resourceManager : util.resource.ResourceManager) {
+            var canvasObj = this.getCanvasDisplayObject(resourceManager);
+            if (!canvasObj) {
+                return false;
+            }
+
+            canvasObj.x += position.x;
+            canvasObj.y += position.y;
+
             var localPoint = canvasObj.globalToLocal(point.x, point.y);
             return canvasObj.hitTest(localPoint.x, localPoint.y);
         }
 
-        getCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
-            return this.transformCanvasDisplayObject(
-                this.generateCanvasDisplayObject(position),
-                position);
+        getCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
+            return this.transformCanvasDisplayObject(this.generateCanvasDisplayObject(resourceManager));
         }
 
-        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             throw new Error("This method is abstract");
         }
 
-        private transformCanvasDisplayObject(displayObj : createjs.DisplayObject, position : math.Vector) : createjs.DisplayObject {
+        private transformCanvasDisplayObject(displayObj : createjs.DisplayObject) : createjs.DisplayObject {
             if (displayObj) {
-                displayObj.regX = position.x;
-                displayObj.regY = position.y;
-                displayObj.x = position.x + this.positionOffset.x;
-                displayObj.y = position.y + this.positionOffset.y;
+                displayObj.x += this.positionOffset.x;
+                displayObj.y += this.positionOffset.y;
                 displayObj.scaleX = this.scale.x;
                 displayObj.scaleY = this.scale.y;
-                displayObj.rotation = this.rotation;
+                displayObj.rotation += this.rotation;
             }
             return displayObj;
+        }
+
+        collectAssets() : Array<map.Asset> {
+            return [];
         }
 
         @serialize.Ignore

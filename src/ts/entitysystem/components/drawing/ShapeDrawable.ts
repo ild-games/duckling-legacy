@@ -19,10 +19,10 @@ module entityframework.components.drawing {
             this.shape = shape || null;
         }
 
-        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             var displayShape = null;
             if (this.shape) {
-                displayShape = this.shape.getDrawable(position);
+                displayShape = this.shape.getDrawable();
             }
             return displayShape;
         }
@@ -52,10 +52,6 @@ module entityframework.components.drawing {
         constructor() {
             super();
             this.registerCallback("add-shape", this.addShape);
-        }
-
-        onDataReady() {
-            super.onDataReady();
         }
 
         onViewReady() {

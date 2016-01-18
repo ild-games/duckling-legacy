@@ -17,11 +17,11 @@ module editorcanvas.drawing {
             this._color = color;
         }
 
-        getDrawable(position : math.Vector) : createjs.DisplayObject {
+        getDrawable() : createjs.DisplayObject {
             var box = new createjs.Shape();
             var topLeft = new math.Vector(
-                position.x - (this._rectangle.dimension.x / 2),
-                position.y - (this._rectangle.dimension.y / 2));
+                -(this._rectangle.dimension.x / 2),
+                -(this._rectangle.dimension.y / 2));
             var topRight = new math.Vector(topLeft.x + this._rectangle.dimension.x, topLeft.y);
             var bottomLeft = new math.Vector(topLeft.x, topLeft.y + this._rectangle.dimension.y);
             var bottomRight = new math.Vector(topLeft.x + this._rectangle.dimension.x, topLeft.y + this._rectangle.dimension.y);
@@ -29,8 +29,8 @@ module editorcanvas.drawing {
             box.graphics
                 .beginStroke(this._color)
                 .drawRect(
-                    position.x - (this._rectangle.dimension.x / 2),
-                    position.y - (this._rectangle.dimension.y / 2),
+                    -(this._rectangle.dimension.x / 2),
+                    -(this._rectangle.dimension.y / 2),
                     this._rectangle.dimension.x,
                     this._rectangle.dimension.y)
                 .moveTo(topLeft.x, topLeft.y)

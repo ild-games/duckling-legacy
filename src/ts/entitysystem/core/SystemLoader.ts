@@ -51,7 +51,7 @@ module entityframework {
          * @returns A promise that can be used to handle a successful save or an error.
          */
         saveMap(mapName : string, system : EntitySystem) : Promise<util.SaveResult> {
-            var saveMap:map.GameMap = new map.Map();
+            var saveMap : map.GameMap = new map.Map();
 
             saveMap.key = mapName;
 
@@ -59,12 +59,14 @@ module entityframework {
                 saveMap.systems[key] = {components : new ObservableMap()};
             });
 
-            system.forEach(function (entity : Entity, entityKey : string) {
+            system.forEach((entity : Entity, entityKey : string) => {
                 saveMap.entities.push(entityKey);
-                entity.forEach(function (component : Component, componentKey : string) {
+                entity.forEach((component : Component, componentKey : string) => {
                     saveMap.systems[componentKey].components.put(entityKey, component);
                 });
             });
+
+            saveMap.assets = system.collectAssets();
 
             var mapString = util.serialize.serialize(saveMap);
             var mapPath = this._project.getMapPath(mapName);

@@ -39,7 +39,7 @@ module editorcanvas.tools {
 
         onBind(context : framework.Context, canvas : editorcanvas.CanvasVM) {
             super.onBind(context, canvas);
-            this.selectService = context.getSharedObject(services.EntitySelectService)
+            this.selectService = context.getSharedObject(services.EntitySelectService);
         }
 
         getDisplayObject() : createjs.DisplayObject {
@@ -62,13 +62,13 @@ module editorcanvas.tools {
         }
 
         private setupMoveCommand(entity : entityframework.Entity, mousePos : math.Vector) {
-                var entityPositionComp = entity.getComponent<comp.PositionComponent>("position");
-                this.moveCommand = new MoveEntityCommand(
-                    entity,
-                    entityPositionComp.position,
-                    mousePos);
-                this.setupDisplayObject(mousePos);
-                this.context.commandQueue.pushCommand(this.moveCommand);
+            var entityPositionComp = entity.getComponent<comp.PositionComponent>("position");
+            this.moveCommand = new MoveEntityCommand(
+                entity,
+                entityPositionComp.position,
+                mousePos);
+            this.setupDisplayObject(mousePos);
+            this.context.commandQueue.pushCommand(this.moveCommand);
         }
 
         private setupDisplayObject(mousePos : math.Vector) {

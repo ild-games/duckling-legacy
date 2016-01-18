@@ -11,12 +11,15 @@ module entityframework.components.drawing {
 
         @observe.Object()
         topDrawable : drawing.Drawable = null;
-    }
 
-    var DrawableTypeToFactory = {
-        Container: new ContainerDrawableFactory(),
-        Shape: new ShapeDrawableFactory()
-    };
+        collectAssets() : Array<map.Asset> {
+            var assets : Array<map.Asset> = [];
+            if (this.topDrawable !== null) {
+                assets = this.topDrawable.collectAssets();
+            }
+            return assets;
+        }
+    }
 
     class DrawableViewModel extends framework.ViewModel<DrawableComponent> {
         private drawableTypeControl : controls.DrawableTypeControl;

@@ -1,5 +1,6 @@
 ///<reference path="./Drawable.ts"/>
 ///<reference path="./ShapeDrawable.ts"/>
+///<reference path="./ImageDrawable.ts"/>
 ///<reference path="../../../util/JsonLoader.ts"/>
 module entityframework.components.drawing {
 
@@ -47,15 +48,25 @@ module entityframework.components.drawing {
             this.drawables.forEach(func);
         }
 
-        protected generateCanvasDisplayObject(position : math.Vector) : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             var container = null;
             if (this.drawables.length > 0) {
                 container = new createjs.Container();
                 this.forEach((drawable) => {
-                    container.addChild(drawable.getCanvasDisplayObject(position));
+                    container.addChild(drawable.getCanvasDisplayObject(resourceManager));
                 });
             }
             return container;
+        }
+
+        collectAssets() : Array<map.Asset> {
+            var assets : Array<map.Asset> = [];
+            this.forEach((drawable) => {
+                drawable.collectAssets().forEach((asset) => {
+                    assets.push(asset);
+                });
+            });
+            return assets;
         }
 
         get length() : number {
@@ -236,6 +247,7 @@ module entityframework.components.drawing {
 
     export var DrawableTypeToFactory = {
         Container: new ContainerDrawableFactory(),
-        Shape: new ShapeDrawableFactory()
+        Shape: new ShapeDrawableFactory(),
+        Image: new ImageDrawableFactory()
     };
 }

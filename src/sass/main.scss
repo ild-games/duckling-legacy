@@ -372,4 +372,14 @@ div.form-group input:focus {
   border-top-left-radius: 0px;
 }
 
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.panel {
+    margin-bottom: 0;
+}
+
 @import '_splash_screen';

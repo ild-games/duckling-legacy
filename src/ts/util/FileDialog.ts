@@ -26,7 +26,12 @@ module util {
          * @param fileTypes List of file extensions the user can select.
          * @returns A promise that evaluates to the file's path.
          */
-        getFileName(fileTypes? : string []) {
+        getFileName(startDir? : string, fileTypes? : string []) {
+            this.clearStartDir(this.fileInputElement);
+            if (startDir) {
+                this.setStartDir(this.fileInputElement, startDir);
+            }
+
             this.clearElementSelectors(this.fileInputElement);
 
             if (fileTypes) {
@@ -37,6 +42,14 @@ module util {
         }
 
         /**
+         * Clear out the file the FileDialog currently has selected.
+         * @return {[type]} [description]
+         */
+        clearFile() {
+            this.fileInputElement.value = null;
+        }
+
+        /**
          * Open a file dialog and have the user select a directory.
          * @returns A promise that evaluates to the directory's path.
          */
@@ -44,12 +57,20 @@ module util {
             return this.getSelectionPromise(this.dirInputElement);
         }
 
+        private setStartDir(element : HTMLInputElement, startDir : string) {
+            element.setAttribute("nwworkingdir", startDir);
+        }
+
+        private clearStartDir(element : HTMLInputElement) {
+            element.setAttribute("nwworkingdir", "");
+        }
+
         private attachFileTypesToElement(element : HTMLInputElement, filters : string []) {
-            element["accept"] = filters.join(",");
+            element.setAttribute("accept", filters.join(","));
         }
 
         private clearElementSelectors(element : HTMLInputElement) {
-            delete element["accept"];
+            element.setAttribute("accept", "");
         }
 
         private getSelectionPromise(inputElement : HTMLInputElement) : Promise<string> {
