@@ -74,26 +74,6 @@ module entityframework {
             return this._jsonLoader.saveJsonToPath(mapPath, mapString);
         }
 
-        /**
-         * Saves the assets that are used in a given component onto the given GameMap.
-         *
-         * @param component Component which contains the assets that will be saved.
-         * @param saveMap GameMap to save the assets onto.
-         */
-        private saveAssetsInComponent(component : Component, saveMap : map.GameMap) {
-            component.collectAssets().forEach(function (asset : map.Asset) {
-                var exists = false;
-                saveMap.assets.forEach(function (existingAsset : map.Asset) {
-                    if (existingAsset.key === asset.key && existingAsset.type === asset.type) {
-                        exists = true;
-                    }
-                });
-                if (!exists) {
-                    saveMap.assets.push(asset);
-                }
-            });
-        }
-
         private getEmptyMap(emptySystem : EntitySystem) {
             var emptyMap = new  map.Map();
             emptySystem.forEachType(function(factory : ComponentFactory) {

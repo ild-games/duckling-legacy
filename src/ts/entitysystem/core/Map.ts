@@ -33,12 +33,9 @@ module entityframework.map {
     /**
      * An asset for .PNG files.
      */
-    export class PNGAsset implements Asset {
-        type : string = "TexturePNG";
-        key : string = "";
-
+    export class PNGAsset extends GenericAsset {
         constructor(key : string) {
-            this.key = key;
+            super("TexturePNG", key);
         }
 
         /**
