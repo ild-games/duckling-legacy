@@ -199,6 +199,10 @@ module entityframework
             this.publishDataChanged(new EntitySystemChanged(EVENT_MOVED, this));
         }
 
+        /**
+         * Collects all the assets used throughout the various components on the EntitySystem.
+         * @return {Array<entityframework.map.Asset>} Set of all the assets used by the Entity System.
+         */
         collectAssets() : Array<entityframework.map.Asset> {
             var allAssets = {};
             this.forEach((entity) => {

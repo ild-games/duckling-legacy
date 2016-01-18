@@ -36,8 +36,8 @@ module util.resource {
 
         /**
          * Get the loaded in HTMLElement associated with the given asset.
-         * @param  {entityframework.map.Asset} asset [description]
-         * @return {any}                             [description]
+         * @param  {entityframework.map.Asset} asset Asset describing the resource to get.
+         * @return {any}                             The resource if it exists, otherwise null.
          */
         getResource(asset : entityframework.map.Asset) : any {
             if (!this.hasAsset(asset)) {
@@ -47,29 +47,13 @@ module util.resource {
             return this._resources[asset.type][asset.key];
         }
 
-        createAssetDOMElement(asset : entityframework.map.Asset, baseSrc : string) : HTMLElement {
-            var obj = null;
-            var src = baseSrc;
-            switch (asset.type) {
-                case "TexturePNG":
-                    src += "/resources/" + asset.key + ".png";
-                    obj = new entityframework.map.PNGAsset(asset.key).createDOMElement(src);
-                    break;
-            }
-            return obj;
-        }
-
-        loadAsset(asset : entityframework.map.Asset, rootPath : string) : Promise<any> {
-            return new Promise<any>((resolve) => {
-                var obj = this.createAssetDOMElement(asset, rootPath);
-                if (obj != null) {
-                    obj.onload = resolve;
-                    this.addAsset(asset, obj);
-                }
-            });
-        }
-
+        /**
+         * Load all the given assets from the given path.
+         * @param  {Array<entityframework.map.Asset>} assets   Assets to load.
+         * @param  {string}                           rootPath Path the resource folder is at.
+         */
         loadAssets(assets : Array<entityframework.map.Asset>, rootPath : string) {
+            this.isFinishedLoading = false;
             this.numAssetsToLoad = assets.length;
             var assetPromises : Array<Promise<any>> = [];
 
@@ -79,8 +63,34 @@ module util.resource {
             Promise.all(assetPromises).then(() => this.isFinishedLoading = true);
         }
 
-        areAllAssetsLoaded() : boolean {
+        /**
+         * Determines if all the resources from loadAssets are done loading.
+         * @return {boolean} True if all resources are loaded, otherwise false.
+         */
+        areAllResourcesLoaded() : boolean {
             return this.isFinishedLoading;
+        }
+
+        private loadAsset(asset : entityframework.map.Asset, rootPath : string) : Promise<any> {
+            return new Promise<any>((resolve) => {
+                var obj = this.createAssetDOMElement(asset, rootPath);
+                if (obj != null) {
+                    obj.onload = resolve;
+                    this.addResource(asset, obj);
+                }
+            });
+        }
+
+        private createAssetDOMElement(asset : entityframework.map.Asset, baseSrc : string) : HTMLElement {
+            var obj = null;
+            var src = baseSrc;
+            switch (asset.type) {
+                case "TexturePNG":
+                    src += "/resources/" + asset.key + ".png";
+                    obj = new entityframework.map.PNGAsset(asset.key).createDOMElement(src);
+                    break;
+            }
+            return obj;
         }
     }
 }

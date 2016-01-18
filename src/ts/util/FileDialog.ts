@@ -41,16 +41,12 @@ module util {
             return this.getSelectionPromise(this.fileInputElement);
         }
 
-        clearStartDir(element : HTMLInputElement) {
-            element.setAttribute("nwworkingdir", "");
-        }
-
+        /**
+         * Clear out the file the FileDialog currently has selected.
+         * @return {[type]} [description]
+         */
         clearFile() {
             this.fileInputElement.value = null;
-        }
-
-        setStartDir(element : HTMLInputElement, startDir : string) {
-            element.setAttribute("nwworkingdir", startDir);
         }
 
         /**
@@ -61,6 +57,14 @@ module util {
             return this.getSelectionPromise(this.dirInputElement);
         }
 
+        private setStartDir(element : HTMLInputElement, startDir : string) {
+            element.setAttribute("nwworkingdir", startDir);
+        }
+
+        private clearStartDir(element : HTMLInputElement) {
+            element.setAttribute("nwworkingdir", "");
+        }
+
         private attachFileTypesToElement(element : HTMLInputElement, filters : string []) {
             element.setAttribute("accept", filters.join(","));
         }
@@ -68,7 +72,6 @@ module util {
         private clearElementSelectors(element : HTMLInputElement) {
             element.setAttribute("accept", "");
         }
-
 
         private getSelectionPromise(inputElement : HTMLInputElement) : Promise<string> {
             return new Promise(function(resolve, reject) {

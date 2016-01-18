@@ -8,6 +8,9 @@ module entityframework.map {
         key : string,
     }
 
+    /**
+     * A generic asset that describes a resource managed by the editor.
+     */
     export class GenericAsset implements Asset {
         type : string = "";
         key : string = "";
@@ -17,11 +20,19 @@ module entityframework.map {
             this.key = key;
         }
 
+        /**
+         * Returns nothing, a generic asset doesn't know what to create.
+         * @param  {string}      src Source of the element on the file system.
+         * @return {HTMLElement}     HTMLElement made from the file.
+         */
         createDOMElement(src : string) : HTMLElement {
-            return null;
+            throw new Error("Unsupported");
         }
     }
 
+    /**
+     * An asset for .PNG files.
+     */
     export class PNGAsset implements Asset {
         type : string = "TexturePNG";
         key : string = "";
@@ -30,6 +41,11 @@ module entityframework.map {
             this.key = key;
         }
 
+        /**
+         * Returns an HTMLImageElement with the image being the image specified by src.
+         * @param  {string}      src Source of the element on the file system.
+         * @return {HTMLElement}     HTMLImageElement made from the file.
+         */
         createDOMElement(src : string) : HTMLElement {
             var obj = document.createElement("img");
             obj.src = src;

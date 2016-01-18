@@ -237,7 +237,7 @@ module editorcanvas {
          * Called every time the canvas needs to be updated and redrawn.
          */
         redrawCanvas() {
-            if (!this._context.getSharedObject(util.resource.ResourceManager).areAllAssetsLoaded()) {
+            if (!this._context.getSharedObject(util.resource.ResourceManager).areAllResourcesLoaded()) {
                 return;
             }
 
