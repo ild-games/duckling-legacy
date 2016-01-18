@@ -10,12 +10,8 @@ module entityframework.components.drawing {
      */
     @serialize.ProvideClass(ImageDrawable, "ild::ImageDrawable")
     export class ImageDrawable extends Drawable {
-        @observe.Primitive(Boolean)
-        @serialize.Ignore
-        private _loaded : boolean = false;
-
         @observe.Object()
-        private textureRect : math.Rectangle = new math.Rectangle(0, 0, -1, -1);
+        textureRect : math.Rectangle = new math.Rectangle(0, 0, -1, -1);
 
         @observe.Primitive(String)
         textureKey : string = "";
@@ -29,7 +25,7 @@ module entityframework.components.drawing {
 
         protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             var bitmap = null;
-            if (this.loaded) {
+            if (resourceManager.hasAsset(new map.PNGAsset(this.textureKey))) {
                 bitmap = new createjs.Bitmap(resourceManager.getResource(new map.PNGAsset(this.textureKey)));
 
                 var dimensions = new math.Vector(0, 0);
@@ -45,35 +41,8 @@ module entityframework.components.drawing {
                 }
                 bitmap.regX = dimensions.x / 2;
                 bitmap.regY = dimensions.y / 2;
-            } else {
-                this.loadImage("", resourceManager);
             }
             return bitmap;
-        }
-
-        loadImage(imageFile : string, resourceManager : util.resource.ResourceManager) {
-            var asset = new map.PNGAsset(this.textureKey);
-            if (resourceManager.hasAsset(asset)) {
-                this.onImageLoaded(asset, new math.Vector(
-                    resourceManager.getResource(asset).width,
-                    resourceManager.getResource(asset).height));
-            }
-
-            if (imageFile) {
-                var image = <HTMLImageElement>asset.createDOMElement(imageFile);
-                image.onload = () => {
-                    resourceManager.addAsset(asset, image);
-                    this.onImageLoaded(asset, new math.Vector(image.width, image.height));
-                }
-            }
-        }
-
-        onImageLoaded(asset : map.PNGAsset, dimensions : math.Vector) {
-            this._loaded = true;
-            if (this.isWholeImage && this.textureRect.width === -1) {
-                this.textureRect.width = dimensions.x;
-                this.textureRect.height = dimensions.y;
-            }
         }
 
         collectAssets() : Array<map.Asset> {
@@ -86,10 +55,6 @@ module entityframework.components.drawing {
 
         get type() : DrawableType {
             return DrawableType.Image;
-        }
-
-        get loaded() : boolean {
-            return this._loaded;
         }
     }
 
@@ -107,16 +72,20 @@ module entityframework.components.drawing {
 
         onDataReady() {
             this.registerCallback("open-image-file", this.openImageFile);
-            this.data.loadImage("", this._context.getSharedObject(util.resource.ResourceManager));
+            this.loadImage();
             this.fileDialog = this._context.getSharedObjectByKey("FileDialog");
 
             this.setChangeListener(this.data, (event) => {
-                this.togglePartialImgPanel(this.data.loaded, !this.data.isWholeImage);
+                this.togglePartialImgPanel(
+                    this._context.getSharedObject(util.resource.ResourceManager).hasAsset(new map.PNGAsset(this.data.textureKey)),
+                    !this.data.isWholeImage);
             });
         }
 
         onViewReady() {
-            this.togglePartialImgPanel(this.data.loaded, !this.data.isWholeImage);
+            this.togglePartialImgPanel(
+                this._context.getSharedObject(util.resource.ResourceManager).hasAsset(new map.PNGAsset(this.data.textureKey)),
+                !this.data.isWholeImage);
         }
 
         private togglePartialImgPanel(visible : boolean, bodyVisible : boolean) {
@@ -145,10 +114,35 @@ module entityframework.components.drawing {
                         var trimmedFileName = fileName.replace(startDir, "");
                         trimmedFileName = trimmedFileName.substring(0, trimmedFileName.length - ".png".length);
                         this.data.textureKey = trimmedFileName;
-                        this.data.loadImage(fileName, this._context.getSharedObject(util.resource.ResourceManager));
+                        this.loadImage(fileName);
                         this.fileDialog.clearFile();
                     }
                 }, framework.error.onPromiseError(this._context));
+        }
+
+        private loadImage(imageFile? : string) {
+            var asset = new map.PNGAsset(this.data.textureKey);
+            var resourceManager = this._context.getSharedObject(util.resource.ResourceManager);
+            if (resourceManager.hasAsset(asset)) {
+                this.onImageLoaded(asset, new math.Vector(
+                    resourceManager.getResource(asset).width,
+                    resourceManager.getResource(asset).height));
+            }
+
+            if (imageFile) {
+                var image = <HTMLImageElement>asset.createDOMElement(imageFile);
+                image.onload = () => {
+                    resourceManager.addAsset(asset, image);
+                    this.onImageLoaded(asset, new math.Vector(image.width, image.height));
+                }
+            }
+        }
+
+        private onImageLoaded(asset : map.PNGAsset, dimensions : math.Vector) {
+            if (this.data.isWholeImage && this.data.textureRect.width === -1) {
+                this.data.textureRect.width = dimensions.x;
+                this.data.textureRect.height = dimensions.y;
+            }
         }
 
         private getResourceDir() : string {

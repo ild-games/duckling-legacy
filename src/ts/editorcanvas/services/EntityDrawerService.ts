@@ -19,23 +19,20 @@ module editorcanvas.services {
          * canvas.
          * @param entity The entity to get a DisplayObject for.
          */
-        getEntityDisplayable(entity : entityframework.Entity) : createjs.Container {
-            var drawable : createjs.Container = this.getDrawableDisplayable(entity);
-            var collision = this.getCollisionDisplayable(entity);
-            if (collision) {
-                drawable.addChild(collision);
-            }
-            return drawable;
-        }
-
-        private getDrawableDisplayable(entity : entityframework.Entity) : createjs.Container {
+         getEntityDisplayable(entity : entityframework.Entity) : createjs.Container {
             var container = new createjs.Container();
 
             var posComp = entity.getComponent<comp.PositionComponent>("position");
             var drawComp  = entity.getComponent<draw.DrawableComponent>("drawable");
 
-            if (drawComp && posComp && drawComp.topDrawable) {
+            if (drawComp && drawComp.topDrawable) {
                 container.addChild(drawComp.topDrawable.getCanvasDisplayObject(this.context.getSharedObject(util.resource.ResourceManager)));
+            }
+            var collision = this.getCollisionDisplayable(entity);
+            if (collision) {
+                container.addChild(collision);
+            }
+            if (posComp) {
                 container.x = posComp.position.x;
                 container.y = posComp.position.y;
             }
@@ -61,7 +58,7 @@ module editorcanvas.services {
                 }
 
                 var boundingBox = new drawing.BoundingBox(collisionComp.info.dimension, color);
-                collisionDrawable = boundingBox.getDrawable(posComp.position);
+                collisionDrawable = boundingBox.getDrawable();
             }
 
             return collisionDrawable;
