@@ -26,9 +26,9 @@ module entityframework.components.drawing {
         @serialize.Ignore
         private curFrame : number = 0;
 
-        protected generateCanvasDisplayObject() : createjs.DisplayObject {
+        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             this.checkFrameSafety();
-            return this.drawables.at(this.curFrame).getCanvasDisplayObject();
+            return this.drawables.at(this.curFrame).getCanvasDisplayObject(resourceManager);
         }
 
         tick(delta : number) {
