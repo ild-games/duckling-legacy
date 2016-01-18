@@ -57,7 +57,7 @@ module splashscreen {
             mapMoveTool.draggedElement = this.findById("canvas-view");
             this.addTool(mapMoveTool);
 
-            this._context.getSharedObject(editorcanvas.services.ToolService).curTool = createEntityTool;
+            this._context.getSharedObject(editorcanvas.services.ToolService).currentTool = createEntityTool;
         }
 
         private addTool(tool : editorcanvas.tools.BaseTool) {

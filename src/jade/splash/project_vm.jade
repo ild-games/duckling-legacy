@@ -1,19 +1,12 @@
+include ../mixins/toolbar_button
+
 div.editor-container
 
     div.editor-header
-        button.btn.btn-primary.toolbar-btn(type="button", data-toggle="tooltip", data-placement="bottom", title="Save", rv-command-save) 
-            span &nbsp;
-            i.fa.fa-save
-            span &nbsp;
+        +toolbar_button("Save", "fa-save")(rv-command-save)
         span.toolbar-separator
-        button.btn.btn-primary.toolbar-btn(type="button", data-toggle="tooltip", data-placement="bottom", title="Undo (#{util.html.getCtrlKeyRepresentation()} + Z)", rv-command-undo) 
-            span &nbsp;
-            i.fa.fa-undo
-            span &nbsp;
-        button.btn.btn-primary.toolbar-btn(type="button", data-toggle="tooltip", data-placement="bottom", title="Redo (#{util.html.getCtrlKeyRepresentation()} + Y)", rv-command-redo) 
-            span &nbsp;
-            i.fa.fa-repeat
-            span &nbsp;
+        +toolbar_button("Undo (" + util.html.getCtrlKeyRepresentation() + " + Z)", "fa-undo")(rv-command-undo)
+        +toolbar_button("Redo (" + util.html.getCtrlKeyRepresentation() + " + Z)", "fa-repeat")(rv-command-redo)
         span.toolbar-separator
         select.toolbar-tool-select(id=this.id("toolSelect"))
         

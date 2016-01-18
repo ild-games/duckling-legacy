@@ -34,6 +34,7 @@ module editorcanvas {
         private scrollDiv : HTMLDivElement;
         private properties : CanvasProperties = new CanvasProperties();
         private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
+        private toolService : services.ToolService;
 
         constructor() {
             super();
@@ -68,6 +69,7 @@ module editorcanvas {
         private setupSharedObjects() {
             this.selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this.project = this._context.getSharedObject(framework.Project);
+            this.toolService = this._context.getSharedObject(editorcanvas.services.ToolService);
             this._context.setSharedObject(this.data);
         }
 
@@ -157,11 +159,10 @@ module editorcanvas {
         }
 
         private subscribeToolEvents() {
-            var toolManager = this._context.getSharedObject(editorcanvas.services.ToolService);
-            this.stage.on("click", (event) => toolManager.curTool.onEvent(event, this));
-            this.stage.on("stagemousedown", (event) => toolManager.curTool.onEvent(event, this));
-            this.stage.on("stagemouseup", (event) => toolManager.curTool.onEvent(event, this));
-            this.stage.on("stagemousemove", (event) => toolManager.curTool.onEvent(event, this));
+            this.stage.on("click", (event) => this.toolService.currentTool.onEvent(event, this));
+            this.stage.on("stagemousedown", (event) => this.toolService.currentTool.onEvent(event, this));
+            this.stage.on("stagemouseup", (event) => this.toolService.currentTool.onEvent(event, this));
+            this.stage.on("stagemousemove", (event) => this.toolService.currentTool.onEvent(event, this));
         }
 
         private onStagePropertiesChanged() {
@@ -232,8 +233,8 @@ module editorcanvas {
         private addDrawnElementsToStage() {
             this.collectEntityDrawables().forEach((drawnElement) =>
                 this.stage.addChild(drawnElement));
-            if (this._context.getSharedObject(editorcanvas.services.ToolService).curTool.getDisplayObject()) {
-                this.stage.addChild(this._context.getSharedObject(editorcanvas.services.ToolService).curTool.getDisplayObject());
+            if (this.toolService.currentTool.getDisplayObject()) {
+                this.stage.addChild(this.toolService.currentTool.getDisplayObject());
             }
             if (this.properties.isGridVisible) {
                 this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));

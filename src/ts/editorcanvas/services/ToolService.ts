@@ -8,7 +8,7 @@ module editorcanvas.services {
         /**
          * Current tool selected.
          */
-        curTool : editorcanvas.tools.Tool;
+        currentTool : editorcanvas.tools.Tool;
 
         private tools : { [key : string] : editorcanvas.tools.BaseTool } = {};
         private context : framework.Context;
@@ -33,7 +33,7 @@ module editorcanvas.services {
          * @param toolName Name of the tool to switch to.
          */
         switchTool(toolName : string) {
-            this.curTool = this.tools[toolName];
+            this.currentTool = this.tools[toolName];
         }
     }
 }
