@@ -200,23 +200,24 @@ module entityframework
         }
 
         collectAssets() : Array<entityframework.map.Asset> {
-            var allAssets : Array<entityframework.map.Asset> = [];
+            var allAssets = {};
             this.forEach((entity) => {
                 entity.forEach((component) => {
                     component.collectAssets().forEach((asset : entityframework.map.Asset) => {
-                        var contains = false;
-                        allAssets.forEach((existingAsset) => {
-                            if (asset.key === existingAsset.key && asset.type === existingAsset.type) {
-                                contains = true;
-                            }
-                        })
-                        if (!contains) {
-                            allAssets.push(asset);
+                        if (!allAssets[asset.type]) {
+                            allAssets[asset.type] = {};
                         }
+                        allAssets[asset.type][asset.key] = true;
                     });
                 });
-            })
-            return allAssets;
+            });
+            var assetsArray : Array<entityframework.map.Asset> = [];
+            for (var assetType in allAssets) {
+                for (var assetKey in allAssets[assetType]) {
+                    assetsArray.push(new entityframework.map.GenericAsset(assetType, assetKey));
+                }
+            }
+            return assetsArray;
         }
 
         private setEntities(entities : observe.ObservableMap<Entity>) {

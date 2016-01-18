@@ -63,9 +63,10 @@ module entityframework {
                 saveMap.entities.push(entityKey);
                 entity.forEach((component : Component, componentKey : string) => {
                     saveMap.systems[componentKey].components.put(entityKey, component);
-                    this.saveAssetsInComponent(component, saveMap);
                 });
             });
+
+            saveMap.assets = system.collectAssets();
 
             var mapString = util.serialize.serialize(saveMap);
             var mapPath = this._project.getMapPath(mapName);

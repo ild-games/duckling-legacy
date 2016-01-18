@@ -1,6 +1,9 @@
 ///<reference path="../framework/Context.ts" />
 module util.resource {
 
+    /**
+     * Holds the loaded in HTMLElements used by the media based components (image, audio)
+     */
     @framework.ContextKey("util.resource.ResourceManager")
     export class ResourceManager {
         private _resources : {[type : string] : {[key : string] : any}} = {};
@@ -8,7 +11,12 @@ module util.resource {
         private numAssetsToLoad : number = 0;
         private isFinishedLoading : boolean = false;
 
-        addAsset(asset : entityframework.map.Asset, loadedObj : any) {
+        /**
+         * Adds a loaded resource object that is associated with a given asset.
+         * @param  {entityframework.map.Asset} asset     Asset that describes the resource.
+         * @param  {any}                       loadedObj HTMLElement that is the resource.
+         */
+        addResource(asset : entityframework.map.Asset, loadedObj : any) {
             if (!this._resources[asset.type]) {
                 this._resources[asset.type] = {};
             }
@@ -17,10 +25,20 @@ module util.resource {
             }
         }
 
+        /**
+         * Checks if a given asset is already contained within the Resource Manager
+         * @param  {entityframework.map.Asset} asset Asset to check if it is contained.
+         * @return {boolean}                         True if the asset is there, otherwise false.
+         */
         hasAsset(asset : entityframework.map.Asset) : boolean {
             return this._resources[asset.type] && this._resources[asset.type][asset.key];
         }
 
+        /**
+         * Get the loaded in HTMLElement associated with the given asset.
+         * @param  {entityframework.map.Asset} asset [description]
+         * @return {any}                             [description]
+         */
         getResource(asset : entityframework.map.Asset) : any {
             if (!this.hasAsset(asset)) {
                 return null;

@@ -20,12 +20,24 @@ describe "The Priority Queue when forwards", ->
         expect(this.priorityQueue.length).toBe 3
 
     it "Returns null when there is nothing to dequeue", ->
-        this.priorityQueue.dequeue();
-        this.priorityQueue.dequeue();
-        this.priorityQueue.dequeue();
-        this.priorityQueue.dequeue();
-        this.priorityQueue.dequeue();
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
         expect(this.priorityQueue.dequeue()).toBe null
+
+    it "Can store negatives along with position priorities", ->
+        this.priorityQueue.enqueue(-100, {obj: "ObjectNegative100"})
+        this.priorityQueue.enqueue(-1, {obj: "ObjectNegative1"})
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
+        this.priorityQueue.dequeue()
+        expect(this.priorityQueue.dequeue().obj).toBe "ObjectNegative1"
+        expect(this.priorityQueue.dequeue().obj).toBe "ObjectNegative100"
+
 
 
 describe "The Priority Queue when backwards", ->

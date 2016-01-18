@@ -6,8 +6,6 @@ module entityframework.map {
     export interface Asset {
         type : string,
         key : string,
-
-        createDOMElement(src : string) : HTMLElement;
     }
 
     export class GenericAsset implements Asset {

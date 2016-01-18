@@ -21,7 +21,7 @@ module util.datastructures {
             if (this.sortedPriorities.indexOf(priority) === -1) {
                 this.sortedPriorities.push(priority);
 
-                this.sortedPriorities.sort();
+                this.sortedPriorities.sort(function(a,b) {return a - b});
                 if (this.backwards) {
                     this.sortedPriorities.reverse();
                 }
