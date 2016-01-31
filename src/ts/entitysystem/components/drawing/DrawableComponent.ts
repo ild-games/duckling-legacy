@@ -21,7 +21,9 @@ module entityframework.components.drawing {
         }
 
         tick(delta : number) {
-            this.topDrawable.tick(delta);
+            if (this.topDrawable) {
+                this.topDrawable.tick(delta);
+            }
         }
     }
 
