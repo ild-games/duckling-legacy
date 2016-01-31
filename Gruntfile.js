@@ -91,6 +91,7 @@ module.exports = function(grunt) {
                     'bower_components/rivets/dist/rivets.js',
                     'bower_components/bootstrap/dist/js/bootstrap.js',
                     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
+                    'bower_components/mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js',
                     'bower_components/jade/runtime.js',
                     'bower_components/mousetrap/mousetrap.js',
                     'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js'
@@ -101,6 +102,7 @@ module.exports = function(grunt) {
                 src: [
                     'bower_components/bootstrap/dist/css/bootstrap.css',
                     'bower_components/bootstrap-select/dist/css/bootstrap-select.css',
+                    'bower_components/mjolnic-bootstrap-colorpicker/dist/css/bootstrap-colorpicker.css',
                     'bower_components/font-awesome/css/font-awesome.css'
                 ],
                 dest: 'build/dependencies/dependencies.css'
@@ -115,12 +117,20 @@ module.exports = function(grunt) {
         },
         image: {
             dynamic: {
-                files: [{
-                    expand: true,
-                    cwd: 'resources',
-                    src: ['**/*.{png,jpg,gif,svg}'],
-                    dest: 'build/resources'
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'resources',
+                        src: ['**/*.{png,jpg,gif,svg}'],
+                        dest: 'build/resources'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'bower_components/mjolnic-bootstrap-colorpicker/dist/img',
+                        src: ['**/*.{png,jpg,gif,svg}'],
+                        dest: 'build/img'
+                    }
+                ]
             }
         },
         copy: {

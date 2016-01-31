@@ -29,4 +29,14 @@ module entityframework.components.drawing {
             return ShapeTypeToFactory[ShapeType[this.type]];
         }
     }
+
+    export class ShapeViewModel<T> extends framework.ViewModel<T> {
+        private colorPicker : controls.ColorPickerControl;
+
+        onViewReady() {
+            super.onViewReady();
+
+            this.colorPicker = new controls.ColorPickerControl(this, "shapeColorPicker");
+        }
+    }
 }

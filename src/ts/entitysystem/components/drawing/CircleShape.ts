@@ -31,7 +31,7 @@ module entityframework.components.drawing {
         }
     }
 
-    export class CircleShapeViewModel extends framework.ViewModel<CircleShape> {
+    export class CircleShapeViewModel extends ShapeViewModel<CircleShape> {
         get viewFile() : string {
             return "drawables/circle_shape";
         }

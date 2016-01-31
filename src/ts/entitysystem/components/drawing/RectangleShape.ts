@@ -35,7 +35,7 @@ module entityframework.components.drawing {
         }
     }
 
-    export class RectangleShapeViewModel extends framework.ViewModel<RectangleShape> {
+    export class RectangleShapeViewModel extends ShapeViewModel<RectangleShape> {
         get viewFile() : string {
             return "drawables/rectangle_shape";
         }

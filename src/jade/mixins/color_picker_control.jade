@@ -1,0 +1,5 @@
+mixin color_picker(pickerId, rvValue)
+    div.input-group(id=pickerId)
+        input.form-control(id=(pickerId+"_inputTag"), type="text", rv-value=(rvValue + " | rgba"))
+        span.input-group-addon(id=(pickerId+"_component"))
+            i
