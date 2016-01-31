@@ -1,0 +1,23 @@
+.no-radius {
+  border-radius: 0px;
+}
+
+.no-right-radius {
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.no-left-radius {
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
+
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gone {
+  display: none;
+}

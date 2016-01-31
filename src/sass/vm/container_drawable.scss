@@ -1,0 +1,10 @@
+div.container-sel-drawable-vm {
+    @include indented-box;
+    border: 1px solid $selected-drawable-vm-border-color;
+    background-color: white;
+}
+
+div.non-white-container-sel-drawable-vm {
+    @extend .container-sel-drawable-vm;
+    background-color: $selected-drawable-vm-non-white-bg-color;
+}

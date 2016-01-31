@@ -1,0 +1,53 @@
+
+/* Form Group UI improvements */
+div.form-group .input-group:first-child .form-control:last-child {
+  border-bottom: 0;
+  border-bottom-right-radius: 0;
+}
+
+div.form-group .input-group:first-child .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+}
+
+div.form-group .input-group:last-child .form-control:last-child {
+  border-top-right-radius: 0;
+}
+
+div.form-group .input-group:last-child .input-group-addon:first-child {
+  border-top-left-radius: 0;
+}
+
+div.form-group .input-group:first-child .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+}
+
+div.form-group .input-group:not(:last-child):not(:first-child) .form-control:last-child {
+  border-bottom: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+div.form-group .input-group:not(:last-child):not(:first-child) .input-group-addon:first-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+div.form-group input:focus {
+  z-index: 3;
+}
+
+div.panel {
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 0px;
+}
+
+/* Form Elements for VMs */
+.form-element {
+  margin-bottom: 10px;
+}
