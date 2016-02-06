@@ -12,7 +12,7 @@ module editorcanvas.tools {
             this.selectService = context.getSharedObject(services.EntitySelectService)
         }
 
-        onLeftClick(mousePos : math.Vector, canvas : editorcanvas.CanvasVM) {
+        onStageUp(mousePos : math.Vector, canvas : editorcanvas.CanvasVM) {
             var localCoords = canvas.stage.globalToLocal(mousePos.x, mousePos.y);
             var selectableEntityKey = this.selectService.findSelectableEntity(new math.Vector(localCoords.x, localCoords.y));
             if (selectableEntityKey) {
@@ -26,6 +26,10 @@ module editorcanvas.tools {
 
         get label() : string {
             return "Select Entity";
+        }
+
+        get allowedMouseButtons() : Array<Number> {
+            return [ BaseTool.LEFT_MOUSE_BUTTON ];
         }
     }
 }

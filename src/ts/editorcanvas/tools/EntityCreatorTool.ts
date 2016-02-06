@@ -9,7 +9,7 @@ module editorcanvas.tools {
      * basic Position, Collision, and Drawable components.
      */
     export class EntityCreatorTool extends BaseTool {
-        onLeftClick(position : math.Vector, canvas : editorcanvas.CanvasVM) {
+        onStageUp(position : math.Vector, canvas : editorcanvas.CanvasVM) {
             var localCoords = canvas.stage.globalToLocal(position.x, position.y);
             this.createBasicEntity(new math.Vector(localCoords.x, localCoords.y));
         }
@@ -38,6 +38,9 @@ module editorcanvas.tools {
         get label() : string {
             return "Create Entity";
         }
-    }
 
+        get allowedMouseButtons() : Array<Number> {
+            return [ BaseTool.LEFT_MOUSE_BUTTON ];
+        }
+    }
 }

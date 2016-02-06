@@ -31,6 +31,10 @@ module editorcanvas.services {
                 var drawableComp = entity.getComponent<draw.DrawableComponent>("drawable");
                 if (drawableComp && drawableComp.topDrawable) {
                     priorityQueue.enqueue(drawableComp.topDrawable.renderPriority + drawableComp.topDrawable.priorityOffset, key);
+                } else {
+                    if (entity.getComponent<comp.CollisionComponent>("collision")) {
+                        priorityQueue.enqueue(Number.MAX_VALUE, key);
+                    }
                 }
             });
             return priorityQueue;

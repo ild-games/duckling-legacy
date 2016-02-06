@@ -19,6 +19,12 @@ module entityframework.components.drawing {
             }
             return assets;
         }
+
+        tick(delta : number) {
+            if (this.topDrawable) {
+                this.topDrawable.tick(delta);
+            }
+        }
     }
 
     class DrawableViewModel extends framework.ViewModel<DrawableComponent> {
@@ -46,13 +52,13 @@ module entityframework.components.drawing {
             if (!this.data.topDrawable) {
                 $(this.findById("divDrawableType")).removeClass("gone");
             } else {
-                this.addTopDrawableVM(DrawableTypeToFactory[DrawableType[this.data.topDrawable.type]]);
+                this.addTopDrawableVM(this.data.topDrawable.factory);
             }
         }
 
         private addDrawable() {
             $(this.findById("divDrawableType")).addClass("gone");
-            var drawableFactory = DrawableTypeToFactory[this.drawableTypeControl.pickedDrawable];
+            var drawableFactory = drawableTypeToFactory(DrawableType[this.drawableTypeControl.pickedDrawable]);
             if (drawableFactory) {
                 this.data.topDrawable = drawableFactory.createDrawable("topDrawable");
                 this.addTopDrawableVM(drawableFactory);

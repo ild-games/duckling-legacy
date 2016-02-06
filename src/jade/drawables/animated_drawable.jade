@@ -5,12 +5,17 @@ include ../mixins/multiple_drawables
 extends ./generic_drawable.jade
 
 block drawable_label
-    h4 Container Drawable
+    h4 Animated Drawable
 
 block specific_drawable
+    label Speed
+    div
+        input.form-control(type="text" placeholder="Speed" rv-value="data.duration")
+    br
+    
     +multiple_drawables(
-        "Drawable", 
-        "Drawables", 
+        "Frame", 
+        "Frames", 
         this.id("selDrawableType"),
         this.id("drawableSelect"),
         this.id("delDrawableBtn"),

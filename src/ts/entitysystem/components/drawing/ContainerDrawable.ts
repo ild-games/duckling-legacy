@@ -1,6 +1,5 @@
 ///<reference path="./Drawable.ts"/>
-///<reference path="./ShapeDrawable.ts"/>
-///<reference path="./ImageDrawable.ts"/>
+///<reference path="./BaseDrawableViewModel.ts"/>
 ///<reference path="../../../util/JsonLoader.ts"/>
 module entityframework.components.drawing {
 
@@ -13,11 +12,8 @@ module entityframework.components.drawing {
     @serialize.ProvideClass(ContainerDrawable, "ild::ContainerDrawable")
     export class ContainerDrawable extends Drawable {
         @observe.Object()
-        private drawables : observe.ObservableArray<Drawable> = new observe.ObservableArray<Drawable>();
-
-        constructor(key : string) {
-            super(key);
-        }
+        protected drawables : observe.ObservableArray<Drawable> =
+            new observe.ObservableArray<Drawable>();
 
         addDrawable(drawable : Drawable) {
             this.drawables.push(drawable);
@@ -48,6 +44,10 @@ module entityframework.components.drawing {
             this.drawables.forEach(func);
         }
 
+        tick(delta : number) {
+            this.forEach((drawable) => drawable.tick(delta));
+        }
+
         protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
             var container = null;
             if (this.drawables.length > 0) {
@@ -69,6 +69,7 @@ module entityframework.components.drawing {
             return assets;
         }
 
+        @serialize.Ignore
         get length() : number {
             return this.drawables.length;
         }
@@ -78,7 +79,7 @@ module entityframework.components.drawing {
         }
     }
 
-    export class ContainerDrawableViewModel extends BaseDrawableViewModel<ContainerDrawable> {
+    export class ContainerDrawableViewModel<T extends ContainerDrawable> extends BaseDrawableViewModel<T> {
         private drawablePicker : controls.SelectControl<Drawable>
         private drawableTypeControl : controls.DrawableTypeControl;
 
@@ -152,7 +153,7 @@ module entityframework.components.drawing {
         }
 
         addDrawable() {
-            var drawableFactory = DrawableTypeToFactory[this.drawableTypeControl.pickedDrawable];
+            var drawableFactory = drawableTypeToFactory(DrawableType[this.drawableTypeControl.pickedDrawable]);
             if (drawableFactory) {
                 var nextKey = this.nextKey(this.drawableTypeControl.pickedDrawable);
                 this._context.commandQueue.pushCommand(
@@ -237,7 +238,7 @@ module entityframework.components.drawing {
 
     export class ContainerDrawableFactory implements DrawableFactory {
         createFormVM() : framework.ViewModel<any> {
-            return new ContainerDrawableViewModel();
+            return new ContainerDrawableViewModel<ContainerDrawable>();
         }
 
         createDrawable(key : string) : Drawable {
@@ -245,9 +246,16 @@ module entityframework.components.drawing {
         }
     }
 
-    export var DrawableTypeToFactory = {
-        Container: new ContainerDrawableFactory(),
-        Shape: new ShapeDrawableFactory(),
-        Image: new ImageDrawableFactory()
-    };
+    export function drawableTypeToFactory(type : DrawableType) {
+        switch (type) {
+            case DrawableType.Container:
+                return new ContainerDrawableFactory();
+            case DrawableType.Shape:
+                return new ShapeDrawableFactory();
+            case DrawableType.Image:
+                return new ImageDrawableFactory();
+            case DrawableType.Animated:
+                return new AnimatedDrawableFactory();
+        }
+    }
 }

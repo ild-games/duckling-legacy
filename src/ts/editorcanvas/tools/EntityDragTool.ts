@@ -106,5 +106,9 @@ module editorcanvas.tools {
         get label() : string {
             return "Move Entity";
         }
+
+        get allowedMouseButtons() : Array<Number> {
+            return [ BaseTool.LEFT_MOUSE_BUTTON ];
+        }
     }
 }

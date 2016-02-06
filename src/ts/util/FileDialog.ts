@@ -78,7 +78,7 @@ module util {
                 var callback = function() {
                     inputElement.removeEventListener("change", callback);
                     if (inputElement.value) {
-                        resolve(inputElement.value.replace("\\","/"));
+                        resolve(inputElement.value.replace(/\\/g,"/"));
                     } else {
                         reject();
                     }
