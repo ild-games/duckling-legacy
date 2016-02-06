@@ -175,7 +175,6 @@ module editorcanvas {
         }
 
         private subscribeToolEvents() {
-            this.stage.on("click", (event) => this.toolService.currentTool.onEvent(event, this));
             this.stage.on("stagemousedown", (event) => this.toolService.currentTool.onEvent(event, this));
             this.stage.on("stagemouseup", (event) => this.toolService.currentTool.onEvent(event, this));
             this.stage.on("stagemousemove", (event) => this.toolService.currentTool.onEvent(event, this));
