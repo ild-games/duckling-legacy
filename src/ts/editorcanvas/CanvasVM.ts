@@ -29,12 +29,15 @@ module editorcanvas {
         private project : framework.Project;
         private _stage : createjs.Stage;
         private entityDrawerService : services.EntityDrawerService;
+        private entityRenderSortService : services.EntityRenderSortService;
         private grid : editorcanvas.drawing.Grid;
         private canvasDiv : HTMLDivElement;
         private scrollDiv : HTMLDivElement;
         private properties : CanvasProperties = new CanvasProperties();
         private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
         private toolService : services.ToolService;
+        private drawablesCache : {[entityKey : string] : createjs.DisplayObject} = {};
+        private isDirty : boolean = false;
 
         constructor() {
             super();
@@ -45,14 +48,15 @@ module editorcanvas {
 
         onDataReady() {
             super.onDataReady();
-            this.setChangeListener(this.data, () => this.redrawCanvas());
+            this.setChangeListener(this.data, (event) => {
+                this.isDirty = true;
+                this.updateDrawablesCache(event);
+            });
             this.setChangeListener(this.properties, () => {
                 this.onStagePropertiesChanged();
-                this.redrawCanvas();
             });
             this.setChangeListener(this.grid, () => {
                 this.grid.constructGrid();
-                this.redrawCanvas();
             });
 
             createjs.Ticker.on("tick", (event) => this.tick(event));
@@ -67,6 +71,20 @@ module editorcanvas {
             this.setupStage();
             this.onStagePropertiesChanged();
             this.load();
+        }
+
+        private updateDrawablesCache(event : entityframework.EntitySystemChanged) {
+            if (!event.isEntityChanged && !event.isEntityRemoved && !event.isEntityAdded) {
+                return;
+            }
+
+            var entityKey = event.entitiesEvent.key;
+            if (event.isEntityRemoved) {
+                delete this.drawablesCache[entityKey];
+            } else {
+                var resourceManager = this._context.getSharedObject(util.resource.ResourceManager);
+                this.drawablesCache[entityKey] = this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey));
+            }
         }
 
         private setupSharedObjects() {
@@ -131,11 +149,17 @@ module editorcanvas {
                 }
             });
 
-            this.stage.update(event);
+            if (this.isDirty) {
+                this.isDirty = false;
+                this.redrawCanvas();
+            } else {
+                this.stage.update();
+            }
         }
 
         private subscribeToServices() {
             this.entityDrawerService = this._context.getSharedObject(services.EntityDrawerService);
+            this.entityRenderSortService = this._context.getSharedObject(services.EntityRenderSortService);
         }
 
         private setupDelegates() {
@@ -162,7 +186,6 @@ module editorcanvas {
             canvas.width = this.canvasDiv.clientWidth;
             canvas.height = this.canvasDiv.clientHeight;
             this.onStagePropertiesChanged();
-            this.redrawCanvas();
         }
 
         private updateGrid() {
@@ -232,11 +255,8 @@ module editorcanvas {
          */
         private collectEntityDrawables() : Array<createjs.DisplayObject> {
             var toDraw : Array<createjs.DisplayObject> = [];
-            var entitiesByPriority = this._context.getSharedObject(services.EntityRenderSortService).getEntitiesByPriority();
-            entitiesByPriority.forEach((entityKey : string) => {
-                var resourceManager = this._context.getSharedObject(util.resource.ResourceManager);
-                toDraw.push(this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey)));
-            });
+            this.entityRenderSortService.getEntitiesByPriority().forEach(
+                (entityKey : string) => toDraw.push(this.drawablesCache[entityKey]));
             return toDraw;
         }
 

@@ -1,7 +1,6 @@
 module editorcanvas.services {
     import draw = entityframework.components.drawing;
     import comp = entityframework.components;
-    import datastructures = util.datastructures;
 
     /**
      * Used to retrieve display objects for entities.

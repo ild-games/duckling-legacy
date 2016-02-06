@@ -27,8 +27,11 @@ module entityframework.components.drawing {
         private curFrame : number = 0;
 
         protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
-            this.checkFrameSafety();
-            return this.drawables.at(this.curFrame).getCanvasDisplayObject(resourceManager);
+            var displayObject = null;
+            if (this.drawables.length > this.curFrame && this.drawables.at(this.curFrame)) {
+                displayObject = this.drawables.at(this.curFrame).getCanvasDisplayObject(resourceManager);
+            }
+            return displayObject;
         }
 
         tick(delta : number) {
@@ -46,7 +49,7 @@ module entityframework.components.drawing {
         }
 
         private checkFrameSafety() {
-            if (this.curFrame === this.drawables.length) {
+            if (this.curFrame >= this.drawables.length) {
                 this.curFrame = 0;
             }
         }
