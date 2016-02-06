@@ -1,3 +1,5 @@
 .map-selector {
-    
+    > .list {
+        @include flat-list-container;
+    }
 }

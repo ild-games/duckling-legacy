@@ -213,6 +213,7 @@ module.exports = function(grunt) {
             }
         }
     });
+    grunt.registerTask('css', ['sass']);
     grunt.registerTask('default', ['typescript','concat','copy','jade','sass','image','coffee']);
     grunt.registerTask('install', ['bower','tsd']);
 };

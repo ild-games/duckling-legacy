@@ -1,0 +1,13 @@
+@mixin flat-list-container {
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    > li {
+        list-style-type: none;
+        @include action;
+        @include rounded-corners;
+        padding: $padding-base-vertical $padding-base-horizontal;
+        margin: 0 0 $spacer-unit 0;
+    }
+}

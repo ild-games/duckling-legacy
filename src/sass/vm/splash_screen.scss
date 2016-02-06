@@ -3,89 +3,67 @@ $splash-over-background-text: #FFFFFF;
 $splash-over-background-text-second: $secondary-text-color;
 $project-background-color: $divider-color;
 $project-text-color:$primary-text-color;
-$project-action-color: #536dfe;
 
-$splash-large-font: 4.5em;
-$splash-medium-font: 1.5em;
-$splash-small-font: 1em;
+$splash-large-font: $font-size-massive;
+$splash-medium-font: $font-size-heading;
+$splash-small-font: $font-size-normal;
 
 .splash-screen {
   @include fill;
   background-color: $splash-background-color;
 
   .left-section {
-    float: left;
-    margin: 1em;
+      float: left;
+      margin: $spacer-unit;
+  }
 
-    .project-list {
+  .project-list {
+      @include flat-list-container;
       width: 375px;
-      padding: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
+  }
 
-      li {
-        list-style-type: none;
-        margin: 0;
-      }
-
-    }
-
-    .actions {
-      position: absolute;
-      bottom: 1em;
-      a {
-        @include action;
-        color: $splash-over-background-text;
-        text-decoration: none;
-        font-size: $splash-medium-font;
-        display: block;
-      }
-    }
-
-    .project {
-      @include action;
-
+  .project-list li {
       background-color: $project-background-color;
-      padding: 0.15em 0.5em;
-      margin: 0 0 1em 0;
-      border-radius: 0.25em;
       color: $splash-background-color;
-      border: 1em;
 
       .title {
-        @include one-line-ellipsis;
-        font-size: $splash-medium-font;
-        margin: 0;
-        padding: 0;
+          @include one-line-ellipsis;
+          font-size: $splash-medium-font;
       }
 
       .path {
-        @include one-line-ellipsis;
-        font-size: $splash-small-font;
-        white-space: nowrap;
+          @include one-line-ellipsis;
+          font-size: $splash-small-font;
       }
-    }
+  }
 
+  .actions {
+      position: absolute;
+      bottom: $spacer-unit;
+  }
+
+  .actions > a {
+      @include clean-link;
+      color: $splash-over-background-text;
+      font-size: $splash-medium-font;
   }
 
   .right-section {
     float: left;
+  }
 
-    .duckling-title {
-      padding-left:32px;
+  .duckling-title {
+      padding-left:2*$spacer-unit;
+  }
 
-      .duckling-name {
-        font-size: $splash-large-font;
-        color: $splash-over-background-text;
-      }
+  .duckling-name {
+      font-size: $splash-large-font;
+      color: $splash-over-background-text;
+  }
 
-      .duckling-version {
-        font-size: $splash-medium-font;
-        color: $splash-over-background-text-second;
-      }
-
-    }
-
+  .duckling-version {
+      font-size: $splash-medium-font;
+      color: $splash-over-background-text-second;
   }
 
   .the-duck {
@@ -96,5 +74,4 @@ $splash-small-font: 1em;
     height: 515px;
     background: url(../resources/duckling_icon.svg);
   }
-
 }
