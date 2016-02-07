@@ -35,6 +35,7 @@ module editorcanvas {
         private properties : CanvasProperties = new CanvasProperties();
         private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
         private toolService : services.ToolService;
+        private gridColor : string = "#cacaca";
 
         constructor() {
             super();
@@ -51,7 +52,7 @@ module editorcanvas {
                 this.redrawCanvas();
             });
             this.setChangeListener(this.grid, () => {
-                this.grid.constructGrid();
+                this.grid.constructGrid(this.gridColor);
                 this.redrawCanvas();
             });
         }
@@ -77,10 +78,10 @@ module editorcanvas {
             var background = new createjs.Shape();
             background.x = -(this.properties.dimensions.x / 2) + 0.5;
             background.y = -(this.properties.dimensions.y / 2) + 0.5;
-            background.shadow = new createjs.Shadow("#cacaca", 0, 0, 5);
+            background.shadow = new createjs.Shadow(this.gridColor, 0, 0, 5);
             background.graphics
                 .setStrokeStyle(1, 0, 0, 10, true)
-                .beginStroke("#cacaca")
+                .beginStroke(this.gridColor)
                 .beginFill("White")
                 .drawRect(0, 0, this.properties.dimensions.x, this.properties.dimensions.y);
             return background;

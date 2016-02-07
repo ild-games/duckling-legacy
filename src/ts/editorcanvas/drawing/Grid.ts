@@ -24,12 +24,12 @@ module editorcanvas.drawing {
             return this._drawable;
         }
 
-        public constructGrid() {
+        public constructGrid(color : string) {
             if (this.cellDimensions && this.canvasDimensions) {
                 this._drawable = new createjs.Shape();
                 this._drawable.graphics
                     .setStrokeStyle(1, 0, 0, 10, true)
-                    .beginStroke("#cacaca");
+                    .beginStroke(color);
                 var xBound = this.cellDimensions * Math.floor((this.canvasDimensions.x / 2) / this.cellDimensions);
                 var yBound = this.cellDimensions * Math.floor((this.canvasDimensions.y / 2) / this.cellDimensions);
                 for (var x = -xBound; x <= xBound; x += this.cellDimensions) {
