@@ -35,6 +35,7 @@ module editorcanvas {
         private properties : CanvasProperties = new CanvasProperties();
         private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
         private toolService : services.ToolService;
+        private gridColor : string = "#cacaca";
 
         constructor() {
             super();
@@ -51,7 +52,7 @@ module editorcanvas {
                 this.redrawCanvas();
             });
             this.setChangeListener(this.grid, () => {
-                this.grid.constructGrid();
+                this.grid.constructGrid(this.gridColor);
                 this.redrawCanvas();
             });
         }
@@ -75,9 +76,14 @@ module editorcanvas {
 
         private buildBackgroundChild() : createjs.DisplayObject {
             var background = new createjs.Shape();
-            background.x = -(this.properties.dimensions.x / 2);
-            background.y = -(this.properties.dimensions.y / 2);
-            background.graphics.beginFill("White").drawRect(0, 0, this.properties.dimensions.x, this.properties.dimensions.y);
+            background.x = -(this.properties.dimensions.x / 2) + 0.5;
+            background.y = -(this.properties.dimensions.y / 2) + 0.5;
+            background.shadow = new createjs.Shadow(this.gridColor, 0, 0, 5);
+            background.graphics
+                .setStrokeStyle(1, 0, 0, 10, true)
+                .beginStroke(this.gridColor)
+                .beginFill("White")
+                .drawRect(0, 0, this.properties.dimensions.x, this.properties.dimensions.y);
             return background;
         }
 
@@ -150,12 +156,7 @@ module editorcanvas {
         }
 
         private updateGrid() {
-            var newDimensions = new math.Vector(
-                Math.max(this.canvasDiv.clientWidth, this.properties.dimensions.x * (this.properties.zoom / 100)),
-                Math.max(this.canvasDiv.clientHeight, this.properties.dimensions.y * (this.properties.zoom / 100)));
-            if (!(newDimensions.x === this.grid.canvasDimensions.x && newDimensions.y === this.grid.canvasDimensions.y)) {
-                this.grid.canvasDimensions = newDimensions;
-            }
+            this.grid.canvasDimensions = new math.Vector(this.properties.dimensions.x, this.properties.dimensions.y);
         }
 
         private subscribeToolEvents() {
@@ -199,7 +200,7 @@ module editorcanvas {
 
             this.disableInterpolation();
             this.clear();
-            this.addDrawnElementsToStage();
+            this.stage.addChild(this.collectDrawnElementsIntoContainer());
             this.stage.update();
         }
 
@@ -230,18 +231,20 @@ module editorcanvas {
          * This includes entity's DrawableComponent drawables, collision bounds,
          * current tool graphical representation, etc.
          */
-        private addDrawnElementsToStage() {
+        private collectDrawnElementsIntoContainer() : createjs.Container {
+            var drawnElements = new createjs.Container();
             this.collectEntityDrawables().forEach((drawnElement) =>
-                this.stage.addChild(drawnElement));
+                drawnElements.addChild(drawnElement));
             if (this.toolService.currentTool) {
                 var toolDrawable = this.toolService.currentTool.getDisplayObject();
                 if (toolDrawable) {
-                    this.stage.addChild(toolDrawable);
+                    drawnElements.addChild(toolDrawable);
                 }
             }
             if (this.properties.isGridVisible) {
-                this.stage.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
+                drawnElements.addChild(this.grid.getDrawable(new math.Vector(0, 0)));
             }
+            return drawnElements;
         }
 
         /**

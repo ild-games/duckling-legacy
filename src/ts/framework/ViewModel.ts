@@ -58,7 +58,9 @@ module framework {
          */
         attach(htmlRoot : HTMLElement) {
             this.log("Attached");
+
             this._htmlRoot = htmlRoot;
+
             this.render();
             this._attached = true;
 
@@ -99,6 +101,10 @@ module framework {
          */
         private render() {
             this.log("Rendered");
+
+            if (this.rootCSSClass !== "") {
+                this._htmlRoot.classList.add(this.rootCSSClass);
+            }
             this._htmlRoot.innerHTML = this._context.views.getTemplate(this.viewFile).call(this, this);
             this._rivetsBinding = this._context.rivets.bind(this._htmlRoot, this);
 
@@ -138,6 +144,10 @@ module framework {
                 this.forEachChild((child) => child.detach());
                 this._rivetsBinding.unbind();
                 this._htmlRoot.innerHTML = "";
+                if (this.rootCSSClass) {
+                    this._htmlRoot.classList.remove(this.rootCSSClass);
+                }
+
                 this.log("Detach");
                 this.onDetach();
             }
@@ -188,6 +198,15 @@ module framework {
          */
         get viewFile() : string {
             return "no_view_defined";
+        }
+
+        /**
+         * The name of a CSS class that should be added to the DOM node the view model is
+         * attached to.
+         * @return {string} CSS class that will be added to the view's root.
+         */
+        get rootCSSClass() : string {
+            return "";
         }
 
         /**

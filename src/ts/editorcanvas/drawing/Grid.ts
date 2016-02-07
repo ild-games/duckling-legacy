@@ -18,30 +18,29 @@ module editorcanvas.drawing {
 
         getDrawable(position : math.Vector) : createjs.DisplayObject {
             if (this._drawable) {
-                this._drawable.x = position.x;
-                this._drawable.y = position.y;
+                this._drawable.x = position.x + 0.5;
+                this._drawable.y = position.y + 0.5;
             }
             return this._drawable;
         }
 
-        public constructGrid() {
+        public constructGrid(color : string) {
             if (this.cellDimensions && this.canvasDimensions) {
                 this._drawable = new createjs.Shape();
                 this._drawable.graphics
                     .setStrokeStyle(1, 0, 0, 10, true)
-                    .beginStroke("#000000");
-                var xBound = this.cellDimensions * Math.ceil(this.canvasDimensions.x / this.cellDimensions);
-                var yBound = this.cellDimensions * Math.ceil(this.canvasDimensions.y / this.cellDimensions);
+                    .beginStroke(color);
+                var xBound = this.cellDimensions * Math.floor((this.canvasDimensions.x / 2) / this.cellDimensions);
+                var yBound = this.cellDimensions * Math.floor((this.canvasDimensions.y / 2) / this.cellDimensions);
                 for (var x = -xBound; x <= xBound; x += this.cellDimensions) {
                     this._drawable.graphics
-                        .moveTo(x, -yBound)
-                        .lineTo(x, yBound);
+                        .moveTo(x, -(this.canvasDimensions.y / 2))
+                        .lineTo(x, this.canvasDimensions.y / 2);
                 }
                 for (var y = -yBound; y <= yBound; y += this.cellDimensions) {
                     this._drawable.graphics
-                        .moveTo(-xBound, y)
-                        .lineTo(xBound, y);
-
+                        .moveTo(-(this.canvasDimensions.x / 2), y)
+                        .lineTo(this.canvasDimensions.x / 2, y);
                 }
             }
         }

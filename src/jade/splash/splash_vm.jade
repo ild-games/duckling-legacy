@@ -1,16 +1,14 @@
-div.splash-screen
-    div.left-section
-        ul.project-list
-            li(rv-each-project="projects")
-                div.project(rv-command-open="project")
-                    div.title { project.title }
-                    div.path { project.path }
-        div.actions
-            a(rv-command-new-project) NEW PROJECT
+div.left-section
+    ul.project-list
+        li(rv-each-project="projects" rv-command-open="project")
+            div.title { project.title }
+            div.project { project.path }
+    div.actions
+        a(rv-command-new-project) NEW PROJECT
 
-    div.right-section
-        div.duckling-title
-            div.duckling-name Duckling
-            div.duckling-version { version }
+div.right-section
+    div.duckling-title
+        div.duckling-name Duckling
+        div.duckling-version { version }
 
-    div.the-duck
+div.the-duck

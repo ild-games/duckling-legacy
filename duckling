@@ -8,8 +8,8 @@ fi
 if [ "$1" == "test" ]; then
     echo Testing Duckling
     grunt
-    (cd build/spec; ../../node_modules/nw/bin/nw build/spec/package.json)
+    (cd build/spec; ../../node_modules/nw/bin/nw)
 else
     grunt
-    (cd build; ../node_modules/nw/bin/nw build/package.json)
+    (cd build; ../node_modules/nw/bin/nw)
 fi

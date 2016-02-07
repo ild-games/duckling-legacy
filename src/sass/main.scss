@@ -1,55 +1,30 @@
-$dark-primary-color: #232323;
-$primary-color: #717171;
-$light-primary-color: #b7b7b7;
-$ultra-light-primary-color: #ececec;
-$text-icon-color: #212121;
-$text-over-primary-color: white;
-$text-over-secondary-color: white;
-$accent-color: #9E9E9E;
-$primary-text-color: #212121;
-$secondary-text-color: #727272;
-$divider-color:#B6B6B6;
-$secondary-color: #526cfc;
-$shadow-color: $secondary-text-color;
-$control-background-color: white;
-$selected-drawable-vm-border-color: #BDBDBD;
-$selected-drawable-vm-non-white-bg-color: #EAEAEA;
+@import 'colors';
 
-$padding-base-vertical: 6px;
-$padding-base-horizontal: 12px;
+$base-font-size: 13px;
+$font-size-massive: 4.5*$base-font-size;
+$font-size-heading: 1.5*$base-font-size;
+$font-size-label: $base-font-size;
+$font-size-normal: $base-font-size;
 
-$padding-large-vertical: 10px;
-$padding-large-horizontal: 16px;
+$spacer-unit: $base-font-size;
 
-$padding-small-vertical: 5px;
-$padding-small-horizontal: 10px;
-
-$padding-xs-vertical: 1px;
-$padding-xs-horizontal: 5px;
-
-$line-height-large: 1.33;
-$line-height-small: 1.5;
+$padding-base-vertical: 0.5*$base-font-size;
+$padding-base-horizontal: $base-font-size;
 
 $border-radius-base: 4px;
 $border-radius-large: 6px;
 $border-radius-small: 3px;
-
-$component-active-color: #fff;
-$component-active-bg: $primary-color;
-
-$caret-width-base:         4px;
-$caret-width-large:        5px;
 
 $padding-form-horizontal: 0.5em;
 $padding-form-vertical: 0.5em;
 
 $default-indented-box-padding: 5px;
 
-$canvas-footer-height: 46px;
-$canvas-header-height: 46px;
+$canvas-footer-height: 3.5*$base-font-size;
+$canvas-header-height: 3.5*$base-font-size;
 
 html,body
-{
+.scss{
   border: 0;
   margin: 0;
   padding: 0;
@@ -68,6 +43,12 @@ div {
     cursor: pointer;
     color: $project-action-color;
   }
+}
+
+@mixin clean-link {
+    @include action;
+    text-decoration: none;
+    display: block;
 }
 
 @mixin fill {
@@ -89,6 +70,7 @@ div {
 @mixin one-line-ellipsis {
   text-overflow: ellipsis;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 @mixin indented-box {
@@ -98,323 +80,17 @@ div {
     padding-bottom: $default-indented-box-padding;
 }
 
-.toolbar-btn:not(:hover) {
-    -webkit-appearance: none;
-    outline: none;
-    color: black;
-    background: transparent;
-}
-
-.toolbar-btn {
-    border: 0;
-}
-
-.toolbar-separator {
-    width: 1px;
-    border: 1px solid gray;
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-.toolbar-tool-select {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.editor-container {
-
-    .editor-content {
-        height: 100%;
-        padding-top: $canvas-header-height;
-        padding-bottom: $canvas-footer-height;
-    }
-
-    .editor-header {
-        @include layout-box;
-        z-index: 10;
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: $canvas-header-height;
-        width: 100%;
-        background-color: $light-primary-color;
-        border: 0 solid black;
-        border-bottom-width: 1px;
-        padding: $padding-base-vertical $padding-base-vertical;
-    }
-
-    .editor-footer {
-        @include layout-box;
-        z-index: 10;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: $canvas-footer-height;
-        width:100%;
-        background-color: $light-primary-color;
-        border: 0px solid black;
-        border-top-width: 1px;
-        padding: $padding-base-vertical $padding-base-horizontal;
-    }
-}
-
-.canvas-properties {
-    div.form-group {
-        padding-right: 5px;
-    }
-}
-
-.entity-canvas {
-  background-color: $primary-color;
-  padding-top: $canvas-header-height;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-}
-
-.canvas-scroll {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 800px;
-  height: 500px;
+@mixin rounded-corners {
+    border-radius: $border-radius-base;
 }
 
 #container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  @include fill;
 }
 
-div.container-sel-drawable-vm {
-    @include indented-box;
-    border: 1px solid $selected-drawable-vm-border-color;
-    background-color: white;
-}
+@import 'mixins/index';
+@import 'functions';
+@import 'bootstrap_tweaks';
 
-div.non-white-container-sel-drawable-vm {
-    @extend .container-sel-drawable-vm;
-    background-color: $selected-drawable-vm-non-white-bg-color;
-}
-
-
-.canvas-view {
-  @include layout-box;
-  float: left;
-  height: 100%;
-  width: 65%;
-  overflow: auto;
-  position: relative;
-}
-
-.entity-editor {
-  @include layout-box;
-  float: left;
-  height: 100%;
-  width: 35%;
-}
-
-.entity-editor {
-  position: relative;
-  border-left: solid 1px $dark-primary-color;
-
-  .btn-delete-entity {
-      float: right;
-  }
-
-  .selector {
-    @include layout-box;
-    position: relative;
-    top: 0;
-    height: 40px;
-    background-color: $primary-color;
-    width:100%;
-    color: $text-over-primary-color;
-    padding: 3px;
-  }
-
-  .forms {
-    @include layout-box;
-    position: absolute;
-    top: 40px;
-    bottom: 40px;
-    width: 100%;
-    overflow-y: auto;
-    background-color: $light-primary-color;
-
-    .entity-form-list {
-      position: relative;
-    }
-
-    .the-duck-bg-img {
-      position: absolute;
-      width: 300px;
-      height: 350px;
-      bottom: 0;
-      right: 0;
-      background: url(../resources/entity-editor-duck-bg.svg) no-repeat;
-    }
-
-    .list-element {
-      @include shadow;
-      margin: 0.5em;
-      border: 1px solid $divider-color;
-      border-radius: $border-radius-base;
-      background-color: $control-background-color;
-    }
-
-    .component-header {
-      background-color: $secondary-color;
-      color: $text-over-secondary-color;
-      border-top-left-radius: $border-radius-base;
-      border-top-right-radius: $border-radius-base;
-      overflow: auto;
-      padding-left: $padding-form-horizontal;
-    }
-
-    .component-header-content {
-      width: 100%;
-    }
-
-    .component-close-container {
-      text-align: right;
-      padding-right: 15px;
-    }
-
-    .component-close-btn {
-      cursor: pointer;
-    }
-
-    .component-wrapper {
-      padding: $padding-base-vertical $padding-form-horizontal;
-    }
-
-    .component-footer {
-      height: 0.25em;
-      background-color: $accent-color;
-    }
-
-  }
-
-  .component-adder {
-    @include layout-box;
-    z-index: 10;
-    position: absolute;
-    bottom: 0;
-    height: 46px;
-    width:100%;
-    padding: $padding-base-vertical $padding-base-horizontal;
-    background-color: $primary-color;
-    color: $ultra-light-primary-color;
-  }
-
-  .add-component-select {
-    width: 100%;
-    margin-right: 7px;
-  }
-
-}
-
-.gone {
-  display: none;
-}
-
-.width-height-input-group {
-  @include input-group-addon(70)
-}
-
-.x-y-input-group {
-  @include input-group-addon(35)
-}
-
-.r-g-b-a-input-group {
-  @include input-group-addon(36)
-}
-
-.form-group {
-    margin-bottom: 0px;
-}
-
-/* Form Group UI improvements */
-div.form-group .input-group:first-child .form-control:last-child {
-  border-bottom: 0;
-  border-bottom-right-radius: 0;
-}
-
-div.form-group .input-group:first-child .input-group-addon:first-child {
-  border-bottom: 0;
-  border-bottom-left-radius: 0;
-}
-
-div.form-group .input-group:last-child .form-control:last-child {
-  border-top-right-radius: 0;
-}
-
-div.form-group .input-group:last-child .input-group-addon:first-child {
-  border-top-left-radius: 0;
-}
-
-div.form-group .input-group:first-child .input-group-addon:first-child {
-  border-bottom: 0;
-  border-bottom-left-radius: 0;
-}
-
-div.form-group .input-group:not(:last-child):not(:first-child) .form-control:last-child {
-  border-bottom: 0;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
-}
-
-div.form-group .input-group:not(:last-child):not(:first-child) .input-group-addon:first-child {
-  border-bottom: 0;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
-}
-
-div.form-group input:focus {
-  z-index: 3;
-}
-/* Form Elements for VMs */
-.form-element {
-  margin-bottom: 10px;
-}
-
-.input-group-picker {
-  width: 220px;
-}
-
-.input-group-picker button {
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-}
-
-.no-radius {
-  border-radius: 0px;
-}
-
-.no-right-radius {
-  border-bottom-right-radius: 0px;
-  border-top-right-radius: 0px;
-}
-
-.no-left-radius {
-  border-bottom-left-radius: 0px;
-  border-top-left-radius: 0px;
-}
-
-.text-ellipsis {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-div.panel {
-    margin-bottom: 0;
-}
-
-@import '_splash_screen';
+@import 'controls/index';
+@import 'vm/index';

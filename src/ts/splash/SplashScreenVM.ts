@@ -56,8 +56,12 @@ module splashscreen {
         }
 
 
-        get viewFile():string {
+        get viewFile() : string {
             return "splash/splash_vm";
+        }
+
+        get rootCSSClass() : string {
+            return "splash-screen";
         }
 
         newProject(event) {

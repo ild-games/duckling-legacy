@@ -1,0 +1,68 @@
+.canvas-view {
+  @include layout-box;
+  float: left;
+  height: 100%;
+  width: 65%;
+  overflow: auto;
+  position: relative;
+}
+
+.editor-container {
+
+    .editor-content {
+        height: 100%;
+        padding-top: $canvas-header-height;
+        padding-bottom: $canvas-footer-height;
+    }
+
+    .editor-header {
+        @include layout-box;
+        z-index: 10;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: $canvas-header-height;
+        width: 100%;
+        background-color: $light-primary-color;
+        border: 0 solid black;
+        border-bottom-width: 1px;
+        padding: $padding-base-vertical $padding-base-vertical;
+    }
+
+    .editor-footer {
+        @include layout-box;
+        z-index: 10;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: $canvas-footer-height;
+        width:100%;
+        background-color: $light-primary-color;
+        border: 0px solid black;
+        border-top-width: 1px;
+        padding: $padding-base-vertical $padding-base-horizontal;
+    }
+}
+
+.canvas-properties {
+    div.form-group {
+        padding-right: 5px;
+    }
+}
+
+.entity-canvas {
+  background-color: $editor-canvas-non-map-bg-color;
+  padding-top: $canvas-header-height;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.canvas-scroll {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 800px;
+  height: 500px;
+}
