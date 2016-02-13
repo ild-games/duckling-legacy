@@ -24,6 +24,8 @@ gulp.task('typescript',function () {
         .src([
             'src/ts/util/**/*.ts',
             'src/ts/framework/**/*.ts',
+            'src/ts/controls/**/*.ts',
+            'src/ts/math/**/*.ts',
             'typings/tsd.d.ts'],
             {base: 'src/ts'})
         .pipe(compileTS())
