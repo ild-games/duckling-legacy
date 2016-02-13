@@ -4,13 +4,13 @@ module entityframework.components.drawing {
 
     export class Color extends observe.SimpleObservable {
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         r : number;
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         g : number;
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         b : number;
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         a : number;
 
         constructor(r : number, g : number, b : number, a : number) {

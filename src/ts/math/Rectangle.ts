@@ -3,16 +3,16 @@ module math {
     import observe = framework.observe;
 
     export class Rectangle extends framework.observe.SimpleObservable {
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         left : number;
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         top : number;
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         width : number;
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         height : number;
 
         constructor(left? : number, top? : number, width? : number, height? : number) {

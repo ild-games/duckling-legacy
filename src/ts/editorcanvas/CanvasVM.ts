@@ -4,6 +4,8 @@
 ///<reference path="../framework/command/Command.ts"/>
 ///<reference path="../entitysystem/components/drawing/DrawableComponent.ts"/>
 ///<reference path="../entitysystem/components/drawing/RectangleShape.ts"/>
+import SystemLoader from '../entitysystem/core/SystemLoader';
+
 module editorcanvas {
     import observe = framework.observe;
 
@@ -11,13 +13,13 @@ module editorcanvas {
      * Contains the editor specific properties of the canvas.
      */
     class CanvasProperties extends observe.SimpleObservable {
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         zoom : number = 100;
 
-        @observe.Object()
+        @ObserveObject()
         dimensions : math.Vector = new math.Vector();
 
-        @observe.Primitive(Boolean)
+        @ObservePrimitive(Boolean)
         isGridVisible : boolean = true;
     }
 
@@ -36,6 +38,7 @@ module editorcanvas {
         private eventsGivenToCanvas : string = "click mousedown mouseup mousemove";
         private toolService : services.ToolService;
         private gridColor : string = "#cacaca";
+        private systemLoader : SystemLoader;
 
         constructor() {
             super();
@@ -71,6 +74,7 @@ module editorcanvas {
             this.selectedEntity = this._context.getSharedObjectByKey("selectedEntity");
             this.project = this._context.getSharedObject(framework.Project);
             this.toolService = this._context.getSharedObject(editorcanvas.services.ToolService);
+            this.systemLoader = this._context.getSharedObject(SystemLoader);
             this._context.setSharedObject(this.data);
         }
 
@@ -93,7 +97,7 @@ module editorcanvas {
         }
 
         private load() {
-            this._context.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
+            this.systemLoader.loadMap(this.project.projectName, this.data.getEmptyClone())
                 .then((entitySystem : entityframework.EntitySystem) => {
                     this.changeData(entitySystem);
                     this._context.getSharedObject(util.resource.ResourceManager).loadAssets(

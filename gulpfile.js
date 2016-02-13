@@ -21,8 +21,11 @@ function compileTS(override) {
 
 gulp.task('typescript',function () {
     return gulp
-        .src(['src/ts/util/**/*.ts',
-            'typings/tsd.d.ts'], {base: 'src/ts'})
+        .src([
+            'src/ts/util/**/*.ts',
+            'src/ts/framework/**/*.ts',
+            'typings/tsd.d.ts'],
+            {base: 'src/ts'})
         .pipe(compileTS())
         .js
  //       .pipe(babel())

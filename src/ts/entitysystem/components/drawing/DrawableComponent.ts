@@ -6,10 +6,10 @@ module entityframework.components.drawing {
     import observe = framework.observe;
 
     export class DrawableComponent extends Component {
-        @observe.Primitive(String)
+        @ObservePrimitive(String)
         private camEntity : string;
 
-        @observe.Object()
+        @ObserveObject()
         topDrawable : drawing.Drawable = null;
 
         collectAssets() : Array<map.Asset> {

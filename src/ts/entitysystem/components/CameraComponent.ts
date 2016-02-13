@@ -5,16 +5,16 @@ module entityframework.components {
     import observe = framework.observe;
 
     export class CameraComponent extends Component {
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         private renderPriority : number;
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         private scale : number;
 
-        @observe.Object()
+        @ObserveObject()
         private size : math.Vector;
 
-        @observe.Primitive(Boolean)
+        @ObservePrimitive(Boolean)
         private default : boolean;
 
         constructor(size? : math.Vector, scale? : number, renderPriority? : number, def? : boolean) {

@@ -10,13 +10,13 @@ module entityframework.components.drawing {
      */
     @serialize.ProvideClass(ImageDrawable, "ild::ImageDrawable")
     export class ImageDrawable extends Drawable {
-        @observe.Object()
+        @ObserveObject()
         textureRect : math.Rectangle = new math.Rectangle(0, 0, -1, -1);
 
-        @observe.Primitive(String)
+        @ObservePrimitive(String)
         textureKey : string = "";
 
-        @observe.Primitive(Boolean)
+        @ObservePrimitive(Boolean)
         isWholeImage : boolean = true;
 
         constructor(key : string = "") {

@@ -13,6 +13,7 @@ module splashscreen {
 
         private childrenAdded : boolean = false;
         private canvas : editorcanvas.CanvasVM = null;
+        private systemLoader : SystemLoader;
 
         constructor() {
             super();
@@ -23,7 +24,8 @@ module splashscreen {
 
         onDataReady() {
             super.onDataReady();
-            this._context.systemLoader = new entityframework.SystemLoader(this.data, new util.JsonLoader());
+            this.systemLoader = new SystemLoader(this.data, new util.JsonLoader());
+            this._context.setSharedObjectByKey('entityframework.SystemLoader', systemLoader);
         }
 
         onViewReady() {
@@ -74,7 +76,7 @@ module splashscreen {
         }
 
         private save() {
-            this._context.systemLoader.saveMap(this.data.projectName, this.canvas.data);
+            this.systemLoader.saveMap(this.data.projectName, this.canvas.data);
         }
 
         private getEmptyEntityFramework() {

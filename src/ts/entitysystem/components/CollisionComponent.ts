@@ -44,7 +44,7 @@ module entityframework.components {
         /**
          * Width and height for the collision's bounding box.
          */
-        @observe.Object()
+        @ObserveObject()
         dimension : math.Vector;
 
         /**
@@ -68,19 +68,19 @@ module entityframework.components {
          * Info instance holding the bindable properties.
          */
         @serialize.Key("dimension")
-        @observe.Object()
+        @ObserveObject()
         info : CollisionShapeInfo;
 
         /**
          * CollisionBodyType for the component.
          */
-        @observe.Primitive(String)
+        @ObservePrimitive(String)
         bodyType : string;
 
         /**
          * CollisionType for the component.
          */
-        @observe.Primitive()
+        @ObservePrimitive()
         collisionType : CollisionType;
 
         /**

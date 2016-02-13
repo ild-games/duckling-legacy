@@ -4,10 +4,10 @@ module helpers {
 
     @util.serialize.ProvideClass(SimpleObservableA, "helpers.SimpleObservableA")
     export class SimpleObservableA extends observe.SimpleObservable {
-        @observe.Primitive(String)
+        @ObservePrimitive(String)
         stringValue = "";
 
-        @observe.Object()
+        @ObserveObject()
         child : SimpleObservableA = null;
 
         constructor(child? : SimpleObservableA) {

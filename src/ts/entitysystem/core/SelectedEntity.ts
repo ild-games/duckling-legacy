@@ -9,7 +9,7 @@ module entityframework.core {
      * by the user.
      */
     export class SelectedEntity extends framework.observe.SimpleObservable {
-        @observe.Primitive()
+        @ObservePrimitive()
         entityKey : string;
     }
 }

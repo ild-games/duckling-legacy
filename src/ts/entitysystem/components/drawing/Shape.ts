@@ -7,7 +7,7 @@ module entityframework.components.drawing {
      *  Model object describing a shape.
      */
     export class Shape extends observe.SimpleObservable {
-        @observe.Object()
+        @ObserveObject()
         fillColor : Color;
 
         constructor(fillColor? : Color) {

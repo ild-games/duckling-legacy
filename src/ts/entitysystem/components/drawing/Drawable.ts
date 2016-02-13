@@ -14,25 +14,25 @@ module entityframework.components.drawing {
      * Represents an object that can be drawn in the game.
      */
     export class Drawable extends framework.observe.SimpleObservable {
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         renderPriority : number = 0;
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         priorityOffset : number = 0;
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         protected rotation : number = 0;
 
-        @observe.Object()
+        @ObserveObject()
         protected positionOffset : math.Vector = new math.Vector();
 
-        @observe.Primitive(Boolean)
+        @ObservePrimitive(Boolean)
         protected inactive : boolean = false;
 
-        @observe.Object()
+        @ObserveObject()
         protected scale : math.Vector = new math.Vector(1.0, 1.0);
 
-        @observe.Primitive()
+        @ObservePrimitive()
         key : string = "";
 
         constructor(key : string = "") {

@@ -12,7 +12,7 @@ module entityframework.components.drawing {
      */
     @serialize.ProvideClass(ContainerDrawable, "ild::ContainerDrawable")
     export class ContainerDrawable extends Drawable {
-        @observe.Object()
+        @ObserveObject()
         private drawables : observe.ObservableArray<Drawable> = new observe.ObservableArray<Drawable>();
 
         constructor(key : string) {

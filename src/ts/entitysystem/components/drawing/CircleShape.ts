@@ -11,7 +11,7 @@ module entityframework.components.drawing {
      */
     @serialize.ProvideClass(CircleShape, "sf::CircleShape")
     export class CircleShape extends Shape implements editorcanvas.drawing.CanvasDrawnElement {
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         radius : number;
 
         constructor(radius? : number) {

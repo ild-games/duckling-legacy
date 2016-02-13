@@ -5,10 +5,10 @@ module entityframework.components {
     import serialize = util.serialize;
 
     export class PositionComponent extends Component {
-        @observe.Object()
+        @ObserveObject()
         position : math.Vector;
 
-        @observe.Object()
+        @ObserveObject()
         velocity : math.Vector;
 
         constructor (position? : math.Vector, velocity? : math.Vector) {

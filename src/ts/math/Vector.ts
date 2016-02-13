@@ -7,10 +7,10 @@ module math {
      * A 2D vector.
      */
     export class Vector extends framework.observe.SimpleObservable {
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         x : number;
 
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         y : number;
 
         /**

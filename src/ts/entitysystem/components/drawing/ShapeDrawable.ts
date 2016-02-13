@@ -11,7 +11,7 @@ module entityframework.components.drawing {
      */
     @serialize.ProvideClass(ShapeDrawable, "ild::ShapeDrawable")
     export class ShapeDrawable extends Drawable {
-        @observe.Object()
+        @ObserveObject()
         shape : Shape;
 
         constructor(key : string, shape? : entityframework.components.drawing.Shape) {

@@ -11,7 +11,7 @@ module entityframework.components.drawing {
      */
     @serialize.ProvideClass(RectangleShape, "sf::RectangleShape")
     export class RectangleShape extends Shape implements editorcanvas.drawing.CanvasDrawnElement {
-        @observe.Object()
+        @ObserveObject()
         dimension : math.Vector;
 
         constructor(dimension? : math.Vector) {

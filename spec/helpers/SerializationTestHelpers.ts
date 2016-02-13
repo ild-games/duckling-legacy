@@ -4,19 +4,19 @@ module helpers {
     import serialize = util.serialize;
 
     export class ObservableTypedRoot extends observe.SimpleObservable {
-        @observe.Object()
+        @ObserveObject()
         object : SimpleObservableA;
 
-        @observe.Primitive()
+        @ObservePrimitive()
         array : number[];
 
-        @observe.Primitive()
+        @ObservePrimitive()
         nill : any;
 
-        @observe.Primitive()
+        @ObservePrimitive()
         undef : any;
 
-        @observe.Primitive()
+        @ObservePrimitive()
         primitive : number;
 
         aMethod() {

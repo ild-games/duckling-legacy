@@ -2,10 +2,10 @@ module editorcanvas.drawing {
     import observe = framework.observe;
 
     export class Grid extends observe.SimpleObservable implements CanvasDrawnElement {
-        @observe.Primitive(Number)
+        @ObservePrimitive(Number)
         cellDimensions : number = 0;
 
-        @observe.Object()
+        @ObserveObject()
         canvasDimensions : math.Vector;
 
         private _drawable : createjs.Shape;
