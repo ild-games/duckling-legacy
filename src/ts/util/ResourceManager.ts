@@ -52,7 +52,7 @@ module util.resource {
          * @param  {Array<entityframework.map.Asset>} assets   Assets to load.
          * @param  {string}                           rootPath Path the resource folder is at.
          */
-        loadAssets(assets : Array<entityframework.map.Asset>, rootPath : string) {
+        loadAssets(assets : Array<entityframework.map.Asset>, rootPath : string) : Promise<any> {
             this.isFinishedLoading = false;
             this.numAssetsToLoad = assets.length;
             var assetPromises : Array<Promise<any>> = [];
@@ -60,7 +60,9 @@ module util.resource {
             assets.forEach((asset : entityframework.map.Asset) => {
                 assetPromises.push(this.loadAsset(asset, rootPath))
             });
-            Promise.all(assetPromises).then(() => this.isFinishedLoading = true);
+            return Promise.all(assetPromises).then(() => {
+                this.isFinishedLoading = true;
+            });
         }
 
         /**

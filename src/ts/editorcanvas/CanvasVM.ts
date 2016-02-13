@@ -57,6 +57,7 @@ module editorcanvas {
             });
             this.setChangeListener(this.grid, () => {
                 this.grid.constructGrid();
+                this.redrawCanvas();
             });
 
             createjs.Ticker.on("tick", (event) => this.tick(event));
@@ -113,7 +114,13 @@ module editorcanvas {
                     this.changeData(entitySystem);
                     this._context.getSharedObject(util.resource.ResourceManager).loadAssets(
                         this.data.collectAssets(),
-                        this._context.getSharedObjectByKey("Project").rootPath);
+                        this._context.getSharedObjectByKey("Project").rootPath).then(() => {
+                            this.data.forEach((entity : entityframework.Entity, entityKey : string) => { var resourceManager = this._context.getSharedObject(util.resource.ResourceManager);
+                                this.drawablesCache[entityKey] = this.entityDrawerService.getEntityDisplayable(this.data.getEntity(entityKey));
+                            });
+
+                            this.redrawCanvas();
+                        });
                 }, framework.error.onPromiseError(this._context));
         }
 
