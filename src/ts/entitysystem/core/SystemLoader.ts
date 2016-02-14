@@ -1,20 +1,28 @@
 import ContextKey from '../../framework/context/ContextKey';
+import Project from '../../framework/project/Project';
 import {ObservableMap} from '../../framework/observe/ObservableMap';
+import {JsonLoader,SaveResult} from '../../util/JsonLoader';
+import {EntitySystem} from './core/EntitySystem';
+import {serialize, deserialize} from '../util/serialize/Serializer';
+import * as map from './Map';
+import Component from './Component';
+import {Entity} from './Entity';
+import ComponentFactory from './ComponentFactory';
 
 /**
  * Class used to load entity systems from maps and save entity systems to maps.
  */
 @ContextKey('entityframework.SystemLoader')
 export class SystemLoader {
-    private _project : framework.Project;
-    private _jsonLoader : util.JsonLoader;
+    private _project : Project;
+    private _jsonLoader : JsonLoader;
 
     /**
      * Initialize a system loader for a specific project.
      * @param project Project the loader is loading for.
      * @param jsonLoader JsonLoader that should be used to save and load paths.
      */
-    constructor(project : framework.Project, jsonLoader : util.JsonLoader) {
+    constructor(project : Project, jsonLoader : JsonLoader) {
         this._project = project;
         this._jsonLoader = jsonLoader;
     }
@@ -34,7 +42,7 @@ export class SystemLoader {
                 }
 
                 var emptyMap = this.getEmptyMap(emptySystem);
-                var loadedMap : map.GameMap = <any>util.serialize.deserialize(mapJson, emptyMap);
+                var loadedMap : map.GameMap = <any>deserialize(mapJson, emptyMap);
 
                 this.initEntitySystem(loadedMap,emptySystem);
 
@@ -49,7 +57,7 @@ export class SystemLoader {
      * @param system EntitySystem to save.
      * @returns A promise that can be used to handle a successful save or an error.
      */
-    saveMap(mapName : string, system : EntitySystem) : Promise<util.SaveResult> {
+    saveMap(mapName : string, system : EntitySystem) : Promise<SaveResult> {
         var saveMap : map.GameMap = new map.Map();
 
         saveMap.key = mapName;
@@ -67,7 +75,7 @@ export class SystemLoader {
 
         saveMap.assets = system.collectAssets();
 
-        var mapString = util.serialize.serialize(saveMap);
+        var mapString = serialize(saveMap);
         var mapPath = this._project.getMapPath(mapName);
 
         return this._jsonLoader.saveJsonToPath(mapPath, mapString);

@@ -4,7 +4,7 @@ import {ObservePrimitive} from '../framework/observe/ObserveDecorators';
 /**
  * A 2D vector.
  */
-export class Vector extends SimpleObservable {
+export default class Vector extends SimpleObservable {
     @ObservePrimitive(Number)
     x : number;
 

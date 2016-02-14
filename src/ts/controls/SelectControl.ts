@@ -1,10 +1,9 @@
-import * as $ from 'jquery';
 import ViewModel from '../framework/ViewModel';
 
 /**
  * Class used to abstract interaction with the jquery select control.
  */
-export class SelectControl<T> {
+export default class SelectControl<T> {
     private view : ViewModel<any>;
     private _values : {[s:string]:T};
     private selectJqueryObject;

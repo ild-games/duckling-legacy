@@ -1,47 +1,55 @@
-///<reference path="../../core/Component.ts"/>
+import ViewModel from '../../../framework/ViewModel';
+import VMFactory from '../../../framework/VMFactory';
+import {ObserveObject, ObservePrimitive} from '../../../framework/observe/ObserveDecorators';
+import SimpleObservable from '../../../framework/observe/SimpleObservable';
+import * as serialize from '../../../util/serialize/Decorators';
+import Component from '../../core/Component';
+import ComponentFactory from '../../core/ComponentFactory';
+import * as map from '../../core/Map';
 
-module entityframework.components.drawing {
+import Drawable from './Drawable';
+import DrawableFactory from './DrawableFactory';
+import DrawableType from './DrawableType';
+import DrawableTypeControl from './DrawableTypeControl';
+import DrawableTypeToFactory from './DrawableTypeToFactory';
 
-    import serialize = util.serialize;
-    import observe = framework.observe;
+export class DrawableComponent extends Component {
+    @ObservePrimitive(String)
+    private camEntity : string;
 
-    export class DrawableComponent extends Component {
-        @ObservePrimitive(String)
-        private camEntity : string;
+    @ObserveObject()
+    topDrawable : Drawable = null;
 
-        @ObserveObject()
-        topDrawable : drawing.Drawable = null;
-
-        collectAssets() : Array<map.Asset> {
-            var assets : Array<map.Asset> = [];
-            if (this.topDrawable !== null) {
-                assets = this.topDrawable.collectAssets();
-            }
-            return assets;
+    collectAssets() : Array<map.Asset> {
+        var assets : Array<map.Asset> = [];
+        if (this.topDrawable !== null) {
+            assets = this.topDrawable.collectAssets();
         }
+        return assets;
+    }
+}
+
+class DrawableViewModel extends ViewModel<DrawableComponent> {
+    private drawableTypeControl : DrawableTypeControl;
+
+    get viewFile() : string {
+        return 'components/drawable';
     }
 
-    class DrawableViewModel extends framework.ViewModel<DrawableComponent> {
-        private drawableTypeControl : controls.DrawableTypeControl;
+    constructor() {
+        super();
+    }
 
-        get viewFile() : string {
-            return 'components/drawable';
-        }
+    onDataReady() {
+        super.onDataReady();
+    }
 
-        constructor() {
-            super();
-        }
-
-        onDataReady() {
-            super.onDataReady();
-        }
-
-        onViewReady() {
-            super.onViewReady();
-            this.drawableTypeControl = new controls.DrawableTypeControl(
-                this,
-                "selDrawableType",
-                this.addDrawable);
+    onViewReady() {
+        super.onViewReady();
+        this.drawableTypeControl = new DrawableTypeControl(
+            this,
+            "selDrawableType",
+            this.addDrawable);
 
             if (!this.data.topDrawable) {
                 $(this.findById("divDrawableType")).removeClass("gone");
@@ -50,41 +58,40 @@ module entityframework.components.drawing {
             }
         }
 
-        private addDrawable() {
-            $(this.findById("divDrawableType")).addClass("gone");
-            var drawableFactory = DrawableTypeToFactory[this.drawableTypeControl.pickedDrawable];
-            if (drawableFactory) {
-                this.data.topDrawable = drawableFactory.createDrawable("topDrawable");
-                this.addTopDrawableVM(drawableFactory);
-            }
-        }
-
-        private addTopDrawableVM(drawableFactory : framework.VMFactory) {
-            if (this.data.topDrawable) {
-                this.addChildView(
-                    "drawableVM",
-                    drawableFactory.createFormVM(),
-                    this.data.topDrawable);
-            }
+    private addDrawable() {
+        $(this.findById("divDrawableType")).addClass("gone");
+        var drawableFactory = DrawableTypeToFactory[this.drawableTypeControl.pickedDrawable];
+        if (drawableFactory) {
+            this.data.topDrawable = drawableFactory.createDrawable("topDrawable");
+            this.addTopDrawableVM(drawableFactory);
         }
     }
 
-    export class DrawableComponentFactory implements ComponentFactory {
-
-        get displayName() {
-            return "Drawable";
+    private addTopDrawableVM(drawableFactory : VMFactory) {
+        if (this.data.topDrawable) {
+            this.addChildView(
+                "drawableVM",
+                drawableFactory.createFormVM(),
+                this.data.topDrawable);
+            }
         }
+}
 
-        get name() {
-            return "drawable";
-        }
+export class DrawableComponentFactory implements ComponentFactory {
 
-        createFormVM() : framework.ViewModel<any> {
-            return new DrawableViewModel();
-        }
+    get displayName() {
+        return "Drawable";
+    }
 
-        createComponent() : entityframework.Component {
-            return new DrawableComponent();
-        }
+    get name() {
+        return "drawable";
+    }
+
+    createFormVM() : ViewModel<any> {
+        return new DrawableViewModel();
+    }
+
+    createComponent() : Component {
+        return new DrawableComponent();
     }
 }

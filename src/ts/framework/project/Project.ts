@@ -4,7 +4,7 @@ import ContextKey from '../context/ContextKey';
 * Project class represents an entire game.  It is used to find maps and other files that make up the project.
 */
 @ContextKey("Project")
-export class Project {
+export default class Project {
     private _rootPath : string;
     private _projectName : string;
 

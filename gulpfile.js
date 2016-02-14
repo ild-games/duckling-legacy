@@ -9,7 +9,8 @@ function compileTS(override) {
         experimentalDecorators: true,
         suppressImplicitAnyIndexErrors : true,
         target : 'ES6',
-        jsx : 'react'
+        jsx : 'react',
+        allowSyntheticDefaultImports : true
     };
 
     for (var key in override) {
@@ -26,7 +27,9 @@ gulp.task('typescript',function () {
             'src/ts/framework/**/*.ts',
             'src/ts/controls/**/*.ts',
             'src/ts/math/**/*.ts',
-            'typings/tsd.d.ts'],
+            'src/ts/entitysystem/**/*.ts',
+            'src/ts/editorcanvas/drawing/CanvasDrawnElement.ts',
+            'typings/typings.d.ts'],
             {base: 'src/ts'})
         .pipe(compileTS())
         .js

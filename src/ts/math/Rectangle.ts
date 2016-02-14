@@ -1,7 +1,7 @@
 import SimpleObservable from '../framework/observe/SimpleObservable';
 import {ObservePrimitive} from '../framework/observe/ObserveDecorators';
 
-export class Rectangle extends SimpleObservable {
+export default class Rectangle extends SimpleObservable {
     @ObservePrimitive(Number)
     left : number;
 
