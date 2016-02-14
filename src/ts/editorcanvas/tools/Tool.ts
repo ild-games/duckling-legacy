@@ -7,6 +7,7 @@ import CanvasVM from '../CanvasVM';
 */
 interface Tool {
     key : string;
+    label : string;
     /**
     * Hook to bind the context this tool is used with.
     */

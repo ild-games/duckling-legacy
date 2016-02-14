@@ -23,17 +23,12 @@ function compileTS(override) {
 gulp.task('typescript',function () {
     return gulp
         .src([
-            'src/ts/util/**/*.ts',
-            'src/ts/framework/**/*.ts',
-            'src/ts/controls/**/*.ts',
-            'src/ts/math/**/*.ts',
-            'src/ts/entitysystem/**/*.ts',
-            'src/ts/editorcanvas/drawing/CanvasDrawnElement.ts',
+            'src/ts/**/*.ts',
             'typings/typings.d.ts'],
             {base: 'src/ts'})
         .pipe(compileTS())
         .js
- //       .pipe(babel())
+        .pipe(babel())
         .pipe(gulp.dest('build/scripts'));
 });
 
