@@ -13,7 +13,7 @@ import ComponentFactory from './ComponentFactory';
  * Class used to load entity systems from maps and save entity systems to maps.
  */
 @ContextKey('entityframework.SystemLoader')
-export class SystemLoader {
+export default class SystemLoader {
     private _project : Project;
     private _jsonLoader : JsonLoader;
 

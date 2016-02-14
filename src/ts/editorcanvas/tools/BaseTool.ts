@@ -1,52 +1,55 @@
-module editorcanvas.tools {
-    export class BaseTool implements Tool {
-        protected context : framework.Context;
+import Context from '../../framework/context/Context';
+import CanvasVM from '../CanvasVM';
+import Vector from '../../math/Vector';
+import Tool from './Tool';
 
-        onBind(context : framework.Context) {
-            this.context = context;
-        }
+export default class BaseTool implements Tool {
+    protected context : Context;
 
-        getDisplayObject() : createjs.DisplayObject {
-            return null;
-        }
+    onBind(context : Context) {
+        this.context = context;
+    }
 
-        onEvent(event, canvas : editorcanvas.CanvasVM) {
-            switch (event.type) {
-                case "click":
-                    if (event.nativeEvent.button === 0) {
-                        this.onLeftClick(new math.Vector(event.stageX, event.stageY), canvas);
-                    }
-                    break;
-                case "stagemousedown":
-                    this.onStageDown(new math.Vector(event.stageX, event.stageY), canvas);
-                    break;
-                case "stagemouseup":
-                    this.onStageUp(new math.Vector(event.stageX, event.stageY), canvas);
-                    break;
-                case "stagemousemove":
-                    this.onStageMove(new math.Vector(event.stageX, event.stageY), canvas);
-                    break;
-            }
-        }
+    getDisplayObject() : createjs.DisplayObject {
+        return null;
+    }
 
-        onLeftClick(position : math.Vector, canvas : editorcanvas.CanvasVM) {
+    onEvent(event, canvas : CanvasVM) {
+        switch (event.type) {
+            case "click":
+                if (event.nativeEvent.button === 0) {
+                    this.onLeftClick(new Vector(event.stageX, event.stageY), canvas);
+                }
+                break;
+            case "stagemousedown":
+                this.onStageDown(new Vector(event.stageX, event.stageY), canvas);
+                break;
+            case "stagemouseup":
+                this.onStageUp(new Vector(event.stageX, event.stageY), canvas);
+                break;
+            case "stagemousemove":
+                this.onStageMove(new Vector(event.stageX, event.stageY), canvas);
+                break;
         }
+    }
 
-        onStageDown(position : math.Vector, canvas : editorcanvas.CanvasVM) {
-        }
+    onLeftClick(position : Vector, canvas : CanvasVM) {
+    }
 
-        onStageUp(position : math.Vector, canvas : editorcanvas.CanvasVM) {
-        }
+    onStageDown(position : Vector, canvas : CanvasVM) {
+    }
 
-        onStageMove(position : math.Vector, canvas : editorcanvas.CanvasVM) {
-        }
+    onStageUp(position : Vector, canvas : CanvasVM) {
+    }
 
-        get key() : string {
-            throw new Error("Not yet implemented");
-        }
+    onStageMove(position : Vector, canvas : CanvasVM) {
+    }
 
-        get label() : string {
-            throw new Error("Not yet implemented");
-        }
+    get key() : string {
+        throw new Error("Not yet implemented");
+    }
+
+    get label() : string {
+        throw new Error("Not yet implemented");
     }
 }
