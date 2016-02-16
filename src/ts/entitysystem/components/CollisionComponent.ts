@@ -5,7 +5,7 @@ import {ObserveObject, ObservePrimitive} from '../../framework/observe/ObserveDe
 import SimpleObservable from '../../framework/observe/SimpleObservable';
 import * as serialize from '../../util/serialize/Decorators';
 import {formatToTitleCase, valuesFromEnum} from '../../util/Formatters';
-import Vector from '../math/Vector';
+import Vector from '../../math/Vector';
 import Component from '../core/Component';
 import ComponentFactory from '../core/ComponentFactory';
 

@@ -3,7 +3,7 @@ import {ObserveObject} from '../../../framework/observe/ObserveDecorators';
 import SimpleObservable from '../../../framework/observe/SimpleObservable';
 import ViewModel from '../../../framework/ViewModel';
 import VMFactory from '../../../framework/VMFactory';
-import {formatToTitleCase, valuesFromEnum} from '../../util/Formatters';
+import {formatToTitleCase, valuesFromEnum} from '../../../util/Formatters';
 import * as serialize from '../../../util/serialize/Decorators';
 import ResourceManager from '../../ResourceManager';
 

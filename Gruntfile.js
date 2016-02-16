@@ -44,26 +44,6 @@ module.exports = function(grunt) {
         },
         typescript: {
             duckling: {
-                src: getTSDirs(
-                    "util",
-                    "framework",
-                    "controls",
-                    "math",
-                    "entitysystem",
-                    "editorcanvas",
-                    "splash"
-                ),
-                dest: 'build/scripts/duckling.js',
-                options: {
-                    module: 'commonjs',
-                    sourceMap: true,
-                    declaration: true,
-                    experimentalDecorators: true,
-                    target: 'es5',
-                    references: [
-                        "typings/tsd.d.ts"
-                    ]
-                }
             },
             spec_helpers: {
                 src: "spec/helpers/**/*.ts",
@@ -77,39 +57,6 @@ module.exports = function(grunt) {
                         "typings/tsd.d.ts",
                         "build/scripts/duckling.d.ts"
                     ]
-                }
-            }
-        },
-        concat: {
-            jsdepend: {
-                options: {
-                    separator: ';'
-                },
-                src: [
-                    'bower_components/jquery/dist/jquery.js',
-                    'node_modules/sightglass/index.js',
-                    'bower_components/rivets/dist/rivets.js',
-                    'bower_components/bootstrap/dist/js/bootstrap.js',
-                    'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
-                    'bower_components/jade/runtime.js',
-                    'bower_components/mousetrap/mousetrap.js',
-                    'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js'
-                ],
-                dest: 'build/dependencies/dependencies.js'
-            },
-            cssdepend: {
-                src: [
-                    'bower_components/bootstrap/dist/css/bootstrap.css',
-                    'bower_components/bootstrap-select/dist/css/bootstrap-select.css',
-                    'bower_components/font-awesome/css/font-awesome.css'
-                ],
-                dest: 'build/dependencies/dependencies.css'
-            }
-        },
-        sass: {
-            dist : {
-                files: {
-                    'build/styles/duckling.css': 'src/sass/main.scss'
                 }
             }
         },
@@ -162,25 +109,6 @@ module.exports = function(grunt) {
                         dest: 'build'
                     }
                 ]
-            }
-        },
-        jade: {
-            index: {
-                files: {
-                    "build/index.html" : ["src/index.jade"]
-                }
-            },
-            views: {
-                options: {
-                    client: "true",
-                    namespace: "views.templates",
-                    processName: function(filename) {
-                        return filename.slice("src/jade/".length,-".jade".length);
-                    }
-                },
-                files: {
-                    "build/scripts/duckling_views.js" : ["src/jade/**/*.jade"]
-                }
             }
         },
         watch: {

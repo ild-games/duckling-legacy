@@ -2,7 +2,7 @@
 import SystemWindow from '../../util/SystemWindow';
 import CommandQueue from '../command/CommandQueue';
 import ConfigureRivets from '../dependencies/ConfigureRivets';
-import {setupMouestrapBindings} from '../dependencies/MouseTrap';
+import {setupMouestrapBindings} from '../dependencies/Mousetrap';
 import Views from '../view/Views';
 import contextKeySymbol from './ContextKeySymbol';
 

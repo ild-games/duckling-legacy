@@ -6,34 +6,34 @@
   "bundle": "typings/tsd/tsd.d.ts",
   "installed": {
     "bootstrap/bootstrap.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "easeljs/easeljs.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "jquery/jquery.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "tweenjs/tweenjs.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "rivets/rivets.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "node/node.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "createjs/createjs.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "soundjs/soundjs.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "preloadjs/preloadjs.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     },
     "createjs-lib/createjs-lib.d.ts": {
-      "commit": "bcd5761826eb567876c197ccc6a87c4d05731054"
+      "commit": "85af69c91599a6c904618545f0613970e1ff3f64"
     }
   }
 }

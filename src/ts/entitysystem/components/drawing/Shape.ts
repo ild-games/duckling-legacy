@@ -1,6 +1,6 @@
-import {ObserveObject} from '../../framework/observe/ObserveDecorators';
-import SimpleObservable from '../../framework/observe/SimpleObservable';
-import * as serialize from '../../util/serialize/Decorators';
+import {ObserveObject} from '../../../framework/observe/ObserveDecorators';
+import SimpleObservable from '../../../framework/observe/SimpleObservable';
+import * as serialize from '../../../util/serialize/Decorators';
 import Color from './Color';
 import ShapeType from './ShapeType';
 import ShapeFactory from './ShapeFactory';

@@ -1,6 +1,6 @@
 import ViewModel from '../../framework/ViewModel';
 import {ObserveObject, ObservePrimitive} from '../../framework/observe/ObserveDecorators';
-import Vector from '../math/Vector';
+import Vector from '../../math/Vector';
 import Component from '../core/Component';
 import ComponentFactory from '../core/ComponentFactory';
 

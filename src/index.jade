@@ -2,33 +2,16 @@ html
     head
         title="duckling"
         meta(charset="UTF-8")
-        each file in ["dependencies/dependencies.css","styles/duckling.css"]
-            link(rel="stylesheet", type="text/css", href=file)
-        each file in ["dependencies/dependencies.js", "scripts/duckling.js", "scripts/duckling_views.js"]
-            script(type='text/javascript' src=file)
+        each file in cssdepends
+            link(rel="stylesheet", type="text/css", href="../"+file)
+        each file in jsdepends
+            script(type='text/javascript' src="../"+file)
+        script(type='text/javascript' src="scripts/bundle/main.js")
     body
         div(id="container")
         script(type='text/javascript').
             $(document).ready(function() {
-                framework.error.startListener(window);
-
-                var context = new framework.Context(views.templates, window);
-                var selectedEntity = new entityframework.core.SelectedEntity();
-                context.setSharedObjectByKey("selectedEntity", selectedEntity);
-                context.setSharedObjectByKey("Project", new framework.Project("."));
-                context.setSharedObjectByKey("FileDialog", new util.FileDialog(window));
-                context.setSharedObjectByKey("util.resource.ResourceManager", new util.resource.ResourceManager());
-                context.setSharedObjectByKey("editorcanvas.services.EntityDrawerService", new editorcanvas.services.EntityDrawerService(context));
-                context.setSharedObjectByKey("editorcanvas.services.EntitySelectService", new editorcanvas.services.EntitySelectService(context));
-                context.setSharedObjectByKey("editorcanvas.services.EntityRenderSortService", new editorcanvas.services.EntityRenderSortService(context));
-                context.setSharedObjectByKey("editorcanvas.services.ToolService", new editorcanvas.services.ToolService(context));
-                
-
-                var splashScreenVM = (new splashscreen.SplashScreenVM()).init(
-                        context,
-                        document.getElementById("container"),
-                        {}
-                )
+                main(document.getElementById("container"),views.templates,window);
             });
 
         form.gone

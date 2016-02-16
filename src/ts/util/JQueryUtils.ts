@@ -2,8 +2,6 @@
  * Contains helper functions for jquery operations.
  */
 
- import * as $ from 'jquery';
-
  /**
  * Adds an option with a given value and text to a select element.
  *

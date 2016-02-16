@@ -1,5 +1,5 @@
 import ViewModel from '../../../framework/ViewModel';
-import {ObserveObject, ObservePrimitive} from '../../framework/observe/ObserveDecorators';
+import {ObserveObject, ObservePrimitive} from '../../../framework/observe/ObserveDecorators';
 import Vector from '../../../math/Vector';
 import CanvasDrawnElement from '../../../editorcanvas/drawing/CanvasDrawnElement';
 import * as serialize from '../../../util/serialize/Decorators';
