@@ -6,7 +6,6 @@ import {Asset} from '../../core/Map';
 import ResourceManager from '../../ResourceManager';
 import DrawableType from './DrawableType';
 import DrawableFactory from './DrawableFactory';
-import DrawableTypeToFactory from './DrawableTypeToFactory';
 
 /**
  * Represents an object that can be drawn in the game.
@@ -81,6 +80,6 @@ export default class Drawable extends SimpleObservable {
 
     @serialize.Ignore
     get factory() : DrawableFactory {
-        return DrawableTypeToFactory[DrawableType[this.type]];
+        throw new Error("This method is abstract");
     }
 }

@@ -1,8 +1,6 @@
 var gulp = require('gulp');
-var ts = require('gulp-typescript');
-//var babel = require('gulp-babel');
 var sourcemaps = require('gulp-sourcemaps');
-//var rollup = require('gulp-rollup');
+var exorcist = require('exorcist');
 var jade = require('gulp-jade');
 var jadens = require('gulp-jade-namespace');
 var concat = require('gulp-concat');
@@ -11,26 +9,7 @@ var copy = require('gulp-copy');
 var watch = require('gulp-watch');
 var source = require('vinyl-source-stream')
 var browserify = require('browserify');
-//var babelhelpers = require('gulp-babel-external-helpers');
-
-function compileTS(override) {
-    var project = {
-        declaration: true,
-        noImplicitAny: false,
-        experimentalDecorators: true,
-        suppressImplicitAnyIndexErrors : true,
-        module : 'commonjs',
-        target : 'ES5',
-        jsx : 'react',
-        allowSyntheticDefaultImports : true
-    };
-
-    for (var key in override) {
-        project[key] = override[key];
-    }
-
-    return ts(ts.createProject(project));
-}
+var tsify = require('tsify');
 
 function moveTask(taskName,fileName,dest) {
     gulp.task(taskName, function() {
@@ -38,21 +17,12 @@ function moveTask(taskName,fileName,dest) {
     });
 }
 
-gulp.task('typescript',function () {
-    return gulp
-        .src([
-            'src/ts/**/*.ts',
-            'typings/typings.d.ts'],
-            {base: 'src/ts'})
-        .pipe(compileTS())
-        .js
-        .pipe(gulp.dest('build/scripts/duckling'));
-});
-
-gulp.task('bundle', ['typescript'], function () {
-    return browserify()
-        .add('build/scripts/duckling/main.js')
+gulp.task('typescript', function () {
+    return browserify({debug : true})
+        .add(['src/ts/main.ts','typings/typings.d.ts'])
+        .plugin('tsify')
         .bundle()
+        .pipe(exorcist('build/scripts/bundle/main.js.map'))
         .pipe(source('main.js'))
         .pipe(gulp.dest('build/scripts/bundle'));
 });
@@ -135,8 +105,6 @@ moveTask('package', 'package.json', 'build/');
 moveTask('specrunner', 'spec/SpecRunner.html', 'build/');
 
 gulp.task('default', [
-    'typescript',
-    'bundle',
     'views',
     'index',
     'css',

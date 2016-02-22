@@ -39,6 +39,11 @@ export class ShapeDrawable extends Drawable {
     get type() : DrawableType {
         return DrawableType.Shape;
     }
+
+    @serialize.Ignore
+    get factory() : DrawableFactory {
+        return new ShapeDrawableFactory();
+    }
 }
 
 export class ShapeDrawableViewModel extends ViewModel<ShapeDrawable> {

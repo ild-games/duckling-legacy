@@ -85,6 +85,11 @@ export class ContainerDrawable extends Drawable {
     get type() : DrawableType {
         return DrawableType.Container;
     }
+
+    @serialize.Ignore
+    get factory() : DrawableFactory {
+        return new ContainerDrawableFactory();
+    }
 }
 
 export class ContainerDrawableViewModel extends BaseDrawableViewModel<ContainerDrawable> {

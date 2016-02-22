@@ -65,6 +65,11 @@ export class ImageDrawable extends Drawable {
     get type() : DrawableType {
         return DrawableType.Image;
     }
+
+    @serialize.Ignore
+    get factory() : DrawableFactory {
+        return new ImageDrawableFactory();
+    }
 }
 
 export class ImageDrawableViewModel extends ViewModel<ImageDrawable> {
