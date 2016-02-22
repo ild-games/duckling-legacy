@@ -1,36 +1,24 @@
 var gulp = require('gulp');
-var ts = require('gulp-typescript');
-//var babel = require('gulp-babel');
-var sourcemaps = require('gulp-sourcemaps');
-//var rollup = require('gulp-rollup');
 var jade = require('gulp-jade');
-var jadens = require('gulp-jade-namespace');
 var concat = require('gulp-concat');
 var sass = require('gulp-sass');
 var copy = require('gulp-copy');
 var watch = require('gulp-watch');
-var source = require('vinyl-source-stream')
 var browserify = require('browserify');
-//var babelhelpers = require('gulp-babel-external-helpers');
+//var nwjsify = require('nwjs-browserify');
+var source = require('vinyl-source-stream')
+var tsify = require('tsify');
+var babelify = require('babelify');
 
-function compileTS(override) {
-    var project = {
-        declaration: true,
-        noImplicitAny: false,
-        experimentalDecorators: true,
-        suppressImplicitAnyIndexErrors : true,
-        module : 'commonjs',
-        target : 'ES5',
-        jsx : 'react',
-        allowSyntheticDefaultImports : true
-    };
-
-    for (var key in override) {
-        project[key] = override[key];
-    }
-
-    return ts(ts.createProject(project));
-}
+var project = {
+    declaration: true,
+    noImplicitAny: false,
+    experimentalDecorators: true,
+    suppressImplicitAnyIndexErrors : true,
+    target : 'ES6',
+    jsx : 'react',
+    allowSyntheticDefaultImports : true
+};
 
 function moveTask(taskName,fileName,dest) {
     gulp.task(taskName, function() {
@@ -39,31 +27,20 @@ function moveTask(taskName,fileName,dest) {
 }
 
 gulp.task('typescript',function () {
-    return gulp
-        .src([
-            'src/ts/**/*.ts',
-            'typings/typings.d.ts'],
-            {base: 'src/ts'})
-        .pipe(compileTS())
-        .js
-        .pipe(gulp.dest('build/scripts/duckling'));
-});
-
-gulp.task('bundle', ['typescript'], function () {
     return browserify()
-        .add('build/scripts/duckling/main.js')
+        .add('src/ts/main.ts')
+        .plugin(tsify, { target: 'es6' })
+        .transform(babelify)
         .bundle()
         .pipe(source('main.js'))
-        .pipe(gulp.dest('build/scripts/bundle'));
+        .pipe(gulp.dest('build/scripts/'));
 });
 
 gulp.task('views', function () {
-    return gulp.src('src/jade/**/*.jade')
+    return gulp.src('src/jade/**/')
         .pipe(jade({
             client : true,
-        }))
-        .pipe(jadens({
-            namespace : "views"
+            namespace : "views.templates"
         }))
         .pipe(concat('duckling_views.js'))
         .pipe(gulp.dest('build/scripts/'));
@@ -78,14 +55,13 @@ var jsdepends = [
     'bower_components/jade/runtime.js',
     'bower_components/mousetrap/mousetrap.js',
     'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js',
-    'build/scripts/duckling_views.js'
+    'bower_components/babel-polyfill/browser-polyfill.js'
 ]
 
 var cssdepends = [
     'bower_components/bootstrap/dist/css/bootstrap.css',
     'bower_components/bootstrap-select/dist/css/bootstrap-select.css',
-    'bower_components/font-awesome/css/font-awesome.css',
-    'build/css/main.css'
+    'bower_components/font-awesome/css/font-awesome.css'
 ]
 
 var DEPEND_LOCALS = {
@@ -96,8 +72,7 @@ var DEPEND_LOCALS = {
 gulp.task('index', function() {
     return gulp.src('src/index.jade')
         .pipe(jade({
-            locals : DEPEND_LOCALS,
-            pretty : true
+            locals : DEPEND_LOCALS
         }))
         .pipe(gulp.dest('build'));
 });
@@ -130,18 +105,15 @@ moveTask('fonts', [
     'bower_components/font-awesome/fonts/**/*',
     'bower_components/bootstrap/fonts/**/*'
 ], 'build/fonts');
-moveTask('resources', 'resources/**', 'build/resources');
 moveTask('package', 'package.json', 'build/');
 moveTask('specrunner', 'spec/SpecRunner.html', 'build/');
 
 gulp.task('default', [
     'typescript',
-    'bundle',
     'views',
     'index',
     'css',
     'fonts',
     'package',
     'specrunner',
-    'resources'
 ]);

@@ -34,6 +34,10 @@ export class RectangleShape extends Shape implements CanvasDrawnElement {
     get type() : ShapeType {
         return ShapeType.Rectangle;
     }
+
+    get factory() : ShapeFactory {
+        return new RectangleShapeFactory();
+    }
 }
 
 export class RectangleShapeViewModel extends ViewModel<RectangleShape> {

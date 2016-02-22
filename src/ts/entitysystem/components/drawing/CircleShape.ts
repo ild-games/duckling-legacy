@@ -30,6 +30,10 @@ export class CircleShape extends Shape implements CanvasDrawnElement {
     get type() : ShapeType {
         return ShapeType.Circle;
     }
+
+    get factory() : ShapeFactory {
+        return new CircleShapeFactory();
+    }
 }
 
 export class CircleShapeViewModel extends ViewModel<CircleShape> {

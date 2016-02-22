@@ -4,7 +4,6 @@ import * as serialize from '../../../util/serialize/Decorators';
 import Color from './Color';
 import ShapeType from './ShapeType';
 import ShapeFactory from './ShapeFactory';
-import ShapeTypeToFactory from './ShapeTypeToFactory';
 
 /**
 *  Model object describing a shape.
@@ -29,6 +28,6 @@ export default class Shape extends SimpleObservable {
 
     @serialize.Ignore
     get factory() : ShapeFactory {
-        return ShapeTypeToFactory[ShapeType[this.type]];
+        throw new Error("This method is abstract");
     }
 }

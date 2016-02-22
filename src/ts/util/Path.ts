@@ -2,9 +2,9 @@
  * Module used to perform operations on paths.
  */
 
- var process = require("process");
- var npath = require("path");
- var fs = require("fs");
+ var process = _require("process");
+ var npath = _require("path");
+ var fs = _require("fs");
 
  /**
  * Join an array of paths into a single path.

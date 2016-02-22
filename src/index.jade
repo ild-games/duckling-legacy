@@ -2,18 +2,17 @@ html
     head
         title="duckling"
         meta(charset="UTF-8")
+        script(type='text/javascript').
+            _require = require; //Map require to _require to prevent node imports from colliding with commonjs imports
         each file in cssdepends
             link(rel="stylesheet", type="text/css", href="../"+file)
         each file in jsdepends
             script(type='text/javascript' src="../"+file)
-        script(type='text/javascript' src="scripts/bundle/main.js")
     body
         div(id="container")
-        script(type='text/javascript').
-            $(document).ready(function() {
-                main(document.getElementById("container"),views.templates,window);
-            });
-
+            // Including the main bundle at the bottom of the body will inject dom elements into this element.
         form.gone
             input(id="hidden-input-for-file-dialog",type="file")
             input(id="hidden-input-for-dir-dialog",type="file",nwdirectory)
+            
+        script(type='text/javascript' src="scripts/bundle/main.js")

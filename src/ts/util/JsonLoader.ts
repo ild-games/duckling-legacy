@@ -1,6 +1,6 @@
 import {pathExists, dirname, makedirs} from './Path'
 
-var fs = require('fs');
+var fs = _require('fs');
 
 /**
 * Describes the result of saving a json object.

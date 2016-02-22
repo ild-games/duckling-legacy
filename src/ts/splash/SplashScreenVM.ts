@@ -11,8 +11,6 @@ interface ProjectModel {
     path : string
 }
 
-var gui = require("nw.gui");
-
 /**
  * ViewModel used to render the splash screen.
  */

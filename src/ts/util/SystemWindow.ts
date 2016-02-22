@@ -1,4 +1,4 @@
-var gui = require("nw.gui");
+var gui = _require("nw.gui");
 
 /**
 * Provides a wrapper for the node webkit window.
