@@ -11,7 +11,6 @@ var source = require('vinyl-source-stream')
 var browserify = require('browserify');
 var tsify = require('tsify');
 var babelify = require('babelify');
-var coffeeify = require('coffeeify');
 
 function moveTask(taskName,fileName,dest) {
     gulp.task(taskName, function() {
