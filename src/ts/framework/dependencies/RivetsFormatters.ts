@@ -1,4 +1,3 @@
-
 /**
  * Creates the formatters used by bindings throughout the editor.
  *

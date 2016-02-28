@@ -1,3 +1,5 @@
+/// <reference path="../../typings/typings.d.ts"/>
+
 import EntityDrawerService from './editorcanvas/services/EntityDrawerService';
 import EntitySelectService from './editorcanvas/services/EntitySelectService';
 import EntityRenderSortService from './editorcanvas/services/EntityRenderSortService';

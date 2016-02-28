@@ -1,6 +1,7 @@
 import CommandQueue from '../command/CommandQueue';
 import DataChangeCallback from '../observe/DataChangeCallback';
 import Observable from '../observe/Observable';
+import ViewModel from '../ViewModel';
 import {CreateFormatters} from './RivetsFormatters';
 import RivetInputCommand from './RivetInputCommand';
 
@@ -156,7 +157,8 @@ export default function ConfigureRivets(window, rivets, commandQueue : CommandQu
                     var adapter = this.view.adapters[this.view.rootInterface];
                     value = adapter.get(this.model, this.keypath);
                 }
-                this.view.models.handleCommand(type.command, event, value);
+                var vm = ViewModel.findViewModel(el);
+                vm.handleCommand(type.command, event, value);
             };
             removeCommandCallback(el, type.event);
             addCommandCallback(el, callback, type.event);

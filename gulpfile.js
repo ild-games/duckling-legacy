@@ -10,6 +10,9 @@ var watch = require('gulp-watch');
 var source = require('vinyl-source-stream')
 var browserify = require('browserify');
 var tsify = require('tsify');
+var babelify = require('babelify');
+var rowflow = require('browserify-row-flow');
+var coffeeify = require('coffeeify');
 
 function moveTask(taskName,fileName,dest) {
     gulp.task(taskName, function() {
@@ -19,13 +22,27 @@ function moveTask(taskName,fileName,dest) {
 
 gulp.task('typescript', function () {
     return browserify({debug : true})
-        .add(['src/ts/main.ts','typings/typings.d.ts'])
-        .plugin('tsify')
+        .add('src/ts/main.ts')
+        .plugin('tsify', {target : "es6"})
+        .transform(babelify,
+            {
+                presets : ["es2015"],
+                extensions : [".ts"]
+            })
         .bundle()
         .pipe(exorcist('build/scripts/bundle/main.js.map'))
         .pipe(source('main.js'))
         .pipe(gulp.dest('build/scripts/bundle'));
 });
+
+gulp.task('spec', function() {
+    return browserify()
+        .add('spec/specmain.coffee')
+        .transform(coffeeify)
+        .bundle()
+        .pipe(source('spec.js'))
+        .pipe(gulp.dest('build/spec/'));
+})
 
 gulp.task('views', function () {
     return gulp.src('src/jade/**/*.jade')
@@ -48,6 +65,7 @@ var jsdepends = [
     'bower_components/jade/runtime.js',
     'bower_components/mousetrap/mousetrap.js',
     'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js',
+//    'bower_components/babel-polyfill/browser-polyfill.js',
     'build/scripts/duckling_views.js'
 ]
 
@@ -105,6 +123,7 @@ moveTask('package', 'package.json', 'build/');
 moveTask('specrunner', 'spec/SpecRunner.html', 'build/');
 
 gulp.task('default', [
+    'typescript',
     'views',
     'index',
     'css',

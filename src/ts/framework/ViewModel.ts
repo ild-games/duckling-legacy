@@ -6,6 +6,8 @@ import DataChangeCallback from './observe/DataChangeCallback';
 
 var nextId : number = 0;
 
+const DUCKLING_VM_KEY = "ducklingViewModel";
+
 interface Observation {
     object : Observable<any>;
     callback : DataChangeCallback<any>;
@@ -65,6 +67,7 @@ export default class ViewModel<T> {
         this.log("Attached");
 
         this._htmlRoot = htmlRoot;
+        this._htmlRoot[DUCKLING_VM_KEY] = this;
 
         this.render();
         this._attached = true;
@@ -149,6 +152,7 @@ export default class ViewModel<T> {
             this.forEachChild((child) => child.detach());
             this._rivetsBinding.unbind();
             this._htmlRoot.innerHTML = "";
+            this._htmlRoot[DUCKLING_VM_KEY] = null;
             if (this.rootCSSClass) {
                 this._htmlRoot.classList.remove(this.rootCSSClass);
             }
@@ -353,6 +357,22 @@ export default class ViewModel<T> {
         if (this.logging) {
             this._context.window.console.log("[VM " + this.viewModelName + " " + this._id + "] " + message);
         }
+    }
+
+    /**
+     * Walk up the tree of elements until you find a node that is the root of a view model.
+     * @param  {HTMLElement} htmlElement Element to start the search from.
+     * @return {ViewModel<any>} The ViewModel that contains the element.
+     */
+    static findViewModel(htmlElement : HTMLElement) : ViewModel<any> {
+        var currentElement = htmlElement;
+        while (currentElement) {
+            if (currentElement[DUCKLING_VM_KEY]) {
+                return currentElement[DUCKLING_VM_KEY];
+            }
+            currentElement = currentElement.parentElement;
+        }
+        return null;
     }
 
     //region Getters and Setters
