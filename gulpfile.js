@@ -12,12 +12,6 @@ var browserify = require('browserify');
 var tsify = require('tsify');
 var babelify = require('babelify');
 
-function moveTask(taskName,fileName,dest) {
-    gulp.task(taskName, function() {
-        return gulp.src(fileName).pipe(gulp.dest(dest));
-    });
-}
-
 gulp.task('typescript', function () {
     return browserify({debug : true})
         .add('src/ts/main.ts')
@@ -71,7 +65,6 @@ var jsdepends = [
     'bower_components/jade/runtime.js',
     'bower_components/mousetrap/mousetrap.js',
     'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js',
-//    'bower_components/babel-polyfill/browser-polyfill.js',
     'build/scripts/duckling_views.js'
 ]
 
@@ -111,13 +104,6 @@ gulp.task('css', function() {
         .pipe(gulp.dest('build/css'));
 });
 
-gulp.task('fonts', function () {
-    return gulp.src([
-        'bower_components/font-awesome/fonts/**/*',
-        'bower_components/bootstrap/fonts/**/*'
-    ]).pipe(gulp.dest('build/fonts'));
-});
-
 gulp.task('babel-helpers', function () {
     return gulp.src('src/')
         .pipe(babel({externalHelpers: true}))
@@ -133,6 +119,12 @@ gulp.task('watch', function () {
         gulp.run('tests');
     });
 });
+
+function moveTask(taskName,fileGlob,dest) {
+    gulp.task(taskName, function() {
+        return gulp.src(fileGlob).pipe(gulp.dest(dest));
+    });
+}
 
 moveTask('fonts', [
     'bower_components/font-awesome/fonts/**/*',
