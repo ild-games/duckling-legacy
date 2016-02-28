@@ -2,6 +2,11 @@ include ../mixins/coupled_form_groups
 
 block drawable_label
 
+div
+    label Inactive? &nbsp;
+    input(type="checkbox" rv-checked="data.inactive")
+br
+
 label Render Priority
 div
     input.form-control(type="text" placeholder="Render Priority" rv-value="data.renderPriority")

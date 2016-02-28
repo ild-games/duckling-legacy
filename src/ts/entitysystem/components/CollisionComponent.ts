@@ -8,10 +8,10 @@ module entityframework.components {
     /**
      * The possible collision types for the game.
      */
-    export enum CollisionType {
-        None,
-        Player,
-        Ground
+    export var CollisionType = {
+        NONE: "none",
+        PLAYER: "player",
+        GROUND: "ground"
     }
 
     /**
@@ -81,7 +81,7 @@ module entityframework.components {
          * CollisionType for the component.
          */
         @observe.Primitive()
-        collisionType : CollisionType;
+        collisionType : string;
 
         /**
          * Constructs a new CollisionComponent.
@@ -90,12 +90,12 @@ module entityframework.components {
          * @param bodyType Collision body type for the component, default value is "none"
          * @param type CollisionType for the component, default value is CollisionType.None
          */
-        constructor (dimensions? : math.Vector, bodyType? : string, type? : CollisionType) {
+        constructor (dimensions? : math.Vector, bodyType? : string, type? : string) {
             super();
 
             this.info = new CollisionShapeInfo(dimensions);
-            this.bodyType = bodyType || "none";
-            this.collisionType = type || CollisionType.None;
+            this.bodyType = bodyType || BodyType.NONE;
+            this.collisionType = type || CollisionType.NONE;
         }
 
         //region Getters and Setters
@@ -112,18 +112,14 @@ module entityframework.components {
      * View Model for the collision component.
      */
     class CollisionViewModel extends framework.ViewModel<CollisionComponent> {
-        private typeVals : Array<number> = [];
         private bodyPicker : controls.SelectControl<string>;
-        private collisionTypePicker : controls.SelectControl<CollisionType>;
+        private collisionTypePicker : controls.SelectControl<string>;
 
         /**
          * Called by the view model when the data has been loaded.
          */
         onDataReady() {
             super.onDataReady();
-            this.setChangeListener(this.data, () => {
-                this.updateCollisionType();
-            });
         }
 
         /**
@@ -132,13 +128,11 @@ module entityframework.components {
         onViewReady() {
             super.onViewReady();
 
-            var typeVals = util.formatters.valuesFromEnum(CollisionType);
-
-            this.collisionTypePicker = new controls.SelectControl<CollisionType>(
+            this.collisionTypePicker = new controls.SelectControl<string>(
                 this,
                 "collisionPicker",
-                typeVals,
-                CollisionType[this.data.collisionType]);
+                this.generateFormattedCollisionTypes(),
+                this.formatCollisionType(this.data.collisionType));
 
             this.collisionTypePicker.callback = (collisionType) => this.onCollisionTypeSelected(this.data, collisionType);
 
@@ -149,14 +143,6 @@ module entityframework.components {
                 this.formatBodyType(this.data.bodyType));
 
             this.bodyPicker.callback = (bodyType) => this.onBodySelected(this.data, bodyType);
-        }
-
-        updateCollisionType() {
-            var pickerValue = this.collisionTypePicker.value;
-            var compValue = CollisionType[this.data.collisionType];
-            if (pickerValue !== compValue) {
-                this.collisionTypePicker.value = compValue;
-            }
         }
 
         private formatBodyType(internal : string) : string {
@@ -172,6 +158,19 @@ module entityframework.components {
             return bodyTypes;
         }
 
+        private formatCollisionType(internal : string) : string {
+            return util.formatters.formatToTitleCase(internal);
+        }
+
+        private generateFormattedCollisionTypes() : { [ s : string ] : string } {
+            var collisionTypes : { [ s : string ] : string } = {};
+            for (var key in CollisionType) {
+                var external = this.formatCollisionType(CollisionType[key]);
+                collisionTypes[external] = CollisionType[key];
+            }
+            return collisionTypes;
+        }
+
         private onBodySelected(component : CollisionComponent, bodyType : string) {
             this.pushCommand(setter(
                 bodyType,
@@ -179,7 +178,7 @@ module entityframework.components {
                 (bodyType) => component.bodyType = bodyType));
         }
 
-        private onCollisionTypeSelected(component : CollisionComponent, collisionType : CollisionType) {
+        private onCollisionTypeSelected(component : CollisionComponent, collisionType : string) {
             this.pushCommand(setter(
                 collisionType,
                 component.collisionType,

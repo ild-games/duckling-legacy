@@ -17,13 +17,17 @@ module entityframework.components {
         @observe.Primitive(Boolean)
         private default : boolean;
 
-        constructor(size? : math.Vector, scale? : number, renderPriority? : number, def? : boolean) {
+        @observe.Primitive(String)
+        private follows : string;
+
+        constructor(size? : math.Vector, scale? : number, renderPriority? : number, def? : boolean, follows? : string) {
             super();
 
             this.size = size || new math.Vector(0, 0);
             this.scale = scale || 1;
             this.renderPriority = renderPriority || 0;
             this.default = def || false;
+            this.follows = follows || null;
         }
     }
 

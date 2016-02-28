@@ -63,6 +63,10 @@ module entityframework.components.drawing {
         }
 
         private transformCanvasDisplayObject(displayObj : createjs.DisplayObject) : createjs.DisplayObject {
+            if (this.inactive) {
+                displayObj = null;
+            }
+
             if (displayObj) {
                 displayObj.x += this.positionOffset.x;
                 displayObj.y += this.positionOffset.y;
