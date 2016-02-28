@@ -2,35 +2,38 @@
   "version": "v4",
   "repo": "borisyankov/DefinitelyTyped",
   "ref": "master",
-  "path": "typings",
-  "bundle": "typings/tsd.d.ts",
+  "path": "typings/tsd",
+  "bundle": "typings/tsd/tsd.d.ts",
   "installed": {
     "bootstrap/bootstrap.d.ts": {
-      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
     },
     "easeljs/easeljs.d.ts": {
-      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
     },
     "jquery/jquery.d.ts": {
-      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
     },
     "tweenjs/tweenjs.d.ts": {
-      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
-    },
-    "es6-promise/es6-promise.d.ts": {
-      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
     },
     "rivets/rivets.d.ts": {
-      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
-    },
-    "createjs-lib/createjs-lib.d.ts": {
-      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
-    },
-    "es6-collections/es6-collections.d.ts": {
-      "commit": "1ffc055e50f0df255da310485a7871c6f894e370"
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
     },
     "node/node.d.ts": {
-      "commit": "6eebd5e90a1cbd6b47b0705ba72dbcd5baf846f3"
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
+    },
+    "createjs/createjs.d.ts": {
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
+    },
+    "soundjs/soundjs.d.ts": {
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
+    },
+    "preloadjs/preloadjs.d.ts": {
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
+    },
+    "createjs-lib/createjs-lib.d.ts": {
+      "commit": "95433230a9913054c57c715e6b91a9ae738d0b97"
     }
   }
 }

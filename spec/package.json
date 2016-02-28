@@ -6,5 +6,8 @@
   "window": {
     "width": 945,
     "height": 645
+  },
+  "dependencies": {
+    "coffeeify": "^2.0.1"
   }
 }

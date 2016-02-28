@@ -1,54 +1,53 @@
-///<reference path="BaseTool.ts"/>
-module editorcanvas.tools {
+import Vector from '../../math/Vector';
+import BaseTool from './BaseTool';
 
-    export class MapDragTool extends BaseTool {
-        private curPos : math.Vector = new math.Vector();
-        private offset : math.Vector = new math.Vector();
-        private isDown : boolean = false;
-        draggedElement = null;
+export default class MapDragTool extends BaseTool {
+    private curPos : Vector = new Vector();
+    private offset : Vector = new Vector();
+    private isDown : boolean = false;
+    draggedElement = null;
 
-        onEvent(event) {
-            switch (event.nativeEvent.type) {
-                case "mousedown":
-                    this.onMouseDown(new math.Vector(event.nativeEvent.clientX, event.nativeEvent.clientY));
-                    break;
-                case "mouseup":
-                    this.onMouseUp();
-                    break;
-                case "mousemove":
-                    this.onMouseMove(new math.Vector(event.nativeEvent.clientX, event.nativeEvent.clientY));
-                    break;
-            }
+    onEvent(event) {
+        switch (event.nativeEvent.type) {
+            case "mousedown":
+            this.onMouseDown(new Vector(event.nativeEvent.clientX, event.nativeEvent.clientY));
+            break;
+            case "mouseup":
+            this.onMouseUp();
+            break;
+            case "mousemove":
+            this.onMouseMove(new Vector(event.nativeEvent.clientX, event.nativeEvent.clientY));
+            break;
         }
+    }
 
-        onMouseDown(position : math.Vector) {
-            this.isDown = true;
-            this.curPos = position;
-            if (this.draggedElement) {
-                this.offset = new math.Vector(this.draggedElement.scrollLeft, this.draggedElement.scrollTop);
-            }
+    onMouseDown(position : Vector) {
+        this.isDown = true;
+        this.curPos = position;
+        if (this.draggedElement) {
+            this.offset = new Vector(this.draggedElement.scrollLeft, this.draggedElement.scrollTop);
         }
+    }
 
-        onMouseUp() {
-            this.isDown = false;
+    onMouseUp() {
+        this.isDown = false;
+    }
+
+    onMouseMove(position : Vector) {
+        if (this.isDown && this.draggedElement) {
+            var scrollToX = this.offset.x + (this.curPos.x - position.x);
+            var scrollToY = this.offset.y + (this.curPos.y - position.y);
+
+            this.draggedElement.scrollLeft = scrollToX;
+            this.draggedElement.scrollTop = scrollToY;
         }
+    }
 
-        onMouseMove(position : math.Vector) {
-            if (this.isDown && this.draggedElement) {
-                var scrollToX = this.offset.x + (this.curPos.x - position.x);
-                var scrollToY = this.offset.y + (this.curPos.y - position.y);
+    get key() : string {
+        return "mapMove";
+    }
 
-                this.draggedElement.scrollLeft = scrollToX;
-                this.draggedElement.scrollTop = scrollToY;
-            }
-        }
-
-        get key() : string {
-            return "mapMove";
-        }
-
-        get label() : string {
-            return "Map Move";
-        }
+    get label() : string {
+        return "Map Move";
     }
 }

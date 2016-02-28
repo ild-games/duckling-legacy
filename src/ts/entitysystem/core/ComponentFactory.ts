@@ -1,21 +1,23 @@
-module entityframework {
+import VMFactory from '../../framework/VMFactory';
+import Component from './Component';
+
+/**
+ * Interface for factories that create all of the objects needed for generically
+ * interacting with components.
+ */
+export interface ComponentFactory extends VMFactory {
+    name : string;
+    displayName : string;
+
     /**
-     * Interface for factories that create all of the objects needed for generically
-     * interacting with components.
+     * Property that is used to determine if the component is polymorphic.  Should
+     * only be used for falsy/truey checks.
      */
-    export interface ComponentFactory extends framework.VMFactory {
-        name : string;
-        displayName : string;
+    isPolymorphic? : boolean;
 
-        /**
-         * Property that is used to determine if the component is polymorphic.  Should
-         * only be used for falsy/truey checks.
-         */
-        isPolymorphic? : boolean;
-
-        /**
-         * Create a new instance of the component.
-         */
-        createComponent() : Component;
-    }
+    /**
+     * Create a new instance of the component.
+     */
+    createComponent() : Component;
 }
+export default ComponentFactory;

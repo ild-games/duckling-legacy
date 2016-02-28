@@ -1,66 +1,70 @@
-///<reference path="../../../util/JsonLoader.ts"/>
-///<reference path="./RectangleShape.ts"/>
-///<reference path="./CircleShape.ts"/>
-module entityframework.components.drawing {
+import SelectControl from '../../../controls/SelectControl';
+import {ObserveObject} from '../../../framework/observe/ObserveDecorators';
+import SimpleObservable from '../../../framework/observe/SimpleObservable';
+import ViewModel from '../../../framework/ViewModel';
+import VMFactory from '../../../framework/VMFactory';
+import {formatToTitleCase, valuesFromEnum} from '../../../util/Formatters';
+import * as serialize from '../../../util/serialize/Decorators';
+import ResourceManager from '../../ResourceManager';
 
-    import observe = framework.observe;
-    import serialize = util.serialize;
+import Drawable from './Drawable';
+import DrawableFactory from './DrawableFactory';
+import DrawableType from './DrawableType';
+import Shape from './Shape';
+import ShapeFactory from './ShapeFactory';
+import ShapeType from './ShapeType';
+import ShapeTypeToFactory from './ShapeTypeToFactory';
 
-    /**
-     * Represents a shape that can be drawn in the game.
-     */
-    @serialize.ProvideClass(ShapeDrawable, "ild::ShapeDrawable")
-    export class ShapeDrawable extends Drawable {
-        @observe.Object()
-        shape : Shape;
+/**
+* Represents a shape that can be drawn in the game.
+*/
+@serialize.ProvideClass(ShapeDrawable, "ild::ShapeDrawable")
+export class ShapeDrawable extends Drawable {
+    @ObserveObject()
+    shape : Shape;
 
-        constructor(key : string, shape? : entityframework.components.drawing.Shape) {
-            super(key);
-            this.shape = shape || null;
-        }
-
-        protected generateCanvasDisplayObject(resourceManager : util.resource.ResourceManager) : createjs.DisplayObject {
-            var displayShape = null;
-            if (this.shape) {
-                displayShape = this.shape.getDrawable();
-            }
-            return displayShape;
-        }
-
-        get type() : DrawableType {
-            return DrawableType.Shape;
-        }
+    constructor(key : string, shape? : Shape) {
+        super(key);
+        this.shape = shape || null;
     }
 
-    export enum ShapeType {
-        Rectangle,
-        Circle
+    protected generateCanvasDisplayObject(resourceManager : ResourceManager) : createjs.DisplayObject {
+        var displayShape = null;
+        if (this.shape) {
+            displayShape = this.shape.getDrawable();
+        }
+        return displayShape;
     }
 
-    export var ShapeTypeToFactory = {
-        Rectangle: new RectangleShapeFactory(),
-        Circle: new CircleShapeFactory()
+    get type() : DrawableType {
+        return DrawableType.Shape;
     }
 
-    export class ShapeDrawableViewModel extends framework.ViewModel<ShapeDrawable> {
-        private shapeTypePicker : controls.SelectControl<ShapeType>;
+    @serialize.Ignore
+    get factory() : DrawableFactory {
+        return new ShapeDrawableFactory();
+    }
+}
 
-        get viewFile() : string {
-            return 'drawables/shape_drawable';
-        }
+export class ShapeDrawableViewModel extends ViewModel<ShapeDrawable> {
+    private shapeTypePicker : SelectControl<ShapeType>;
 
-        constructor() {
-            super();
-            this.registerCallback("add-shape", this.addShape);
-        }
+    get viewFile() : string {
+        return 'drawables/shape_drawable';
+    }
 
-        onViewReady() {
-            super.onViewReady();
-            this.shapeTypePicker = new controls.SelectControl<ShapeType>(
-                this,
-                "selShapeType",
-                util.formatters.valuesFromEnum(ShapeType),
-                ShapeType[ShapeType.Rectangle]);
+    constructor() {
+        super();
+        this.registerCallback("add-shape", this.addShape);
+    }
+
+    onViewReady() {
+        super.onViewReady();
+        this.shapeTypePicker = new SelectControl<ShapeType>(
+            this,
+            "selShapeType",
+            valuesFromEnum(ShapeType),
+            ShapeType[ShapeType.Rectangle]);
 
             if (!this.data.shape) {
                 $(this.findById("divShapeType")).removeClass("gone");
@@ -78,7 +82,7 @@ module entityframework.components.drawing {
             }
         }
 
-        private addShapeVM(shapeFactory : framework.VMFactory) {
+        private addShapeVM(shapeFactory : VMFactory) {
             if (this.data.shape) {
                 this.addChildView(
                     "shapeVM",
@@ -89,7 +93,7 @@ module entityframework.components.drawing {
     }
 
     export class ShapeDrawableFactory implements DrawableFactory {
-        createFormVM() : framework.ViewModel<any> {
+        createFormVM() : ViewModel<any> {
             return new ShapeDrawableViewModel();
         }
 
@@ -97,4 +101,3 @@ module entityframework.components.drawing {
             return new ShapeDrawable(key);
         }
     }
-}

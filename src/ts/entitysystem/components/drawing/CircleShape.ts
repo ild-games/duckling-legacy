@@ -1,49 +1,53 @@
-///<reference path="../../../math/Vector.ts"/>
-///<reference path="Shape.ts"/>
-///<reference path="../../../util/JsonLoader.ts"/>
-module entityframework.components.drawing {
+import ViewModel from '../../../framework/ViewModel';
+import {ObserveObject, ObservePrimitive} from '../../../framework/observe/ObserveDecorators';
+import Vector from '../../../math/Vector';
+import CanvasDrawnElement from '../../../editorcanvas/drawing/CanvasDrawnElement';
+import * as serialize from '../../../util/serialize/Decorators';
+import ShapeFactory from './ShapeFactory';
+import ShapeType from './ShapeType';
+import Shape from './Shape';
 
-    import serialize = util.serialize;
-    import observe = framework.observe;
+/**
+ * A shape that represents a circle.
+ */
+@serialize.ProvideClass(CircleShape, "sf::CircleShape")
+export class CircleShape extends Shape implements CanvasDrawnElement {
+    @ObservePrimitive(Number)
+    radius : number;
 
-    /**
-     * A shape that represents a circle.
-     */
-    @serialize.ProvideClass(CircleShape, "sf::CircleShape")
-    export class CircleShape extends Shape implements editorcanvas.drawing.CanvasDrawnElement {
-        @observe.Primitive(Number)
-        radius : number;
-
-        constructor(radius? : number) {
-            super();
-            this.radius = radius || 0;
-        }
-
-        getDrawable() {
-            var easelCircle = new createjs.Shape();
-            easelCircle.graphics.beginFill(this.fillColor.rgbaStringFormat()).
-                drawCircle(0, 0, this.radius);
-            return easelCircle;
-        }
-
-        get type() : ShapeType {
-            return ShapeType.Circle;
-        }
+    constructor(radius? : number) {
+        super();
+        this.radius = radius || 0;
     }
 
-    export class CircleShapeViewModel extends framework.ViewModel<CircleShape> {
-        get viewFile() : string {
-            return "drawables/circle_shape";
-        }
+    getDrawable() {
+        var easelCircle = new createjs.Shape();
+        easelCircle.graphics.beginFill(this.fillColor.rgbaStringFormat()).
+            drawCircle(0, 0, this.radius);
+        return easelCircle;
     }
 
-    export class CircleShapeFactory implements ShapeFactory {
-        createFormVM() : framework.ViewModel<any> {
-            return new CircleShapeViewModel();
-        }
+    get type() : ShapeType {
+        return ShapeType.Circle;
+    }
 
-        createShape() : Shape {
-            return new CircleShape();
-        }
+    get factory() : ShapeFactory {
+        return new CircleShapeFactory();
+    }
+}
+
+export class CircleShapeViewModel extends ViewModel<CircleShape> {
+    get viewFile() : string {
+        return "drawables/circle_shape";
+    }
+}
+
+export class CircleShapeFactory implements ShapeFactory {
+    createFormVM() : ViewModel<any> {
+        return new CircleShapeViewModel();
+    }
+
+    createShape() : Shape {
+        return new CircleShape();
     }
 }

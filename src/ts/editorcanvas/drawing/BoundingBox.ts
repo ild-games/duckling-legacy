@@ -1,43 +1,41 @@
-///<reference path="../../framework/observe/Observable.ts"/>
+import {RectangleShape} from '../../entitysystem/components/drawing/RectangleShape';
+import SimpleObservable from '../../framework/observe/SimpleObservable';
+import Vector from '../../math/Vector';
+import CanvasDrawnElement from './CanvasDrawnElement';
 
-module editorcanvas.drawing {
+/**
+ * A collision bounding box that can be drawn on the canvas.
+ */
+export default class BoundingBox extends SimpleObservable implements CanvasDrawnElement {
+    private _rectangle : RectangleShape;
+    private _color : string;
 
-    import es_drawing = entityframework.components.drawing;
+    constructor(dimensions : Vector, color : string) {
+        super();
+        this._rectangle = new RectangleShape(dimensions);
+        this._color = color;
+    }
 
-    /**
-     * A collision bounding box that can be drawn on the canvas.
-     */
-    export class BoundingBox extends framework.observe.SimpleObservable implements CanvasDrawnElement {
-        private _rectangle : es_drawing.RectangleShape;
-        private _color : string;
+    getDrawable() : createjs.DisplayObject {
+        var box = new createjs.Shape();
+        var topLeft = new Vector(
+            -(this._rectangle.dimension.x / 2),
+            -(this._rectangle.dimension.y / 2));
+        var topRight = new Vector(topLeft.x + this._rectangle.dimension.x, topLeft.y);
+        var bottomLeft = new Vector(topLeft.x, topLeft.y + this._rectangle.dimension.y);
+        var bottomRight = new Vector(topLeft.x + this._rectangle.dimension.x, topLeft.y + this._rectangle.dimension.y);
 
-        constructor(dimensions : math.Vector, color : string) {
-            super();
-            this._rectangle = new es_drawing.RectangleShape(dimensions);
-            this._color = color;
-        }
-
-        getDrawable() : createjs.DisplayObject {
-            var box = new createjs.Shape();
-            var topLeft = new math.Vector(
+        box.graphics
+            .beginStroke(this._color)
+            .drawRect(
                 -(this._rectangle.dimension.x / 2),
-                -(this._rectangle.dimension.y / 2));
-            var topRight = new math.Vector(topLeft.x + this._rectangle.dimension.x, topLeft.y);
-            var bottomLeft = new math.Vector(topLeft.x, topLeft.y + this._rectangle.dimension.y);
-            var bottomRight = new math.Vector(topLeft.x + this._rectangle.dimension.x, topLeft.y + this._rectangle.dimension.y);
-
-            box.graphics
-                .beginStroke(this._color)
-                .drawRect(
-                    -(this._rectangle.dimension.x / 2),
-                    -(this._rectangle.dimension.y / 2),
-                    this._rectangle.dimension.x,
-                    this._rectangle.dimension.y)
-                .moveTo(topLeft.x, topLeft.y)
-                .lineTo(bottomRight.x, bottomRight.y)
-                .moveTo(topRight.x, topRight.y)
-                .lineTo(bottomLeft.x, bottomLeft.y);
-            return box;
-        }
+                -(this._rectangle.dimension.y / 2),
+                this._rectangle.dimension.x,
+                this._rectangle.dimension.y)
+            .moveTo(topLeft.x, topLeft.y)
+            .lineTo(bottomRight.x, bottomRight.y)
+            .moveTo(topRight.x, topRight.y)
+            .lineTo(bottomLeft.x, bottomLeft.y);
+        return box;
     }
 }

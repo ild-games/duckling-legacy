@@ -1,67 +1,61 @@
-module util {
-    var fs = require('fs');
+import {pathExists, dirname, makedirs} from './Path'
 
+var fs = _require('fs');
+
+/**
+* Describes the result of saving a json object.
+*/
+export interface SaveResult {
+    isSuccess : boolean;
+    error : any;
+}
+
+/**
+ * The purpose of JsonLoader is to provide a level of indirection when loading JSON.  In the future
+ * we may load json from a server or database. Currently it loads JSON from the file system.
+ */
+export class JsonLoader {
     /**
-     * Describes the result of saving a json object.
-     */
-    export interface SaveResult {
-        isSuccess : boolean;
-        error : any;
-    }
-
-    interface PropertDescriptor {
-        value : any;
-        enumerable : boolean;
-        configurable : boolean;
-        writable : boolean
-    }
-
-    /**
-     * JsonLoader is used to retrieve json strings using a provided path.
-     */
-    export class JsonLoader {
-        /**
-         * Return a promise that resolves to a json string containing the contents of the path.
-         * @param path Path to retrieve data from.
-         * @returns Promise resolving to the json string if it exists or null if it does not.
-         */
-        getJsonFromPath(path : string) : Promise<string> {
-            return util.path.pathExists(path).then(function (exists) {
-                if (exists) {
-                    return new Promise<string>(function (resolve, reject) {
-                        fs.readFile(path, function(err, data) {
-                            if (err) {
-                                reject({ error : true});
-                            } else {
-                                resolve(data);
-                            }
-                        });
-                    });
-                } else {
-                    return null;
-                }
-            });
-        }
-
-        /**
-         * Save a json object to the specified path.
-         * @param path Path the object will be saved to.
-         * @param json String of Json that is being saved.
-         * @returns Promise that resolves to a SaveResult describing the result of the save action.
-         */
-        saveJsonToPath(path : string, json : string) : Promise<SaveResult> {
-            var dirname = util.path.dirname(path);
-            return util.path.makedirs(dirname).then(function() {
-                return new Promise<SaveResult>(function (resolve, reject) {
-                    fs.writeFile(path,json, function (err) {
+    * Return a promise that resolves to a json string containing the contents of the path.
+    * @param path Path to retrieve data from.
+    * @returns Promise resolving to the json string if it exists or null if it does not.
+    */
+    getJsonFromPath(path : string) : Promise<string> {
+        return pathExists(path).then(function (exists) {
+            if (exists) {
+                return new Promise<string>(function (resolve, reject) {
+                    fs.readFile(path, function(err, data) {
                         if (err) {
-                            reject({isSuccess : false, error : err});
+                            reject({ error : true});
                         } else {
-                            resolve({isSuccess : true, error : null});
+                            resolve(data);
                         }
                     });
                 });
+            } else {
+                return null;
+            }
+        });
+    }
+
+    /**
+    * Save a json object to the specified path.
+    * @param path Path the object will be saved to.
+    * @param json String of Json that is being saved.
+    * @returns Promise that resolves to a SaveResult describing the result of the save action.
+    */
+    saveJsonToPath(path : string, json : string) : Promise<SaveResult> {
+        var dir = dirname(path);
+        return makedirs(dir).then(function() {
+            return new Promise<SaveResult>(function (resolve, reject) {
+                fs.writeFile(path,json, function (err) {
+                    if (err) {
+                        reject({isSuccess : false, error : err});
+                    } else {
+                        resolve({isSuccess : true, error : null});
+                    }
+                });
             });
-        }
+        });
     }
 }

@@ -1,45 +1,44 @@
-///<reference path="../core/Component.ts"/>
-module entityframework.components {
+import ViewModel from '../../framework/ViewModel';
+import {ObserveObject} from '../../framework/observe/ObserveDecorators';
+import Vector from '../../math/Vector';
+import Component from '../core/Component';
+import ComponentFactory from '../core/ComponentFactory';
 
-    import observe = framework.observe;
-    import serialize = util.serialize;
+export class PositionComponent extends Component {
+    @ObserveObject()
+    position : Vector;
 
-    export class PositionComponent extends Component {
-        @observe.Object()
-        position : math.Vector;
+    @ObserveObject()
+    velocity : Vector;
 
-        @observe.Object()
-        velocity : math.Vector;
+    constructor (position? : Vector, velocity? : Vector) {
+        super();
+        this.position = position || new Vector();
+        this.velocity = velocity || new Vector();
+    }
+}
 
-        constructor (position? : math.Vector, velocity? : math.Vector) {
-            super();
-            this.position = position || new math.Vector();
-            this.velocity = velocity || new math.Vector();
-        }
+class PositionViewModel extends ViewModel<PositionComponent> {
+    get viewFile() : string {
+        return "components/position";
+    }
+}
+
+export class PositionComponentFactory implements ComponentFactory {
+
+    get displayName() {
+        return "Position";
     }
 
-    class PositionViewModel extends framework.ViewModel<PositionComponent> {
-        get viewFile() : string {
-            return "components/position";
-        }
+    get name() {
+        return "position";
     }
 
-    export class PositionComponentFactory implements ComponentFactory {
+    createFormVM() : ViewModel<any> {
+        return new PositionViewModel();
+    }
 
-        get displayName() {
-            return "Position";
-        }
-
-        get name() {
-            return "position";
-        }
-
-        createFormVM():framework.ViewModel<any> {
-            return new PositionViewModel();
-        }
-
-        createComponent():entityframework.Component {
-            return new PositionComponent();
-        }
+    createComponent() : Component {
+        return new PositionComponent();
     }
 }

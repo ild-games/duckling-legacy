@@ -1,31 +1,28 @@
-module framework.dependencies {
+/**
+* Initialize the mousetrap key bindings.
+* @param window window that mousetrap is being initialized in.
+* @param context Context that the key bindings should act on.
+*/
+export function setupMouestrapBindings(window, context) {
+    var mousetrap = window["Mousetrap"];
+    var commandQueue = context.commandQueue;
 
-    /**
-     * Initialize the mousetrap key bindings.
-     * @param window window that mousetrap is being initialized in.
-     * @param context Context that the key bindings should act on.
-     */
-    export function setupMouestrapBindings(window, context) {
-        var mousetrap = window["Mousetrap"];
-        var commandQueue : framework.command.CommandQueue = context.commandQueue;
+    mousetrap.bind(["command+z", "ctrl+z"], (e) => {
+        commandQueue.undo();
 
-        mousetrap.bind(["command+z", "ctrl+z"], (e) => {
-            commandQueue.undo();
+        //Prevent the browser from intercepting the event and using its own undo stack
+        return false;
+    });
 
-            //Prevent the browser from intercepting the event and using its own undo stack
-            return false;
-        });
+    mousetrap.bind(["command+y", "ctrl+y"], (e) => {
+        commandQueue.redo();
 
-        mousetrap.bind(["command+y", "ctrl+y"], (e) => {
-            commandQueue.redo();
+        //Prevent the browser from intercepting the event and using its own undo stack
+        return false;
+    });
 
-            //Prevent the browser from intercepting the event and using its own undo stack
-            return false;
-        });
-
-        //Prevent mousetrap from ignoring keybindings in input controls.
-        mousetrap.prototype.stopCallback = function () {
-            return false;
-        }
+    //Prevent mousetrap from ignoring keybindings in input controls.
+    mousetrap.prototype.stopCallback = function () {
+        return false;
     }
 }
