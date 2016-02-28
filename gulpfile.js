@@ -11,7 +11,6 @@ var source = require('vinyl-source-stream')
 var browserify = require('browserify');
 var tsify = require('tsify');
 var babelify = require('babelify');
-var rowflow = require('browserify-row-flow');
 var coffeeify = require('coffeeify');
 
 function moveTask(taskName,fileName,dest) {
@@ -36,13 +35,21 @@ gulp.task('typescript', function () {
 });
 
 gulp.task('spec', function() {
-    return browserify()
-        .add('spec/specmain.coffee')
-        .transform(coffeeify)
+    return browserify({
+            paths : ['./src/']
+        })
+        .add('spec/ts/specmain.js')
+        .add('typings/typings.d.ts')
+        .plugin('tsify', {target : "es6"})
+        .transform(babelify,
+            {
+                presets : ["es2015"],
+                extensions : [".js", ".ts"]
+            })
         .bundle()
         .pipe(source('spec.js'))
         .pipe(gulp.dest('build/spec/'));
-})
+});
 
 gulp.task('views', function () {
     return gulp.src('src/jade/**/*.jade')
@@ -90,6 +97,15 @@ gulp.task('index', function() {
         .pipe(gulp.dest('build'));
 });
 
+gulp.task('specrunner', function() {
+    return gulp.src('spec/SpecRunner.jade')
+        .pipe(jade({
+            locals : DEPEND_LOCALS,
+            pretty : true
+        }))
+        .pipe(gulp.dest('build/spec'));
+});
+
 gulp.task('css', function() {
     return gulp.src('src/sass/main.scss')
         .pipe(sass())
@@ -111,7 +127,12 @@ gulp.task('babel-helpers', function () {
 })
 
 gulp.task('watch', function () {
-
+    watch('src/**/*', function() {
+        gulp.run('default');
+    });
+    watch('spec/**/*', function() {
+        gulp.run('tests');
+    });
 });
 
 moveTask('fonts', [
@@ -120,15 +141,25 @@ moveTask('fonts', [
 ], 'build/fonts');
 moveTask('resources', 'resources/**', 'build/resources');
 moveTask('package', 'package.json', 'build/');
-moveTask('specrunner', 'spec/SpecRunner.html', 'build/');
+moveTask('speckpackage', 'spec/package.json', 'build/spec');
 
-gulp.task('default', [
+gulp.task('tests', [
+    'spec',
+    'specrunner',
+    'speckpackage'
+]);
+
+gulp.task('duckling', [
     'typescript',
     'views',
     'index',
     'css',
     'fonts',
     'package',
-    'specrunner',
-    'resources'
+    'resources',
+]);
+
+gulp.task('default', [
+    'duckling',
+    'tests'
 ]);

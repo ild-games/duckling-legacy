@@ -7,9 +7,11 @@ fi
 
 if [ "$1" == "test" ]; then
     echo Testing Duckling
-    grunt
-    (cd build/spec; ../../node_modules/nw/bin/nw)
+    gulp
+    (cd build/spec; ../../node_modules/nw/bin/nw) &
+    gulp watch
 else
-    grunt
-    (cd build; ../node_modules/nw/bin/nw)
+    gulp
+    (cd build; ../node_modules/nw/bin/nw) &
+    gulp watch
 fi

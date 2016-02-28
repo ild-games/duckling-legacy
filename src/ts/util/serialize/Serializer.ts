@@ -82,17 +82,15 @@ function getObjectAfterKeyOverrides(value) {
 //endregion
 
 //region deserialize implementation
-export module errors {
-    /**
-    * Create an error describing a mismatch between the typed object being
-    * deserialized and the json object being read.
-    * @param keyName Key that is the source of the error.
-    * @param jsonValue Value found in the json object.
-    * @param jsValue Value found in the typed object.
-    */
-    export function createInvalidJSONError(fullKeyPath, jsonValue, jsValue) {
-        return Error(`Unable to serialize ${fullKeyPath}`);
-    }
+/**
+* Create an error describing a mismatch between the typed object being
+* deserialized and the json object being read.
+* @param keyName Key that is the source of the error.
+* @param jsonValue Value found in the json object.
+* @param jsValue Value found in the typed object.
+*/
+export function createInvalidJSONError(fullKeyPath, jsonValue, jsValue) {
+    return Error(`Unable to serialize ${fullKeyPath}`);
 }
 
 /**
@@ -254,7 +252,7 @@ export class SerializationContext {
                 result = this.initChildren(dataValue, dataValue);
                 break;
             case DeserializationAction.Error:
-                throw errors.createInvalidJSONError(this.keyStack.join("."), dataValue, instanceValue);
+                throw createInvalidJSONError(this.keyStack.join("."), dataValue, instanceValue);
             case DeserializationAction.Unknown:
                 throw Error("Unknown deserialization action");
         }

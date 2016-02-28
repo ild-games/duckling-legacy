@@ -1,69 +1,69 @@
-module helpers {
 
-    import observe = framework.observe;
-    import serialize = util.serialize;
+import {ObservePrimitive, ObserveObject} from '../../src/ts/framework/observe/ObserveDecorators';
+import SimpleObservable from '../../src/ts/framework/observe/SimpleObservable';
+import {CustomSerializer} from '../../src/ts/util/serialize/CustomSerializer';
+import {SimpleObservableA, makeSimpleObservableTree} from './ObservableTestHelpers';
 
-    export class ObservableTypedRoot extends observe.SimpleObservable {
-        @ObserveObject()
-        object : SimpleObservableA;
+export class ObservableTypedRoot extends SimpleObservable {
+    @ObserveObject()
+    object : SimpleObservableA;
 
-        @ObservePrimitive()
-        array : number[];
+    @ObservePrimitive()
+    array : number[];
 
-        @ObservePrimitive()
-        nill : any;
+    @ObservePrimitive()
+    nill : any;
 
-        @ObservePrimitive()
-        undef : any;
+    @ObservePrimitive()
+    undef : any;
 
-        @ObservePrimitive()
-        primitive : number;
+    @ObservePrimitive()
+    primitive : number;
 
-        aMethod() {
-            return {};
-        }
-
-        constructor() {
-            super();
-            this.object = makeSimpleObservableTree(2);
-            this.array = [1,2,3,4];
-            this.nill = null;
-            this.undef = undefined;
-            this.primitive = 424242;
-        }
+    aMethod() {
+        return {};
     }
 
-    export class SimpleCustomSerializer implements serialize.CustomSerializer {
-        toJSON() {
-            return "";
-        }
+    constructor() {
+        super();
+        this.object = makeSimpleObservableTree(2);
+        this.array = [1,2,3,4];
+        this.nill = null;
+        this.undef = undefined;
+        this.primitive = 424242;
+    }
+}
 
-        fromJSON(object) {
-            return object;
-        }
+export class SimpleCustomSerializer implements CustomSerializer {
+    toJSON() {
+        return "";
     }
 
-    export class SimpleTypedRoot {
-        object : SimpleObservableA;
+    fromJSON(object) {
+        return object;
+    }
+}
 
-        array : number[];
+export class SimpleTypedRoot {
+    object : SimpleObservableA;
 
-        nill : any;
+    array : number[];
 
-        undef : any;
+    nill : any;
 
-        primitive : number;
+    undef : any;
 
-        aMethod() {
-            return {};
-        }
+    primitive : number;
 
-        constructor() {
-            this.object = makeSimpleObservableTree(2);
-            this.array = [1,2,3,4];
-            this.nill = null;
-            this.undef = undefined;
-            this.primitive = 42;
-        }
+    aMethod() {
+        return {};
+    }
+
+    constructor() {
+        this.object = makeSimpleObservableTree(2);
+        this.array = [1,2,3,4];
+        this.nill = null;
+        this.undef = undefined;
+        this.primitive = 42;
     }
 }
