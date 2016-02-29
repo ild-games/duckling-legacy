@@ -1,5 +1,6 @@
 import Command from '../../framework/command/Command';
 import Context from '../../framework/context/Context';
+import RivetsViewModel from '../../framework/RivetsViewModel';
 import ViewModel from '../../framework/ViewModel';
 import ListAdapter from '../../framework/listvm/ListAdapter';
 import ListVM from '../../framework/listvm/ListVM';
@@ -17,7 +18,7 @@ interface ComponentType {
     vm : ViewModel<any>;
 }
 
-export class EntityEditorVM extends  ViewModel<EntitySystem> implements ListAdapter<Component> {
+export class EntityEditorVM extends RivetsViewModel<EntitySystem> implements ListAdapter<Component> {
     //Field that exist for rivets bindings
     private _currentEntityName : string = "Select Entity";
     private _currentEntity : Entity;

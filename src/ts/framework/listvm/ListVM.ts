@@ -1,12 +1,12 @@
-import ViewModel from '../ViewModel';
+import RivetsViewModel from '../RivetsViewModel';
 import ListAdapter from './ListAdapter';
 
 /**
- * ViewModel that can be used to render a list of complex items. Each item
- * will get its own ViewModel.  Consumers of ListVM should implement the
+ * RivetsViewModel that can be used to render a list of complex items. Each item
+ * will get its own RivetsViewModel.  Consumers of ListVM should implement the
  * ListAdapter<T> interface.
  */
-export default class ListVM extends ViewModel<ListAdapter<any>> {
+export default class ListVM extends RivetsViewModel<ListAdapter<any>> {
     private _ids : string[];
     private _indexes : {[id:string] : number};
     private _nextID : number = 0;

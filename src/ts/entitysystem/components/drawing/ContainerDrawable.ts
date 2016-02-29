@@ -3,7 +3,7 @@ import Command from '../../../framework/command/Command';
 import DataChangeEvent from '../../../framework/observe/DataChangeEvent';
 import {ObserveObject} from '../../../framework/observe/ObserveDecorators';
 import {ObservableArray, ObservableArrayChanged} from '../../../framework/observe/ObservableArray';
-import ViewModel from '../../../framework/ViewModel';
+import RivetsViewModel from '../../../framework/RivetsViewModel';
 import * as serialize from '../../../util/serialize/Decorators';
 import * as map from '../../core/Map';
 import ResourceManager from '../../ResourceManager';
@@ -250,11 +250,11 @@ class AddDrawableCommand implements Command {
 }
 
 export class ContainerDrawableFactory implements DrawableFactory {
-    createFormVM() : ViewModel<any> {
+    createFormVM() {
         return new ContainerDrawableViewModel();
     }
 
-    createDrawable(key : string) : Drawable {
+    createDrawable(key : string) {
         return new ContainerDrawable(key);
     }
 }

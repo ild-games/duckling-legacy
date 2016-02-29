@@ -70,6 +70,11 @@ export default class ViewModel<T> {
         this._htmlRoot[DUCKLING_VM_KEY] = this;
 
         this.render();
+
+        this.forEachChild((child, childID) => {
+            child.attach(this.findById(childID));
+        });
+
         this._attached = true;
 
         this.log("View Ready");
@@ -107,18 +112,13 @@ export default class ViewModel<T> {
     /**
      * Renders the ViewModel's template and binds the model to the view.
      */
-    private render() {
+    protected render() {
         this.log("Rendered");
 
         if (this.rootCSSClass !== "") {
             this._htmlRoot.classList.add(this.rootCSSClass);
         }
-        this._htmlRoot.innerHTML = this._context.views.getTemplate(this.viewFile).call(this, this);
-        this._rivetsBinding = this._context.rivets.bind(this._htmlRoot, this);
-
-        this.forEachChild((child, childID) => {
-            child.attach(this.findById(childID));
-        });
+        //Note: The child class will actually render the content
     }
 
     /**
@@ -147,11 +147,10 @@ export default class ViewModel<T> {
      * Remove the ViewModel from the page.
      */
     detach() {
+        //Note: The child class will override this method to detach the view
         if (this._attached) {
             this._attached = false;
             this.forEachChild((child) => child.detach());
-            this._rivetsBinding.unbind();
-            this._htmlRoot.innerHTML = "";
             this._htmlRoot[DUCKLING_VM_KEY] = null;
             if (this.rootCSSClass) {
                 this._htmlRoot.classList.remove(this.rootCSSClass);
@@ -160,7 +159,7 @@ export default class ViewModel<T> {
             this.log("Detach");
             this.onDetach();
         }
-    };
+    }
 
     /**
      * Destroy the ViewModel.  After this is called the view should never be reused.
@@ -199,14 +198,6 @@ export default class ViewModel<T> {
      */
     onDestroy() {
 
-    }
-
-    /**
-     * Child classes should implement this
-     * @returns A string defining the view used by the ViewModel.
-     */
-    get viewFile() : string {
-        return "no_view_defined";
     }
 
     /**

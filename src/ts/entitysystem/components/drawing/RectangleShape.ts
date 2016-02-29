@@ -1,4 +1,4 @@
-import ViewModel from '../../../framework/ViewModel';
+import RivetsViewModel from '../../../framework/RivetsViewModel';
 import {ObserveObject} from '../../../framework/observe/ObserveDecorators';
 import Vector from '../../../math/Vector';
 import CanvasDrawnElement from '../../../editorcanvas/drawing/CanvasDrawnElement';
@@ -40,18 +40,18 @@ export class RectangleShape extends Shape implements CanvasDrawnElement {
     }
 }
 
-export class RectangleShapeViewModel extends ViewModel<RectangleShape> {
+export class RectangleShapeViewModel extends RivetsViewModel<RectangleShape> {
     get viewFile() : string {
         return "drawables/rectangle_shape";
     }
 }
 
 export class RectangleShapeFactory implements ShapeFactory {
-    createFormVM() : ViewModel<any> {
+    createFormVM() {
         return new RectangleShapeViewModel();
     }
 
-    createShape() : Shape {
+    createShape() {
         return new RectangleShape();
     }
 }

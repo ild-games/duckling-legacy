@@ -1,4 +1,4 @@
-import ViewModel from '../../../framework/ViewModel';
+import RivetsViewModel from '../../../framework/RivetsViewModel';
 import VMFactory from '../../../framework/VMFactory';
 import {ObserveObject, ObservePrimitive} from '../../../framework/observe/ObserveDecorators';
 import SimpleObservable from '../../../framework/observe/SimpleObservable';
@@ -29,7 +29,7 @@ export class DrawableComponent extends Component {
     }
 }
 
-class DrawableViewModel extends ViewModel<DrawableComponent> {
+class DrawableViewModel extends RivetsViewModel<DrawableComponent> {
     private drawableTypeControl : DrawableTypeControl;
 
     get viewFile() : string {
@@ -87,7 +87,7 @@ export class DrawableComponentFactory implements ComponentFactory {
         return "drawable";
     }
 
-    createFormVM() : ViewModel<any> {
+    createFormVM() : RivetsViewModel<any> {
         return new DrawableViewModel();
     }
 

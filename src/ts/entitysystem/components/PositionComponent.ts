@@ -1,4 +1,4 @@
-import ViewModel from '../../framework/ViewModel';
+import RivetsViewModel from '../../framework/RivetsViewModel';
 import {ObserveObject} from '../../framework/observe/ObserveDecorators';
 import Vector from '../../math/Vector';
 import Component from '../core/Component';
@@ -18,7 +18,7 @@ export class PositionComponent extends Component {
     }
 }
 
-class PositionViewModel extends ViewModel<PositionComponent> {
+class PositionViewModel extends RivetsViewModel<PositionComponent> {
     get viewFile() : string {
         return "components/position";
     }
@@ -34,11 +34,11 @@ export class PositionComponentFactory implements ComponentFactory {
         return "position";
     }
 
-    createFormVM() : ViewModel<any> {
+    createFormVM() {
         return new PositionViewModel();
     }
 
-    createComponent() : Component {
+    createComponent() {
         return new PositionComponent();
     }
 }

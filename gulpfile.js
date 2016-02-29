@@ -19,7 +19,7 @@ gulp.task('typescript', function () {
         .transform(babelify,
             {
                 presets : ["es2015"],
-                extensions : [".ts"]
+                extensions : [".ts", ".ts", ".tsx"]
             })
         .bundle()
         .pipe(exorcist('build/scripts/bundle/main.js.map'))
@@ -37,7 +37,7 @@ gulp.task('spec', function() {
         .transform(babelify,
             {
                 presets : ["es2015"],
-                extensions : [".js", ".ts"]
+                extensions : [".js", ".ts", ".tsx"]
             })
         .bundle()
         .pipe(source('spec.js'))
@@ -65,6 +65,8 @@ var jsdepends = [
     'bower_components/jade/runtime.js',
     'bower_components/mousetrap/mousetrap.js',
     'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js',
+    'bower_components/react/react.js',
+    'bower_components/react/react-dom.js',
     'build/scripts/duckling_views.js'
 ]
 
