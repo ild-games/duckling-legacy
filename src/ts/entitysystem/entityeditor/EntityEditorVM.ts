@@ -57,17 +57,14 @@ export class EntityEditorVM extends RivetsViewModel<EntitySystem> implements Lis
 
     onViewReady() {
         super.onViewReady();
-        this.selectedEntityPicker = new SelectControl(this, "entityNames", this.getEntities(), "");
+        this.selectedEntityPicker = new SelectControl<String>(this, "entityNames", this.getEntities(), "");
         this.selectedEntityPicker.callback = () => this._selectedEntity.entityKey = this.selectedEntityPicker.value;
-        this.addComponentPicker = new SelectControl(this, "componentsToAddPicker",{},"");
+        this.addComponentPicker = new SelectControl<String>(this, "componentsToAddPicker",{},"");
     }
 
     private deleteEntity() {
         this._context.commandQueue.pushCommand(
             new DeleteEntityCommand(this.data, this, this._selectedEntity.entityKey, this._currentEntity));
-        //this.selectEntity("");
-        //this.data.removeEntity(this._selectedEntity.entityKey);
-        //this._selectedEntity.entityKey = "";
     }
 
     addComponentFromSelect() {

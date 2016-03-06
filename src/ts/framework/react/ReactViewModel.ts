@@ -1,3 +1,6 @@
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+
 import Observable from "../observe/Observable";
 import ViewModel from "../ViewModel";
 import DucklingProps from "./DucklingProps";

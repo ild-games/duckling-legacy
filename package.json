@@ -25,11 +25,13 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-watch": "^4.3.5",
     "jasmine-core": "~2.4.1",
+    "material-ui": "^0.15.0-alpha.1",
     "nw": "~0.12.3",
+    "react": "^0.14.7",
     "sightglass": "git://github.com/nopnop/sightglass.git#fixRivetsMemoryLeak",
     "tsd": "~0.6.5",
-    "tsify": "^0.13.2",
-    "typescript": "~1.7.5",
+    "tsify": "git+https://github.com/joelday/tsify",
+    "typescript": "^1.8.0",
     "vinyl-source-stream": "^1.1.0"
   }
 }

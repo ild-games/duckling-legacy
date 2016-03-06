@@ -1,5 +1,10 @@
 var gui = _require("nw.gui");
 
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import {RaisedButton, List, ListItem, Avatar} from "material-ui";
+import {FileFolder} from "material-ui/lib/svg-icons";
+
 import Context from "../framework/context/Context";
 import ReactViewModel from "../framework/react/ReactViewModel";
 import DucklingComponent from '../framework/react/DucklingComponent';
@@ -20,37 +25,47 @@ interface ProjectComponentProps {
     key : string,
     data : ProjectModel
 
-    onClick(event : MouseEvent);
+    onClick();
 }
 class ProjectComponent extends React.Component<ProjectComponentProps, any> {
     render() {
         return (
-            <li onClick={this.props.onClick}>
-                <div className="title">{this.props.data.title}</div>
-                <div className="path">{this.props.data.path}</div>
-            </li>
+            <ListItem
+                primaryText={this.props.data.title}
+                secondaryText={this.props.data.path}
+                leftAvatar={<Avatar icon={<FileFolder />} />}
+                onClick={this.props.onClick} />
         );
     }
-
 }
 
-interface ProjectListParams {
+interface ProjectListProps {
     projects : ProjectModel [];
 
     openProject(project : ProjectModel);
 }
-class ProjectListComponent extends React.Component<ProjectListParams,any> {
+class ProjectListComponent extends React.Component<ProjectListProps,any> {
+    private styles = {
+        projectList: {
+            width: "375px",
+            overflowY: "auto",
+            overflowX: "hidden",
+            height: "100%"
+        }
+    };
+
     render() {
         return (
-            <ul className="project-list">
+            <List style={this.styles.projectList}>
                 {this.props.projects.map((project) => {
-                    return <ProjectComponent
-                        key={project.path}
-                        data={project}
-                        onClick={() => this.props.openProject(project)}
-                    />;
-                })};
-            </ul>
+                    return (
+                        <ProjectComponent
+                            key={project.path}
+                            data={project}
+                            onClick={() => this.props.openProject(project)} />
+                    );
+                })}
+            </List>
         );
     }
 }
@@ -59,7 +74,7 @@ interface SplashScreenState {
     projects : ProjectModel [];
     version : string;
 }
-export default class SplashScreenComponent extends DucklingComponent<any, SplashScreenState> {
+export default class SplashScreenView extends DucklingComponent<any, SplashScreenState> {
     private fileDialog : FileDialog;
 
     protected onCreate() {
@@ -78,9 +93,11 @@ export default class SplashScreenComponent extends DucklingComponent<any, Splash
         return (
             <div className="splash-screen">
                 <div className="left-section">
-                    <ProjectListComponent projects={this.state.projects} openProject={(project) => this.openProject(project) } />
+                    <ProjectListComponent
+                        projects={this.state.projects}
+                        openProject={(project) => this.openProject(project) } />
                     <div className="actions">
-                        <a onClick={(event) => this.newProject(event)}> NEW PROJECT </a>
+                        <RaisedButton onMouseUp={(event) => this.newProject(event)} label="NEW PROJECT" />
                     </div>
                 </div>
                 <div className="right-section">
@@ -149,5 +166,5 @@ export default class SplashScreenComponent extends DucklingComponent<any, Splash
 }
 
 export function SplashScreenVMFactory() {
-    return new ReactViewModel(SplashScreenComponent);
+    return new ReactViewModel(SplashScreenView);
 }

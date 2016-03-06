@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import Context from "../context/Context";
 import DucklingContext from "./DucklingContext";
 import DucklingProps from "./DucklingProps";

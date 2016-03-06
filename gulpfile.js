@@ -11,15 +11,23 @@ var source = require('vinyl-source-stream')
 var browserify = require('browserify');
 var tsify = require('tsify');
 var babelify = require('babelify');
+var typescript = require('typescript');
 
 gulp.task('typescript', function () {
-    return browserify({debug : true})
+    return browserify({
+            debug : true,
+            paths : ['./node_modules']
+        })
         .add('src/ts/main.ts')
-        .plugin('tsify', {target : "es6"})
+        .plugin('tsify',
+            {
+                target : "es6",
+                typescript: typescript
+            })
         .transform(babelify,
             {
                 presets : ["es2015"],
-                extensions : [".ts", ".ts", ".tsx"]
+                extensions : [".js", ".ts", ".tsx"]
             })
         .bundle()
         .pipe(exorcist('build/scripts/bundle/main.js.map'))
@@ -33,7 +41,11 @@ gulp.task('spec', function() {
         })
         .add('spec/ts/specmain.js')
         .add('typings/typings.d.ts')
-        .plugin('tsify', {target : "es6"})
+        .plugin('tsify',
+            {
+                target : "es6",
+                typescript : typescript
+            })
         .transform(babelify,
             {
                 presets : ["es2015"],
@@ -65,8 +77,6 @@ var jsdepends = [
     'bower_components/jade/runtime.js',
     'bower_components/mousetrap/mousetrap.js',
     'bower_components/EaselJS/lib/easeljs-0.8.2.combined.js',
-    'bower_components/react/react.js',
-    'bower_components/react/react-dom.js',
     'build/scripts/duckling_views.js'
 ]
 

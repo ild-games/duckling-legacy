@@ -23,7 +23,5 @@
     "rivets": "~0.8.1",
     "mousetrap": "~1.5.3",
     "babel-polyfill": "^0.0.1",
-    "react": "^0.14.7",
-    "material-ui": "^0.14.4"
   }
 }
