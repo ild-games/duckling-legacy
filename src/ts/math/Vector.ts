@@ -1,5 +1,5 @@
 import CommandQueue from '../framework/command/CommandQueue';
-import {setter} from '../framework/command/SetterCommand';
+import createSetter from '../framework/command/CreateSetter';
 import SimpleObservable from '../framework/observe/SimpleObservable';
 import {ObservePrimitive} from '../framework/observe/ObserveDecorators';
 
@@ -30,14 +30,14 @@ export default class Vector extends SimpleObservable {
      * @return A function that takes in an x and y to set for this vector and pushes it onto the command queue.
      */
     createSetter(commands : CommandQueue) : (x: number, y: number) => void {
-        var xSymbol = Symbol();
-        var ySymbol = Symbol();
+        var xSetter = createSetter(commands, this, "x");
+        var ySetter = createSetter(commands, this, "y");
         return (x : number, y : number) => {
             if (x !== this.x) {
-                commands.pushCommand(setter(x, this.x, (x) => this.x = x, xSymbol));
+                xSetter(x);
             }
             if (y !== this.y) {
-                commands.pushCommand(setter(y, this.y, (y) => this.y = y, ySymbol));
+                ySetter(y);
             }
         }
     }
