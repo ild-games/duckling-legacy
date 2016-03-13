@@ -1,7 +1,9 @@
 /**
-* An object implementing the Command interface describes an undoable task.
-*/
+ * An object implementing the Command interface describes an undoable task.
+ */
 interface Command {
+    id? : symbol;
+
     /**
     * Perform the action encapsulated by the command.
     */
