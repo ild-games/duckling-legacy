@@ -2,7 +2,6 @@
   "ambientDependencies": {
     "material-ui": "github:DefinitelyTyped/DefinitelyTyped/material-ui/material-ui.d.ts#745bc4b343672b6ac9881d50b51478926c8a658c",
     "react": "github:DefinitelyTyped/DefinitelyTyped/react/react.d.ts#945ebfe049964e429c2530971b9081f3c0f611df",
-    "react-dom": "github:DefinitelyTyped/DefinitelyTyped/react/react-dom.d.ts#ca5bfe76d2d9bf6852cbc712d9f3e0047c93486e",
-    "react-native": "github:DefinitelyTyped/DefinitelyTyped/react-native/react-native.d.ts#52270b07349ce82b720c9e79a0dfb992dc89c1d8"
+    "react-dom": "github:DefinitelyTyped/DefinitelyTyped/react/react-dom.d.ts#ca5bfe76d2d9bf6852cbc712d9f3e0047c93486e"
   }
 }

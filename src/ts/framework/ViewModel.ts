@@ -3,22 +3,18 @@ import Context from './context/Context';
 import Observable from './observe/Observable';
 import DataChangeEvent from './observe/DataChangeEvent';
 import DataChangeCallback from './observe/DataChangeCallback';
+import DataObservations from './observe/DataObservations';
 
 var nextId : number = 0;
 
 const DUCKLING_VM_KEY = "ducklingViewModel";
-
-interface Observation {
-    object : Observable<any>;
-    callback : DataChangeCallback<any>;
-}
 
 /**
  * A ViewModel is responsible for responding to user actions and population the view
  * with information from the model.
  */
 export default class ViewModel<T> {
-    private dataObservations : Observation [] = [];
+    private dataObservations : DataObservations = new DataObservations();
     private _data : T;
 
     protected _children : {[id : string]:ViewModel<any>} = {};
@@ -166,7 +162,7 @@ export default class ViewModel<T> {
      */
      destroy() {
          this.removeChildViews();
-         this.removeChangeListeners();
+         this.dataObservations.removeChangeListeners();
          this.log("Destroyed");
          this.onDestroy();
      }
@@ -227,49 +223,25 @@ export default class ViewModel<T> {
     }
 
     /**
-     * Add a change listner to the object. The change listner will automatically be cleaned up when the object is
-     * destroyed.
-     * @param object Object that will be observed.
-     * @param callback Callback that will be fired on data change.
+     * @see DataObservations::setChangeListener
      */
     setChangeListener<T extends DataChangeEvent>(object : Observable<T>, callback : DataChangeCallback<T>) {
-        if (this.dataObservations === null) {
-            this.dataObservations = [];
-        }
-
-        this.dataObservations.push({
-            object: object,
-            callback: callback
-        });
-
-        object.addChangeListener(callback);
+        this.dataObservations.setChangeListener(object, callback);
     }
 
     /**
-     * Remove all of the attached change listeners.
+     * @see DataObservations::removeChangeListeners
      */
-    protected removeChangeListeners() {
-        for (var i = 0; i < this.dataObservations.length; i++) {
-            var observation = this.dataObservations[i];
-            observation.object.removeChangeListener(observation.callback);
-        }
-        this.dataObservations= [];
+    removeChangeListeners() {
+        this.dataObservations.removeChangeListeners();
     }
 
     /**
-     * Remove one change listener from the object.
-     * @param object Object that is being listened to for chagnes by the view model.
+     * @see DataObservations::removeChangeListener
      */
-     protected removeChangeListener(object) {
-         for(var i = 0; i < this.dataObservations.length; i++) {
-             var observation = this.dataObservations[i];
-             if (observation.object === object) {
-                 this.dataObservations.slice(i,1);
-                 observation.object.removeChangeListener(observation.callback);
-                 break;
-             }
-         }
-     }
+    removeChangeListener(object) {
+        this.dataObservations.removeChangeListener(object);
+    }
 
     /**
      * Called by rivets when a view command is fired.

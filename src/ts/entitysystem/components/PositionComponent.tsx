@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {TextField} from "material-ui";
 
+import VectorInputComponent from '../../controls/VectorInputComponent';
 import DucklingComponent from '../../framework/react/DucklingComponent';
 import ReactViewModel from '../../framework/react/ReactViewModel';
 import {ObserveObject} from '../../framework/observe/ObserveDecorators';
@@ -24,8 +24,8 @@ export class PositionComponent extends Component {
 }
 
 class PositionView extends DucklingComponent<PositionComponent, any> {
-    onCreate() {
-        this.props.data.addChangeListener(() => {
+    componentWillMount() {
+        this.dataObservations.setChangeListener(this.props.data, () => {
             this.forceUpdate();
         });
     }
@@ -33,12 +33,20 @@ class PositionView extends DucklingComponent<PositionComponent, any> {
     render() {
         return (
             <div>
-                <TextField
-                    hintText="Position's x coordinate"
-                    floatingLabelText="X Position"
-                    defaultValue={this.props.data.position.x}
-                    onChange={(event) => this.props.data.position.x = (event.target as any).value }
-                />
+                <VectorInputComponent
+                    value={this.props.data.position}
+                    name="Position"
+                    onInput={(x, y) => {
+                        this.props.data.position.x = x;
+                        this.props.data.position.y = y;
+                    }} />
+                <VectorInputComponent
+                    value={this.props.data.velocity}
+                    name="Velocity"
+                    onInput={(x, y) => {
+                        this.props.data.velocity.x = x;
+                        this.props.data.velocity.y = y;
+                    }} />
             </div>
         );
     }

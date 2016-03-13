@@ -125,7 +125,7 @@ export class EntityEditorVM extends RivetsViewModel<EntitySystem> implements Lis
         this._componentsNotOnEntity = [];
 
 
-        if (name && name !== "") {
+        if (name && name !== "" && this._currentEntityName !== name) {
             this.selectedEntityPicker.value = name;
             if (this._currentEntity) {
                 this.removeChangeListener(this._currentEntity);
@@ -143,9 +143,9 @@ export class EntityEditorVM extends RivetsViewModel<EntitySystem> implements Lis
                     this.constructVMComponent(type, factory);
                 }
             });
-        }
 
-        this.onComponentsChanged();
+            this.onComponentsChanged();
+        }
     }
 
     constructVMComponent(name : string, factory : ComponentFactory) {
