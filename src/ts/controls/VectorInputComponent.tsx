@@ -8,6 +8,10 @@ export interface VectorInputProps {
     value : {x : number, y : number},
     name : string
 }
+
+/**
+ * Control that allows a user to modify a vector.
+ */
 export default function VectorInputComponent(props :VectorInputProps) {
     return (
         <div>

@@ -1,5 +1,8 @@
 import ViewModel from "./ViewModel";
 
+/**
+ * Implementation for view models that use the Jade and the Rivets data binding library.
+ */
 export default class RivetsViewModel<T> extends ViewModel<T> {
     protected _rivetsBinding;
 

@@ -13,22 +13,24 @@ var tsify = require('tsify');
 var babelify = require('babelify');
 var typescript = require('typescript');
 
+var tsconfig = {
+    target : "es6",
+    typescript: typescript
+}
+
+var babelconfig = {
+    presets : ["es2015"],
+    extensions : [".js", ".ts", ".tsx"]
+}
+
 gulp.task('typescript', function () {
     return browserify({
             debug : true,
             paths : ['./node_modules']
         })
         .add('src/ts/main.ts')
-        .plugin('tsify',
-            {
-                target : "es6",
-                typescript: typescript
-            })
-        .transform(babelify,
-            {
-                presets : ["es2015"],
-                extensions : [".js", ".ts", ".tsx"]
-            })
+        .plugin('tsify', tsconfig)
+        .transform(babelify, babelconfig)
         .bundle()
         .pipe(exorcist('build/scripts/bundle/main.js.map'))
         .pipe(source('main.js'))
@@ -41,16 +43,8 @@ gulp.task('spec', function() {
         })
         .add('spec/ts/specmain.js')
         .add('typings/typings.d.ts')
-        .plugin('tsify',
-            {
-                target : "es6",
-                typescript : typescript
-            })
-        .transform(babelify,
-            {
-                presets : ["es2015"],
-                extensions : [".js", ".ts", ".tsx"]
-            })
+        .plugin('tsify', tsconfig)
+        .transform(babelify, babelconfig)
         .bundle()
         .pipe(source('spec.js'))
         .pipe(gulp.dest('build/spec/'));

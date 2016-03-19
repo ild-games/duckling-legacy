@@ -8,7 +8,6 @@ import DataObservations from "../observe/DataObservations";
 /**
  * A wrapper around the React.Component class.  Used for type safe access
  * to the duckling context.
- * @type {[type]}
  */
 export default class DucklingComponent<T, State> extends React.Component<DucklingProps<T>, State> {
     protected dataObservations : DataObservations = new DataObservations();

@@ -22,6 +22,9 @@ export interface ValidatorInputProps extends TextInputProps {
     validator : (string) => boolean;
 }
 
+/**
+ * A control that allows you to validate the user's input. It will only update the model if the user's input is valid.
+ */
 export default class ValidatorInputComponent extends React.Component<ValidatorInputProps, ValidatorInputState> {
     constructor(props : ValidatorInputProps) {
         super(props);

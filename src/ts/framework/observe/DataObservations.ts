@@ -7,6 +7,10 @@ interface Observation {
     callback : DataChangeCallback<any>;
 }
 
+/**
+ * Used to track a group of data observations. This is useful if many data observations will need to be
+ * cleaned up at the same time.
+ */
 export default class DataObservations {
     private dataObservations : Observation[] = [];
 
