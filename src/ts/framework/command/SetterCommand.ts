@@ -12,23 +12,23 @@ export interface Setter<T> {
  * @param newValue The value that is being set.
  * @param oldValue The value that was set.
  * @param setter A function that will take a value and set a value.
- * @param id An optional id used to merge related commands.
+ * @param ids An optional array ids used to merge related commands. Two ids are considered equal if they return true for ===.
  */
-export function setter<T>(newValue : T, oldValue : T, setter : Setter<T>, id? : symbol) : Command {
-    return new SetterCommand(setter, newValue, oldValue, id);
+export function setter<T>(newValue : T, oldValue : T, setter : Setter<T>, ids? : any[]) : Command {
+    return new SetterCommand(setter, newValue, oldValue, ids);
 }
 
 class SetterCommand<T> implements Command {
     private setter : Setter<T>;
     private newValue : T;
     private oldValue : T;
-    id : symbol;
+    ids : any[];
 
-    constructor(setter : Setter<T>, newValue : T, oldValue : T, id? : symbol) {
+    constructor(setter : Setter<T>, newValue : T, oldValue : T, ids : any[] = []) {
         this.setter = setter;
         this.newValue = newValue;
         this.oldValue = oldValue;
-        this.id = id || null;
+        this.ids = ids;
     }
 
     execute() {
@@ -38,4 +38,29 @@ class SetterCommand<T> implements Command {
     undo() {
         this.setter(this.oldValue);
     }
+
+    merge(previousCmd : SetterCommand<T>) {
+        var prevIds = previousCmd.ids;
+        var ids = this.ids;
+
+        if (this.isEmpty(prevIds) ||
+            prevIds.length !== ids.length ||
+            previousCmd.newValue !== this.oldValue) {
+
+            return null;
+        }
+
+        for (var i = 0; i < ids.length; i++) {
+            if (prevIds[i] !== ids[i]) {
+                return null;
+            }
+        }
+
+        return new SetterCommand(this.setter, this.newValue, previousCmd.oldValue, this.ids);
+    }
+
+    private isEmpty(ids : any[]) : boolean {
+        return !ids || ids.length === 0;
+    }
+
 }

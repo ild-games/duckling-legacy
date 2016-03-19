@@ -24,14 +24,7 @@ export class PositionComponent extends Component {
 }
 
 class PositionView extends DucklingComponent<PositionComponent, any> {
-    setPosition : (x : number, y : number) => void;
-    setVelocity : (x : number, y : number) => void;
-
     componentWillMount() {
-        var cmdQueue = this.props.context.commandQueue;
-        var data = this.props.data;
-        this.setPosition = data.position.createSetter(cmdQueue);
-        this.setVelocity = data.velocity.createSetter(cmdQueue);
         this.dataObservations.setChangeListener(this.props.data, () => {
             this.forceUpdate();
         });
@@ -39,16 +32,17 @@ class PositionView extends DucklingComponent<PositionComponent, any> {
 
     render() {
         var data = this.props.data;
+        var cmdQueue = this.props.context.commandQueue;
         return (
             <div>
                 <VectorInputComponent
                     value={data.position}
                     name="Position"
-                    onInput={this.setPosition} />
+                    onInput={data.position.createSetter(cmdQueue)} />
                 <VectorInputComponent
                     value={data.velocity}
                     name="Velocity"
-                    onInput={this.setVelocity} />
+                    onInput={data.velocity.createSetter(cmdQueue)} />
             </div>
         );
     }
