@@ -71,6 +71,9 @@ module entityframework.components {
         @observe.Object()
         info : CollisionShapeInfo;
 
+        @observe.Object()
+        oneWayNormal: math.Vector;
+
         /**
          * CollisionBodyType for the component.
          */
@@ -90,12 +93,13 @@ module entityframework.components {
          * @param bodyType Collision body type for the component, default value is "none"
          * @param type CollisionType for the component, default value is CollisionType.None
          */
-        constructor (dimensions? : math.Vector, bodyType? : string, type? : string) {
+        constructor (dimensions? : math.Vector, bodyType? : string, type? : string, oneWayNormal? : math.Vector) {
             super();
 
             this.info = new CollisionShapeInfo(dimensions);
             this.bodyType = bodyType || BodyType.NONE;
             this.collisionType = type || CollisionType.NONE;
+            this.oneWayNormal = oneWayNormal || new math.Vector();
         }
 
         //region Getters and Setters
