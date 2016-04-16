@@ -6,8 +6,12 @@ import {
 } from 'angular2/core';
 
 import {Vector} from '../math/vector';
+import {immutableAssign} from '../util/model';
 import {NumberInput} from './number-input.component';
 
+/**
+ * Component that allows a user to input values for a vector.
+ */
 @Component({
     selector: "vector-input",
     directives: [NumberInput],
@@ -19,7 +23,7 @@ import {NumberInput} from './number-input.component';
     `],
     template:`
         <div>
-            <div class="vectorLabel">{{labelPrefix}}</div>
+            <div class="vectorLabel">{{title}}</div>
             <number-input
                 label="X"
                 [value]="value.x"
@@ -34,16 +38,25 @@ import {NumberInput} from './number-input.component';
     `
 })
 export class VectorInput {
-    @Input() labelPrefix : string;
+    /**
+     * Title describing the input to the user.
+     */
+    @Input() title : string;
+    /**
+     * The value stored in the control.
+     */
     @Input() value : Vector;
 
+    /**
+     * Event published when the user enters a valid input.
+     */
     @Output() validInput : EventEmitter<Vector> = new EventEmitter();
 
     onXInput(x : number) {
-        this.validInput.emit(Object.assign(this.value, {x}));
+        this.validInput.emit(immutableAssign(this.value, {x}));
     }
 
     onYInput(y : number) {
-        this.validInput.emit(Object.assign(this.value, {y}));
+        this.validInput.emit(immutableAssign(this.value, {y}));
     }
 }

@@ -9,6 +9,9 @@ import {ValidatedInput} from './validated-input.component';
 
 var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
 
+/**
+ * Validated input that only publishes events when the input contains a number.
+ */
 @Component({
     selector: "number-input",
     directives: [ValidatedInput],
@@ -21,9 +24,18 @@ var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
     `
 })
 export class NumberInput {
+    /**
+     * Text label displayed to the user.
+     */
     @Input() label : string;
+    /**
+     * The value stored in the control.
+     */
     @Input() value : number;
 
+    /**
+     * Event published when the user enters a valid input.
+     */
     @Output() validInput : EventEmitter<number> = new EventEmitter();
 
     onInput(value : string) {

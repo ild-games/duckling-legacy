@@ -2,17 +2,26 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    OnChanges
 } from 'angular2/core';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
-import {Entity, AttributeKey, Attribute, KeyedAttribute} from './entity';
+import {immutableAssign} from '../util/model';
+import {Entity, AttributeKey, Attribute, TaggedAttribute} from './entity';
 import {AttributeComponent} from './attribute.component';
 
-
+/**
+ * Display a form that allows for editting the attributes attached to a component.
+ */
 @Component({
     selector: "entity-component",
     directives: [AttributeComponent, MD_CARD_DIRECTIVES],
+    styles: [`
+        md-card {
+            margin-bottom: 1em;
+        }
+    `],
     template: `
         <div *ngFor="#key of keys()">
             <md-card>
@@ -40,6 +49,6 @@ export class EntityComponent {
     onAttributeChanged(key : AttributeKey, attribute : Attribute) {
         var entityPatch : any = {};
         entityPatch[key] = attribute;
-        this.entityChanged.emit(Object.assign(this.entity, entityPatch));
+        this.entityChanged.emit(immutableAssign(this.entity, entityPatch));
     }
 }

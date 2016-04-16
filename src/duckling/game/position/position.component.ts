@@ -8,19 +8,24 @@ import {
 import {PositionAttribute} from './position-attribute';
 import {VectorInput} from '../../controls/vector-input.component';
 import {Vector} from '../../math/vector';
+import {immutableAssign} from '../../util/model';
 
+/**
+ * Implementation that will be registered with the AttributeComponentService.
+ * @see AttributeComponentService
+ * @see AttributeComponent
+ */
 @Component({
     selector: "position-component",
     directives: [VectorInput],
     template: `
         <vector-input
-            labelPrefix="Position"
+            title="Position"
             [value]="attribute.position"
             (validInput)="onPositionInput($event)">
         </vector-input>
-        <br />
         <vector-input
-            labelPrefix="Velocity"
+            title="Velocity"
             [value]="attribute.velocity"
             (validInput)="onVelocityInput($event)">
         </vector-input>
@@ -33,10 +38,10 @@ export class PositionComponent {
     @Output() attributeChanged: EventEmitter<PositionAttribute> = new EventEmitter();
 
     onPositionInput(position : Vector) {
-        this.attributeChanged.emit(Object.assign(this.attribute, {position}));
+        this.attributeChanged.emit(immutableAssign(this.attribute, {position}));
     }
 
     onVelocityInput(velocity : Vector) {
-        this.attributeChanged.emit(Object.assign(this.attribute, {velocity}));
+        this.attributeChanged.emit(immutableAssign(this.attribute, {velocity}));
     }
 }

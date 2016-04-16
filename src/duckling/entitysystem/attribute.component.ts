@@ -1,9 +1,22 @@
-import {Component, ElementRef, DynamicComponentLoader, ComponentRef, Input, SimpleChange} from 'angular2/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    DynamicComponentLoader,
+    ComponentRef,
+    Input,
+    Output,
+    SimpleChange
+} from 'angular2/core';
 import {Attribute, AttributeKey} from './entity';
 import {AttributeComponentService} from './attribute-component.service';
 
 var logcount = 0;
 
+/**
+ * Each attribute has its own component implementation.  This Component is a
+ * wrapper that will dynamically instantiate the correct attribute type.
+ */
 @Component({
     selector: "attribute-component",
     template: ""
@@ -14,6 +27,8 @@ export class AttributeComponent {
     @Input() key: AttributeKey;
     @Input() attribute: Attribute;
 
+    @Output() attributeChanged : EventEmitter<Attribute> = new EventEmitter();
+
     constructor(private _attributeComponentService : AttributeComponentService,
                 private _dcl : DynamicComponentLoader,
                 private _elementRef : ElementRef) {
@@ -23,6 +38,8 @@ export class AttributeComponent {
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
         if (changes["key"]) {
             this.switchToType(changes["key"].currentValue);
+        } else if (changes["attribute"] && this._childComponent) {
+            this._childComponent.instance.attribute = changes["attribute"].currentValue;
         }
     }
 
@@ -33,7 +50,9 @@ export class AttributeComponent {
             this._elementRef
         ).then((ref: ComponentRef) =>  {
             this._childComponent = ref;
-            this._childComponent.instance.attribute = this.attribute;
+            var childInstance : AttributeComponent = this._childComponent.instance;
+            childInstance.attribute = this.attribute;
+            childInstance.attributeChanged.subscribe((event : Attribute) => this.attributeChanged.emit(event));
         });
     }
 }

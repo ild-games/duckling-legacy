@@ -1,6 +1,9 @@
-import {Component} from 'angular2/core';
+import {Component, Input, ChangeDetectorRef} from 'angular2/core';
 import {Entity} from '../entitysystem/entity';
 import {EntityComponent} from '../entitysystem/entity.component';
+import {NumberInput} from '../controls/number-input.component';
+
+import {BodyType, CollisionType} from '../game/collision/collision-attribute';
 
 @Component({
     selector: 'duckling-shell',
@@ -11,13 +14,38 @@ import {EntityComponent} from '../entitysystem/entity.component';
             [entity]="entity"
             (entityChanged)="onEntityChanged($event)">
         </entity-component>
+        <br />
+        <entity-component
+            [entity]="entity"
+            (entityChanged)="onEntityChanged($event)">
+        </entity-component>
     `
 })
 export class ShellComponent {
-    entity : Entity = {
-        position : {
-            position: { x: 0, y: 0},
-            velocity: { x: 0, y: 0}
+    @Input() entity : Entity = {
+        position: {
+            position: {
+                x: 0,
+                y: 0
+            },
+            velocity: {
+                x: 0,
+                y: 0
+            }
+        },
+        collision: {
+            dimension: {
+                dimension: {
+                    x: 0,
+                    y: 0
+                }
+            },
+            oneWayNormal: {
+                x: 0,
+                y: 0
+            },
+            collisionType: CollisionType.Ground,
+            bodyType: BodyType.Environment
         }
     }
 
