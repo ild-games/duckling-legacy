@@ -18,17 +18,19 @@ import {NumberInput} from './number-input.component';
         }
     `],
     template:`
-        <div class="vectorLabel">{{labelPrefix}}</div>
-        <number-input
-            label="X"
-            [value]="value.x"
-            (validInput)="onXInput($event)">
-        </number-input>
-        <number-input
-            label="Y"
-            [value]="value.y"
-            (validInput)="onYInput($event)">
-        </number-input>
+        <div>
+            <div class="vectorLabel">{{labelPrefix}}</div>
+            <number-input
+                label="X"
+                [value]="value.x"
+                (validInput)="onXInput($event)">
+            </number-input>
+            <number-input
+                label="Y"
+                [value]="value.y"
+                (validInput)="onYInput($event)">
+            </number-input>
+        </div>
     `
 })
 export class VectorInput {

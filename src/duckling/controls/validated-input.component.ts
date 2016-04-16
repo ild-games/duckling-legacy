@@ -12,7 +12,7 @@ import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
     template:`
         <md-input
             [placeholder]="label"
-            [value]="value"
+            value="{{value}}"
             (input)="onUserInput($event.target.value)">
         </md-input>
     `
