@@ -1,7 +1,7 @@
 import SelectControl from '../../../controls/SelectControl';
 import {ObserveObject} from '../../../framework/observe/ObserveDecorators';
 import SimpleObservable from '../../../framework/observe/SimpleObservable';
-import ViewModel from '../../../framework/ViewModel';
+import RivetsViewModel from '../../../framework/RivetsViewModel';
 import VMFactory from '../../../framework/VMFactory';
 import {formatToTitleCase, valuesFromEnum} from '../../../util/Formatters';
 import * as serialize from '../../../util/serialize/Decorators';
@@ -46,7 +46,7 @@ export class ShapeDrawable extends Drawable {
     }
 }
 
-export class ShapeDrawableViewModel extends ViewModel<ShapeDrawable> {
+export class ShapeDrawableViewModel extends RivetsViewModel<ShapeDrawable> {
     private shapeTypePicker : SelectControl<ShapeType>;
 
     get viewFile() : string {
@@ -93,11 +93,11 @@ export class ShapeDrawableViewModel extends ViewModel<ShapeDrawable> {
     }
 
     export class ShapeDrawableFactory implements DrawableFactory {
-        createFormVM() : ViewModel<any> {
+        createFormVM() {
             return new ShapeDrawableViewModel();
         }
 
-        createDrawable(key : string) : Drawable {
+        createDrawable(key : string) {
             return new ShapeDrawable(key);
         }
     }

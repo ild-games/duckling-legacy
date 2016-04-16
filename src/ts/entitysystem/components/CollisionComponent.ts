@@ -1,6 +1,6 @@
 import SelectControl from '../../controls/SelectControl';
 import {setter} from '../../framework/command/SetterCommand';
-import ViewModel from '../../framework/ViewModel';
+import RivetsViewModel from '../../framework/RivetsViewModel';
 import {ObserveObject, ObservePrimitive} from '../../framework/observe/ObserveDecorators';
 import SimpleObservable from '../../framework/observe/SimpleObservable';
 import * as serialize from '../../util/serialize/Decorators';
@@ -115,7 +115,7 @@ export class CollisionComponent extends Component {
 /**
  * View Model for the collision component.
  */
-class CollisionViewModel extends ViewModel<CollisionComponent> {
+class CollisionViewModel extends RivetsViewModel<CollisionComponent> {
     private typeVals : Array<number> = [];
     private bodyPicker : SelectControl<string>;
     private collisionTypePicker : SelectControl<CollisionType>;
@@ -207,7 +207,7 @@ export class CollisionComponentFactory implements ComponentFactory {
      *
      * @returns new instance of CollisionViewModel
      */
-    createFormVM() : ViewModel<any> {
+    createFormVM() {
         return new CollisionViewModel();
     }
 
@@ -216,7 +216,7 @@ export class CollisionComponentFactory implements ComponentFactory {
      *
      * @returns new instance of CollisionComponent
      */
-    createComponent() : Component {
+    createComponent() {
         return new CollisionComponent();
     }
 

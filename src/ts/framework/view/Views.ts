@@ -1,4 +1,4 @@
-import ViewModel from '../ViewModel';
+import RivetsViewModel from '../RivetsViewModel';
 /**
 * Used to track all of the jade view templates.  Will usually be attached to the
 * context object.
@@ -19,7 +19,7 @@ export default class Views {
     * @param key A string key describing the template.
     * @returns A function that can be used to generate the view.
     */
-    getTemplate(key: string) : (locals: ViewModel<any>)=>string {
-        return <(locals: ViewModel<any>)=>string>this._templates[key];
+    getTemplate(key: string) : (locals: RivetsViewModel<any>)=>string {
+        return <(locals: RivetsViewModel<any>)=>string>this._templates[key];
     }
 }

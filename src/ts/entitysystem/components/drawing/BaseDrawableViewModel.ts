@@ -1,7 +1,7 @@
-import ViewModel from '../../../framework/ViewModel';
+import RivetsViewModel from '../../../framework/RivetsViewModel';
 /**
-* Base ViewModel for all used by all Drawable ViewModels.
+* Base RivetsViewModel for all used by all Drawable RivetsViewModels.
 */
-export default class BaseDrawableViewModel<T> extends ViewModel<T> {
+export default class BaseDrawableViewModel<T> extends RivetsViewModel<T> {
     isWhite : boolean = true;
 }

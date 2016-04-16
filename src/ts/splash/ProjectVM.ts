@@ -14,14 +14,14 @@ import SelectedEntity from '../entitysystem/core/SelectedEntity';
 import SystemLoader from '../entitysystem/core/SystemLoader';
 import {EntityEditorVM} from '../entitysystem/entityeditor/EntityEditorVM';
 import Project from '../framework/project/Project';
-import ViewModel from '../framework/ViewModel';
+import RivetsViewModel from '../framework/RivetsViewModel';
 import {JsonLoader} from '../util/JsonLoader';
 import {addOptionToSelect} from '../util/JQueryUtils';
 
 /**
  * View Model that initializes an editor canvas and entity editor for a specific project.
  */
-export default class ProjectVM extends ViewModel<Project> {
+export default class ProjectVM extends RivetsViewModel<Project> {
     get viewFile() : string {
         return "splash/project_vm";
     }

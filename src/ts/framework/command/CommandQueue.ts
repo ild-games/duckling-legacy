@@ -15,8 +15,19 @@ export default class CommandQueue {
      */
     pushCommand(cmd : Command) {
         this._undone.length = 0;
-        this._commands.push(cmd);
-        cmd.execute();
+
+        var mergedCommand : Command = null;
+        if (this.peekUndo() && cmd.merge) {
+            mergedCommand = cmd.merge(this.peekUndo());
+        }
+
+        if (mergedCommand) {
+            this._commands[this._commands.length - 1] = mergedCommand;
+            mergedCommand.execute();
+        } else {
+            this._commands.push(cmd);
+            cmd.execute();
+        }
     }
 
     /**
@@ -58,5 +69,4 @@ export default class CommandQueue {
         this._commands = [];
         this._undone = [];
     }
-
 }

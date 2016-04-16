@@ -23,7 +23,7 @@ export function formatToTitleCase(toFormat : string) : string {
 export function valuesFromEnum(enumType) : any {
     var values = {};
     for (var val in enumType) {
-        if (!isNaN(val)) {
+        if (!isNaN(+val)) {
             values[enumType[val]] = Number(val);
         }
     }

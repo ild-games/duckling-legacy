@@ -1,4 +1,4 @@
-import ViewModel from '../../framework/ViewModel';
+import RivetsViewModel from '../../framework/RivetsViewModel';
 import {ObserveObject, ObservePrimitive} from '../../framework/observe/ObserveDecorators';
 import Vector from '../../math/Vector';
 import Component from '../core/Component';
@@ -27,7 +27,7 @@ export class CameraComponent extends Component {
     }
 }
 
-class CameraViewModel extends ViewModel<CameraComponent> {
+class CameraViewModel extends RivetsViewModel<CameraComponent> {
     get viewFile() : string {
         return "components/camera";
     }
@@ -40,7 +40,7 @@ export class CameraComponentFactory implements ComponentFactory {
      *
      * @returns new instance of CameraViewModel
      */
-    createFormVM() : ViewModel<any> {
+    createFormVM() {
         return new CameraViewModel();
     }
 
@@ -49,7 +49,7 @@ export class CameraComponentFactory implements ComponentFactory {
      *
      * @returns new instance of CameraComponent
      */
-    createComponent() : Component {
+    createComponent() {
         return new CameraComponent();
     }
 

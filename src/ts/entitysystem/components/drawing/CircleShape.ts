@@ -1,4 +1,4 @@
-import ViewModel from '../../../framework/ViewModel';
+import RivetsViewModel from '../../../framework/RivetsViewModel';
 import {ObserveObject, ObservePrimitive} from '../../../framework/observe/ObserveDecorators';
 import Vector from '../../../math/Vector';
 import CanvasDrawnElement from '../../../editorcanvas/drawing/CanvasDrawnElement';
@@ -36,18 +36,18 @@ export class CircleShape extends Shape implements CanvasDrawnElement {
     }
 }
 
-export class CircleShapeViewModel extends ViewModel<CircleShape> {
+export class CircleShapeViewModel extends RivetsViewModel<CircleShape> {
     get viewFile() : string {
         return "drawables/circle_shape";
     }
 }
 
 export class CircleShapeFactory implements ShapeFactory {
-    createFormVM() : ViewModel<any> {
+    createFormVM() {
         return new CircleShapeViewModel();
     }
 
-    createShape() : Shape {
+    createShape() {
         return new CircleShape();
     }
 }

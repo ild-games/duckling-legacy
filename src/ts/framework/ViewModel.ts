@@ -3,22 +3,18 @@ import Context from './context/Context';
 import Observable from './observe/Observable';
 import DataChangeEvent from './observe/DataChangeEvent';
 import DataChangeCallback from './observe/DataChangeCallback';
+import DataObservations from './observe/DataObservations';
 
 var nextId : number = 0;
 
 const DUCKLING_VM_KEY = "ducklingViewModel";
-
-interface Observation {
-    object : Observable<any>;
-    callback : DataChangeCallback<any>;
-}
 
 /**
  * A ViewModel is responsible for responding to user actions and population the view
  * with information from the model.
  */
 export default class ViewModel<T> {
-    private dataObservations : Observation [] = [];
+    private dataObservations : DataObservations = new DataObservations();
     private _data : T;
 
     protected _children : {[id : string]:ViewModel<any>} = {};
@@ -70,6 +66,11 @@ export default class ViewModel<T> {
         this._htmlRoot[DUCKLING_VM_KEY] = this;
 
         this.render();
+
+        this.forEachChild((child, childID) => {
+            child.attach(this.findById(childID));
+        });
+
         this._attached = true;
 
         this.log("View Ready");
@@ -107,18 +108,13 @@ export default class ViewModel<T> {
     /**
      * Renders the ViewModel's template and binds the model to the view.
      */
-    private render() {
+    protected render() {
         this.log("Rendered");
 
         if (this.rootCSSClass !== "") {
             this._htmlRoot.classList.add(this.rootCSSClass);
         }
-        this._htmlRoot.innerHTML = this._context.views.getTemplate(this.viewFile).call(this, this);
-        this._rivetsBinding = this._context.rivets.bind(this._htmlRoot, this);
-
-        this.forEachChild((child, childID) => {
-            child.attach(this.findById(childID));
-        });
+        //Note: The child class will actually render the content
     }
 
     /**
@@ -147,11 +143,10 @@ export default class ViewModel<T> {
      * Remove the ViewModel from the page.
      */
     detach() {
+        //Note: The child class will override this method to detach the view
         if (this._attached) {
             this._attached = false;
             this.forEachChild((child) => child.detach());
-            this._rivetsBinding.unbind();
-            this._htmlRoot.innerHTML = "";
             this._htmlRoot[DUCKLING_VM_KEY] = null;
             if (this.rootCSSClass) {
                 this._htmlRoot.classList.remove(this.rootCSSClass);
@@ -160,14 +155,14 @@ export default class ViewModel<T> {
             this.log("Detach");
             this.onDetach();
         }
-    };
+    }
 
     /**
      * Destroy the ViewModel.  After this is called the view should never be reused.
      */
      destroy() {
          this.removeChildViews();
-         this.removeChangeListeners();
+         this.dataObservations.removeChangeListeners();
          this.log("Destroyed");
          this.onDestroy();
      }
@@ -202,14 +197,6 @@ export default class ViewModel<T> {
     }
 
     /**
-     * Child classes should implement this
-     * @returns A string defining the view used by the ViewModel.
-     */
-    get viewFile() : string {
-        return "no_view_defined";
-    }
-
-    /**
      * The name of a CSS class that should be added to the DOM node the view model is
      * attached to.
      * @return {string} CSS class that will be added to the view's root.
@@ -236,49 +223,25 @@ export default class ViewModel<T> {
     }
 
     /**
-     * Add a change listner to the object. The change listner will automatically be cleaned up when the object is
-     * destroyed.
-     * @param object Object that will be observed.
-     * @param callback Callback that will be fired on data change.
+     * @see DataObservations::setChangeListener
      */
     setChangeListener<T extends DataChangeEvent>(object : Observable<T>, callback : DataChangeCallback<T>) {
-        if (this.dataObservations === null) {
-            this.dataObservations = [];
-        }
-
-        this.dataObservations.push({
-            object: object,
-            callback: callback
-        });
-
-        object.addChangeListener(callback);
+        this.dataObservations.setChangeListener(object, callback);
     }
 
     /**
-     * Remove all of the attached change listeners.
+     * @see DataObservations::removeChangeListeners
      */
-    protected removeChangeListeners() {
-        for (var i = 0; i < this.dataObservations.length; i++) {
-            var observation = this.dataObservations[i];
-            observation.object.removeChangeListener(observation.callback);
-        }
-        this.dataObservations= [];
+    removeChangeListeners() {
+        this.dataObservations.removeChangeListeners();
     }
 
     /**
-     * Remove one change listener from the object.
-     * @param object Object that is being listened to for chagnes by the view model.
+     * @see DataObservations::removeChangeListener
      */
-     protected removeChangeListener(object) {
-         for(var i = 0; i < this.dataObservations.length; i++) {
-             var observation = this.dataObservations[i];
-             if (observation.object === object) {
-                 this.dataObservations.slice(i,1);
-                 observation.object.removeChangeListener(observation.callback);
-                 break;
-             }
-         }
-     }
+    removeChangeListener(object) {
+        this.dataObservations.removeChangeListener(object);
+    }
 
     /**
      * Called by rivets when a view command is fired.

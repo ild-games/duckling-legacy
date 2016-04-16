@@ -1,5 +1,5 @@
 import SelectedEntity from '../entitysystem/core/SelectedEntity';
-import ViewModel from '../framework/ViewModel';
+import RivetsViewModel from '../framework/RivetsViewModel';
 import Project from '../framework/project/Project';
 import {onPromiseError} from '../framework/error/ErrorHandler';
 import SimpleObservable from '../framework/observe/SimpleObservable';
@@ -31,9 +31,9 @@ class CanvasProperties extends SimpleObservable {
 }
 
 /**
- * ViewModel for the main canvas used to interact with entities.
+ * RivetsViewModel for the main canvas used to interact with entities.
  */
-export default class CanvasVM extends ViewModel<EntitySystem> {
+export default class CanvasVM extends RivetsViewModel<EntitySystem> {
     private selectedEntity : SelectedEntity;
     private project : Project;
     private _stage : createjs.Stage;
@@ -259,7 +259,7 @@ export default class CanvasVM extends ViewModel<EntitySystem> {
     }
 
     /**
-     * @see ViewModel.viewFile
+     * @see RivetsViewModel.viewFile
      */
     get viewFile() : string {
         return "canvas";

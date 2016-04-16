@@ -1,5 +1,6 @@
 import Command from '../../framework/command/Command';
 import Context from '../../framework/context/Context';
+import RivetsViewModel from '../../framework/RivetsViewModel';
 import ViewModel from '../../framework/ViewModel';
 import ListAdapter from '../../framework/listvm/ListAdapter';
 import ListVM from '../../framework/listvm/ListVM';
@@ -17,7 +18,7 @@ interface ComponentType {
     vm : ViewModel<any>;
 }
 
-export class EntityEditorVM extends  ViewModel<EntitySystem> implements ListAdapter<Component> {
+export class EntityEditorVM extends RivetsViewModel<EntitySystem> implements ListAdapter<Component> {
     //Field that exist for rivets bindings
     private _currentEntityName : string = "Select Entity";
     private _currentEntity : Entity;
@@ -56,17 +57,14 @@ export class EntityEditorVM extends  ViewModel<EntitySystem> implements ListAdap
 
     onViewReady() {
         super.onViewReady();
-        this.selectedEntityPicker = new SelectControl(this, "entityNames", this.getEntities(), "");
+        this.selectedEntityPicker = new SelectControl<String>(this, "entityNames", this.getEntities(), "");
         this.selectedEntityPicker.callback = () => this._selectedEntity.entityKey = this.selectedEntityPicker.value;
-        this.addComponentPicker = new SelectControl(this, "componentsToAddPicker",{},"");
+        this.addComponentPicker = new SelectControl<String>(this, "componentsToAddPicker",{},"");
     }
 
     private deleteEntity() {
         this._context.commandQueue.pushCommand(
             new DeleteEntityCommand(this.data, this, this._selectedEntity.entityKey, this._currentEntity));
-        //this.selectEntity("");
-        //this.data.removeEntity(this._selectedEntity.entityKey);
-        //this._selectedEntity.entityKey = "";
     }
 
     addComponentFromSelect() {
@@ -127,7 +125,7 @@ export class EntityEditorVM extends  ViewModel<EntitySystem> implements ListAdap
         this._componentsNotOnEntity = [];
 
 
-        if (name && name !== "") {
+        if (name && name !== "" && this._currentEntityName !== name) {
             this.selectedEntityPicker.value = name;
             if (this._currentEntity) {
                 this.removeChangeListener(this._currentEntity);
@@ -145,9 +143,9 @@ export class EntityEditorVM extends  ViewModel<EntitySystem> implements ListAdap
                     this.constructVMComponent(type, factory);
                 }
             });
-        }
 
-        this.onComponentsChanged();
+            this.onComponentsChanged();
+        }
     }
 
     constructVMComponent(name : string, factory : ComponentFactory) {

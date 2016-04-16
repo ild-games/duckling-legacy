@@ -1,7 +1,7 @@
 import {onPromiseError} from '../../../framework/error/ErrorHandler';
 import {ObserveObject, ObservePrimitive} from '../../../framework/observe/ObserveDecorators';
 import SimpleObservable from '../../../framework/observe/SimpleObservable';
-import ViewModel from '../../../framework/ViewModel';
+import RivetsViewModel from '../../../framework/RivetsViewModel';
 import Vector from '../../../math/Vector';
 import Rectangle from '../../../math/Rectangle';
 import * as serialize from '../../../util/serialize/Decorators';
@@ -72,7 +72,7 @@ export class ImageDrawable extends Drawable {
     }
 }
 
-export class ImageDrawableViewModel extends ViewModel<ImageDrawable> {
+export class ImageDrawableViewModel extends RivetsViewModel<ImageDrawable> {
     private fileDialog : FileDialog;
 
     get viewFile() : string {
@@ -165,11 +165,11 @@ export class ImageDrawableViewModel extends ViewModel<ImageDrawable> {
 }
 
 export class ImageDrawableFactory implements DrawableFactory {
-    createFormVM() : ViewModel<any> {
+    createFormVM() {
         return new ImageDrawableViewModel();
     }
 
-    createDrawable(key : string) : Drawable {
+    createDrawable(key : string) {
         return new ImageDrawable(key);
     }
 }
