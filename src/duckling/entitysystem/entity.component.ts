@@ -17,7 +17,8 @@ import {AttributeComponent} from './attribute.component';
 @Component({
     selector: "entity-component",
     directives: [AttributeComponent, MD_CARD_DIRECTIVES],
-    styleUrls: ['build/entitysystem/entity.component.css'],
+    moduleId: "/" + module.id,
+    styleUrls: ['entity.component.css'],
     template: `
         <div *ngFor="#key of keys()">
             <md-card>

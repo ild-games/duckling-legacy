@@ -19,7 +19,8 @@ import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute
 @Component({
     selector: "dk-collision-component",
     directives: [VectorInput, EnumSelect],
-    styleUrls: ['build/game/collision/collision.component.css'],
+    moduleId: "/" + module.id,
+    styleUrls: ['collision.component.css'],
     template: `
         <dk-vector-input
             title="Dimension"
