@@ -19,16 +19,16 @@ import {immutableAssign} from '../../util/model';
     selector: "position-component",
     directives: [VectorInput],
     template: `
-        <vector-input
+        <dk-vector-input
             title="Position"
             [value]="attribute.position"
             (validInput)="onPositionInput($event)">
-        </vector-input>
-        <vector-input
+        </dk-vector-input>
+        <dk-vector-input
             title="Velocity"
             [value]="attribute.velocity"
             (validInput)="onVelocityInput($event)">
-        </vector-input>
+        </dk-vector-input>
     `
 })
 export class PositionComponent {
