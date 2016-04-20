@@ -18,6 +18,7 @@ import {immutableAssign} from '../../util/model';
 @Component({
     selector: "position-component",
     directives: [VectorInput],
+    styleUrls: ['build/game/position/position.component.css']
     template: `
         <dk-vector-input
             title="Position"
