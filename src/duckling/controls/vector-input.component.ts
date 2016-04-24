@@ -15,7 +15,7 @@ import {NumberInput} from './number-input.component';
 @Component({
     selector: "dk-vector-input",
     directives: [NumberInput],
-    styleUrls: ['../duckling/controls/vector-input.component.css'],
+    styleUrls: ['./duckling/controls/vector-input.component.css'],
     template:`
         <div>
             <div class="vectorLabel">{{title}}</div>

@@ -21,10 +21,12 @@ gulp.task('watch', function () {
 });
 
 moveTask('electron', 'src/electron/**', 'build/electron');
+moveTask('index', 'src/index.html', 'build');
 
 gulp.task('duckling', [
-    'css',
-    'electron'
+    'index',
+    'electron',
+    'css'
 ]);
 
 gulp.task('default', [

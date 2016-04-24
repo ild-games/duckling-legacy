@@ -17,7 +17,7 @@ import {AttributeComponent} from './attribute.component';
 @Component({
     selector: "entity-component",
     directives: [AttributeComponent, MD_CARD_DIRECTIVES],
-    styleUrls: ['../duckling/entitysystem/entity.component.css'],
+    styleUrls: ['./duckling/entitysystem/entity.component.css'],
     template: `
         <div *ngFor="#key of keys()">
             <md-card>
