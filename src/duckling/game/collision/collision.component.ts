@@ -32,14 +32,14 @@ import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute
             (validInput)="onOneWayNormalInput($event)">
         </dk-vector-input>
 
-        <div class="formLabel">Body Type</div>
+        <div class="form-label">Body Type</div>
         <dk-enum-select
             [value]="attribute.bodyType"
             [enum]="bodyTypes"
             (selection)="onBodyTypeInput($event)">
         </dk-enum-select>
 
-        <div class="formLabel">Collision Type</div>
+        <div class="form-label">Collision Type</div>
         <dk-enum-select
             [value]="attribute.collisionType"
             [enum]="collisionType"

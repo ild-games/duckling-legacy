@@ -18,7 +18,7 @@ import {NumberInput} from './number-input.component';
     styleUrls: ['./duckling/controls/vector-input.component.css'],
     template:`
         <div>
-            <div class="vectorLabel">{{title}}</div>
+            <div class="form-label">{{title}}</div>
             <number-input
                 label="X"
                 [value]="value.x"
