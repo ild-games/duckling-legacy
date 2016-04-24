@@ -6,7 +6,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "typings": "typings",
-    "electron": "electron background-main.js",
+    "electron": "electron build/electron/background-main.js",
     "postinstall": "typings install"
   },
   "license": "ISC",

@@ -3,6 +3,7 @@ typings/
 build/
 node_modules/
 .sass-cache/
+npm-debug.log
 
 # Ignore certain IntelliJ files
 .idea/workspace.xml

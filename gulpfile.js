@@ -11,7 +11,7 @@ gulp.task('css', function() {
         ])
         .pipe(sass())
         .on('error', swallowError)
-        .pipe(gulp.dest('build/'));
+        .pipe(gulp.dest('build/duckling/'));
 });
 
 gulp.task('watch', function () {
@@ -20,15 +20,24 @@ gulp.task('watch', function () {
     });
 });
 
-function swallowError (error) {
-    console.log(error.toString());
-    this.emit('end');
-}
+moveTask('electron', 'src/electron/**', 'build/electron');
 
 gulp.task('duckling', [
-    'css'
+    'css',
+    'electron'
 ]);
 
 gulp.task('default', [
     'duckling'
 ]);
+
+function swallowError (error) {
+    console.log(error.toString());
+    this.emit('end');
+}
+
+function moveTask(taskName,fileGlob,dest) {
+    gulp.task(taskName, function() {
+        return gulp.src(fileGlob).pipe(gulp.dest(dest));
+    });
+}
