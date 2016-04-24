@@ -13,17 +13,12 @@ import {NumberInput} from './number-input.component';
  * Component that allows a user to input values for a vector.
  */
 @Component({
-    selector: "vector-input",
+    selector: "dk-vector-input",
     directives: [NumberInput],
-    styles: [`
-        .vectorLabel {
-            color: black;
-            padding-bottom: 5px;
-        }
-    `],
+    styleUrls: ['./duckling/controls/vector-input.component.css'],
     template:`
         <div>
-            <div class="vectorLabel">{{title}}</div>
+            <div class="form-label">{{title}}</div>
             <number-input
                 label="X"
                 [value]="value.x"

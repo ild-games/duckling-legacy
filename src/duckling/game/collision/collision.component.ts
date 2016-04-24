@@ -17,35 +17,29 @@ import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute
  * @see AttributeComponent
  */
 @Component({
-    selector: "collision-component",
+    selector: "dk-collision-component",
     directives: [VectorInput, EnumSelect],
-    styles: [`
-        .formLabel {
-            color: black;
-            padding-top: 20px;
-            padding-bottom: 5px;
-        }
-    `],
+    styleUrls: ['./duckling/game/collision/collision.component.css'],
     template: `
-        <vector-input
+        <dk-vector-input
             title="Dimension"
             [value]="attribute.dimension.dimension"
             (validInput)="onDimensionInput($event)">
-        </vector-input>
-        <vector-input
+        </dk-vector-input>
+        <dk-vector-input
             title="One Way Normal"
             [value]="attribute.oneWayNormal"
             (validInput)="onOneWayNormalInput($event)">
-        </vector-input>
+        </dk-vector-input>
 
-        <div class="formLabel">Body Type</div>
+        <div class="form-label">Body Type</div>
         <dk-enum-select
             [value]="attribute.bodyType"
             [enum]="bodyTypes"
             (selection)="onBodyTypeInput($event)">
         </dk-enum-select>
 
-        <div class="formLabel">Collision Type</div>
+        <div class="form-label">Collision Type</div>
         <dk-enum-select
             [value]="attribute.collisionType"
             [enum]="collisionType"
