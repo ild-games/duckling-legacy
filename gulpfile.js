@@ -6,7 +6,11 @@ var watch = require('gulp-watch');
 gulp.task('css', function() {
     return gulp.src(
         [
+            'src/duckling/index.scss',
+            'src/duckling/colors.scss',
+            'src/duckling/fonts.scss',
             'src/duckling/forms.scss',
+            'src/duckling/misc-mixins.scss',
             'src/duckling/**/*component.scss'
         ])
         .pipe(sass())
@@ -22,11 +26,13 @@ gulp.task('watch', function () {
 
 moveTask('electron', 'src/electron/**', 'build/electron');
 moveTask('index', 'src/index.html', 'build');
+moveTask('resources', 'resources/**', 'build/resources');
 
 gulp.task('duckling', [
     'index',
     'electron',
-    'css'
+    'css',
+    'resources'
 ]);
 
 gulp.task('default', [
