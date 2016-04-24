@@ -19,46 +19,34 @@ interface ProjectModel {
     directives: [
         MD_LIST_DIRECTIVES
     ],
-    styles: [`
-        ._splash-screen {
-            background-color: #212121;
-            height: 100%;
-        }
-
-        ._left-section {
-            padding: 1em;
-        }
-
-        md-list {
-            background-color: white;
-            width: 375px;
-        }
-
-        ._actions {
-            margin-left: 1em;
-            position: absolute;
-            bottom: 1em;
-        }
-
-        ._actions > a {
-            text-decoration: none;
-            color: #FFFFFF;
-            font-size: 1.5em;
-        }
-    `],
+    styleUrls: [ 'build/splash/splash.component.css' ],
     template: `
-        <div class="_splash-screen">
-            <div class="_left-section">
+        <div class="splash-screen">
+            <div class="left-section">
                 <md-list>
                     <md-list-item *ngFor="#project of projects">
                         <h3 md-line> {{project.title}} </h3>
                         <p md-line> {{project.path}} </p>
                     </md-list-item>
                 </md-list>
+
+                <div class="actions">
+                    <a>NEW PROJECT</a>
+                </div>
             </div>
-            <div class="_actions">
-                <a>NEW PROJECT</a>
+
+            <div class="right-section">
+                <div class="duckling-title">
+                    <div class="duckling-name">
+                        Duckling
+                    </div>
+                    <div class="duckling-version">
+                        0.0.1
+                    </div>
+                </div>
             </div>
+
+            <div class="the-duck"></div>
         </div>
     `
 })
