@@ -30,4 +30,11 @@ export class BaseAttributeService<ImplementationType> {
     getImplementation(key : AttributeKey) : any {
         return this._attributeComponentType[key];
     }
+
+
+    forEach(callback : (key : AttributeKey, implementation : ImplementationType) => any) {
+        for (var key in this._attributeComponentType) {
+            callback(key, this._attributeComponentType[key]);
+        }
+    }
 }

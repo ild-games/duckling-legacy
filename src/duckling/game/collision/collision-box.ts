@@ -1,0 +1,19 @@
+import {Entity} from '../../entitysystem/entity';
+import {getPosition} from '../position/position-attribute';
+import {getCollision} from './collision-attribute';
+import {Box2} from '../../math';
+
+/**
+ * Get the bounding box for an entity with a collision attribute.
+ * @param entity The entity the bounding box will be built for.
+ * @return A Box2 bounding box for the entity's collision attribute.
+ */
+export function collisionBoundingBox(entity : Entity) : Box2 {
+    var positionAttribute = getPosition(entity);
+    var collisionAttribute = getCollision(entity);
+    return {
+        position: positionAttribute.position,
+        dimension: collisionAttribute.dimension.dimension,
+        rotation: collisionAttribute.dimension.rotation
+    }
+}

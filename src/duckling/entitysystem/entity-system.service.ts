@@ -12,6 +12,10 @@ export class EntitySystemService {
         this.loadSystem("DEADBEAF");
     }
 
+    getEntity(key : EntityKey) : Entity {
+        return this._entitySystem.get(key);
+    }
+
     updateEntity(key : EntityKey, entity : Entity) {
         this._entitySystem = this._entitySystem.set(key, entity);
         this.publishChange();

@@ -10,6 +10,7 @@ import {
 } from 'angular2/core';
 import {Observable} from 'rxjs';
 import {autoDetectRenderer, DisplayObject, WebGLRenderer, CanvasRenderer} from 'pixi.js';
+import {BaseTool} from './tools/BaseTool';
 
 
 /**
@@ -26,6 +27,7 @@ export class Canvas implements OnChanges, OnDestroy {
     @Input() width : number;
     @Input() height : number;
     @Input() stage : DisplayObject;
+    @Input() tool : BaseTool;
 
     private _renderer : WebGLRenderer | CanvasRenderer;
 

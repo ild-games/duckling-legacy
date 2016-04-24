@@ -46,6 +46,26 @@ export interface CollisionAttribute extends Attribute {
     oneWayNormal : Vector;
 }
 
+export var defaultCollison : CollisionAttribute = {
+    dimension: {
+        dimension: {
+            x: 10,
+            y: 10
+        },
+        position: {
+            x: 0,
+            y: 0
+        },
+        rotation: 0
+    },
+    bodyType: BodyType.Environment,
+    collisionType: CollisionType.Ground,
+    oneWayNormal: {
+        x: 0,
+        y: 0
+    }
+}
+
 /**
  * Retrieve the collision attribute from the entity.
  * @param  entity Entity the component will be retrieved from.

@@ -5,9 +5,9 @@ import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/
 import {Container, DisplayObject} from 'pixi.js';
 
 /**
- * The type an attribute drawer that should be registered to draw entities.
+ * Function type used to draw attributes.
  */
-export type AttributeDrawer = (attribute : Attribute, entity : Entity, oldDrawable? : any) => any;
+export type AttributeDrawer = (entity : Entity, oldDrawable? : any) => any;
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class
@@ -24,7 +24,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     drawAttribute(key : AttributeKey, entity : Entity) : DisplayObject {
         var drawer = this.getImplementation(key);
         if (drawer) {
-            return drawer(entity[key], entity);
+            return drawer(entity);
         }
         return null;
     }

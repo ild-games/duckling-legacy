@@ -18,6 +18,17 @@ export interface PositionAttribute extends Attribute {
     velocity : Vector
 }
 
+export var defaultPosition : PositionAttribute = {
+    position: {
+        x: 0,
+        y: 0
+    },
+    velocity: {
+        x: 0,
+        y: 0
+    }
+};
+
 /**
  * Retrieve the position attribute from the entity.
  * @param  entity Entity the component will be retrieved from.
