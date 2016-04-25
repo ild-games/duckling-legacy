@@ -1,7 +1,7 @@
 import {Component, Injectable} from 'angular2/core';
 import {EntityKey, Entity} from '../entity';
 import {EntityBoxService} from './entity-box.service';
-import {EntitySystemService} from '../entity-system.service.ts';
+import {EntitySystemService} from '../entity-system.service';
 import {Vector, boxContainsPoint} from '../../math';
 
 /**
@@ -21,7 +21,7 @@ export class EntitySelectionService {
      * @param  position Position that may overlap with an entity.
      * @return The key of the entity contained at the position.
      */
-    getEntityKey(position : Vector) : EntityKey | null {
+    getEntityKey(position : Vector) : EntityKey {
         var key = this._entitySystemService
             .entitySystem
             .getValue()

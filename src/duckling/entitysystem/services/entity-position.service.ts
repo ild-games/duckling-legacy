@@ -2,7 +2,7 @@
 import {Component, Injectable} from 'angular2/core';
 import {Attribute, Entity, EntityKey} from '../entity';
 import {BaseAttributeService} from '../base-attribute-service';
-import {EntitySystemService} from '../entity-system.service.ts';
+import {EntitySystemService} from '../entity-system.service';
 import {Vector, boxContainsPoint} from '../../math';
 import {immutableAssign} from '../../util';
 

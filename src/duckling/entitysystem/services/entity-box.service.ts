@@ -19,7 +19,11 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
      * @return The component class to use for the attribute.
      */
     getAttributeBox(key : AttributeKey, entity : Entity) : any {
-        return this.getImplementation(key)(entity);
+        var getBox = this.getImplementation(key);
+        if (getBox) {
+            return getBox(entity);
+        }
+        return null;
     }
 
     /**
@@ -33,7 +37,7 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
         for (var key in entity) {
             var attributeBox = this.getAttributeBox(key, entity);
             if (attributeBox) {
-                if (box) {
+                if (!box) {
                     box = attributeBox;
                 } else {
                     box = boxUnion(box, attributeBox);

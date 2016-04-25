@@ -9,8 +9,13 @@ import {
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
-    EntityPositionSetService
+    EntityPositionSetService,
+    EntitySelectionService
 } from './entitysystem';
+
+import {
+    EntityCreatorTool
+} from './canvas/tools';
 
 import {bootstrapGameComponents} from './game/index';
 
@@ -21,6 +26,8 @@ var entityDrawerService = new EntityDrawerService();
 var entityBoxService = new EntityBoxService();
 var attributeDefaultService = new AttributeDefaultService();
 var entityPositionSetService = new EntityPositionSetService(entitySystemService);
+
+var entityCreatorTool = new EntityCreatorTool(attributeDefaultService, entitySystemService, entityPositionSetService);
 
 /**
  * Eventually we want to support multiple different games.  This means any component specific
@@ -43,5 +50,9 @@ bootstrap(ShellComponent, [
     provide(attributeComponentService, AttributeComponentService),
     provide(entityDrawerService, EntityDrawerService),
     provide(entityBoxService, EntityBoxService),
-    EntitySystemService
+    provide(attributeDefaultService, AttributeDefaultService),
+    provide(entityPositionSetService, EntityPositionSetService),
+    provide(entitySystemService, EntitySystemService),
+    provide(entityCreatorTool, EntityCreatorTool),
+    EntitySelectionService
 ]);

@@ -9,15 +9,23 @@ export class BaseTool {
     }
 
     onLeftClick(position : Vector) {
+
     }
 
     onStageDown(position : Vector) {
+
     }
 
     onStageUp(position : Vector) {
+
     }
 
     onStageMove(position : Vector) {
+
+    }
+
+    onLeaveStage() {
+        
     }
 
     get key() : string {

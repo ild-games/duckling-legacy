@@ -15,7 +15,7 @@ export interface Box2 {
  * @param position The position to test if it is in the box.
  * @return True if the box contains the point, false otherwise.
  */
-export function boxContainsPoint(box : Box2 | null, position : Vector | null) {
+export function boxContainsPoint(box : Box2, position : Vector) {
     if (!box || !position) {
         return false;
     }
@@ -60,7 +60,7 @@ export function boxMinY(box : Box2) : number {
  * Get the maximum Y position that a box touches.
  */
 export function boxMaxY(box : Box2) : number {
-    return box.position.y - box.dimension.y / 2;
+    return box.position.y + box.dimension.y / 2;
 }
 
 /**

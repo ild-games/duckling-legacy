@@ -10,16 +10,24 @@ import {
 } from 'angular2/core';
 import {Observable} from 'rxjs';
 import {autoDetectRenderer, DisplayObject, WebGLRenderer, CanvasRenderer} from 'pixi.js';
-import {BaseTool} from './tools/BaseTool';
-
+import {BaseTool} from './tools/base-tool';
+import {Vector} from '../math';
+import {isMouseButtonPressed, MouseButton} from '../util';
 
 /**
- * The Canvas Component is used to render pixijs display objects.
+ * The Canvas Component is used to render pixijs display objects and wire up Tools.
  */
 @Component({
     selector: 'dk-canvas',
     template: `
-        <canvas #canvas [height]="height" [width]="width">
+        <canvas
+            #canvas
+            (mousedown)="onMouseDown($event)"
+            (mouseup)="onMouseUp($event)"
+            (mousemove)="onMouseDrag($event)"
+            (mouseout)="onMouseOut()"
+            [height]="height"
+            [width]="width">
         </canvas>
     `
 })
@@ -32,6 +40,37 @@ export class Canvas implements OnChanges, OnDestroy {
     private _renderer : WebGLRenderer | CanvasRenderer;
 
     @ViewChild("canvas") canvasRoot : ElementRef;
+
+    onMouseDown(event : MouseEvent) {
+        if (this.tool) {
+            this.tool.onStageDown(this.positionFromEvent(event));
+        }
+    }
+
+    onMouseUp(event : MouseEvent) {
+        if (this.tool) {
+            this.tool.onStageUp(this.positionFromEvent(event));
+        }
+    }
+
+    onMouseDrag(event : MouseEvent) {
+        if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
+            this.tool.onStageMove(this.positionFromEvent(event));
+        }
+    }
+
+    onMouseOut() {
+        if (this.tool) {
+            this.tool.onLeaveStage();
+        }
+    }
+
+    positionFromEvent(event : MouseEvent) : Vector {
+        return {
+            x: event.offsetX,
+            y: event.offsetY
+        }
+    }
 
     ngAfterViewInit() {
         this._renderer = new CanvasRenderer(this.width, this.height, {view: this.canvasRoot.nativeElement});

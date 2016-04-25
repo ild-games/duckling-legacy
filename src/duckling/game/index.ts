@@ -23,7 +23,7 @@ export function bootstrapGameComponents(services: {
         entityDrawerService: EntityDrawerService}) {
 
     //Bootstrap Position
-    services.entityBoxService.register(POSITION_KEY, PositionComponent);
+    services.attributeComponentService.register(POSITION_KEY, PositionComponent);
     services.attributeDefaultService.register(POSITION_KEY, {createByDefault: true, default: defaultPosition});
     services.entityPositionSetService.register(POSITION_KEY, setPosition);
 
