@@ -19,7 +19,7 @@ interface ProjectModel {
     directives: [
         MD_LIST_DIRECTIVES
     ],
-    styleUrls: [ 'build/splash/splash.component.css' ],
+    styleUrls: [ './duckling/splash/splash.component.css' ],
     template: `
         <div class="splash-screen">
             <div class="left-section">
@@ -31,7 +31,9 @@ interface ProjectModel {
                 </md-list>
 
                 <div class="actions">
-                    <a>NEW PROJECT</a>
+                    <a (click)="onNewProjectClick($event)">
+                        NEW PROJECT
+                    </a>
                 </div>
             </div>
 
@@ -41,7 +43,7 @@ interface ProjectModel {
                         Duckling
                     </div>
                     <div class="duckling-version">
-                        0.0.1
+                        {{version}}
                     </div>
                 </div>
             </div>
@@ -53,9 +55,19 @@ interface ProjectModel {
 export class SplashComponent implements OnInit {
     private version : string = "0.0.1";
     private projects : ProjectModel[] = [];
+    private dialogOptions : {};
+    private dialog = remote.require('dialog');
+    private MAX_ENTRIES : number = 7;
 
     constructor(private _jsonLoader : JsonLoaderService,
                 private _path : PathService) {
+        this.dialogOptions = {
+            defaultPath: this._path.home(),
+            properties: [
+                'openDirectory',
+                'createDirectory'
+            ]
+        };
     }
 
     ngOnInit() {
@@ -81,6 +93,29 @@ export class SplashComponent implements OnInit {
         remote.getCurrentWindow().setResizable(false);
     }
 
+    private onNewProjectClick(event : any) {
+        remote.require('dialog').showOpenDialog(
+            remote.getCurrentWindow(),
+            this.dialogOptions,
+            (dirName : string) => this.openProject({
+                path: dirName,
+                title: this._path.basename(dirName)
+            }));
+    }
+
+    private openProject(project : ProjectModel) {
+        this.reorderProject(project);
+        this.saveProjects();
+    }
+
+    private reorderProject(openedProject : ProjectModel) {
+        this.projects = this.projects.filter((project) => project.path !== openedProject.path);
+        this.projects = ([openedProject].concat(this.projects)).slice(0, this.MAX_ENTRIES);
+    }
+
+    saveProjects() {
+        this._jsonLoader.saveJsonToPath(this.projectListPath, JSON.stringify(this.projects));
+    }
 
     get projectListPath() {
         return this._path.join(this._path.home(),".duckling","recent_projects.json");
