@@ -1,7 +1,9 @@
 import {
     OnInit,
     Component,
-    Input
+    Input,
+    Output,
+    EventEmitter
 } from 'angular2/core';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {remote} from 'electron';
@@ -23,12 +25,15 @@ interface ProjectModel {
     template: `
         <div class="splash-screen">
             <div class="left-section">
-                <md-list>
-                    <md-list-item *ngFor="#project of projects">
+                <md-nav-list>
+                    <md-list-item
+                    md-list-item
+                    *ngFor="#project of projects"
+                    (click)="openProject({title: project.title, path: project.path})">
                         <h3 md-line> {{project.title}} </h3>
                         <p md-line> {{project.path}} </p>
                     </md-list-item>
-                </md-list>
+                </md-nav-list>
 
                 <div class="actions">
                     <a (click)="onNewProjectClick($event)">
@@ -58,6 +63,9 @@ export class SplashComponent implements OnInit {
     private dialogOptions : {};
     private dialog = remote.require('dialog');
     private MAX_ENTRIES : number = 7;
+
+    @Output()
+    projectOpened : EventEmitter<ProjectModel> = new EventEmitter();
 
     constructor(private _jsonLoader : JsonLoaderService,
                 private _path : PathService) {
@@ -94,18 +102,23 @@ export class SplashComponent implements OnInit {
     }
 
     private onNewProjectClick(event : any) {
-        remote.require('dialog').showOpenDialog(
+        this.dialog.showOpenDialog(
             remote.getCurrentWindow(),
             this.dialogOptions,
             (dirName : string) => this.openProject({
-                path: dirName,
+                path: dirName[0],
                 title: this._path.basename(dirName)
             }));
     }
 
     private openProject(project : ProjectModel) {
+        if (!project) {
+            return;
+        }
+
         this.reorderProject(project);
         this.saveProjects();
+        this.projectOpened.emit(project);
     }
 
     private reorderProject(openedProject : ProjectModel) {

@@ -16,7 +16,9 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
     ],
     template: `
         <div *ngIf="!gameLoaded">
-            <dk-splash-screen></dk-splash-screen>
+            <dk-splash-screen
+                (projectOpened)="onProjectOpened()">
+            </dk-splash-screen>
         </div>
 
         <div *ngIf="gameLoaded">
@@ -27,6 +29,10 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
     `
 })
 export class ShellComponent {
-    
+
     private gameLoaded : boolean = false;
+
+    onProjectOpened() {
+        this.gameLoaded = true;
+    }
 }
