@@ -5,6 +5,7 @@ import {AttributeComponentService} from './entitysystem/attribute-component.serv
 import {bootstrapGameComponents} from './game/index';
 import {JsonLoaderService} from './util/json-loader.service';
 import {PathService} from './util/path.service';
+import {DialogService} from './util/dialog.service';
 
 
 var instance = new AttributeComponentService();
@@ -26,5 +27,6 @@ bootstrap(
     [
         componentService,
         JsonLoaderService,
-        PathService
+        PathService,
+        DialogService
     ]);

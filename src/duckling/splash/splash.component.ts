@@ -3,13 +3,15 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    NgZone
 } from 'angular2/core';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {remote} from 'electron';
 
 import {JsonLoaderService} from '../util/json-loader.service';
 import {PathService} from '../util/path.service';
+import {DialogService} from '../util/dialog.service';
 
 interface ProjectModel {
     title : string,
@@ -61,16 +63,17 @@ export class SplashComponent implements OnInit {
     private version : string = "0.0.1";
     private projects : ProjectModel[] = [];
     private dialogOptions : {};
-    private dialog = remote.require('dialog');
     private MAX_ENTRIES : number = 7;
 
     @Output()
     projectOpened : EventEmitter<ProjectModel> = new EventEmitter();
 
-    constructor(private _jsonLoader : JsonLoaderService,
-                private _path : PathService) {
+    constructor(private jsonLoader : JsonLoaderService,
+                private path : PathService,
+                private dialog : DialogService,
+                private zone : NgZone) {
         this.dialogOptions = {
-            defaultPath: this._path.home(),
+            defaultPath: this.path.home(),
             properties: [
                 'openDirectory',
                 'createDirectory'
@@ -80,11 +83,11 @@ export class SplashComponent implements OnInit {
 
     ngOnInit() {
         this.resizeAndCenterWindow();
-        this.loadProject();
+        this.loadProjects();
     }
 
-    loadProject() {
-        this._jsonLoader.getJsonFromPath(this.projectListPath).then((json) => {
+    loadProjects() {
+        this.jsonLoader.getJsonFromPath(this.projectListPath).then((json) => {
             if (json) {
                 this.projects = JSON.parse(json);
             } else {
@@ -105,9 +108,9 @@ export class SplashComponent implements OnInit {
         this.dialog.showOpenDialog(
             remote.getCurrentWindow(),
             this.dialogOptions,
-            (dirName : string) => this.openProject({
-                path: dirName[0],
-                title: this._path.basename(dirName)
+            (dirNames : string[]) => this.openProject({
+                path: dirNames[0],
+                title: this.path.basename(dirNames[0])
             }));
     }
 
@@ -118,7 +121,13 @@ export class SplashComponent implements OnInit {
 
         this.reorderProject(project);
         this.saveProjects();
+        this.maximizeWindow();
         this.projectOpened.emit(project);
+    }
+
+    private maximizeWindow() {
+        remote.getCurrentWindow().setResizable(true);
+        remote.getCurrentWindow().maximize();
     }
 
     private reorderProject(openedProject : ProjectModel) {
@@ -127,10 +136,10 @@ export class SplashComponent implements OnInit {
     }
 
     saveProjects() {
-        this._jsonLoader.saveJsonToPath(this.projectListPath, JSON.stringify(this.projects));
+        this.jsonLoader.saveJsonToPath(this.projectListPath, JSON.stringify(this.projects));
     }
 
     get projectListPath() {
-        return this._path.join(this._path.home(),".duckling","recent_projects.json");
+        return this.path.join(this.path.home(),".duckling","recent_projects.json");
     }
 }
