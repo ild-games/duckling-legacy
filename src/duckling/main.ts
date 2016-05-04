@@ -20,6 +20,7 @@ import {
 import {bootstrapGameComponents} from './game/index';
 import {JsonLoaderService} from './util/json-loader.service';
 import {PathService} from './util/path.service';
+import {DialogService} from './util/dialog.service';
 
 
 var entitySystemService = new EntitySystemService();
@@ -58,5 +59,6 @@ bootstrap(ShellComponent, [
     provide(entityCreatorTool, EntityCreatorTool),
     EntitySelectionService,
     JsonLoaderService,
-    PathService
+    PathService,
+    DialogService
 ]);
