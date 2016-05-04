@@ -1,10 +1,9 @@
 # Ignore build files and dependencies
 typings/
-bower_components/
 build/
-lib/
 node_modules/
 .sass-cache/
+npm-debug.log
 
 # Ignore certain IntelliJ files
 .idea/workspace.xml
@@ -12,9 +11,6 @@ node_modules/
 .idea/dictionaries
 .idea/libraries
 .settings/launch.json
-
-# Ingore Atom files
-tsconfig.json
 
 # Ignore OSX files
 .DS_Store
