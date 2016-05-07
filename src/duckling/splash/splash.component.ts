@@ -32,14 +32,15 @@ interface ProjectModel {
                     md-list-item
                     *ngFor="#project of projects"
                     (click)="openProject({title: project.title, path: project.path})">
-                        <h3 md-line> {{project.title}} </h3>
-                        <p md-line> {{project.path}} </p>
+                        <p md-line class="project-title"> {{project.title}} </p>
+                        <p md-line class="project-path"> {{project.path}} </p>
                     </md-list-item>
                 </md-nav-list>
 
                 <div class="actions">
                     <a (click)="onNewProjectClick($event)">
-                        NEW PROJECT
+                        <i class="fa fa-file-o" aria-hidden="true"></i>
+                        New
                     </a>
                 </div>
             </div>
@@ -63,7 +64,7 @@ export class SplashComponent implements OnInit {
     private version : string = "0.0.1";
     private projects : ProjectModel[] = [];
     private dialogOptions : {};
-    private MAX_ENTRIES : number = 7;
+    private MAX_ENTRIES : number = 8;
 
     @Output()
     projectOpened : EventEmitter<ProjectModel> = new EventEmitter();
@@ -108,17 +109,17 @@ export class SplashComponent implements OnInit {
         this.dialog.showOpenDialog(
             remote.getCurrentWindow(),
             this.dialogOptions,
-            (dirNames : string[]) => this.openProject({
-                path: dirNames[0],
-                title: this.path.basename(dirNames[0])
-            }));
+            (dirNames : string[]) => {
+                if (dirNames) {
+                    this.openProject({
+                        path: dirNames[0],
+                        title: this.path.basename(dirNames[0])
+                    });
+                }
+            });
     }
 
     private openProject(project : ProjectModel) {
-        if (!project) {
-            return;
-        }
-
         this.reorderProject(project);
         this.saveProjects();
         this.maximizeWindow();
