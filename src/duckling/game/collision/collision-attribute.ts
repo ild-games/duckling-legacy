@@ -1,6 +1,8 @@
-import {Attribute} from '../../entitysystem/entity';
+import {Attribute, Entity} from '../../entitysystem/entity';
 import {Vector} from '../../math/vector';
 import {Box2} from '../../math/box2';
+
+export const COLLISION_KEY = "collision";
 
 /**
  * Describes how the entity behaves in the solid body system.
@@ -42,4 +44,33 @@ export interface CollisionAttribute extends Attribute {
      * towards the direction other entities are unable to pass through.
      */
     oneWayNormal : Vector;
+}
+
+export var defaultCollison : CollisionAttribute = {
+    dimension: {
+        dimension: {
+            x: 10,
+            y: 10
+        },
+        position: {
+            x: 0,
+            y: 0
+        },
+        rotation: 0
+    },
+    bodyType: BodyType.Environment,
+    collisionType: CollisionType.Ground,
+    oneWayNormal: {
+        x: 0,
+        y: 0
+    }
+}
+
+/**
+ * Retrieve the collision attribute from the entity.
+ * @param  entity Entity the component will be retrieved from.
+ * @return Collision attribute belonging to the entity.
+ */
+export function getCollision(entity : Entity) : CollisionAttribute {
+    return <CollisionAttribute>entity[COLLISION_KEY];
 }
