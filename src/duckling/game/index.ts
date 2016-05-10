@@ -15,6 +15,9 @@ import {CollisionComponent} from './collision/collision.component';
 import {drawCollision} from './collision/collision-drawer';
 import {collisionBoundingBox} from './collision/collision-box';
 
+/**
+ * Initialize the Services used by duckling to interact with the attribute implementations.
+ */
 export function bootstrapGameComponents(services: {
         attributeDefaultService : AttributeDefaultService;
         entityPositionSetService : EntityPositionSetService,

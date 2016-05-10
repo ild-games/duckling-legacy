@@ -14,5 +14,5 @@ export enum MouseButton {
  * @return True if the button is pressed.  False otherwise.
  */
 export function isMouseButtonPressed(event : MouseEvent, button : MouseButton) {
-    return !!(event.buttons | button);
+    return !!(event.buttons & button);
 }

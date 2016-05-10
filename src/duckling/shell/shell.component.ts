@@ -16,34 +16,4 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
     `
 })
 export class ShellComponent {
-    @Input() entity : Entity = {
-        position: {
-            position: {
-                x: 0,
-                y: 0
-            },
-            velocity: {
-                x: 0,
-                y: 0
-            }
-        },
-        collision: {
-            dimension: {
-                dimension: {
-                    x: 0,
-                    y: 0
-                }
-            },
-            oneWayNormal: {
-                x: 0,
-                y: 0
-            },
-            collisionType: CollisionType.Ground,
-            bodyType: BodyType.Environment
-        }
-    }
-
-    onEntityChanged(entity : Entity) {
-        this.entity = entity;
-    }
 }

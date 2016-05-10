@@ -8,7 +8,7 @@ import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
 import {Canvas} from './canvas.component';
 import {EntityDrawerService} from './drawing/entity-drawer.service';
-import {EntityCreatorTool, BaseTool, EntityMoveTool, TOOL_PROVIDERS} from './tools';
+import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
 
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
@@ -19,8 +19,8 @@ import {EntityCreatorTool, BaseTool, EntityMoveTool, TOOL_PROVIDERS} from './too
     viewProviders : [TOOL_PROVIDERS],
     template: `
         <dk-array-select
-            [value]="selectedTool"
-            [options]="toolOptions"
+            [value]="tool.key"
+            [options]="options"
             (selection)="onToolSelected($event)">
         </dk-array-select>
 
@@ -38,30 +38,21 @@ export class MapEditorComponent {
     mapStage : DisplayObject;
 
     tool : BaseTool;
-    selectedTool : string = "move";
-    toolOptions : SelectOption [] = [
-            { value: "move", title: "Move Entity" },
-            { value: "create", title: "Create Entity" }];
+    options : SelectOption [];
 
     constructor(private _entitySystemService : EntitySystemService,
-                private _moveTool : EntityMoveTool,
-                private _createTool : EntityCreatorTool,
+                public toolService : ToolService,
                 private _entityDrawerService : EntityDrawerService) {
+
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe(stage => this.mapStage = stage);
-        this.tool = this._moveTool;
+
+        this.tool = this.toolService.defaultTool;
+        this.options = this.toolService.toolOptions;
     }
 
-    onToolSelected(toolName : string) {
-        this.selectedTool = toolName;
-        switch (toolName) {
-            case "move":
-                this.tool = this._moveTool;
-                break;
-            case "create":
-                this.tool = this._createTool;
-                break;
-        }
+    onToolSelected(toolKey : string) {
+        this.tool = this.toolService.getTool(toolKey);
     }
 }

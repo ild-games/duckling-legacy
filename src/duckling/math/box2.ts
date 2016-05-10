@@ -16,6 +16,7 @@ export interface Box2 {
  * @return True if the box contains the point, false otherwise.
  */
 export function boxContainsPoint(box : Box2, position : Vector) {
+    //TODO https://github.com/JeffSwenson/duckling/issues/28 Support Rotation
     if (!box || !position) {
         return false;
     }

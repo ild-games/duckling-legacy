@@ -17,4 +17,12 @@ export class EntityCreatorTool extends BaseTool {
         var key = this._entitySystemService.addNewEntity(entity);
         this._entityPositionSetService.setPosition(key, position);
     }
+
+    get key() {
+        return "EntityCreatorTool";
+    }
+
+    get label() {
+        return "Create Entity";
+    }
 }

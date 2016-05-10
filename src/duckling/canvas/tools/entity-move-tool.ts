@@ -37,6 +37,14 @@ export class EntityMoveTool extends BaseTool {
         this._cancel();
     }
 
+    get key() {
+        return "EntityMoveTool";
+    }
+
+    get label() {
+        return "Move Entity";
+    }
+
     private _cancel() {
         this._selection = null;
     }

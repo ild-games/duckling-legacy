@@ -4,7 +4,7 @@ import {
     Input,
     OnChanges,
     OnDestroy,
-    OnInit,
+    AfterViewInit,
     SimpleChange,
     ViewChild
 } from 'angular2/core';
@@ -31,7 +31,7 @@ import {isMouseButtonPressed, MouseButton} from '../util';
         </canvas>
     `
 })
-export class Canvas implements OnChanges, OnDestroy {
+export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Input() width : number;
     @Input() height : number;
     @Input() stage : DisplayObject;
