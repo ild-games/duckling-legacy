@@ -14,6 +14,7 @@
     "@angular2-material/card": "^2.0.0-alpha.2",
     "@angular2-material/core": "^2.0.0-alpha.2",
     "@angular2-material/input": "^2.0.0-alpha.2",
+    "@angular2-material/list": "^2.0.0-alpha.2",
     "angular2": "2.0.0-beta.14",
     "es6-shim": "^0.35.0",
     "gulp": "^3.9.1",

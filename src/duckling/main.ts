@@ -18,6 +18,9 @@ import {
 } from './canvas/tools';
 
 import {bootstrapGameComponents} from './game/index';
+import {JsonLoaderService} from './util/json-loader.service';
+import {PathService} from './util/path.service';
+
 
 var entitySystemService = new EntitySystemService();
 
@@ -45,7 +48,6 @@ bootstrapGameComponents({
 function provide(instance : any, base : any) {
     return new Provider(base, {useValue : instance});
 }
-
 bootstrap(ShellComponent, [
     provide(attributeComponentService, AttributeComponentService),
     provide(entityDrawerService, EntityDrawerService),
@@ -54,5 +56,7 @@ bootstrap(ShellComponent, [
     provide(entityPositionSetService, EntityPositionSetService),
     provide(entitySystemService, EntitySystemService),
     provide(entityCreatorTool, EntityCreatorTool),
-    EntitySelectionService
+    EntitySelectionService,
+    JsonLoaderService,
+    PathService
 ]);
