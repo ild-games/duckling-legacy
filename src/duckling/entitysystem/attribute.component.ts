@@ -32,7 +32,6 @@ export class AttributeComponent {
     constructor(private _attributeComponentService : AttributeComponentService,
                 private _dcl : DynamicComponentLoader,
                 private _elementRef : ElementRef) {
-
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {

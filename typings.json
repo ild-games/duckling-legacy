@@ -1,7 +1,9 @@
 {
   "ambientDependencies": {
+    "electron": "registry:env/electron#0.37.6+20160416165306",
     "es6-shim": "github:DefinitelyTyped/DefinitelyTyped/es6-shim/es6-shim.d.ts#7de6c3dd94feaeb21f20054b9f30d5dabc5efabd",
     "jasmine": "github:DefinitelyTyped/DefinitelyTyped/jasmine/jasmine.d.ts#7de6c3dd94feaeb21f20054b9f30d5dabc5efabd",
-    "pixi.js": "registry:dt/pixi.js#3.0.9+20160404013751"
+    "pixi.js": "registry:dt/pixi.js#3.0.9+20160404013751",
+    "node": "registry:dt/node#4.0.0+20160412142033"
   }
 }

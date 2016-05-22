@@ -4,7 +4,21 @@ $form-label-padding-down: 5px;
 $form-label-padding-left: 0;
 $form-label-padding: $form-label-padding-top $form-label-padding-right $form-label-padding-down $form-label-padding-left;
 
+$spacer-unit: 13px;
+
 .form-label {
-    color: black;
     padding: $form-label-padding;
+}
+
+@mixin action {
+    &:hover {
+      cursor: pointer;
+      color: $action-color;
+    }
+}
+
+@mixin clean-link {
+    @include action;
+    text-decoration: none;
+    display: block;
 }
