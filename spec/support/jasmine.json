@@ -1,0 +1,11 @@
+{
+  "spec_dir": "build/duckling-tests",
+  "spec_files": [
+    "**/*spec.js"
+  ],
+  "helpers": [
+    "**/*helper.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": false
+}

@@ -23,7 +23,7 @@ export const ACTION_UPDATE_ENTITY = "EntitySystem.UpdateEntity";
  */
 export function updateEntityAction(entity : Entity, entityKey : EntityKey) : EntityUpdateAction {
         return {
-            name : ACTION_UPDATE_ENTITY,
+            type : ACTION_UPDATE_ENTITY,
             entity,
             entityKey
         }
@@ -44,7 +44,7 @@ export function mergeEntityAction(action : EntityUpdateAction, previousAction : 
  * Reducer for the EntitySystem portion of a map.
  */
 export function entitySystemReducer(entitySystem : EntitySystem, action : EntityUpdateAction) : EntitySystem {
-    switch (action.name) {
+    switch (action.type) {
         case ACTION_UPDATE_ENTITY:
             return entitySystem.set(action.entityKey, action.entity);
     }

@@ -1,6 +1,5 @@
-export type ActionName = string;
+import {Action as ReduxAction} from 'redux';
 
-export interface Action {
-    name : ActionName,
+export interface Action extends ReduxAction {
     mergeKey? : any
 }
