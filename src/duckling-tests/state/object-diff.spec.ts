@@ -43,10 +43,6 @@ describe("changeType", function() {
         expect(changeType({foo: 5, bar: 4}, {foo:3, bar: 2})).toBe(ChangeType.ComplexChange);
     });
 
-    it("returns PrimitiveChange for two flat objects with an extra key", function() {
-        expect(changeType({foo: 3, bar: 2}, {foo:3, bar: 2, spam: 2})).toBe(ChangeType.PrimitiveChange);
-    });
-
     it("returns PrimitiveChange for two flat objects with a missing key", function() {
         expect(changeType({foo: 3, bar: 2}, {foo:3, bar: 2, spam: 2})).toBe(ChangeType.PrimitiveChange);
     });

@@ -10,7 +10,6 @@
     "tsc:w": "tsc -w",
     "typings": "typings",
     "duckling": "electron build/electron/background-main.js",
-    "duckling-test": "electron build/duckling-tests/background-test-main.js",
     "postinstall": "typings install"
   },
   "license": "ISC",
@@ -20,7 +19,6 @@
     "@angular2-material/input": "2.0.0-alpha.3",
     "@angular2-material/list": "2.0.0-alpha.3",
     "angular2": "2.0.0-beta.14",
-    "electron-jasmine": "^0.2.0",
     "es6-shim": "^0.35.0",
     "gulp": "^3.9.1",
     "gulp-sass": "^2.2.0",

@@ -27,7 +27,6 @@ gulp.task('watch', function () {
 moveTask('electron', 'src/electron/**', 'build/electron');
 moveTask('index', 'src/index.html', 'build');
 moveTask('resources', 'resources/**', 'build/resources');
-moveTask('duckling-test', 'src/duckling-tests/jasmine.json', 'build/duckling-tests');
 
 gulp.task('duckling', [
     'index',
@@ -36,13 +35,8 @@ gulp.task('duckling', [
     'resources'
 ]);
 
-gulp.task('tests', [
-    'duckling-test',
-])
-
 gulp.task('default', [
-    'duckling',
-    'tests'
+    'duckling'
 ]);
 
 function swallowError (error) {

@@ -63,7 +63,7 @@ function isReplaceSystemAction(action : Action): action is ReplaceSystemAction  
  * @return True if the entity actions should be merged. False otherwise.
  */
 export function mergeEntityAction(action : EntityUpdateAction, previousAction : EntityUpdateAction) : boolean {
-    if (action.type !== ACTION_UPDATE_ENTITY && previousAction.type !== ACTION_UPDATE_ENTITY) {
+    if (action.type !== ACTION_UPDATE_ENTITY || previousAction.type !== ACTION_UPDATE_ENTITY) {
         return false
     }
 
