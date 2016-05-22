@@ -15,7 +15,7 @@ import {AttributeComponent} from './attribute.component';
  * Display a form that allows for editting the attributes attached to a component.
  */
 @Component({
-    selector: "entity-component",
+    selector: "dk-entity-component",
     directives: [AttributeComponent, MD_CARD_DIRECTIVES],
     styleUrls: ['./duckling/entitysystem/entity.component.css'],
     template: `

@@ -26,13 +26,13 @@ import {ProjectService} from '../project';
             <h1>This is the Shell</h1>
             <dk-map-editor>
             </dk-map-editor>
+            <dk-entity-component
+                [entity]="_entity">
+            </dk-entity-component>
         </div>
     `
 })
 export class ShellComponent {
-
-    private gameLoaded : boolean = false;
-
     constructor(public projectService : ProjectService) {
 
     }
