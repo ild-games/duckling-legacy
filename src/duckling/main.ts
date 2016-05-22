@@ -21,6 +21,7 @@ import {
 } from './canvas/tools';
 
 import {bootstrapGameComponents} from './game/index';
+import {ProjectSerializerService} from './splash/project-serializer.service';
 import {DialogService} from './util/dialog.service';
 import {JsonLoaderService} from './util/json-loader.service';
 import {PathService} from './util/path.service';
@@ -69,4 +70,5 @@ bootstrap(ShellComponent, [
     EntitySelectionService,
     JsonLoaderService,
     PathService,
+    ProjectSerializerService
 ]);
