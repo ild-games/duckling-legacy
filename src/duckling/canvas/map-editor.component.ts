@@ -6,6 +6,7 @@ import {Observable} from 'rxjs';
 
 import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
+import {StoreService} from '../state';
 import {Canvas} from './canvas.component';
 import {EntityDrawerService} from './drawing/entity-drawer.service';
 import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
@@ -23,6 +24,9 @@ import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
             [options]="options"
             (selection)="onToolSelected($event)">
         </dk-array-select>
+
+        <button (click)="store.undo()">Undo</button>
+        <button (click)="store.redo()">Redo</button>
 
         <dk-canvas
             [tool]="tool"
@@ -42,6 +46,7 @@ export class MapEditorComponent {
 
     constructor(private _entitySystemService : EntitySystemService,
                 public toolService : ToolService,
+                public store : StoreService,
                 private _entityDrawerService : EntityDrawerService) {
 
         this._entitySystemService.entitySystem

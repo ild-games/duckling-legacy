@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {createStore} from 'redux';
 
-import {Action, undoAction, redoAction, createUndoRedoReducer, getCurrentState} from '../../duckling/state';
+import {Action, undoAction, redoAction, createUndoRedoReducer, clearUndoHistoryAction, getCurrentState} from '../../duckling/state';
 import {testAction, testReducer, TestAction} from './reducer-helper';
 
 function getState(store : any) : any {
@@ -49,6 +49,30 @@ describe("undo-redo", function () {
             expect(getState(this.store).update).toBe(2);
         });
     });
+
+    describe("clear", function() {
+        it("removes the undo stack", function() {
+            this.store.dispatch(testAction({update : 1}));
+            this.store.dispatch(testAction({update : 2}));
+
+            this.store.dispatch(clearUndoHistoryAction());
+            this.store.dispatch(undoAction());
+
+            expect(getState(this.store).update).toBe(2);
+        });
+
+        it("removes the redo stack", function() {
+            this.store.dispatch(testAction({update : 1}));
+            this.store.dispatch(testAction({update : 2}));
+
+            this.store.dispatch(undoAction());
+            this.store.dispatch(clearUndoHistoryAction());
+            this.store.dispatch(redoAction());
+
+            expect(getState(this.store).update).toBe(1);
+        });
+    });
+
 
     describe("redo", function() {
         it("does nothing to the initial state", function() {

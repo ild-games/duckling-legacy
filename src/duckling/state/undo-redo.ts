@@ -5,6 +5,7 @@ import {List} from 'immutable';
 
 export const UNDO_ACTION = "UndoRedo.Undo";
 export const REDO_ACTION = "UndoRedo.Redo";
+export const CLEAR_HISTORY_ACTION = "UndoRedo.Clear";
 
 /**
  * Create a new undo action.
@@ -23,6 +24,15 @@ export function redoAction() : Action {
         type : REDO_ACTION
     }
 }
+
+/**
+ * Create a clear state action.
+ */
+ export function clearUndoHistoryAction() : Action {
+     return {
+         type : CLEAR_HISTORY_ACTION
+     }
+ }
 
 /**
  * State used by the UndoRedo reducer.
@@ -69,6 +79,8 @@ export function createUndoRedoReducer<T>(rootReducer : Reducer<T>, autoMerger : 
                return undo(state);
            case REDO_ACTION:
                return redo(state);
+           case CLEAR_HISTORY_ACTION:
+               return clear(state);
            default:
                return applyReducer<T>(rootReducer, autoMerger, state, action);
        }
@@ -101,6 +113,13 @@ function shouldMerge(action : Action, prevAction : Action, autoMerger : AutoMerg
     }
 
     return autoMerger(action, prevAction);
+}
+
+function clear<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
+    return {
+        stateHistory : List<T>(),
+        state : state.state
+    }
 }
 
 function undo<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
