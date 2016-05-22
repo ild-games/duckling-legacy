@@ -39,7 +39,7 @@ export class ArraySelect {
     }
 
     indexOfValue(value : string) {
-        return this.options.findIndex(option => option.value == value)
+        return this.options.findIndex(option => option.value === value)
     }
 }
 

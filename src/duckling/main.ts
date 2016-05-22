@@ -13,12 +13,19 @@ import {
     EntityBoxService,
     EntitySystemService,
     EntityPositionSetService,
-    EntitySelectionService
+    EntitySelectionService,
+    entitySystemReducer,
+    mergeEntityAction,
+    createEntitySystem
 } from './entitysystem';
 
 import {
     EntityCreatorTool
 } from './canvas/tools';
+
+import {
+    Action, StoreService, DucklingState
+} from './state';
 
 import {bootstrapGameComponents} from './game/index';
 import {ProjectSerializerService} from './splash/project-serializer.service';
@@ -30,7 +37,18 @@ import {ElectronDialogService} from '../electron/util/electron-dialog.service';
 import {ElectronWindowService} from '../electron/util/electron-window.service';
 
 
-var entitySystemService = new EntitySystemService();
+// Bootstrap the Redux Store
+function mainReducer(state : DucklingState = {entitySystem : createEntitySystem()}, action : Action) : DucklingState {
+    return {
+        entitySystem : entitySystemReducer(state.entitySystem, action)
+    }
+}
+var storeService = new StoreService(mainReducer, mergeEntityAction);
+
+// Create the Entity System
+var entitySystemService = new EntitySystemService(storeService);
+
+// Bootstrap game specific behavior
 var attributeComponentService = new AttributeComponentService();
 var entityDrawerService = new EntityDrawerService();
 var entityBoxService = new EntityBoxService();
@@ -58,6 +76,7 @@ function provideClass(implementationClass : Type, base : Type) {
     return new Provider(base, {useClass : implementationClass});
 }
 bootstrap(ShellComponent, [
+    provideInstance(storeService, StoreService),
     provideInstance(attributeComponentService, AttributeComponentService),
     provideInstance(entityDrawerService, EntityDrawerService),
     provideInstance(entityBoxService, EntityBoxService),

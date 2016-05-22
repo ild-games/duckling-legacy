@@ -1,5 +1,6 @@
 import {Injectable} from 'angular2/core';
 
+import {newMergeKey} from '../../state';
 import {AttributeDefaultService, EntitySystemService, EntityPositionSetService} from '../../entitysystem';
 import {Vector} from '../../math';
 import {BaseTool} from './base-tool';
@@ -13,9 +14,10 @@ export class EntityCreatorTool extends BaseTool {
     }
 
     onStageDown(position : Vector) {
+        var mergeKey = newMergeKey();
         var entity = this._attributeDefaultService.createEntity();
-        var key = this._entitySystemService.addNewEntity(entity);
-        this._entityPositionSetService.setPosition(key, position);
+        var key = this._entitySystemService.addNewEntity(entity, mergeKey);
+        this._entityPositionSetService.setPosition(key, position, mergeKey);
     }
 
     get key() {
