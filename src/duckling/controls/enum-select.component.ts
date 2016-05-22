@@ -1,8 +1,9 @@
 import {
     Component,
+    ChangeDetectionStrategy,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
 } from 'angular2/core';
 
 import {SelectOption, ArraySelect} from './array-select.component';
@@ -20,7 +21,8 @@ import {isInteger} from '../math/number-utils';
             [options]="enumOptions()"
             (selection)="onSelectionChanged($event)">
         </dk-array-select>
-    `
+    `,
+    changeDetection : ChangeDetectionStrategy.OnPush,
 })
 export class EnumSelect {
     /**
@@ -44,7 +46,7 @@ export class EnumSelect {
             if (isInteger(Number(value))) {
                 options.push({
                     value,
-                    title : this.enum[value]
+                    title : this.enum[value],
                 });
             }
         }

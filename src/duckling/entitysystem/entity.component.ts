@@ -3,7 +3,8 @@ import {
     Input,
     Output,
     EventEmitter,
-    OnChanges
+    OnChanges,
+    ChangeDetectionStrategy
 } from 'angular2/core';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
@@ -31,7 +32,8 @@ import {AttributeComponent} from './attribute.component';
                 </md-card-content>
             </md-card>
         </div>
-    `
+    `,
+    changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class EntityComponent {
     @Input() entity : Entity;
