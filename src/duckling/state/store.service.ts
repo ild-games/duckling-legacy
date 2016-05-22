@@ -30,7 +30,20 @@ export class StoreService {
     /**
      * Observable that publishes updates to DucklingState.
      */
-    state : BehaviorSubject<DucklingState> = new BehaviorSubject({});
+    state : BehaviorSubject<DucklingState>;
+
+    /**
+     * Initialize the store service. Should be constructed then injected into duckling.
+     * @param  reducer    Reducer that is used to manage duckling's state.
+     * @param  autoMerger Function that is used to determine when two actions should be merged.
+     */
+    constructor(reducer : Reducer<DucklingState>, autoMerger : AutoMerger) {
+        this._store = createStore(createUndoRedoReducer(reducer, autoMerger));
+        this.state = new BehaviorSubject(this.getState());
+        this._store.subscribe(() => {
+            this.state.next(this.getState());
+        });
+    }
 
     /**
      * Dispatch an action to the store.
@@ -62,17 +75,5 @@ export class StoreService {
      */
     redo() {
         this.dispatch(redoAction());
-    }
-
-    /**
-     * Set the reducer that will be used by duckling. Should only be called at app startup.
-     * @param  reducer    Reducer that is used to manage duckling's state.
-     * @param  autoMerger Function that is used to determine when two actions should be merged.
-     */
-    setReducer(reducer : Reducer<DucklingState>, autoMerger : AutoMerger) {
-        this._store = createStore(createUndoRedoReducer(reducer, autoMerger));
-        this._store.subscribe(() => {
-            this.state.next(this.getState());
-        });
     }
 }

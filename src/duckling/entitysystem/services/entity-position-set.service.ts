@@ -25,7 +25,7 @@ export class EntityPositionSetService extends BaseAttributeService<PositionSette
      * @param entityKey The key of the entity that needs to be updated.
      * @param newPosition The position the entity should be moved to.
      */
-    setPosition(entityKey : EntityKey, newPosition : Vector) {
+    setPosition(entityKey : EntityKey, newPosition : Vector, mergeKey? : any) {
         var entity = this._entitySystemService.getEntity(entityKey);
         var patch : Entity = {};
 
@@ -36,6 +36,6 @@ export class EntityPositionSetService extends BaseAttributeService<PositionSette
             }
         }
 
-        this._entitySystemService.updateEntity(entityKey, immutableAssign(entity, patch));
+        this._entitySystemService.updateEntity(entityKey, immutableAssign(entity, patch), mergeKey);
     }
 }

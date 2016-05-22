@@ -38,13 +38,12 @@ import {ElectronWindowService} from '../electron/util/electron-window.service';
 
 
 // Bootstrap the Redux Store
-var storeService = new StoreService();
-function mainReducer(state : DucklingState = {}, action : Action) : DucklingState {
+function mainReducer(state : DucklingState = {entitySystem : createEntitySystem()}, action : Action) : DucklingState {
     return {
         entitySystem : entitySystemReducer(state.entitySystem, action)
     }
 }
-storeService.setReducer(mainReducer, mergeEntityAction);
+var storeService = new StoreService(mainReducer, mergeEntityAction);
 
 // Create the Entity System
 var entitySystemService = new EntitySystemService(storeService);

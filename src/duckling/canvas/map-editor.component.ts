@@ -50,6 +50,9 @@ export class MapEditorComponent {
                 private _entityDrawerService : EntityDrawerService) {
 
         this._entitySystemService.entitySystem
+            .map((value) => {
+                return value;
+            })
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe(stage => this.mapStage = stage);
 

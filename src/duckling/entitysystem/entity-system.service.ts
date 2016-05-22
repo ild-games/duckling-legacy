@@ -15,7 +15,9 @@ export class EntitySystemService {
 
     constructor(private _storeService : StoreService) {
         this.entitySystem = new BehaviorSubject(this._system);
-        this._storeService.state.do((state) => this.entitySystem.next(state.entitySystem));
+        this._storeService.state.subscribe((state) => {
+            this.entitySystem.next(state.entitySystem);
+        });
     }
 
     /**
@@ -40,11 +42,12 @@ export class EntitySystemService {
     /**
      * Add a new entity to the entity system.
      * @param  entity The entity that is being added to the system.
+     * @param  mergeKey Used to merge updates.
      * @return The key of the newly created entity.
      */
-    addNewEntity(entity : Entity) : EntityKey {
+    addNewEntity(entity : Entity, mergeKey? : any) : EntityKey {
         var key = this.nextKey();
-        this.updateEntity(key, entity);
+        this.updateEntity(key, entity, mergeKey);
         return key;
     }
 

@@ -83,5 +83,7 @@ export function entitySystemReducer(entitySystem : EntitySystem, action : Action
         return entitySystem.set(action.entityKey, action.entity);
     } else if (isReplaceSystemAction(action)) {
         return action.entitySystem;
+    } else {
+        return entitySystem;
     }
 }
