@@ -1,23 +1,29 @@
 import {
     OnInit,
     Component,
-    Input,
     Output,
-    EventEmitter,
-    NgZone
+    EventEmitter
 } from 'angular2/core';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
-import {remote} from 'electron';
 
-import {JsonLoaderService} from '../util/json-loader.service';
+import {ProjectSerializerService} from './project-serializer.service';
 import {PathService} from '../util/path.service';
 import {DialogService} from '../util/dialog.service';
+import {WindowService} from '../util/window.service';
 
 interface ProjectModel {
     title : string,
     path : string
 }
 
+/**
+ * Specifies the number of projects can be displayed on the splash screen.
+ */
+const MAX_SPLASH_ENTRIES : number = 8;
+
+/**
+ * The splash screen component allows the user to select a project they wish to edit.
+ */
 @Component({
     selector: 'dk-splash-screen',
     directives: [
@@ -30,7 +36,7 @@ interface ProjectModel {
                 <md-nav-list>
                     <md-list-item
                     md-list-item
-                    *ngFor="#project of projects"
+                    *ngFor="#project of _projects"
                     (click)="openProject({title: project.title, path: project.path})">
                         <p md-line class="project-title"> {{project.title}} </p>
                         <p md-line class="project-path"> {{project.path}} </p>
@@ -51,7 +57,7 @@ interface ProjectModel {
                         Duckling
                     </div>
                     <div class="duckling-version">
-                        {{version}}
+                        {{_version}}
                     </div>
                 </div>
             </div>
@@ -61,20 +67,22 @@ interface ProjectModel {
     `
 })
 export class SplashComponent implements OnInit {
-    private version : string = "0.0.1";
-    private projects : ProjectModel[] = [];
-    private dialogOptions : {};
-    private MAX_ENTRIES : number = 8;
+    private _version : string = "0.0.1";
+    private _projects : ProjectModel[] = [];
+    private _dialogOptions : {};
 
+    /**
+     * EventEmitter that will be invoked when a project is selected.
+     */
     @Output()
     projectOpened : EventEmitter<ProjectModel> = new EventEmitter();
 
-    constructor(private jsonLoader : JsonLoaderService,
-                private path : PathService,
-                private dialog : DialogService,
-                private zone : NgZone) {
-        this.dialogOptions = {
-            defaultPath: this.path.home(),
+    constructor(private _path : PathService,
+                private _window : WindowService,
+                private _dialog : DialogService,
+                private _projectSerializer : ProjectSerializerService) {
+        this._dialogOptions = {
+            defaultPath: this._path.home(),
             properties: [
                 'openDirectory',
                 'createDirectory'
@@ -87,33 +95,37 @@ export class SplashComponent implements OnInit {
         this.loadProjects();
     }
 
+    /**
+     * Loads the recently used project list.
+     */
     loadProjects() {
-        this.jsonLoader.getJsonFromPath(this.projectListPath).then((json) => {
-            if (json) {
-                this.projects = JSON.parse(json);
-            } else {
-                this.projects = [];
-            }
-        },(error) => {
-            this.projects = [];
+        this._projectSerializer.loadProjects(this.projectListFile).then((projects) => {
+            this._projects = projects;
         });
     }
 
+    /**
+     * Saves the current projects being managed by the splash screen into the recent
+     * project list file.
+     */
+    saveProjects() {
+        this._projectSerializer.saveProjects(this.projectListFile, this._projects);
+    }
+
     private resizeAndCenterWindow() {
-        remote.getCurrentWindow().setSize(945, 645);
-        remote.getCurrentWindow().center();
-        remote.getCurrentWindow().setResizable(false);
+        this._window.setSize(945, 645);
+        this._window.center();
+        this._window.setResizable(false);
     }
 
     private onNewProjectClick(event : any) {
-        this.dialog.showOpenDialog(
-            remote.getCurrentWindow(),
-            this.dialogOptions,
+        this._dialog.showOpenDialog(
+            this._dialogOptions,
             (dirNames : string[]) => {
                 if (dirNames) {
                     this.openProject({
                         path: dirNames[0],
-                        title: this.path.basename(dirNames[0])
+                        title: this._path.basename(dirNames[0])
                     });
                 }
             });
@@ -127,20 +139,16 @@ export class SplashComponent implements OnInit {
     }
 
     private maximizeWindow() {
-        remote.getCurrentWindow().setResizable(true);
-        remote.getCurrentWindow().maximize();
+        this._window.setResizable(true);
+        this._window.maximize();
     }
 
     private reorderProject(openedProject : ProjectModel) {
-        this.projects = this.projects.filter((project) => project.path !== openedProject.path);
-        this.projects = ([openedProject].concat(this.projects)).slice(0, this.MAX_ENTRIES);
+        this._projects = this._projects.filter((project) => project.path !== openedProject.path);
+        this._projects = ([openedProject].concat(this._projects)).slice(0, MAX_SPLASH_ENTRIES);
     }
 
-    saveProjects() {
-        this.jsonLoader.saveJsonToPath(this.projectListPath, JSON.stringify(this.projects));
-    }
-
-    get projectListPath() {
-        return this.path.join(this.path.home(),".duckling","recent_projects.json");
+    get projectListFile() : string {
+        return this._path.join(this._path.home(),".duckling","recent_projects.json");
     }
 }

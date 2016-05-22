@@ -7,14 +7,13 @@ $form-label-padding: $form-label-padding-top $form-label-padding-right $form-lab
 $spacer-unit: 13px;
 
 .form-label {
-    color: black;
     padding: $form-label-padding;
 }
 
 @mixin action {
     &:hover {
       cursor: pointer;
-      color: $project-action-color;
+      color: $action-color;
     }
 }
 
