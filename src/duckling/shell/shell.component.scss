@@ -1,0 +1,24 @@
+@import '../misc-mixins';
+@import '../colors';
+
+$shell-padding: 16px;
+.shell {
+    @include fill;
+
+    padding: $shell-padding;
+    box-sizing: border-box;
+    flex-flow: row;
+    display: flex;
+    background-color: $ultra-light-primary-color;
+
+    .canvas-container {
+        flex: 1 1 70%;
+        margin-right: $shell-padding / 2;
+        padding: 0;
+    }
+
+    .entity-editor-container {
+        flex: 1 1 30%;
+        margin-left: $shell-padding / 2;
+    }
+}

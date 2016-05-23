@@ -1,16 +1,20 @@
 import {
-    Component
+    Component,
+    ViewChild,
+    ElementRef
 } from 'angular2/core';
 import {DisplayObject} from 'pixi.js';
 import {Observable} from 'rxjs';
+import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
-import {ArraySelect, SelectOption} from '../controls';
-import {EntitySystemService} from '../entitysystem/';
 import {StoreService} from '../state';
 import {ProjectService} from '../project';
 import {Canvas} from './canvas.component';
 import {EntityDrawerService} from './drawing/entity-drawer.service';
 import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
+import {ArraySelect, SelectOption} from '../controls';
+import {EntitySystemService} from '../entitysystem/';
+import {WindowService} from '../util';
 
 
 /**
@@ -18,26 +22,40 @@ import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
  */
 @Component({
     selector: "dk-map-editor",
-    directives: [Canvas, ArraySelect],
+    directives: [Canvas, ArraySelect, MD_CARD_DIRECTIVES],
     viewProviders : [TOOL_PROVIDERS],
+    styleUrls: ['./duckling/canvas/map-editor.component.css'],
     template: `
-        <dk-array-select
-            [value]="tool.key"
-            [options]="options"
-            (selection)="onToolSelected($event)">
-        </dk-array-select>
+        <md-card>
+            <md-card-content>
+                <div class="content">
+                    <div class="canvas-top-toolbar">
+                        <dk-array-select
+                            [value]="tool.key"
+                            [options]="options"
+                            (selection)="onToolSelected($event)">
+                        </dk-array-select>
+                        <button (click)="store.undo()">Undo</button>
+                        <button (click)="store.redo()">Redo</button>
+                        <button (click)="project.save()">Save</button>
+                        <button (click)="project.reload()">Load</button>
+                    </div>
 
-        <button (click)="store.undo()">Undo</button>
-        <button (click)="store.redo()">Redo</button>
-        <button (click)="project.save()">Save</button>
-        <button (click)="project.reload()">Load</button>
+                    <div #canvasContainerDiv class="canvas-container">
+                        <dk-canvas
+                            [tool]="tool"
+                            [width]="width"
+                            [height]="height"
+                            [stage]="mapStage">
+                        </dk-canvas>
+                    </div>
 
-        <dk-canvas
-            [tool]="tool"
-            [width]="width"
-            [height]="height"
-            [stage]="mapStage">
-        </dk-canvas>
+                    <div class="canvas-bottom-toolbar">
+                        Bottom Toolbar
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
     `
 })
 export class MapEditorComponent {
@@ -47,6 +65,9 @@ export class MapEditorComponent {
 
     tool : BaseTool;
     options : SelectOption [];
+
+    @ViewChild('canvasContainerDiv')
+    canvasContainerDiv : ElementRef;
 
     constructor(private _entitySystemService : EntitySystemService,
                 public toolService : ToolService,
@@ -60,6 +81,7 @@ export class MapEditorComponent {
 
         this.tool = this.toolService.defaultTool;
         this.options = this.toolService.toolOptions;
+
     }
 
     onToolSelected(toolKey : string) {

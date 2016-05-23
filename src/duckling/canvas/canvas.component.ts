@@ -10,15 +10,17 @@ import {
 } from 'angular2/core';
 import {Observable} from 'rxjs';
 import {autoDetectRenderer, DisplayObject, WebGLRenderer, CanvasRenderer} from 'pixi.js';
+
 import {BaseTool} from './tools/base-tool';
 import {Vector} from '../math';
-import {isMouseButtonPressed, MouseButton} from '../util';
+import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 
 /**
  * The Canvas Component is used to render pixijs display objects and wire up Tools.
  */
 @Component({
     selector: 'dk-canvas',
+    styleUrls: ['./duckling/canvas/canvas.component.css'],
     template: `
         <canvas
             #canvas
@@ -40,6 +42,9 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private _renderer : WebGLRenderer | CanvasRenderer;
 
     @ViewChild("canvas") canvasRoot : ElementRef;
+
+    constructor(private _window : WindowService) {
+    }
 
     onMouseDown(event : MouseEvent) {
         if (this.tool) {
@@ -73,6 +78,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
+        this._window.on('resize', () => {
+            //this.width = this.canvasRoot.nativeElement.parent.width;
+            //this.height = this.canvasRoot.nativeElement.parent.height;
+        });
+
         this._renderer = new CanvasRenderer(this.width, this.height, {view: this.canvasRoot.nativeElement});
         this.render();
     }

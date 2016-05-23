@@ -1,0 +1,36 @@
+@import '../misc-mixins';
+
+:host {
+    height: 100%;
+    display: block;
+}
+
+$canvas-top-bar-height: 35px;
+$canvas-bottom-bar-height: 35px;
+
+md-card {
+    padding: 0;
+    height: 100%;
+
+    .canvas-top-toolbar {
+        width: 100%;
+        height: $canvas-top-bar-height;
+    }
+
+    .canvas-container {
+        background-color: red;
+
+        position: absolute;
+        top: $canvas-top-bar-height;
+        left: 0;
+        right: 0;
+        bottom: $canvas-bottom-bar-height;
+    }
+
+    .canvas-bottom-toolbar {
+        width: 100%;
+        height: $canvas-bottom-bar-height;
+        position: absolute;
+        bottom: 0;
+    }
+}

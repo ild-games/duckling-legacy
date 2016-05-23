@@ -11,6 +11,7 @@ import {ProjectService} from '../project';
         SplashComponent,
         MapEditorComponent
     ],
+    styleUrls: ['./duckling/shell/shell.component.css'],
     template: `
         <div *ngIf="showSplash">
             <dk-splash-screen
@@ -22,13 +23,16 @@ import {ProjectService} from '../project';
             Loading...
         </div>
 
-        <div *ngIf="showProject">
-            <h1>This is the Shell</h1>
-            <dk-map-editor>
-            </dk-map-editor>
-            <dk-entity-component
-                [entity]="_entity">
-            </dk-entity-component>
+        <div class="shell" *ngIf="showProject">
+            <div class="canvas-container">
+                <dk-map-editor>
+                </dk-map-editor>
+            </div>
+            <div class="entity-editor-container">
+                <dk-entity-component
+                    [entity]="_entity">
+                </dk-entity-component>
+            </div>
         </div>
     `
 })
