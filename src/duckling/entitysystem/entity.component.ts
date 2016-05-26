@@ -32,6 +32,7 @@ import {AttributeComponent} from './attribute.component';
                 </md-card-content>
             </md-card>
         </div>
+        <div class="the-duck-bg-img"></div>
     `,
     changeDetection : ChangeDetectionStrategy.OnPush
 })
