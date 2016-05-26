@@ -43,9 +43,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     @ViewChild("canvas") canvasRoot : ElementRef;
 
-    constructor(private _window : WindowService) {
-    }
-
     onMouseDown(event : MouseEvent) {
         if (this.tool) {
             this.tool.onStageDown(this.positionFromEvent(event));
@@ -78,11 +75,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this._window.on('resize', () => {
-            //this.width = this.canvasRoot.nativeElement.parent.width;
-            //this.height = this.canvasRoot.nativeElement.parent.height;
-        });
-
         this._renderer = new CanvasRenderer(this.width, this.height, {view: this.canvasRoot.nativeElement});
         this.render();
     }
@@ -95,10 +87,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     ngOnChanges(changes : {stage?:SimpleChange, width?:SimpleChange, height?:SimpleChange}) {
         if ((changes.width || changes.height) && this._renderer) {
+            this._renderer.view.style.width = this.width + "px";
+            this._renderer.view.style.height = this.height + "px";
             this._renderer.resize(this.width, this.height);
         }
-
-        this.render();
+        setTimeout(() => this.render(), 1);
     }
 
     ngOnDestroy() {

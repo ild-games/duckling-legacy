@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     Component,
     ViewChild,
     ElementRef
@@ -6,6 +7,7 @@ import {
 import {DisplayObject} from 'pixi.js';
 import {Observable} from 'rxjs';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
+import {ipcRenderer} from 'electron';
 
 import {StoreService} from '../state';
 import {ProjectService} from '../project';
@@ -41,7 +43,9 @@ import {WindowService} from '../util';
                         <button (click)="project.reload()">Load</button>
                     </div>
 
-                    <div #canvasContainerDiv class="canvas-container">
+                    <div #canvasContainerDiv
+                    class="canvas-container"
+                    (window:resize)="onResize($event)">
                         <dk-canvas
                             [tool]="tool"
                             [width]="width"
@@ -73,15 +77,19 @@ export class MapEditorComponent {
                 public toolService : ToolService,
                 public store : StoreService,
                 public project : ProjectService,
+                private _window : WindowService,
                 private _entityDrawerService : EntityDrawerService) {
-
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe(stage => this.mapStage = stage);
 
         this.tool = this.toolService.defaultTool;
         this.options = this.toolService.toolOptions;
+    }
 
+    onResize(event : any) {
+        this.width = this.canvasContainerDiv.nativeElement.clientWidth;
+        this.height = this.canvasContainerDiv.nativeElement.clientHeight;
     }
 
     onToolSelected(toolKey : string) {
