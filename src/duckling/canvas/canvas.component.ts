@@ -6,7 +6,8 @@ import {
     OnDestroy,
     AfterViewInit,
     SimpleChange,
-    ViewChild
+    ViewChild,
+    ChangeDetectorRef
 } from 'angular2/core';
 import {Observable} from 'rxjs';
 import {autoDetectRenderer, DisplayObject, WebGLRenderer, CanvasRenderer} from 'pixi.js';
@@ -42,6 +43,9 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private _renderer : WebGLRenderer | CanvasRenderer;
 
     @ViewChild("canvas") canvasRoot : ElementRef;
+
+    constructor(private _changeDetector : ChangeDetectorRef) {
+    }
 
     onMouseDown(event : MouseEvent) {
         if (this.tool) {
@@ -90,8 +94,9 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             this._renderer.view.style.width = this.width + "px";
             this._renderer.view.style.height = this.height + "px";
             this._renderer.resize(this.width, this.height);
+            this._changeDetector.detectChanges();
         }
-        setTimeout(() => this.render(), 1);
+        this.render();
     }
 
     ngOnDestroy() {
