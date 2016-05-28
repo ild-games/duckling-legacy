@@ -27,6 +27,10 @@ import {
     Action, StoreService, DucklingState
 } from './state';
 
+import {
+    projectReducer, ProjectService, MapParserService
+} from './project';
+
 import {bootstrapGameComponents} from './game/index';
 import {ProjectSerializerService} from './splash/project-serializer.service';
 import {DialogService} from './util/dialog.service';
@@ -38,9 +42,10 @@ import {ElectronWindowService} from '../electron/util/electron-window.service';
 
 
 // Bootstrap the Redux Store
-function mainReducer(state : DucklingState = {entitySystem : createEntitySystem()}, action : Action) : DucklingState {
+function mainReducer(state : DucklingState = {}, action : Action) : DucklingState {
     return {
-        entitySystem : entitySystemReducer(state.entitySystem, action)
+        entitySystem : entitySystemReducer(state.entitySystem, action),
+        project : projectReducer(state.project, action)
     }
 }
 var storeService = new StoreService(mainReducer, mergeEntityAction);
@@ -89,5 +94,7 @@ bootstrap(ShellComponent, [
     EntitySelectionService,
     JsonLoaderService,
     PathService,
-    ProjectSerializerService
+    ProjectSerializerService,
+    ProjectService,
+    MapParserService
 ]);

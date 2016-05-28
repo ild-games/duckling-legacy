@@ -1,6 +1,6 @@
 import {Injectable} from 'angular2/core';
 
-import {JsonLoaderService} from '../util/json-loader.service';
+import {JsonLoaderService} from '../util';
 
 /**
  * Service to load and save the project list for the splash screen.
@@ -29,7 +29,11 @@ export class ProjectSerializerService {
     }
 
     private successfulLoad(json : string) : Array<any> {
-        return JSON.parse(json);
+        if (json) {
+            return JSON.parse(json);
+        } else {
+            return [];
+        }
     }
 
     private failedLoad(error : string) : Array<any> {

@@ -75,7 +75,7 @@ export class SplashComponent implements OnInit {
      * EventEmitter that will be invoked when a project is selected.
      */
     @Output()
-    projectOpened : EventEmitter<ProjectModel> = new EventEmitter();
+    projectOpened : EventEmitter<string> = new EventEmitter();
 
     constructor(private _path : PathService,
                 private _window : WindowService,
@@ -135,7 +135,7 @@ export class SplashComponent implements OnInit {
         this.reorderProject(project);
         this.saveProjects();
         this.maximizeWindow();
-        this.projectOpened.emit(project);
+        this.projectOpened.emit(project.path);
     }
 
     private maximizeWindow() {

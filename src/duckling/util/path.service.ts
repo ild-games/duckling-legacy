@@ -87,12 +87,12 @@ export class PathService {
      */
     makedirs(path : string) : Promise<any> {
         return this.pathExists(path)
-            .then(function(exists : boolean) {
+            .then((exists : boolean) => {
                 if (exists) {
                     return null;
                 } else {
                     return this.makedirs(this.dirname(path))
-                        .then(function () {
+                        .then(() => {
                             return this.makedir(path);
                         });
                 }
