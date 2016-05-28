@@ -21,7 +21,8 @@ import {
 } from './entitysystem';
 
 import {
-    EntityCreatorTool
+    EntityCreatorTool,
+    ToolService
 } from './canvas/tools';
 
 import {

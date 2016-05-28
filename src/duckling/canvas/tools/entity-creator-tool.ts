@@ -25,6 +25,6 @@ export class EntityCreatorTool extends BaseTool {
     }
 
     get label() {
-        return "Create Entity";
+        return "Create";
     }
 }

@@ -20,7 +20,13 @@ export class ElectronWindowService extends WindowService {
     }
 
     on(event: string, listener: Function) {
-        this._curWindow.on(event, () => listener());
+        if (event === 'resize') {
+            // The electron resize event has annoying lag, hooking directly into the
+            // window object fixes this.
+            window.onresize = () => listener();
+        } else {
+            this._curWindow.on(event, () => listener());
+        }
     }
 
     setSize(width : number, height : number) : void {

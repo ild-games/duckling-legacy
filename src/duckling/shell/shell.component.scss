@@ -15,10 +15,11 @@ $shell-padding: 16px;
         flex: 1 1 100%;
         margin-right: $shell-padding / 2;
         padding: 0;
+        overflow: hidden;
     }
 
     .entity-editor-container {
-        flex-basis: auto; 
+        flex-basis: auto;
         flex-grow: 1;
         min-width: 400px;
         margin-left: $shell-padding / 2;

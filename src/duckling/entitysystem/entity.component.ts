@@ -22,7 +22,7 @@ import {AttributeComponent} from './attribute.component';
     template: `
         <div *ngFor="#key of keys()">
             <md-card>
-                <md-card-title>{{key}} attribute</md-card-title>
+                <md-card-title>{{key}}</md-card-title>
                 <md-card-content>
                     <attribute-component
                         [key]="key"
