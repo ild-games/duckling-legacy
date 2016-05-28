@@ -55,11 +55,8 @@ export class EntitySystemService {
      * Load the system stored in the file.
      * @param  path The path the system is stored in.
      */
-    loadSystem(path : string) {
-        var newSystem = this.fromJson(system); //TODO: Implement correctly!
-
-        this._storeService.dispatch(replaceSystemAction(newSystem));
-        this._storeService.dispatch(clearUndoHistoryAction());
+    replaceSystem(entitySystem : EntitySystem) {
+        this._storeService.dispatch(replaceSystemAction(entitySystem));
     }
 
     private get _system() : EntitySystem {
@@ -87,61 +84,3 @@ export class EntitySystemService {
         });
     }
 };
-
-// Mock system that should be deleted once loadSystem is implemented.
-var system = {
-    entityA: {
-        position: {
-            position: {
-                x: 100,
-                y: 200
-            },
-            velocity: {
-                x: 0,
-                y: 0
-            }
-        },
-        collision: {
-            dimension: {
-                position: {
-                    x: 0,
-                    y: 0
-                },
-                dimension: {
-                    x: 10,
-                    y: 10
-                },
-                rotation: 0
-            },
-            bodyType: 2,
-            collisionType: 2
-        }
-    },
-    entityB : {
-        position: {
-            position: {
-                x: 200,
-                y: 250
-            },
-            velocity: {
-                x: 0,
-                y: 0
-            },
-            rotation: 0
-        },
-        collision: {
-            dimension: {
-                position: {
-                    x: 0,
-                    y: 0
-                },
-                dimension: {
-                    x: 10,
-                    y: 10
-                }
-            },
-            bodyType: 2,
-            collisionType: 2
-        }
-    }
-}

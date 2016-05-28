@@ -1,11 +1,8 @@
 import {Component, Input, ChangeDetectorRef} from 'angular2/core';
-import {Entity} from '../entitysystem/entity';
-import {EntityComponent} from '../entitysystem/entity.component';
+import {Entity, EntityComponent} from '../entitysystem';
 import {MapEditorComponent} from '../canvas/map-editor.component';
 import {SplashComponent} from '../splash/splash.component';
-import {NumberInput} from '../controls/number-input.component';
-
-import {BodyType, CollisionType} from '../game/collision/collision-attribute';
+import {ProjectService} from '../project';
 
 @Component({
     selector: 'duckling-shell',
@@ -15,13 +12,17 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
         MapEditorComponent
     ],
     template: `
-        <div *ngIf="!gameLoaded">
+        <div *ngIf="showSplash">
             <dk-splash-screen
-                (projectOpened)="onProjectOpened()">
+                (projectOpened)="onProjectOpened($event)">
             </dk-splash-screen>
         </div>
 
-        <div *ngIf="gameLoaded">
+        <div *ngIf="showLoading">
+            Loading...
+        </div>
+
+        <div *ngIf="showProject">
             <h1>This is the Shell</h1>
             <dk-map-editor>
             </dk-map-editor>
@@ -32,7 +33,23 @@ export class ShellComponent {
 
     private gameLoaded : boolean = false;
 
-    onProjectOpened() {
-        this.gameLoaded = true;
+    constructor(public projectService : ProjectService) {
+
+    }
+
+    onProjectOpened(path : string) {
+        this.projectService.open(path);
+    }
+
+    get showSplash() {
+        return !this.projectService.project.home;
+    }
+
+    get showLoading() {
+        return !this.showSplash && !this.projectService.project.loaded;
+    }
+
+    get showProject() {
+        return !this.showSplash && !this.showLoading;
     }
 }

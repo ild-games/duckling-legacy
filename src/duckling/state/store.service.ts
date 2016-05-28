@@ -3,6 +3,7 @@ import {createStore, Store, Reducer} from 'redux';
 import {BehaviorSubject} from 'rxjs';
 
 import {EntitySystem} from '../entitysystem';
+import {Project} from '../project';
 import {Action} from './actions';
 import {
     createUndoRedoReducer,
@@ -18,6 +19,7 @@ import {
  */
 export interface DucklingState {
     entitySystem? : EntitySystem;
+    project? : Project;
 }
 
 /**

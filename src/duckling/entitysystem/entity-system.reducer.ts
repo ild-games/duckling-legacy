@@ -1,4 +1,4 @@
-import {Entity, EntityKey, EntitySystem} from '../entitysystem';
+import {createEntitySystem, Entity, EntityKey, EntitySystem} from '../entitysystem';
 import {Action, changeType, ChangeType} from '../state';
 
 const ACTION_UPDATE_ENTITY = "EntitySystem.UpdateEntity";
@@ -78,7 +78,7 @@ export function mergeEntityAction(action : EntityUpdateAction, previousAction : 
 /**
  * Reducer for the EntitySystem portion of a map.
  */
-export function entitySystemReducer(entitySystem : EntitySystem, action : Action) : EntitySystem {
+export function entitySystemReducer(entitySystem : EntitySystem = createEntitySystem(), action : Action) : EntitySystem {
     if (isUpdateEntityAction(action)) {
         return entitySystem.set(action.entityKey, action.entity);
     } else if (isReplaceSystemAction(action)) {
