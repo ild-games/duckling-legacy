@@ -4,8 +4,6 @@ import {createEntitySystem} from '../../duckling/entitysystem';
 import {RawMapFile, MapParserService} from '../../duckling/project';
 import {immutableAssign} from '../../duckling/util';
 
-import {isDeepEqual} from '../helpers';
-
 var emptyMap : RawMapFile = {
     key : "",
     entities : [],
