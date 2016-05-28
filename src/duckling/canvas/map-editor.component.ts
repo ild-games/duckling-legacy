@@ -5,13 +5,11 @@ import {DisplayObject} from 'pixi.js';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {StoreService} from '../state';
-import {ProjectService} from '../project';
 import {Canvas} from './canvas.component';
 import {EntityDrawerService} from './drawing/entity-drawer.service';
 import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
 import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
-import {WindowService} from '../util';
 import {TopToolbarComponent} from './_toolbars';
 
 
@@ -30,8 +28,6 @@ import {TopToolbarComponent} from './_toolbars';
                     class="canvas-top-toolbar"
                     (toolSelection)="onToolSelected($event)">
                 </dk-top-toolbar>
-                <button (click)="project.save()">Save</button>
-                <button (click)="project.reload()">Load</button>
 
                 <dk-canvas
                     class="canvas"
@@ -53,12 +49,11 @@ export class MapEditorComponent {
     constructor(private _entitySystemService : EntitySystemService,
                 public toolService : ToolService,
                 public store : StoreService,
-                public project : ProjectService,
-                private _window : WindowService,
                 private _entityDrawerService : EntityDrawerService) {
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe(stage => this.mapStage = stage);
+        this.tool = this.toolService.defaultTool;
     }
 
     onToolSelected(newTool : BaseTool) {

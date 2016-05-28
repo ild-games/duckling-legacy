@@ -14,15 +14,7 @@ import {ToolbarButton} from './toolbar-button.component';
     template: `
         <span *ngFor="#option of options">
             <dk-toolbar-button
-                *ngIf="selectedValue === option.value"
-                color="primary"
-                [icon]="option.icon"
-                [text]="option.title"
-                (selected)="buttonClicked($event, option.value)">
-            </dk-toolbar-button>
-
-            <dk-toolbar-button
-                *ngIf="selectedValue !== option.value"
+                [color]="selectedValue === option.value ? 'primary' : 'none'"
                 [icon]="option.icon"
                 [text]="option.title"
                 (selected)="buttonClicked($event, option.value)">
@@ -33,8 +25,7 @@ import {ToolbarButton} from './toolbar-button.component';
 export class ToolbarButtonGroup {
     @Input() options : ToolbarOption[];
     @Output() selected : EventEmitter<ToolbarOption> = new EventEmitter<ToolbarOption>();
-
-    selectedValue : string = "";
+    @Input() selectedValue : string = "";
 
     private buttonClicked(event : MouseEvent, clickedValue : string) {
         var clickedOption : ToolbarOption = null;

@@ -13,6 +13,7 @@ import {MdButton} from '@angular2-material/button';
     template: `
         <button
         md-button
+        title="{{tooltip}}"
         color="{{color}}"
         (click)="clicked($event)">
             &nbsp;
@@ -33,6 +34,7 @@ export class ToolbarButton {
     @Input() text : string = "";
     @Input() icon : string = "";
     @Input() color : string = "";
+    @Input() tooltip : string = "";
     @Output() selected : EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
     private clicked(event : MouseEvent) {

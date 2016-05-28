@@ -22,7 +22,7 @@ import {AttributeComponent} from './attribute.component';
     template: `
         <div *ngFor="#key of keys()">
             <md-card>
-                <md-card-title>{{key}}</md-card-title>
+                <md-card-title>{{formatCardTitle(key)}}</md-card-title>
                 <md-card-content>
                     <attribute-component
                         [key]="key"
@@ -49,5 +49,9 @@ export class EntityComponent {
         var entityPatch : any = {};
         entityPatch[key] = attribute;
         this.entityChanged.emit(immutableAssign(this.entity, entityPatch));
+    }
+
+    formatCardTitle(title : string) : string {
+        return title.substring(0, 1).toUpperCase() + title.substring(1);
     }
 }

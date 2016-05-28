@@ -50,12 +50,12 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _window : WindowService) {
-        this._window.on('resize', (event : any) => this.onResize(event));
+        this._window.on('resize', () => this.onResize());
     }
 
     ngAfterViewInit() {
         this._renderer = new CanvasRenderer(this.width, this.height, {view: this.canvasRoot.nativeElement});
-        this.render();
+        this.onResize();
     }
 
     ngOnChanges(changes : {stage?:SimpleChange, width?:SimpleChange, height?:SimpleChange}) {
@@ -90,7 +90,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         }
     }
 
-    onResize(event : any) {
+    onResize() {
         this.width = this.canvasContainerDiv.nativeElement.clientWidth;
         this.height = this.canvasContainerDiv.nativeElement.clientHeight;
         if (this._renderer) {
