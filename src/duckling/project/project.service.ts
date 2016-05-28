@@ -7,7 +7,7 @@ import {MapParserService} from './map-parser.service';
 import {switchProjectAction, doneLoadingProjectAction, Project} from './project';
 
 const MAP_DIR = "maps";
-const MAP_NAME = "map1.map"; //Note - Eventually this will be a dynamic property
+const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
 
 /**
  * The project service provides access to project level state and operations.
@@ -39,8 +39,8 @@ export class ProjectService {
 
             this._entitySystem.replaceSystem(system);
 
-            this._store.dispatch(clearUndoHistoryAction());
             this._store.dispatch(doneLoadingProjectAction());
+            this._store.dispatch(clearUndoHistoryAction());
         });
     }
 
@@ -49,7 +49,7 @@ export class ProjectService {
      */
     save() {
         var map = this._mapParser.systemToMap(MAP_NAME, this._entitySystem.entitySystem.value);
-        var json = JSON.stringify(map);
+        var json = JSON.stringify(map, null, 4);
         this._jsonLoader.saveJsonToPath(this.getMapPath(MAP_NAME), json);
     }
 
@@ -66,7 +66,7 @@ export class ProjectService {
      * @return The Path that can be used to load the map.
      */
     getMapPath(mapName : string) : string {
-        return this._pathService.join(this.project.home, "maps", mapName);
+        return this._pathService.join(this.project.home, "maps", mapName + ".map");
     }
 
     get project() : Project {
