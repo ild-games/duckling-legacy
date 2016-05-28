@@ -48,6 +48,10 @@ export class EntityMoveTool extends BaseTool {
         return "Move";
     }
 
+    get icon() {
+        return "move";
+    }
+
     private _cancel() {
         this._selection = null;
     }

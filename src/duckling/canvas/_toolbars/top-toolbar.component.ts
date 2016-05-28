@@ -7,40 +7,35 @@ import {
 import {MdButton} from '@angular2-material/button';
 
 import {BaseTool, ToolService} from '../tools';
-import {ArraySelect, SelectOption} from '../../controls';
 import {StoreService} from '../../state';
+import {ToolbarButton, ToolbarButtonGroup, ToolbarOption} from '../../controls';
 
 @Component({
     selector: "dk-top-toolbar",
-    directives: [ArraySelect, MdButton],
+    directives: [MdButton, ToolbarButton, ToolbarButtonGroup],
     styleUrls: ['./duckling/canvas/_toolbars/top-toolbar.component.css'],
     template: `
-        <button md-button class="undo-button" (click)="store.undo()">
-        &nbsp;
-        </button>
-        <button md-button class="redo-button" (click)="store.redo()">
-        &nbsp;
-        </button>
+        <dk-toolbar-button
+            icon="action-undo"
+            (click)="store.undo()">
+        </dk-toolbar-button>
+        <dk-toolbar-button
+            icon="action-redo"
+            (click)="store.redo()">
+        </dk-toolbar-button>
+
         <span class="separator"></span>
-        <span *ngFor="#option of toolOptions">
-            <button md-button
-            *ngIf="option.value === tool.key"
-            color="primary"
-            (click)="onToolSelected($event, option)">
-                {{option.title}}
-            </button>
-            <button md-button
-            *ngIf="option.value !== tool.key"
-            (click)="onToolSelected($event, option)">
-                {{option.title}}
-            </button>
-        </span>
+
+        <dk-toolbar-button-group
+            [options]="toolOptions"
+            (selected)="onToolSelected($event)">
+        </dk-toolbar-button-group>
     `
 })
 export class TopToolbarComponent {
     tool : BaseTool;
 
-    toolOptions : SelectOption[];
+    toolOptions : ToolbarOption[];
 
     @Output() toolSelection : EventEmitter<BaseTool> = new EventEmitter();
 
@@ -50,7 +45,7 @@ export class TopToolbarComponent {
         this.toolOptions = this.toolService.toolOptions;
     }
 
-    onToolSelected(event : MouseEvent, tool : SelectOption) {
+    onToolSelected(tool : ToolbarOption) {
         this.tool = this.toolService.getTool(tool.value);
         this.toolSelection.emit(this.tool);
     }

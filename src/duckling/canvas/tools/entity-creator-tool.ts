@@ -27,4 +27,8 @@ export class EntityCreatorTool extends BaseTool {
     get label() {
         return "Create";
     }
+
+    get icon() {
+        return "pencil";
+    }
 }
