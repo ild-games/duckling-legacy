@@ -1,6 +1,6 @@
 import {Injectable} from 'angular2/core';
 
-import {SelectOption} from '../../controls';
+import {ToolbarOption} from '../../controls';
 import {EntityCreatorTool, BaseTool, EntityMoveTool} from '../tools';
 
 /**
@@ -29,10 +29,14 @@ export class ToolService {
     /**
      * Get the select options for the available tools.
      */
-    get toolOptions() : SelectOption[] {
-        var options : SelectOption[] = [];
+    get toolOptions() : ToolbarOption[] {
+        var options : ToolbarOption[] = [];
         for (var toolKey in this._tools) {
-            options.push({value : toolKey, title : this._tools[toolKey].label});
+            options.push({
+                value : toolKey,
+                title : this._tools[toolKey].label,
+                icon : this._tools[toolKey].icon
+            });
         }
         return options;
     }

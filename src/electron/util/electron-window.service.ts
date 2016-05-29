@@ -8,8 +8,26 @@ import {WindowService} from '../../duckling/util/window.service';
  * Service to manage the Electron window that Duckling is running in.
  */
 @Injectable()
-export class ElectronWindowService implements WindowService {
+export class ElectronWindowService extends WindowService {
     private _curWindow = remote.getCurrentWindow();
+
+    get width() : number {
+        return this._curWindow.getSize()[0];
+    }
+
+    get height() : number {
+        return this._curWindow.getSize()[1];
+    }
+
+    on(event: string, listener: Function) {
+        if (event === 'resize') {
+            // The electron resize event has annoying lag, hooking directly into the
+            // window object fixes this.
+            window.onresize = () => listener();
+        } else {
+            this._curWindow.on(event, () => listener());
+        }
+    }
 
     setSize(width : number, height : number) : void {
         this._curWindow.setSize(width, height);

@@ -25,7 +25,7 @@ export class BaseTool {
     }
 
     onLeaveStage() {
-        
+
     }
 
     get key() : string {
@@ -34,5 +34,9 @@ export class BaseTool {
 
     get label() : string {
         throw new Error("Not yet implemented");
+    }
+
+    get icon() : string {
+        throw new Error("");
     }
 }

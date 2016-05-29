@@ -6,7 +6,9 @@ import {
     ComponentRef,
     Input,
     Output,
-    SimpleChange
+    SimpleChange,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef
 } from 'angular2/core';
 import {Attribute, AttributeKey} from './entity';
 import {AttributeComponentService} from './attribute-component.service';
@@ -19,7 +21,8 @@ var logcount = 0;
  */
 @Component({
     selector: "attribute-component",
-    template: ""
+    template: "",
+    changeDetection : ChangeDetectionStrategy.OnPush,
 })
 export class AttributeComponent {
     private _childComponent : ComponentRef;
@@ -31,7 +34,8 @@ export class AttributeComponent {
 
     constructor(private _attributeComponentService : AttributeComponentService,
                 private _dcl : DynamicComponentLoader,
-                private _elementRef : ElementRef) {
+                private _elementRef : ElementRef,
+                private _changeDetector : ChangeDetectorRef) {
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
@@ -52,6 +56,11 @@ export class AttributeComponent {
             var childInstance : AttributeComponent = this._childComponent.instance;
             childInstance.attribute = this.attribute;
             childInstance.attributeChanged.subscribe((event : Attribute) => this.attributeChanged.emit(event));
+            this._detectChanges();
         });
+    }
+
+    private _detectChanges() {
+        this._changeDetector.markForCheck();
     }
 }

@@ -45,7 +45,11 @@ export class EntityMoveTool extends BaseTool {
     }
 
     get label() {
-        return "Move Entity";
+        return "Move";
+    }
+
+    get icon() {
+        return "move";
     }
 
     private _cancel() {

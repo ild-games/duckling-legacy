@@ -1,0 +1,37 @@
+@import '../misc-mixins';
+@import '../colors';
+
+$shell-padding: 16px;
+.shell {
+    @include fill;
+
+    padding: $shell-padding;
+    box-sizing: border-box;
+    flex-flow: row;
+    display: flex;
+    background-color: $ultra-light-primary-color;
+
+    .canvas-container {
+        flex: 1 1 100%;
+        margin-right: $shell-padding / 2;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .entity-editor-container {
+        flex-basis: auto;
+        flex-grow: 1;
+        min-width: 400px;
+        margin-left: $shell-padding / 2;
+        overflow-y: auto;
+    }
+
+    .the-duck-bg-img {
+        position: absolute;
+        width: 300px;
+        height: 350px;
+        bottom: 0;
+        right: 0;
+        background: url(./resources/entity-editor-duck-bg.svg) no-repeat;
+    }
+}

@@ -3,6 +3,7 @@ import {
     Type
 } from 'angular2/core';
 import {bootstrap} from 'angular2/platform/browser';
+import {remote} from 'electron';
 
 import {ShellComponent} from './shell/shell.component';
 import {EntityDrawerService} from './canvas/drawing/entity-drawer.service';
@@ -20,7 +21,8 @@ import {
 } from './entitysystem';
 
 import {
-    EntityCreatorTool
+    EntityCreatorTool,
+    ToolService
 } from './canvas/tools';
 
 import {
@@ -40,6 +42,7 @@ import {WindowService} from './util/window.service';
 import {ElectronDialogService} from '../electron/util/electron-dialog.service';
 import {ElectronWindowService} from '../electron/util/electron-window.service';
 
+remote.getCurrentWindow().removeAllListeners();
 
 // Bootstrap the Redux Store
 function mainReducer(state : DucklingState = {}, action : Action) : DucklingState {

@@ -1,16 +1,14 @@
 import {Injectable} from 'angular2/core';
 
 @Injectable()
-export class WindowService {
-    setSize(width : number, height : number) : void {
-    }
+export abstract class WindowService {
 
-    center() : void {
-    }
+    get width() : number { throw Error("Unimplemented"); }
+    get height() : number { throw Error("Unimplemented"); }
 
-    maximize() : void {
-    }
-
-    setResizable(isResizable : boolean) : void {
-    }
+    abstract on(event : string, listener: Function) : void;
+    abstract setSize(width : number, height : number) : void;
+    abstract center() : void;
+    abstract maximize() : void;
+    abstract setResizable(isResizable : boolean) : void;
 }

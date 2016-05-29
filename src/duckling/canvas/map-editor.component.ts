@@ -2,15 +2,15 @@ import {
     Component
 } from 'angular2/core';
 import {DisplayObject} from 'pixi.js';
-import {Observable} from 'rxjs';
+import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
-import {ArraySelect, SelectOption} from '../controls';
-import {EntitySystemService} from '../entitysystem/';
 import {StoreService} from '../state';
-import {ProjectService} from '../project';
 import {Canvas} from './canvas.component';
 import {EntityDrawerService} from './drawing/entity-drawer.service';
 import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
+import {ArraySelect, SelectOption} from '../controls';
+import {EntitySystemService} from '../entitysystem/';
+import {TopToolbarComponent} from './_toolbars';
 
 
 /**
@@ -18,51 +18,45 @@ import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
  */
 @Component({
     selector: "dk-map-editor",
-    directives: [Canvas, ArraySelect],
-    viewProviders : [TOOL_PROVIDERS],
+    directives: [Canvas, TopToolbarComponent, MD_CARD_DIRECTIVES],
+    providers : [TOOL_PROVIDERS],
+    styleUrls: ['./duckling/canvas/map-editor.component.css'],
     template: `
-        <dk-array-select
-            [value]="tool.key"
-            [options]="options"
-            (selection)="onToolSelected($event)">
-        </dk-array-select>
+        <md-card>
+            <md-card-content>
+                <dk-top-toolbar
+                    class="canvas-top-toolbar"
+                    (toolSelection)="onToolSelected($event)">
+                </dk-top-toolbar>
 
-        <button (click)="store.undo()">Undo</button>
-        <button (click)="store.redo()">Redo</button>
-        <button (click)="project.save()">Save</button>
-        <button (click)="project.reload()">Load</button>
+                <dk-canvas
+                    class="canvas"
+                    [tool]="tool"
+                    [stage]="mapStage">
+                </dk-canvas>
 
-        <dk-canvas
-            [tool]="tool"
-            [width]="width"
-            [height]="height"
-            [stage]="mapStage">
-        </dk-canvas>
+                <div class="canvas-bottom-toolbar">
+                    Bottom Toolbar
+                </div>
+            </md-card-content>
+        </md-card>
     `
 })
 export class MapEditorComponent {
-    width : number = 500
-    height : number = 400;
     mapStage : DisplayObject;
-
     tool : BaseTool;
-    options : SelectOption [];
 
     constructor(private _entitySystemService : EntitySystemService,
                 public toolService : ToolService,
                 public store : StoreService,
-                public project : ProjectService,
                 private _entityDrawerService : EntityDrawerService) {
-
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe(stage => this.mapStage = stage);
-
         this.tool = this.toolService.defaultTool;
-        this.options = this.toolService.toolOptions;
     }
 
-    onToolSelected(toolKey : string) {
-        this.tool = this.toolService.getTool(toolKey);
+    onToolSelected(newTool : BaseTool) {
+        this.tool = newTool;
     }
 }
