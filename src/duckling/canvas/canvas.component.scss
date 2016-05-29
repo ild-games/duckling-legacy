@@ -4,4 +4,9 @@
 
 .canvas-container {
     height: 100%;
+    cursor: default;
+}
+
+.canvas-container canvas {
+    cursor: default;
 }

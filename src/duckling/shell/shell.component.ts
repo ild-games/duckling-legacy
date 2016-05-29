@@ -1,4 +1,5 @@
 import {Component, Input, ChangeDetectorRef} from 'angular2/core';
+
 import {Entity, EntityComponent} from '../entitysystem';
 import {MapEditorComponent} from '../canvas/map-editor.component';
 import {SplashComponent} from '../splash/splash.component';

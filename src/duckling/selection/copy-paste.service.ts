@@ -6,6 +6,9 @@ import {Vector} from '../math';
 import {Entity, EntitySystemService, EntityPositionSetService, EntityKey} from '../entitysystem';
 import {SelectionService} from './selection.service';
 
+/**
+ * Service used to manage copy pasting of entities.
+ */
 @Injectable()
 export class CopyPasteService {
 

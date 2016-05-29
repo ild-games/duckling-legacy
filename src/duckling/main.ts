@@ -25,6 +25,11 @@ import {
     ToolService
 } from './canvas/tools';
 
+import {
+    SelectionService,
+    CopyPasteService
+} from './selection';
+
 import {Action, StoreService} from './state';
 import {mainReducer} from './main.reducer';
 
@@ -50,7 +55,6 @@ var entityDrawerService = new EntityDrawerService();
 var entityBoxService = new EntityBoxService();
 var attributeDefaultService = new AttributeDefaultService();
 var entityPositionSetService = new EntityPositionSetService(entitySystemService);
-var entityCreatorTool = new EntityCreatorTool(attributeDefaultService, entitySystemService, entityPositionSetService);
 
 /**
  * Eventually we want to support multiple different games.  This means any component specific
@@ -79,7 +83,6 @@ bootstrap(ShellComponent, [
     provideInstance(attributeDefaultService, AttributeDefaultService),
     provideInstance(entityPositionSetService, EntityPositionSetService),
     provideInstance(entitySystemService, EntitySystemService),
-    provideInstance(entityCreatorTool, EntityCreatorTool),
     provideClass(ElectronDialogService, DialogService),
     provideClass(ElectronWindowService, WindowService),
     EntitySelectionService,
@@ -87,5 +90,7 @@ bootstrap(ShellComponent, [
     PathService,
     ProjectSerializerService,
     ProjectService,
-    MapParserService
+    MapParserService,
+    SelectionService,
+    CopyPasteService
 ]);
