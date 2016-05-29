@@ -25,13 +25,10 @@ import {
     ToolService
 } from './canvas/tools';
 
-import {
-    Action, StoreService, DucklingState
-} from './state';
+import {Action, StoreService} from './state';
+import {mainReducer} from './main.reducer';
 
-import {
-    projectReducer, ProjectService, MapParserService
-} from './project';
+import {projectReducer, ProjectService, MapParserService} from './project';
 
 import {bootstrapGameComponents} from './game/index';
 import {ProjectSerializerService} from './splash/project-serializer.service';
@@ -44,16 +41,7 @@ import {ElectronWindowService} from '../electron/util/electron-window.service';
 
 remote.getCurrentWindow().removeAllListeners();
 
-// Bootstrap the Redux Store
-function mainReducer(state : DucklingState = {}, action : Action) : DucklingState {
-    return {
-        entitySystem : entitySystemReducer(state.entitySystem, action),
-        project : projectReducer(state.project, action)
-    }
-}
 var storeService = new StoreService(mainReducer, mergeEntityAction);
-
-// Create the Entity System
 var entitySystemService = new EntitySystemService(storeService);
 
 // Bootstrap game specific behavior

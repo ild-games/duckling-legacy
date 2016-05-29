@@ -2,8 +2,6 @@ import {Injectable} from 'angular2/core';
 import {createStore, Store, Reducer} from 'redux';
 import {BehaviorSubject} from 'rxjs';
 
-import {EntitySystem} from '../entitysystem';
-import {Project} from '../project';
 import {Action} from './actions';
 import {
     createUndoRedoReducer,
@@ -15,31 +13,23 @@ import {
 } from './undo-redo';
 
 /**
- * Describes the overall structure of duckling's state.
- */
-export interface DucklingState {
-    entitySystem? : EntitySystem;
-    project? : Project;
-}
-
-/**
  * Provides access to the redux store used to maintain the applications state.
  */
 @Injectable()
 export class StoreService {
-    private _store : Store<UndoRedoState<DucklingState>>;
+    private _store : Store<UndoRedoState<any>>;
 
     /**
      * Observable that publishes updates to DucklingState.
      */
-    state : BehaviorSubject<DucklingState>;
+    state : BehaviorSubject<any>;
 
     /**
      * Initialize the store service. Should be constructed then injected into duckling.
      * @param  reducer    Reducer that is used to manage duckling's state.
      * @param  autoMerger Function that is used to determine when two actions should be merged.
      */
-    constructor(reducer : Reducer<DucklingState>, autoMerger : AutoMerger) {
+    constructor(reducer : Reducer<any>, autoMerger : AutoMerger) {
         this._store = createStore(createUndoRedoReducer(reducer, autoMerger));
         this.state = new BehaviorSubject(this.getState());
         this._store.subscribe(() => {
