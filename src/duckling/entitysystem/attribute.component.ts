@@ -62,6 +62,5 @@ export class AttributeComponent {
 
     private _detectChanges() {
         this._changeDetector.markForCheck();
-        this._changeDetector.detectChanges();
     }
 }

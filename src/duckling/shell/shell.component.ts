@@ -26,6 +26,8 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
         </div>
 
         <div class="shell" *ngIf="showProject">
+            <div class="the-duck-bg-img"></div>
+
             <div class="canvas-container">
                 <dk-map-editor>
                 </dk-map-editor>

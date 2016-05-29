@@ -8,9 +8,9 @@ import {
 } from 'angular2/core';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
-import {immutableAssign} from '../util/model';
 import {Entity, AttributeKey, Attribute, TaggedAttribute} from './entity';
 import {AttributeComponent} from './attribute.component';
+import {immutableAssign, toTitleCase} from '../util';
 
 /**
  * Display a form that allows for editting the attributes attached to a component.
@@ -32,7 +32,6 @@ import {AttributeComponent} from './attribute.component';
                 </md-card-content>
             </md-card>
         </div>
-        <div class="the-duck-bg-img"></div>
     `,
     changeDetection : ChangeDetectionStrategy.OnPush
 })
@@ -52,6 +51,6 @@ export class EntityComponent {
     }
 
     formatCardTitle(title : string) : string {
-        return title.substring(0, 1).toUpperCase() + title.substring(1);
+        return toTitleCase(title);
     }
 }

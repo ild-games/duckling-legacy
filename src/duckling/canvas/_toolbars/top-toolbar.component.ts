@@ -1,5 +1,6 @@
 import {
     Component,
+    ChangeDetectionStrategy,
     Input,
     Output,
     EventEmitter
@@ -47,7 +48,8 @@ import {ToolbarButton, ToolbarButtonGroup, ToolbarOption} from '../../controls';
             [selectedValue]="toolService.defaultTool.key"
             (selected)="onToolSelected($event)">
         </dk-toolbar-button-group>
-    `
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TopToolbarComponent {
     toolOptions : ToolbarOption[];

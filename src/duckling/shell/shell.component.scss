@@ -25,4 +25,13 @@ $shell-padding: 16px;
         margin-left: $shell-padding / 2;
         overflow-y: auto;
     }
+
+    .the-duck-bg-img {
+        position: absolute;
+        width: 300px;
+        height: 350px;
+        bottom: 0;
+        right: 0;
+        background: url(./resources/entity-editor-duck-bg.svg) no-repeat;
+    }
 }

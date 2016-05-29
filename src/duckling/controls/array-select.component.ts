@@ -1,6 +1,5 @@
 import {
     Component,
-    ChangeDetectorRef,
     Input,
     Output,
     EventEmitter

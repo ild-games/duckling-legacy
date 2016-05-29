@@ -58,7 +58,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.onResize();
     }
 
-    ngOnChanges(changes : {stage?:SimpleChange, width?:SimpleChange, height?:SimpleChange}) {
+    ngOnChanges() {
         this.render();
     }
 

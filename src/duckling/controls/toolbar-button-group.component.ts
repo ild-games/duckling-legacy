@@ -17,7 +17,7 @@ import {ToolbarButton} from './toolbar-button.component';
                 [color]="selectedValue === option.value ? 'primary' : 'none'"
                 [icon]="option.icon"
                 [text]="option.title"
-                (selected)="buttonClicked($event, option.value)">
+                (click)="buttonClicked($event, option.value)">
             </dk-toolbar-button>
         </span>
     `
