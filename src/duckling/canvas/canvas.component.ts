@@ -23,7 +23,7 @@ import {
 } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
-import {drawRectangle, drawX} from './drawing/util';
+import {drawRectangle, drawX, drawGrid} from './drawing/util';
 import {BaseTool} from './tools/base-tool';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
@@ -67,13 +67,15 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 })
 export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     stageWidth : number = 1200;
-    stageHeight : number = 800;
+    stageHeight : number = 808;
     canvasWidth : number = 500;
     canvasHeight : number = 400;
     canvasScrollWidth : number = 1200;
     canvasScrollHeight : number = 800;
+    gridSize : number = 16;
     @Input() entitiesDisplayObject : DisplayObject;
     @Input() canvasDisplayObject : DisplayObject;
+    @Input() gridDisplayObject : DisplayObject;
     @Input() tool : BaseTool;
 
     @ViewChild('canvas') canvasRoot : ElementRef;
@@ -101,8 +103,9 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     ngAfterViewInit() {
         this._renderer = new CanvasRenderer(this.canvasWidth, this.canvasHeight, {view: this.canvasRoot.nativeElement});
-        this._renderer.backgroundColor = 0xCACACA;
-        this.canvasDisplayObject = this.buildBackgroundChild();
+        this._renderer.backgroundColor = 0xDFDFDF;
+        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+        this.gridDisplayObject = this.buildCanvasGrid();
         this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => {
             this.repositionStage();
             this.render();
@@ -187,28 +190,32 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.canvasScrollHeight / 2) - (this.canvasHeight / 2);
     }
 
-    private buildBackgroundChild() : DisplayObject {
-        var background = new Graphics();
-        background.beginFill(0xFFFFFF, 1);
+    private buildCanvasDisplayObject() : DisplayObject {
+        var graphics = new Graphics();
+        graphics.beginFill(0xFFFFFF, 1);
         drawRectangle(
             {x: 0, y: 0},
             {x: this.stageWidth, y: this.stageHeight},
-            background);
-        background.endFill();
-        background.lineStyle(1, 0xBABABA, 1);
+            graphics);
+        graphics.endFill();
+        graphics.lineStyle(1, 0xAAAAAA, 1);
         drawRectangle(
             {x: 0, y: 0},
             {x: this.stageWidth, y: this.stageHeight},
-            background);
-        var dropShadowFilter = new PIXI.filters.DropShadowFilter();
-        dropShadowFilter.color = 0xBABABA;
-        dropShadowFilter.alpha = 1.0;
-        dropShadowFilter.blur = 1;
-        dropShadowFilter.distance = 5;
-        background.filters = [dropShadowFilter];
-        return background;
+            graphics);
+        return graphics;
     }
 
+    private buildCanvasGrid() : DisplayObject {
+        var graphics = new Graphics();
+        graphics.lineStyle(1, 0xEEEEEE, 1);
+        drawGrid(
+            {x: 0, y: 0},
+            {x: this.stageWidth - 2, y: this.stageHeight - 2},
+            {x: this.gridSize, y: this.gridSize},
+            graphics);
+        return graphics;
+    }
 
     positionFromEvent(event : MouseEvent) : Vector {
         var localPoint = this._stage.toLocal(new Point(event.offsetX, event.offsetY));
@@ -223,6 +230,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             this._stage.removeChildren();
             this._stage.addChild(this.canvasDisplayObject);
             this._stage.addChild(this.entitiesDisplayObject);
+            this._stage.addChild(this.gridDisplayObject);
             this._renderer.render(this._stage);
         }
     }
