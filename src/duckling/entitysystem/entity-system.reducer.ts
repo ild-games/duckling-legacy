@@ -57,6 +57,30 @@ function isReplaceSystemAction(action : Action): action is ReplaceSystemAction  
 }
 
 /**
+ * Action used to delete an entity.
+ */
+export interface DeleteEntityAction extends Action {
+    key : EntityKey;
+}
+
+/**
+ * Create an action that will delete the entity.
+ * @param  key Key of the entity to delete.
+ * @return An action that will delete the entity.
+ */
+export function deleteEntityAction(key : EntityKey) {
+    return {
+        type : ACTION_DELETE_ENTITY,
+        key
+    }
+}
+
+const ACTION_DELETE_ENTITY = "EntitySystem.DeleteEntity";
+function isDeleteEntityAction(action : Action) : action is DeleteEntityAction {
+    return action.type === ACTION_DELETE_ENTITY;
+}
+
+/**
  * Determine if two entity update actions should be merged.  The entity update actions will
  * be merged if they affect a single field in the entity. This prevents the user from needing to
  * undo individual characters when the modify an entity using an edit field.
@@ -83,6 +107,8 @@ export function entitySystemReducer(entitySystem : EntitySystem = createEntitySy
         return entitySystem.set(action.entityKey, action.entity);
     } else if (isReplaceSystemAction(action)) {
         return action.entitySystem;
+    } else if (isDeleteEntityAction(action)) {
+        return entitySystem.remove(action.key);
     } else {
         return entitySystem;
     }

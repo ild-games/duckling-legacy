@@ -13,10 +13,14 @@ const blue = 0x00ccff;
  * @return A DisplayObject representing the collision component.
  */
 export function drawCollision(entity : Entity) {
-    var graphics = new Graphics();
     var positionAttribute = getPosition(entity);
     var collisionAttribute = getCollision(entity);
 
+    if (!positionAttribute || !collisionAttribute) {
+        return null;
+    }
+
+    var graphics = new Graphics();
     graphics.lineStyle(2, blue, 1);
     drawRectangle(positionAttribute.position, collisionAttribute.dimension.dimension, graphics);
     drawX(positionAttribute.position, collisionAttribute.dimension.dimension, graphics);

@@ -1,12 +1,12 @@
 import {
-    AttributeComponentService,
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
     EntityPositionSetService
 } from '../entitysystem';
-
+import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
+
 import {defaultPosition, POSITION_KEY} from './position/position-attribute';
 import {setPosition} from './position/set-position';
 import {defaultCollison, COLLISION_KEY} from './collision/collision-attribute';
@@ -14,6 +14,9 @@ import {PositionComponent} from './position/position.component';
 import {CollisionComponent} from './collision/collision.component';
 import {drawCollision} from './collision/collision-drawer';
 import {collisionBoundingBox} from './collision/collision-box';
+
+import {defaultCamera, CAMERA_KEY} from './camera/camera-attribute';
+import {CameraComponent} from './camera/camera.component';
 
 /**
  * Initialize the Services used by duckling to interact with the attribute implementations.
@@ -35,4 +38,8 @@ export function bootstrapGameComponents(services: {
     services.entityDrawerService.register(COLLISION_KEY, drawCollision);
     services.entityBoxService.register(COLLISION_KEY, collisionBoundingBox);
     services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollison});
+
+    //Bootstrap Camera
+    services.attributeComponentService.register(CAMERA_KEY, CameraComponent);
+    services.attributeDefaultService.register(CAMERA_KEY, {createByDefault: false, default: defaultCamera});
 }
