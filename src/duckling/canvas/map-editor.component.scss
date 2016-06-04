@@ -8,7 +8,7 @@
 }
 
 $canvas-top-bar-height: 35px;
-$canvas-bottom-bar-height: 35px;
+$canvas-bottom-bar-height: 50px;
 $canvas-left-right-border-width: $canvas-top-bar-height / 2;
 
 .canvas-toolbar {
@@ -39,6 +39,8 @@ md-card {
         @extend .canvas-toolbar;
         width: 100%;
         height: $canvas-bottom-bar-height;
+        padding: 5px 5px 5px 5px;
+        box-sizing: border-box;
         position: absolute;
         bottom: 0;
     }

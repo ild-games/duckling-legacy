@@ -19,16 +19,16 @@ import {NumberInput} from './number-input.component';
     template:`
         <div>
             <div class="form-label">{{title}}</div>
-            <number-input
+            <dk-number-input
                 label="X"
                 [value]="value.x"
                 (validInput)="onXInput($event)">
-            </number-input>
-            <number-input
+            </dk-number-input>
+            <dk-number-input
                 label="Y"
                 [value]="value.y"
                 (validInput)="onYInput($event)">
-            </number-input>
+            </dk-number-input>
         </div>
     `
 })

@@ -43,8 +43,8 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
             (mouseout)="forwardContainingDivEvent($event)">
             <div
                 class="canvas-scroll"
-                [style.width]="canvasScrollWidth"
-                [style.height]="canvasScrollHeight">
+                [style.width]="scrollerDimensions.x"
+                [style.height]="scrollerDimensions.y">
             </div>
             <canvas
                 #canvas
@@ -66,14 +66,12 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
     `
 })
 export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
-    stageWidth : number = 1200;
-    stageHeight : number = 808;
-    canvasHTMLElementWidth : number = 500;
-    canvasHTMLElementHeight : number = 400;
-    canvasScrollWidth : number = 1200;
-    canvasScrollHeight : number = 800;
-    gridSize : number = 16;
-    scale : number = 0.5;
+    elementDimensions : Vector = {x: 0, y: 0};
+    scrollerDimensions : Vector = {x: 0, y: 0};
+
+    @Input() stageDimensions : Vector;
+    @Input() gridSize : number;
+    @Input() scale : number;
     @Input() entitiesDisplayObject : DisplayObject;
     @Input() canvasDisplayObject : DisplayObject;
     @Input() gridDisplayObject : DisplayObject;
@@ -96,33 +94,56 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private _stage : Container = new Container();
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
+    private _viewInited = false;
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _window : WindowService) {
-        this._window.on('resize', () => this.onResize());
     }
 
     ngAfterViewInit() {
-        this._renderer = new CanvasRenderer(this.canvasHTMLElementWidth, this.canvasHTMLElementHeight, {view: this.canvasRoot.nativeElement});
+        this._viewInited = true;
+        this._window.on('resize', () => this.onResize());
+        this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
+
+        this._renderer = new CanvasRenderer(this.elementDimensions.x, this.elementDimensions.y, {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
-        this.canvasDisplayObject = this.buildCanvasDisplayObject();
-        this.gridDisplayObject = this.buildCanvasGrid();
-        this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => {
-            this.repositionStage();
-            this.render();
-        };
-        this.onResize();
+        this.setupStage();
         this.centerStage();
+        this.render();
     }
 
     repositionStage() {
-        var canvasScrollDifferenceWidth = this.canvasScrollWidth - this.canvasHTMLElementWidth;
-        var canvasScrollDifferenceHeight = this.canvasScrollHeight - this.canvasHTMLElementHeight;
-        this._stage.x = (this.canvasHTMLElementWidth / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
-        this._stage.y = (this.canvasHTMLElementHeight / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
+        var canvasScrollDifferenceWidth = this.scrollerDimensions.x - this.elementDimensions.x;
+        var canvasScrollDifferenceHeight = this.scrollerDimensions.y - this.elementDimensions.y;
+        this._stage.x = (this.elementDimensions.x / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
+        this._stage.y = (this.elementDimensions.y / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
     }
 
-    ngOnChanges(changes : {stage?:SimpleChange}) {
+    setupStage() {
+        this.buildCanvasDisplayObjects();
+        this.resizeCanvasElements();
+        this.repositionStage();
+    }
+
+    buildCanvasDisplayObjects() {
+        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+        this.gridDisplayObject = this.buildCanvasGrid();
+    }
+
+    ngOnChanges(changes : {stageDimensions?:SimpleChange, gridSize?:SimpleChange, scale?:SimpleChange}) {
+        if (!this._viewInited) {
+            return;
+        }
+
+        if (changes.stageDimensions) {
+            this.setupStage();
+            this.centerStage();
+        } else if (changes.gridSize) {
+            this.gridDisplayObject = this.buildCanvasGrid();
+        } else if (changes.scale) {
+            this.setupStage();
+        }
+
         this.render();
     }
 
@@ -148,7 +169,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     onMouseUp(event : MouseEvent) {
         if (this.tool) {
-            this.tool.onStageUp(this.positionFromEvent(event));
+
         }
         event.stopPropagation();
     }
@@ -172,23 +193,32 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
 
     onResize() {
-        this.canvasHTMLElementWidth = this.canvasContainerDiv.nativeElement.clientWidth;
-        this.canvasHTMLElementHeight = this.canvasContainerDiv.nativeElement.clientHeight;
-        this.canvasScrollWidth = this.canvasHTMLElementWidth * 2 + (this.stageWidth * this.scale) - (this._scrollStageOffset * 2);
-        this.canvasScrollHeight = this.canvasHTMLElementHeight * 2 + (this.stageHeight * this.scale) - (this._scrollStageOffset * 2);
-        this.repositionStage();
-        if (this._renderer) {
-            this._renderer.view.style.width = this.canvasHTMLElementWidth + "px";
-            this._renderer.view.style.height = this.canvasHTMLElementHeight + "px";
-            this._renderer.resize(this.canvasHTMLElementWidth, this.canvasHTMLElementHeight);
-            this._changeDetector.detectChanges();
-        }
+        this.resizeCanvasElements();
         this.render();
     }
 
+    onScroll() {
+        this.repositionStage();
+        this.render();
+    }
+
+    resizeCanvasElements() {
+        this.elementDimensions.x = this.canvasContainerDiv.nativeElement.clientWidth;
+        this.elementDimensions.y = this.canvasContainerDiv.nativeElement.clientHeight;
+        this.scrollerDimensions.x = this.elementDimensions.x * 2 + (this.stageDimensions.x * this.scale) - (this._scrollStageOffset * 2);
+        this.scrollerDimensions.y = this.elementDimensions.y * 2 + (this.stageDimensions.y * this.scale) - (this._scrollStageOffset * 2);
+        this.repositionStage();
+        if (this._renderer) {
+            this._renderer.view.style.width = this.elementDimensions.x + "px";
+            this._renderer.view.style.height = this.elementDimensions.y + "px";
+            this._renderer.resize(this.elementDimensions.x, this.elementDimensions.y);
+            this._changeDetector.detectChanges();
+        }
+    }
+
     private centerStage() {
-        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = (this.canvasScrollWidth / 2) - (this.canvasHTMLElementWidth / 2);
-        this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.canvasScrollHeight / 2) - (this.canvasHTMLElementHeight / 2);
+        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2);
+        this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2);
     }
 
     private buildCanvasDisplayObject() : DisplayObject {
@@ -196,13 +226,13 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         graphics.beginFill(0xFFFFFF, 1);
         drawRectangle(
             {x: 0, y: 0},
-            {x: this.stageWidth, y: this.stageHeight},
+            {x: this.stageDimensions.x, y: this.stageDimensions.y},
             graphics);
         graphics.endFill();
         graphics.lineStyle(1, 0xAAAAAA, 1);
         drawRectangle(
             {x: 0, y: 0},
-            {x: this.stageWidth, y: this.stageHeight},
+            {x: this.stageDimensions.x, y: this.stageDimensions.y},
             graphics);
         return graphics;
     }
@@ -212,7 +242,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         graphics.lineStyle(1, 0xEEEEEE, 1);
         drawGrid(
             {x: 0, y: 0},
-            {x: this.stageWidth - 2, y: this.stageHeight - 2},
+            {x: this.stageDimensions.x - 2, y: this.stageDimensions.y - 2},
             {x: this.gridSize, y: this.gridSize},
             graphics);
         return graphics;
