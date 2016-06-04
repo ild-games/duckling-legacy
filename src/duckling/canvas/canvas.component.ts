@@ -68,11 +68,12 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     stageWidth : number = 1200;
     stageHeight : number = 808;
-    canvasWidth : number = 500;
-    canvasHeight : number = 400;
+    canvasHTMLElementWidth : number = 500;
+    canvasHTMLElementHeight : number = 400;
     canvasScrollWidth : number = 1200;
     canvasScrollHeight : number = 800;
     gridSize : number = 16;
+    scale : number = 0.5;
     @Input() entitiesDisplayObject : DisplayObject;
     @Input() canvasDisplayObject : DisplayObject;
     @Input() gridDisplayObject : DisplayObject;
@@ -102,7 +103,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this._renderer = new CanvasRenderer(this.canvasWidth, this.canvasHeight, {view: this.canvasRoot.nativeElement});
+        this._renderer = new CanvasRenderer(this.canvasHTMLElementWidth, this.canvasHTMLElementHeight, {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
         this.canvasDisplayObject = this.buildCanvasDisplayObject();
         this.gridDisplayObject = this.buildCanvasGrid();
@@ -115,10 +116,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     repositionStage() {
-        var canvasScrollDifferenceWidth = this.canvasScrollWidth - this.canvasWidth;
-        var canvasScrollDifferenceHeight = this.canvasScrollHeight - this.canvasHeight;
-        this._stage.x = (this.canvasWidth / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
-        this._stage.y = (this.canvasHeight / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
+        var canvasScrollDifferenceWidth = this.canvasScrollWidth - this.canvasHTMLElementWidth;
+        var canvasScrollDifferenceHeight = this.canvasScrollHeight - this.canvasHTMLElementHeight;
+        this._stage.x = (this.canvasHTMLElementWidth / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
+        this._stage.y = (this.canvasHTMLElementHeight / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
     }
 
     ngOnChanges(changes : {stage?:SimpleChange}) {
@@ -171,23 +172,23 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
 
     onResize() {
-        this.canvasWidth = this.canvasContainerDiv.nativeElement.clientWidth;
-        this.canvasHeight = this.canvasContainerDiv.nativeElement.clientHeight;
-        this.canvasScrollWidth = this.canvasWidth * 2 + this.stageWidth - (this._scrollStageOffset * 2);
-        this.canvasScrollHeight = this.canvasHeight * 2 + this.stageHeight - (this._scrollStageOffset * 2);
+        this.canvasHTMLElementWidth = this.canvasContainerDiv.nativeElement.clientWidth;
+        this.canvasHTMLElementHeight = this.canvasContainerDiv.nativeElement.clientHeight;
+        this.canvasScrollWidth = this.canvasHTMLElementWidth * 2 + (this.stageWidth * this.scale) - (this._scrollStageOffset * 2);
+        this.canvasScrollHeight = this.canvasHTMLElementHeight * 2 + (this.stageHeight * this.scale) - (this._scrollStageOffset * 2);
         this.repositionStage();
         if (this._renderer) {
-            this._renderer.view.style.width = this.canvasWidth + "px";
-            this._renderer.view.style.height = this.canvasHeight + "px";
-            this._renderer.resize(this.canvasWidth, this.canvasHeight);
+            this._renderer.view.style.width = this.canvasHTMLElementWidth + "px";
+            this._renderer.view.style.height = this.canvasHTMLElementHeight + "px";
+            this._renderer.resize(this.canvasHTMLElementWidth, this.canvasHTMLElementHeight);
             this._changeDetector.detectChanges();
         }
         this.render();
     }
 
     private centerStage() {
-        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = (this.canvasScrollWidth / 2) - (this.canvasWidth / 2);
-        this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.canvasScrollHeight / 2) - (this.canvasHeight / 2);
+        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = (this.canvasScrollWidth / 2) - (this.canvasHTMLElementWidth / 2);
+        this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.canvasScrollHeight / 2) - (this.canvasHTMLElementHeight / 2);
     }
 
     private buildCanvasDisplayObject() : DisplayObject {
@@ -231,6 +232,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             this._stage.addChild(this.canvasDisplayObject);
             this._stage.addChild(this.entitiesDisplayObject);
             this._stage.addChild(this.gridDisplayObject);
+            this._stage.scale = new Point(this.scale, this.scale);
             this._renderer.render(this._stage);
         }
     }
