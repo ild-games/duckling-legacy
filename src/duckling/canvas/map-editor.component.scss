@@ -18,6 +18,7 @@ $canvas-left-right-border-width: $canvas-top-bar-height / 2;
 md-card {
     padding: 0;
     height: 100%;
+    z-index: 1;
     min-width: 650px;
 
     .canvas-top-toolbar {
