@@ -33,6 +33,10 @@ export class ElectronWindowService extends WindowService {
         this._curWindow.setSize(width, height);
     }
 
+    setMinimumSize(minWidth : number, minHeight : number) : void {
+        this._curWindow.setMinimumSize(minWidth, minHeight);
+    }
+
     center() : void {
         this._curWindow.center();
     }

@@ -12,8 +12,18 @@ import {
     Output
 } from 'angular2/core';
 import {Observable} from 'rxjs';
-import {autoDetectRenderer, DisplayObject, WebGLRenderer, CanvasRenderer} from 'pixi.js';
+import {
+    autoDetectRenderer,
+    DisplayObject,
+    WebGLRenderer,
+    CanvasRenderer,
+    Graphics,
+    Container,
+    Point
+} from 'pixi.js';
+import * as PIXI from 'pixi.js';
 
+import {drawRectangle, drawX} from './drawing/util';
 import {BaseTool} from './tools/base-tool';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
@@ -25,10 +35,24 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
     selector: 'dk-canvas',
     styleUrls: ['./duckling/canvas/canvas.component.css'],
     template: `
-        <div #canvasContainerDiv class="canvas-container">
+        <div #canvasContainerDiv
+            class="canvas-container"
+            (mousedown)="forwardContainingDivEvent($event)"
+            (mouseUp)="forwardContainingDivEvent($event)"
+            (mousemove)="forwardContainingDivEvent($event)"
+            (mouseout)="forwardContainingDivEvent($event)">
+            <div
+                class="canvas-scroll"
+                [style.width]="canvasScrollWidth"
+                [style.height]="canvasScrollHeight">
+            </div>
             <canvas
                 #canvas
+<<<<<<< HEAD
                 contentEditable="true"
+=======
+                class="canvas"
+>>>>>>> 0fee658... implement scrolling with the canvas
                 (mousedown)="onMouseDown($event)"
                 (mouseup)="onMouseUp($event)"
                 (mousemove)="onMouseDrag($event)"
@@ -42,10 +66,14 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
     `
 })
 export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
-    width : number = 500;
-    height : number = 400;
-
-    @Input() stage : DisplayObject;
+    stageWidth : number = 1200;
+    stageHeight : number = 800;
+    canvasWidth : number = 500;
+    canvasHeight : number = 400;
+    canvasScrollWidth : number = 1200;
+    canvasScrollHeight : number = 800;
+    @Input() entitiesDisplayObject : DisplayObject;
+    @Input() canvasDisplayObject : DisplayObject;
     @Input() tool : BaseTool;
 
     @ViewChild('canvas') canvasRoot : ElementRef;
@@ -61,8 +89,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
      */
     @Output() elementPaste : EventEmitter<Vector> = new EventEmitter();
 
-    private _renderer : WebGLRenderer | CanvasRenderer;
     private _mouseLocation : Vector = {x: 0, y: 0};
+    private _stage : Container = new Container();
+    private _renderer : WebGLRenderer | CanvasRenderer;
+    private _scrollStageOffset = 32;
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _window : WindowService) {
@@ -70,12 +100,25 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this._renderer = new CanvasRenderer(this.width, this.height, {view: this.canvasRoot.nativeElement});
-        this._renderer.backgroundColor = 0xCBCBCB;
+        this._renderer = new CanvasRenderer(this.canvasWidth, this.canvasHeight, {view: this.canvasRoot.nativeElement});
+        this._renderer.backgroundColor = 0xCACACA;
+        this.canvasDisplayObject = this.buildBackgroundChild();
+        this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => {
+            this.repositionStage();
+            this.render();
+        };
         this.onResize();
+        this.centerStage();
     }
 
-    ngOnChanges() {
+    repositionStage() {
+        var canvasScrollDifferenceWidth = this.canvasScrollWidth - this.canvasWidth;
+        var canvasScrollDifferenceHeight = this.canvasScrollHeight - this.canvasHeight;
+        this._stage.x = (this.canvasWidth / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
+        this._stage.y = (this.canvasHeight / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
+    }
+
+    ngOnChanges(changes : {stage?:SimpleChange}) {
         this.render();
     }
 
@@ -96,12 +139,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         if (this.tool) {
             this.tool.onStageDown(this.positionFromEvent(event));
         }
+        event.stopPropagation();
     }
 
     onMouseUp(event : MouseEvent) {
         if (this.tool) {
             this.tool.onStageUp(this.positionFromEvent(event));
         }
+        event.stopPropagation();
     }
 
     onMouseDrag(event : MouseEvent) {
@@ -110,6 +155,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
             this.tool.onStageMove(position);
         }
+        event.stopPropagation();
     }
 
 
@@ -117,46 +163,71 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         if (this.tool) {
             this.tool.onLeaveStage();
         }
+        event.stopPropagation();
     }
 
+
     onResize() {
-        this.width = this.canvasContainerDiv.nativeElement.clientWidth;
-        this.height = this.canvasContainerDiv.nativeElement.clientHeight;
+        this.canvasWidth = this.canvasContainerDiv.nativeElement.clientWidth;
+        this.canvasHeight = this.canvasContainerDiv.nativeElement.clientHeight;
+        this.canvasScrollWidth = this.canvasWidth * 2 + this.stageWidth - (this._scrollStageOffset * 2);
+        this.canvasScrollHeight = this.canvasHeight * 2 + this.stageHeight - (this._scrollStageOffset * 2);
+        this.repositionStage();
         if (this._renderer) {
-            this._renderer.view.style.width = this.width + "px";
-            this._renderer.view.style.height = this.height + "px";
-            this._renderer.resize(this.width, this.height);
+            this._renderer.view.style.width = this.canvasWidth + "px";
+            this._renderer.view.style.height = this.canvasHeight + "px";
+            this._renderer.resize(this.canvasWidth, this.canvasHeight);
             this._changeDetector.detectChanges();
         }
         this.render();
     }
 
-    /*private buildBackgroundChild() : DisplayObject {
-        var background = new createjs.Shape();
-        background.x = -(this.properties.dimensions.x / 2) + 0.5;
-        background.y = -(this.properties.dimensions.y / 2) + 0.5;
-        background.shadow = new createjs.Shadow(this.gridColor, 0, 0, 5);
-        background.graphics
-            .setStrokeStyle(1, 0, 0, 10, true)
-            .beginStroke(this.gridColor)
-            .beginFill("White")
-            .drawRect(0, 0, this.properties.dimensions.x, this.properties.dimensions.y);
+    private centerStage() {
+        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = (this.canvasScrollWidth / 2) - (this.canvasWidth / 2);
+        this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.canvasScrollHeight / 2) - (this.canvasHeight / 2);
+    }
+
+    private buildBackgroundChild() : DisplayObject {
+        var background = new Graphics();
+        background.beginFill(0xFFFFFF, 1);
+        drawRectangle(
+            {x: 0, y: 0},
+            {x: this.stageWidth, y: this.stageHeight},
+            background);
+        background.endFill();
+        background.lineStyle(1, 0xBABABA, 1);
+        drawRectangle(
+            {x: 0, y: 0},
+            {x: this.stageWidth, y: this.stageHeight},
+            background);
+        var dropShadowFilter = new PIXI.filters.DropShadowFilter();
+        dropShadowFilter.color = 0xBABABA;
+        dropShadowFilter.alpha = 1.0;
+        dropShadowFilter.blur = 1;
+        dropShadowFilter.distance = 5;
+        background.filters = [dropShadowFilter];
         return background;
-    }*/
+    }
 
 
     positionFromEvent(event : MouseEvent) : Vector {
+        var localPoint = this._stage.toLocal(new Point(event.offsetX, event.offsetY));
         return {
-            x: event.offsetX,
-            y: event.offsetY
+            x: localPoint.x,
+            y: localPoint.y
         }
     }
 
     render() {
-        if (this.stage && this._renderer) {
-            this.stage.x = 0.5;
-            this.stage.y = 0.5;
-            this._renderer.render(this.stage);
+        if (this._renderer) {
+            this._stage.removeChildren();
+            this._stage.addChild(this.canvasDisplayObject);
+            this._stage.addChild(this.entitiesDisplayObject);
+            this._renderer.render(this._stage);
         }
+    }
+
+    forwardContainingDivEvent(event : MouseEvent) {
+        this.canvasRoot.nativeElement.dispatchEvent(new MouseEvent(event.type, event));
     }
 }

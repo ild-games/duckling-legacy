@@ -1,7 +1,7 @@
 import {
     Component
 } from 'angular2/core';
-import {DisplayObject} from 'pixi.js';
+import {DisplayObject, Container} from 'pixi.js';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {StoreService} from '../state';
@@ -26,7 +26,7 @@ import {TopToolbarComponent} from './_toolbars';
         <md-card>
             <md-card-content>
                 <dk-top-toolbar
-                    class="canvas-top-toolbar"
+                    class="canvas-top-toolbar md-elevation-z4"
                     (toolSelection)="onToolSelected($event)">
                 </dk-top-toolbar>
 
@@ -35,10 +35,10 @@ import {TopToolbarComponent} from './_toolbars';
                     (elementCopy)="copyEntity()"
                     (elementPaste)="pasteEntity($event)"
                     [tool]="tool"
-                    [stage]="mapStage">
+                    [entitiesDisplayObject]="mapStage">
                 </dk-canvas>
 
-                <div class="canvas-bottom-toolbar">
+                <div class="canvas-bottom-toolbar md-elevation-z4">
                     Bottom Toolbar
                 </div>
             </md-card-content>
@@ -58,7 +58,9 @@ export class MapEditorComponent {
 
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
-            .subscribe(stage => this.mapStage = stage);
+            .subscribe((stage) => {
+                this.mapStage = stage;
+            });
         this.tool = this.toolService.defaultTool;
     }
 

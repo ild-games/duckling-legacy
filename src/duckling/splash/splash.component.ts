@@ -139,7 +139,7 @@ export class SplashComponent implements OnInit {
         this.reorderProject(project);
         this.saveProjects();
         this.maximizeWindow();
-        this.projectOpened.emit(project.path);
+        setTimeout(() => this.projectOpened.emit(project.path), 100);
     }
 
     private maximizeWindow() {
