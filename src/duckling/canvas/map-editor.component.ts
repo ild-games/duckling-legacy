@@ -38,6 +38,7 @@ import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
                     [stageDimensions]="stageDimensions"
                     [gridSize]="gridSize"
                     [scale]="scale"
+                    [showGrid]="showGrid"
                     [entitiesDisplayObject]="entitiesDisplayObject">
                 </dk-canvas>
 
@@ -46,9 +47,11 @@ import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
                     [stageDimensions]="stageDimensions"
                     [gridSize]="gridSize"
                     [scale]="scale"
+                    [showGrid]="showGrid"
                     (stageDimensionsChanged)="onStageDimensonsChanged($event)"
                     (gridSizeChanged)="onGridSizeChanged($event)"
-                    (scaleChanged)="onScaleChanged($event)">
+                    (scaleChanged)="onScaleChanged($event)"
+                    (showGridChanged)="onShowGridChanged($event)">
                 </dk-bottom-toolbar>
             </md-card-content>
         </md-card>
@@ -59,6 +62,7 @@ export class MapEditorComponent {
     stageDimensions : Vector = {x: 1200, y: 800};
     gridSize : number = 16;
     scale : number = 1;
+    showGrid : boolean = true;
     entitiesDisplayObject : DisplayObject;
 
     constructor(private _entitySystemService : EntitySystemService,
@@ -99,5 +103,9 @@ export class MapEditorComponent {
 
     onScaleChanged(scale : number) {
         this.scale = scale;
+    }
+
+    onShowGridChanged(showGrid : boolean) {
+        this.showGrid = showGrid;
     }
 }

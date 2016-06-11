@@ -72,6 +72,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Input() stageDimensions : Vector;
     @Input() gridSize : number;
     @Input() scale : number;
+    @Input() showGrid : boolean;
     @Input() entitiesDisplayObject : DisplayObject;
     @Input() canvasDisplayObject : DisplayObject;
     @Input() gridDisplayObject : DisplayObject;
@@ -130,7 +131,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.gridDisplayObject = this.buildCanvasGrid();
     }
 
-    ngOnChanges(changes : {stageDimensions?:SimpleChange, gridSize?:SimpleChange, scale?:SimpleChange}) {
+    ngOnChanges(changes : {stageDimensions?:SimpleChange, gridSize?:SimpleChange, scale?:SimpleChange, showGrid?:SimpleChange}) {
         if (!this._viewInited) {
             return;
         }
@@ -261,7 +262,9 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             this._stage.removeChildren();
             this._stage.addChild(this.canvasDisplayObject);
             this._stage.addChild(this.entitiesDisplayObject);
-            this._stage.addChild(this.gridDisplayObject);
+            if (this.showGrid) {
+                this._stage.addChild(this.gridDisplayObject);
+            }
             this._stage.scale = new Point(this.scale, this.scale);
             this._renderer.render(this._stage);
         }

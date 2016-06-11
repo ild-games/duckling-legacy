@@ -4,13 +4,14 @@ import {
     Output,
     EventEmitter
 } from 'angular2/core';
+import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {NumberInput, VectorInput} from '../../controls';
 import {Vector} from '../../math/vector';
 
 @Component({
     selector: "dk-bottom-toolbar",
-    directives: [VectorInput, NumberInput],
+    directives: [VectorInput, NumberInput, MdCheckbox],
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
         <div class="inlineEntryField">
@@ -36,16 +37,25 @@ import {Vector} from '../../math/vector';
             [value]="scale"
             (validInput)="onScaleInput($event)">
         </dk-number-input>
+
+        <md-checkbox
+            class="showGrid"
+            [checked]="showGrid"
+            (change)="onShowGridPressed($event)">
+            Show Grid?
+        </md-checkbox>
     `
 })
 export class BottomToolbarComponent {
     @Input() stageDimensions : Vector;
     @Input() gridSize : number;
     @Input() scale : number;
+    @Input() showGrid : boolean;
 
     @Output() stageDimensionsChanged: EventEmitter<Vector> = new EventEmitter();
     @Output() gridSizeChanged: EventEmitter<number> = new EventEmitter();
     @Output() scaleChanged: EventEmitter<number> = new EventEmitter();
+    @Output() showGridChanged: EventEmitter<boolean> = new EventEmitter();
 
     onStageDimensionsInput(stageDimensions : Vector) {
         this.stageDimensions = stageDimensions;
@@ -60,5 +70,10 @@ export class BottomToolbarComponent {
     onScaleInput(scale : number) {
         this.scale = scale;
         this.scaleChanged.emit(scale);
+    }
+
+    onShowGridPressed(showGrid : boolean) {
+        this.showGrid = showGrid;
+        this.showGridChanged.emit(this.showGrid);
     }
 }
