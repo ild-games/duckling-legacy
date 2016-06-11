@@ -1,4 +1,5 @@
 @import '../misc-mixins';
+@import '../../../node_modules/@angular2-material/core/style/core.css';
 
 :host {
     height: 100%;
@@ -7,6 +8,7 @@
 
 $canvas-top-bar-height: 35px;
 $canvas-bottom-bar-height: 35px;
+$canvas-left-right-border-width: $canvas-top-bar-height / 2;
 
 md-card {
     padding: 0;
@@ -18,12 +20,12 @@ md-card {
     }
 
     .canvas {
+        overflow: hidden;
         background-color: red;
-
         position: absolute;
         top: $canvas-top-bar-height;
-        left: 0;
-        right: 0;
+        left: $canvas-left-right-border-width;
+        right: $canvas-left-right-border-width;
         bottom: $canvas-bottom-bar-height;
     }
 

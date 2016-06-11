@@ -71,6 +71,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     ngAfterViewInit() {
         this._renderer = new CanvasRenderer(this.width, this.height, {view: this.canvasRoot.nativeElement});
+        this._renderer.backgroundColor = 0xCBCBCB;
         this.onResize();
     }
 
@@ -130,6 +131,20 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.render();
     }
 
+    /*private buildBackgroundChild() : DisplayObject {
+        var background = new createjs.Shape();
+        background.x = -(this.properties.dimensions.x / 2) + 0.5;
+        background.y = -(this.properties.dimensions.y / 2) + 0.5;
+        background.shadow = new createjs.Shadow(this.gridColor, 0, 0, 5);
+        background.graphics
+            .setStrokeStyle(1, 0, 0, 10, true)
+            .beginStroke(this.gridColor)
+            .beginFill("White")
+            .drawRect(0, 0, this.properties.dimensions.x, this.properties.dimensions.y);
+        return background;
+    }*/
+
+
     positionFromEvent(event : MouseEvent) : Vector {
         return {
             x: event.offsetX,
@@ -139,6 +154,8 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     render() {
         if (this.stage && this._renderer) {
+            this.stage.x = 0.5;
+            this.stage.y = 0.5;
             this._renderer.render(this.stage);
         }
     }

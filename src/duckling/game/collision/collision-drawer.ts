@@ -21,7 +21,7 @@ export function drawCollision(entity : Entity) {
     }
 
     var graphics = new Graphics();
-    graphics.lineStyle(2, blue, 1);
+    graphics.lineStyle(1, blue, 1);
     drawRectangle(positionAttribute.position, collisionAttribute.dimension.dimension, graphics);
     drawX(positionAttribute.position, collisionAttribute.dimension.dimension, graphics);
 
