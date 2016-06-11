@@ -6,7 +6,7 @@ import {
 } from 'angular2/core';
 
 import {PositionAttribute} from './position-attribute';
-import {VectorInput} from '../../controls/vector-input.component';
+import {VectorInput, FormLabel} from '../../controls';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
 
@@ -17,16 +17,16 @@ import {immutableAssign} from '../../util/model';
  */
 @Component({
     selector: "position-component",
-    directives: [VectorInput],
+    directives: [VectorInput, FormLabel],
     styleUrls: ['./duckling/game/position/position.component.css'],
     template: `
+        <dk-form-label title="Position"></dk-form-label>
         <dk-vector-input
-            title="Position"
             [value]="attribute.position"
             (validInput)="onPositionInput($event)">
         </dk-vector-input>
+        <dk-form-label title="Velocity"></dk-form-label>
         <dk-vector-input
-            title="Velocity"
             [value]="attribute.velocity"
             (validInput)="onVelocityInput($event)">
         </dk-vector-input>

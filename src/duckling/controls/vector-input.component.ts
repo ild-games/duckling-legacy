@@ -18,14 +18,13 @@ import {NumberInput} from './number-input.component';
     styleUrls: ['./duckling/controls/vector-input.component.css'],
     template:`
         <div>
-            <div class="form-label">{{title}}</div>
             <dk-number-input
-                label="X"
+                [label]="xLabel"
                 [value]="value.x"
                 (validInput)="onXInput($event)">
             </dk-number-input>
             <dk-number-input
-                label="Y"
+                [label]="yLabel"
                 [value]="value.y"
                 (validInput)="onYInput($event)">
             </dk-number-input>
@@ -33,13 +32,8 @@ import {NumberInput} from './number-input.component';
     `
 })
 export class VectorInput {
-    /**
-     * Title describing the input to the user.
-     */
-    @Input() title : string;
-    /**
-     * The value stored in the control.
-     */
+    @Input() xLabel : string = "X";
+    @Input() yLabel : string = "Y";
     @Input() value : Vector;
 
     /**

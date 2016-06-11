@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from 'angular2/core';
 
-import {VectorInput} from '../../controls/vector-input.component';
+import {VectorInput, FormLabel} from '../../controls';
 import {EnumSelect} from '../../controls/enum-select.component';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
@@ -18,16 +18,18 @@ import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute
  */
 @Component({
     selector: "dk-collision-component",
-    directives: [VectorInput, EnumSelect],
+    directives: [VectorInput, EnumSelect, FormLabel],
     styleUrls: ['./duckling/game/collision/collision.component.css'],
     template: `
+        <dk-form-label title="Dimension"></dk-form-label>
         <dk-vector-input
-            title="Dimension"
+            xLabel="Width"
+            yLabel="Height"
             [value]="attribute.dimension.dimension"
             (validInput)="onDimensionInput($event)">
         </dk-vector-input>
+        <dk-form-label title="One Way Normal"></dk-form-label>
         <dk-vector-input
-            title="One Way Normal"
             [value]="attribute.oneWayNormal"
             (validInput)="onOneWayNormalInput($event)">
         </dk-vector-input>
