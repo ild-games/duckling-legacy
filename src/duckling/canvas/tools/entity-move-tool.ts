@@ -23,19 +23,19 @@ export class EntityMoveTool extends BaseTool {
         super();
     }
 
-    onStageDown(position : Vector) {
-        this._selection = this._entitySelectionService.getEntityKey(position);
+    onStageDown(canvasCoords : Vector, stageCoords : Vector) {
+        this._selection = this._entitySelectionService.getEntityKey(stageCoords);
         this._mergeKey = newMergeKey();
         this._selectionService.select(this._selection, this._mergeKey);
     }
 
-    onStageMove(position : Vector) {
+    onStageMove(canvasCoords : Vector, stageCoords : Vector) {
         if (this._selection) {
-            this._entityPositionSetService.setPosition(this._selection, position, this._mergeKey);
+            this._entityPositionSetService.setPosition(this._selection, stageCoords, this._mergeKey);
         }
     }
 
-    onStageUp() {
+    onStageUp(canvasCoords : Vector, stageCoords : Vector) {
         this._cancel();
     }
 
@@ -48,7 +48,7 @@ export class EntityMoveTool extends BaseTool {
     }
 
     get label() {
-        return "Move";
+        return "Move Entity";
     }
 
     get icon() {

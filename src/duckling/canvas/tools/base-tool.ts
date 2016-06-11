@@ -8,19 +8,15 @@ export class BaseTool {
         return null;
     }
 
-    onLeftClick(position : Vector) {
+    onStageDown(canvasCoords : Vector, stageCoords : Vector) {
 
     }
 
-    onStageDown(position : Vector) {
+    onStageUp(canvasCoords : Vector, stageCoords : Vector) {
 
     }
 
-    onStageUp(position : Vector) {
-
-    }
-
-    onStageMove(position : Vector) {
+    onStageMove(canvasCoords : Vector, stageCoords : Vector) {
 
     }
 

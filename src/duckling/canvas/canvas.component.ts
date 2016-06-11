@@ -24,7 +24,7 @@ import {
 import * as PIXI from 'pixi.js';
 
 import {drawRectangle, drawX, drawGrid} from './drawing/util';
-import {BaseTool} from './tools/base-tool';
+import {BaseTool, ToolService, MapMoveTool} from './tools';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 
@@ -98,13 +98,15 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private _viewInited = false;
 
     constructor(private _changeDetector : ChangeDetectorRef,
-                private _window : WindowService) {
+                private _window : WindowService,
+                private _toolService : ToolService) {
     }
 
     ngAfterViewInit() {
         this._viewInited = true;
         this._window.on('resize', () => this.onResize());
         this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
+        this._toolService.getTool<MapMoveTool>("MapMoveTool").draggedElement = this.canvasContainerDiv.nativeElement.parentElement;
 
         this._renderer = new CanvasRenderer(this.elementDimensions.x, this.elementDimensions.y, {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
@@ -163,14 +165,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     onMouseDown(event : MouseEvent) {
         this.canvasRoot.nativeElement.focus();
         if (this.tool) {
-            this.tool.onStageDown(this.positionFromEvent(event));
+            this.tool.onStageDown(this.canvasCoordsFromEvent(event), this.stageCoordsFromEvent(event));
         }
         event.stopPropagation();
     }
 
     onMouseUp(event : MouseEvent) {
         if (this.tool) {
-
+            this.tool.onStageUp(this.canvasCoordsFromEvent(event), this.stageCoordsFromEvent(event));
         }
         event.stopPropagation();
     }
@@ -179,7 +181,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         var position = this.positionFromEvent(event);
         this._mouseLocation = position;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
-            this.tool.onStageMove(position);
+            this.tool.onStageMove(this.canvasCoordsFromEvent(event), this.stageCoordsFromEvent(event));
         }
         event.stopPropagation();
     }
@@ -249,11 +251,18 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         return graphics;
     }
 
-    positionFromEvent(event : MouseEvent) : Vector {
+    stageCoordsFromEvent(event : MouseEvent) : Vector {
         var localPoint = this._stage.toLocal(new Point(event.offsetX, event.offsetY));
         return {
             x: localPoint.x,
             y: localPoint.y
+        }
+    }
+
+    canvasCoordsFromEvent(event : MouseEvent) : Vector {
+        return {
+            x: event.offsetX,
+            y: event.offsetY
         }
     }
 
