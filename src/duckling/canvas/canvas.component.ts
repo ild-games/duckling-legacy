@@ -21,9 +21,8 @@ import {
     Container,
     Point
 } from 'pixi.js';
-import * as PIXI from 'pixi.js';
 
-import {drawRectangle, drawX, drawGrid} from './drawing/util';
+import {drawRectangle, drawGrid} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool} from './tools';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
@@ -74,7 +73,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Input() scale : number;
     @Input() showGrid : boolean;
     @Input() entitiesDisplayObject : DisplayObject;
-    @Input() canvasDisplayObject : DisplayObject;
+    @Input() canvasDisplayObjects : {bg: DisplayObject, border: DisplayObject};
     @Input() gridDisplayObject : DisplayObject;
     @Input() tool : BaseTool;
 
@@ -129,7 +128,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     buildCanvasDisplayObjects() {
-        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+        this.canvasDisplayObjects = this.buildCanvasDisplayObject();
         this.gridDisplayObject = this.buildCanvasGrid();
     }
 
@@ -224,28 +223,29 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2);
     }
 
-    private buildCanvasDisplayObject() : DisplayObject {
-        var graphics = new Graphics();
-        graphics.beginFill(0xFFFFFF, 1);
+    private buildCanvasDisplayObject() : {bg: DisplayObject, border: DisplayObject} {
+        var bg = new Graphics();
+        bg.beginFill(0xFFFFFF, 1);
         drawRectangle(
             {x: 0, y: 0},
             {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            graphics);
-        graphics.endFill();
-        graphics.lineStyle(1, 0xAAAAAA, 1);
+            bg);
+        bg.endFill();
+        var border = new Graphics();
+        border.lineStyle(1 / this.scale, 0xAAAAAA, 1);
         drawRectangle(
             {x: 0, y: 0},
             {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            graphics);
-        return graphics;
+            border);
+        return {bg: bg, border: border};
     }
 
     private buildCanvasGrid() : DisplayObject {
         var graphics = new Graphics();
-        graphics.lineStyle(1, 0xEEEEEE, 1);
+        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 1);
         drawGrid(
             {x: 0, y: 0},
-            {x: this.stageDimensions.x - 2, y: this.stageDimensions.y - 2},
+            {x: this.stageDimensions.x, y: this.stageDimensions.y},
             {x: this.gridSize, y: this.gridSize},
             graphics);
         return graphics;
@@ -269,11 +269,12 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     render() {
         if (this._renderer) {
             this._stage.removeChildren();
-            this._stage.addChild(this.canvasDisplayObject);
+            this._stage.addChild(this.canvasDisplayObjects.bg);
             this._stage.addChild(this.entitiesDisplayObject);
             if (this.showGrid) {
                 this._stage.addChild(this.gridDisplayObject);
             }
+            this._stage.addChild(this.canvasDisplayObjects.border);
             this._stage.scale = new Point(this.scale, this.scale);
             this._renderer.render(this._stage);
         }
