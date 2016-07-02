@@ -36,6 +36,8 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
     template: `
         <div #canvasContainerDiv
             class="canvas-container"
+            (copy)="onCopy($event)"
+            (paste)="onPaste($event)"
             (mousedown)="forwardContainingDivEvent($event)"
             (mouseUp)="forwardContainingDivEvent($event)"
             (mousemove)="forwardContainingDivEvent($event)"
@@ -47,17 +49,11 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
             </div>
             <canvas
                 #canvas
-<<<<<<< HEAD
-                contentEditable="true"
-=======
                 class="canvas"
->>>>>>> 0fee658... implement scrolling with the canvas
                 (mousedown)="onMouseDown($event)"
                 (mouseup)="onMouseUp($event)"
                 (mousemove)="onMouseDrag($event)"
                 (mouseout)="onMouseOut()"
-                (copy)="onCopy($event)"
-                (paste)="onPaste($event)"
                 [height]="height"
                 [width]="width">
             </canvas>
@@ -115,7 +111,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
 
-    ngOnChanges(changes : {stageDimensions?:SimpleChange, gridSize?:SimpleChange, scale?:SimpleChange, showGrid?:SimpleChange}) {
+    ngOnChanges(changes : {stageDimensions?:SimpleChange, scale?:SimpleChange}) {
         if (!this._viewInited) {
             return;
         }
@@ -145,7 +141,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onMouseDown(event : MouseEvent) {
-        this.canvasRoot.nativeElement.focus();
+        this.canvasContainerDiv.nativeElement.focus();
         if (this.tool) {
             this.tool.onStageDown(this.canvasCoordsFromEvent(event), this.stageCoordsFromEvent(event));
         }
@@ -160,10 +156,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onMouseDrag(event : MouseEvent) {
-        var position = this.positionFromEvent(event);
-        this._mouseLocation = position;
+        var stagePosition = this.stageCoordsFromEvent(event);
+        var canvasPosition = this.canvasCoordsFromEvent(event);
+        this._mouseLocation = stagePosition;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
-            this.tool.onStageMove(this.canvasCoordsFromEvent(event), this.stageCoordsFromEvent(event));
+            this.tool.onStageMove(canvasPosition, stagePosition);
         }
         event.stopPropagation();
     }
