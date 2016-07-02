@@ -22,7 +22,7 @@ import {
     Point
 } from 'pixi.js';
 
-import {drawRectangle, drawGrid} from './drawing/util';
+import {drawRectangle} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool} from './tools';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
@@ -72,9 +72,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Input() gridSize : number;
     @Input() scale : number;
     @Input() showGrid : boolean;
-    @Input() entitiesDisplayObject : DisplayObject;
-    @Input() canvasDisplayObjects : {bg: DisplayObject, border: DisplayObject};
-    @Input() gridDisplayObject : DisplayObject;
+    @Input() canvasDisplayObject : DisplayObject;
     @Input() tool : BaseTool;
 
     @ViewChild('canvas') canvasRoot : ElementRef;
@@ -109,28 +107,13 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
         this._renderer = new CanvasRenderer(this.elementDimensions.x, this.elementDimensions.y, {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
-        this.setupStage();
+
+        this.resizeCanvasElements();
+        this.repositionStage();
         this.centerStage();
         this.render();
     }
 
-    repositionStage() {
-        var canvasScrollDifferenceWidth = this.scrollerDimensions.x - this.elementDimensions.x;
-        var canvasScrollDifferenceHeight = this.scrollerDimensions.y - this.elementDimensions.y;
-        this._stage.x = (this.elementDimensions.x / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
-        this._stage.y = (this.elementDimensions.y / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
-    }
-
-    setupStage() {
-        this.buildCanvasDisplayObjects();
-        this.resizeCanvasElements();
-        this.repositionStage();
-    }
-
-    buildCanvasDisplayObjects() {
-        this.canvasDisplayObjects = this.buildCanvasDisplayObject();
-        this.gridDisplayObject = this.buildCanvasGrid();
-    }
 
     ngOnChanges(changes : {stageDimensions?:SimpleChange, gridSize?:SimpleChange, scale?:SimpleChange, showGrid?:SimpleChange}) {
         if (!this._viewInited) {
@@ -138,12 +121,12 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         }
 
         if (changes.stageDimensions) {
-            this.setupStage();
+            this.resizeCanvasElements();
+            this.repositionStage();
             this.centerStage();
-        } else if (changes.gridSize) {
-            this.gridDisplayObject = this.buildCanvasGrid();
         } else if (changes.scale) {
-            this.setupStage();
+            this.resizeCanvasElements();
+            this.repositionStage();
         }
 
         this.render();
@@ -193,7 +176,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         event.stopPropagation();
     }
 
-
     onResize() {
         this.resizeCanvasElements();
         this.render();
@@ -204,7 +186,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.render();
     }
 
-    resizeCanvasElements() {
+    forwardContainingDivEvent(event : MouseEvent) {
+        this.canvasRoot.nativeElement.dispatchEvent(new MouseEvent(event.type, event));
+    }
+
+    private resizeCanvasElements() {
         this.elementDimensions.x = this.canvasContainerDiv.nativeElement.clientWidth;
         this.elementDimensions.y = this.canvasContainerDiv.nativeElement.clientHeight;
         this.scrollerDimensions.x = this.elementDimensions.x * 2 + (this.stageDimensions.x * this.scale) - (this._scrollStageOffset * 2);
@@ -223,35 +209,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2);
     }
 
-    private buildCanvasDisplayObject() : {bg: DisplayObject, border: DisplayObject} {
-        var bg = new Graphics();
-        bg.beginFill(0xFFFFFF, 1);
-        drawRectangle(
-            {x: 0, y: 0},
-            {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            bg);
-        bg.endFill();
-        var border = new Graphics();
-        border.lineStyle(1 / this.scale, 0xAAAAAA, 1);
-        drawRectangle(
-            {x: 0, y: 0},
-            {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            border);
-        return {bg: bg, border: border};
-    }
-
-    private buildCanvasGrid() : DisplayObject {
-        var graphics = new Graphics();
-        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 1);
-        drawGrid(
-            {x: 0, y: 0},
-            {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            {x: this.gridSize, y: this.gridSize},
-            graphics);
-        return graphics;
-    }
-
-    stageCoordsFromEvent(event : MouseEvent) : Vector {
+    private stageCoordsFromEvent(event : MouseEvent) : Vector {
         var localPoint = this._stage.toLocal(new Point(event.offsetX, event.offsetY));
         return {
             x: localPoint.x,
@@ -259,28 +217,30 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         }
     }
 
-    canvasCoordsFromEvent(event : MouseEvent) : Vector {
+    private canvasCoordsFromEvent(event : MouseEvent) : Vector {
         return {
             x: event.offsetX,
             y: event.offsetY
         }
     }
 
-    render() {
+    private render() {
         if (this._renderer) {
             this._stage.removeChildren();
-            this._stage.addChild(this.canvasDisplayObjects.bg);
-            this._stage.addChild(this.entitiesDisplayObject);
-            if (this.showGrid) {
-                this._stage.addChild(this.gridDisplayObject);
-            }
-            this._stage.addChild(this.canvasDisplayObjects.border);
+            this._stage.addChild(this.canvasDisplayObject);
             this._stage.scale = new Point(this.scale, this.scale);
             this._renderer.render(this._stage);
         }
     }
 
-    forwardContainingDivEvent(event : MouseEvent) {
-        this.canvasRoot.nativeElement.dispatchEvent(new MouseEvent(event.type, event));
+    /**
+     * Used to reposition the virtual stage when the canvas has been scrolled
+     */
+    private repositionStage() {
+        var canvasScrollDifferenceWidth = this.scrollerDimensions.x - this.elementDimensions.x;
+        var canvasScrollDifferenceHeight = this.scrollerDimensions.y - this.elementDimensions.y;
+        this._stage.x = (this.elementDimensions.x / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
+        this._stage.y = (this.elementDimensions.y / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
     }
+
 }

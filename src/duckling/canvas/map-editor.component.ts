@@ -1,13 +1,21 @@
 import {
-    Component
+    AfterViewInit,
+    Component,
+    ElementRef,
+    ViewChild
 } from 'angular2/core';
-import {DisplayObject, Container} from 'pixi.js';
+import {
+    Container,
+    DisplayObject,
+    Graphics
+} from 'pixi.js';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {StoreService} from '../state';
 import {Canvas} from './canvas.component';
 import {EntityDrawerService} from './drawing/entity-drawer.service';
-import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
+import {drawRectangle, drawGrid} from './drawing/util';
+import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
 import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
 import {Vector} from '../math';
@@ -30,7 +38,7 @@ import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
                     (toolSelection)="onToolSelected($event)">
                 </dk-top-toolbar>
 
-                <dk-canvas
+                <dk-canvas #canvasElement
                     class="canvas"
                     (elementCopy)="copyEntity()"
                     (elementPaste)="pasteEntity($event)"
@@ -39,7 +47,7 @@ import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
                     [gridSize]="gridSize"
                     [scale]="scale"
                     [showGrid]="showGrid"
-                    [entitiesDisplayObject]="entitiesDisplayObject">
+                    [canvasDisplayObject]="canvasDisplayObject">
                 </dk-canvas>
 
                 <dk-bottom-toolbar
@@ -57,27 +65,66 @@ import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
         </md-card>
     `
 })
-export class MapEditorComponent {
+export class MapEditorComponent implements AfterViewInit {
+    /**
+     * Current tool in use
+     * @type {BaseTool}
+     */
     tool : BaseTool;
+
+    /**
+     * Size of the stage being edited
+     * @type {Vector}
+     */
     stageDimensions : Vector = {x: 1200, y: 800};
+
+    /**
+     * Width/Height dimension of the grid
+     * @type {number}
+     */
     gridSize : number = 16;
+
+    /**
+     * Scale of the map elements
+     * @type {number}
+     */
     scale : number = 1;
+
+    /**
+     * Determines if the grid should be rendered with the map
+     * @type {boolean}
+     */
     showGrid : boolean = true;
-    entitiesDisplayObject : DisplayObject;
+
+    /**
+     * The display object sent to the canvas with all the visual aspects of the map editor
+     * @type {DisplayObject}
+     */
+    canvasDisplayObject : Container = new Container();
+
+    private _entitiesDisplayObject : DisplayObject;
+    private _bgDisplayObjects : {bg: DisplayObject, border: DisplayObject};
+    private _gridDisplayObject : DisplayObject;
+
+    @ViewChild('canvasElement') canvasElement : ElementRef;
 
     constructor(private _entitySystemService : EntitySystemService,
-                public toolService : ToolService,
-                public store : StoreService,
-                private _entityDrawerService : EntityDrawerService,
                 private _selection : SelectionService,
-                private _copyPaste : CopyPasteService) {
+                private _copyPaste : CopyPasteService,
+                private _toolService : ToolService,
+                private _entityDrawerService : EntityDrawerService) {
+        this.tool = this._toolService.defaultTool;
+    }
+
+    ngAfterViewInit() {
+        this.redrawAllDisplayObjects();
 
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe((stage) => {
-                this.entitiesDisplayObject = stage;
+                this._entitiesDisplayObject = stage;
+                this.canvasDisplayObject = this.buildCanvasDisplayObject();
             });
-        this.tool = this.toolService.defaultTool;
     }
 
     copyEntity() {
@@ -95,17 +142,76 @@ export class MapEditorComponent {
 
     onStageDimensonsChanged(stageDimensions : Vector) {
         this.stageDimensions = stageDimensions;
+        this.redrawAllDisplayObjects();
     }
 
     onGridSizeChanged(gridSize : number) {
         this.gridSize = gridSize;
+        this._gridDisplayObject = this.buildGrid();
+        this.canvasDisplayObject = this.buildCanvasDisplayObject();
     }
 
     onScaleChanged(scale : number) {
         this.scale = scale;
+        this.redrawAllDisplayObjects();
     }
 
     onShowGridChanged(showGrid : boolean) {
         this.showGrid = showGrid;
+        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+    }
+
+    private redrawAllDisplayObjects() {
+        this._bgDisplayObjects = this.buildBGDisplayObjects();
+        this._gridDisplayObject = this.buildGrid();
+        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+    }
+
+    private buildGrid() : DisplayObject {
+        var graphics = new Graphics();
+        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 1);
+        drawGrid(
+            {x: 0, y: 0},
+            {x: this.stageDimensions.x, y: this.stageDimensions.y},
+            {x: this.gridSize, y: this.gridSize},
+            graphics);
+        return graphics;
+    }
+
+    private buildCanvasDisplayObject() : Container {
+
+        var canvasDrawnElements : Container = new Container();
+
+        if (this._bgDisplayObjects.bg) {
+            canvasDrawnElements.addChild(this._bgDisplayObjects.bg);
+        }
+        if (this._entitiesDisplayObject) {
+            canvasDrawnElements.addChild(this._entitiesDisplayObject);
+        }
+        if (this.showGrid && this._gridDisplayObject) {
+            canvasDrawnElements.addChild(this._gridDisplayObject);
+        }
+        if (this._bgDisplayObjects.border) {
+            canvasDrawnElements.addChild(this._bgDisplayObjects.border);
+        }
+
+        return canvasDrawnElements;
+    }
+
+    private buildBGDisplayObjects() : {bg: DisplayObject, border: DisplayObject} {
+        var bg = new Graphics();
+        bg.beginFill(0xFFFFFF, 1);
+        drawRectangle(
+            {x: 0, y: 0},
+            {x: this.stageDimensions.x, y: this.stageDimensions.y},
+            bg);
+        bg.endFill();
+        var border = new Graphics();
+        border.lineStyle(1 / this.scale, 0xAAAAAA, 1);
+        drawRectangle(
+            {x: 0, y: 0},
+            {x: this.stageDimensions.x, y: this.stageDimensions.y},
+            border);
+        return {bg: bg, border: border};
     }
 }

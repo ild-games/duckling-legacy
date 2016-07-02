@@ -5,6 +5,7 @@ import {EntityEditorComponent} from '../entityeditor';
 import {MapEditorComponent} from '../canvas/map-editor.component';
 import {SplashComponent} from '../splash/splash.component';
 import {ProjectService} from '../project';
+import {WindowService} from '../util';
 
 import {BodyType, CollisionType} from '../game/collision/collision-attribute';
 
@@ -69,12 +70,14 @@ export class ShellComponent {
         }
     }
 
-    constructor(public projectService : ProjectService) {
-
+    constructor(public projectService : ProjectService,
+                private _windowService : WindowService) {
+        this._windowService.setMinimumSize(0, 0);
     }
 
     onProjectOpened(path : string) {
         this.projectService.open(path);
+        this._windowService.setMinimumSize(1300, 500);
     }
 
     get showSplash() {

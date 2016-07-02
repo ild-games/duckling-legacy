@@ -11,4 +11,5 @@ export abstract class WindowService {
     abstract center() : void;
     abstract maximize() : void;
     abstract setResizable(isResizable : boolean) : void;
+    abstract setMinimumSize(minWidth : number, minHeight : number) : void;
 }

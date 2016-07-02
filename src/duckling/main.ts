@@ -62,7 +62,6 @@ var entityPositionSetService = new EntityPositionSetService(entitySystemService)
 
 // Setup window defaults
 var electronWindowService = new ElectronWindowService();
-electronWindowService.setMinimumSize(1150, 500);
 
 /**
  * Eventually we want to support multiple different games.  This means any component specific
