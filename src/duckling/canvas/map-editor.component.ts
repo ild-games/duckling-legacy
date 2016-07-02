@@ -68,37 +68,31 @@ import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 export class MapEditorComponent implements AfterViewInit {
     /**
      * Current tool in use
-     * @type {BaseTool}
      */
     tool : BaseTool;
 
     /**
      * Size of the stage being edited
-     * @type {Vector}
      */
     stageDimensions : Vector = {x: 1200, y: 800};
 
     /**
      * Width/Height dimension of the grid
-     * @type {number}
      */
     gridSize : number = 16;
 
     /**
      * Scale of the map elements
-     * @type {number}
      */
     scale : number = 1;
 
     /**
      * Determines if the grid should be rendered with the map
-     * @type {boolean}
      */
     showGrid : boolean = true;
 
     /**
      * The display object sent to the canvas with all the visual aspects of the map editor
-     * @type {DisplayObject}
      */
     canvasDisplayObject : Container = new Container();
 

@@ -9,7 +9,7 @@ import {
 import {Vector} from '../../math';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
-import {BaseTool} from './base-tool';
+import {BaseTool, CanvasMouseEvent} from './base-tool';
 
 @Injectable()
 export class EntityMoveTool extends BaseTool {
@@ -23,19 +23,19 @@ export class EntityMoveTool extends BaseTool {
         super();
     }
 
-    onStageDown(canvasCoords : Vector, stageCoords : Vector) {
-        this._selection = this._entitySelectionService.getEntityKey(stageCoords);
+    onStageDown(event : CanvasMouseEvent) {
+        this._selection = this._entitySelectionService.getEntityKey(event.stageCoords);
         this._mergeKey = newMergeKey();
         this._selectionService.select(this._selection, this._mergeKey);
     }
 
-    onStageMove(canvasCoords : Vector, stageCoords : Vector) {
+    onStageMove(event : CanvasMouseEvent) {
         if (this._selection) {
-            this._entityPositionSetService.setPosition(this._selection, stageCoords, this._mergeKey);
+            this._entityPositionSetService.setPosition(this._selection, event.stageCoords, this._mergeKey);
         }
     }
 
-    onStageUp(canvasCoords : Vector, stageCoords : Vector) {
+    onStageUp(event : CanvasMouseEvent) {
         this._cancel();
     }
 

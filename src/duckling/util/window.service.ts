@@ -6,7 +6,8 @@ export abstract class WindowService {
     get width() : number { throw Error("Unimplemented"); }
     get height() : number { throw Error("Unimplemented"); }
 
-    abstract on(event : string, listener: Function) : void;
+    abstract onResize(handler: Function) : void;
+    abstract removeResizeEvent() : void;
     abstract setSize(width : number, height : number) : void;
     abstract center() : void;
     abstract maximize() : void;

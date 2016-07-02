@@ -9,6 +9,9 @@ import {MdCheckbox} from '@angular2-material/checkbox';
 import {NumberInput, VectorInput} from '../../controls';
 import {Vector} from '../../math/vector';
 
+/**
+ * Component for managing the bottom bar controls for the map editor
+ */
 @Component({
     selector: "dk-bottom-toolbar",
     directives: [VectorInput, NumberInput, MdCheckbox],
@@ -58,22 +61,18 @@ export class BottomToolbarComponent {
     @Output() showGridChanged: EventEmitter<boolean> = new EventEmitter();
 
     onStageDimensionsInput(stageDimensions : Vector) {
-        this.stageDimensions = stageDimensions;
         this.stageDimensionsChanged.emit(stageDimensions);
     }
 
     onGridSizeInput(gridSize : number) {
-        this.gridSize = gridSize;
         this.gridSizeChanged.emit(gridSize);
     }
 
     onScaleInput(scale : number) {
-        this.scale = scale;
         this.scaleChanged.emit(scale);
     }
 
     onShowGridPressed(showGrid : boolean) {
-        this.showGrid = showGrid;
         this.showGridChanged.emit(this.showGrid);
     }
 }

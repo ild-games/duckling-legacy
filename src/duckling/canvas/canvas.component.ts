@@ -97,7 +97,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     ngAfterViewInit() {
         this._viewInited = true;
-        this._window.on('resize', () => this.onResize());
+        this._window.onResize(() => this.onResize());
         this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
         this._toolService.getTool<MapMoveTool>("MapMoveTool").draggedElement = this.canvasContainerDiv.nativeElement.parentElement;
 
@@ -143,14 +143,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     onMouseDown(event : MouseEvent) {
         this.canvasContainerDiv.nativeElement.focus();
         if (this.tool) {
-            this.tool.onStageDown(this.canvasCoordsFromEvent(event), this.stageCoordsFromEvent(event));
+            this.tool.onStageDown({canvasCoords: this.canvasCoordsFromEvent(event), stageCoords: this.stageCoordsFromEvent(event)});
         }
         event.stopPropagation();
     }
 
     onMouseUp(event : MouseEvent) {
         if (this.tool) {
-            this.tool.onStageUp(this.canvasCoordsFromEvent(event), this.stageCoordsFromEvent(event));
+            this.tool.onStageUp({canvasCoords: this.canvasCoordsFromEvent(event), stageCoords: this.stageCoordsFromEvent(event)});
         }
         event.stopPropagation();
     }
@@ -160,7 +160,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         var canvasPosition = this.canvasCoordsFromEvent(event);
         this._mouseLocation = stagePosition;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
-            this.tool.onStageMove(canvasPosition, stagePosition);
+            this.tool.onStageMove({canvasCoords: this.canvasCoordsFromEvent(event), stageCoords: this.stageCoordsFromEvent(event)});
         }
         event.stopPropagation();
     }

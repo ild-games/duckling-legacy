@@ -35,10 +35,10 @@ export function drawX(centerPosition : Vector, dimension : Vector, graphics : Gr
 
 /**
  * Draws a grid at the given position.
- * @param  {Vector}   centerPosition Center point of the grid
- * @param  {Vector}   gridDimension  Dimensions of the entire grid
- * @param  {Vector}   cellDimension  Dimensions of a cell
- * @param  {Graphics} graphics       Graphics object used to draw
+ * @param  centerPosition Center point of the grid
+ * @param  gridDimension  Dimensions of the entire grid
+ * @param  cellDimension  Dimensions of a cell
+ * @param  graphics       Graphics object used to draw
  */
 export function drawGrid(centerPosition : Vector, gridDimension : Vector, cellDimension : Vector, graphics : Graphics) {
     var halfX = gridDimension.x / 2;

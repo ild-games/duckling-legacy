@@ -8,15 +8,15 @@ export class BaseTool {
         return null;
     }
 
-    onStageDown(canvasCoords : Vector, stageCoords : Vector) {
+    onStageDown(event : CanvasMouseEvent) {
 
     }
 
-    onStageUp(canvasCoords : Vector, stageCoords : Vector) {
+    onStageUp(event : CanvasMouseEvent) {
 
     }
 
-    onStageMove(canvasCoords : Vector, stageCoords : Vector) {
+    onStageMove(event : CanvasMouseEvent) {
 
     }
 
@@ -33,6 +33,11 @@ export class BaseTool {
     }
 
     get icon() : string {
-        throw new Error("");
+        throw new Error("Not yet implemented");
     }
+}
+
+export class CanvasMouseEvent {
+    canvasCoords : Vector;
+    stageCoords : Vector;
 }

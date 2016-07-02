@@ -11,10 +11,6 @@
     cursor: default;
 }
 
-.canvas-container canvas, .canvas-container canvas:focus {
-     outline: 0 solid transparent;
-}
-
 .canvas {
     position: fixed;
     z-index: -1;
