@@ -41,7 +41,7 @@ export class BaseTool {
 /**
  * Event describing a mouse action on the canvas
  */
-export class CanvasMouseEvent {
+export interface CanvasMouseEvent {
     /**
      * Coordinate of the mouse event in respect to the canvas element
      */

@@ -17,15 +17,14 @@ import {Vector} from '../../math/vector';
     directives: [VectorInput, NumberInput, MdCheckbox],
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
-        <div class="inlineEntryField">
-            <dk-vector-input
-                title="Dimension"
-                xLabel="Stage Width"
-                yLabel="Stage Height"
-                [value]="stageDimensions"
-                (validInput)="onStageDimensionsInput($event)">
-            </dk-vector-input>
-        </div>
+        <dk-vector-input
+            class="inlineEntryField"
+            title="Dimension"
+            xLabel="Stage Width"
+            yLabel="Stage Height"
+            [value]="stageDimensions"
+            (validInput)="onStageDimensionsInput($event)">
+        </dk-vector-input>
 
         <dk-number-input
             class="inlineEntryField"

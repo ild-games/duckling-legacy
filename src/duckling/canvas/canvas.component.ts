@@ -23,7 +23,7 @@ import {
 } from 'pixi.js';
 
 import {drawRectangle} from './drawing/util';
-import {BaseTool, ToolService, MapMoveTool} from './tools';
+import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 
@@ -129,6 +129,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     ngOnDestroy() {
         this._renderer.destroy();
+        this._window.removeResizeEvent();
     }
 
     onCopy(event : ClipboardEvent) {
@@ -142,22 +143,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     onMouseDown(event : MouseEvent) {
         this.canvasContainerDiv.nativeElement.focus();
         if (this.tool) {
-            this.tool.onStageDown({
-                canvasCoords: this.canvasCoordsFromEvent(event),
-                stageCoords: this.stageCoordsFromEvent(event),
-                canvas: this
-            });
+            this.tool.onStageDown(this.createCanvasMouseEvent(event));
         }
         event.stopPropagation();
     }
 
     onMouseUp(event : MouseEvent) {
         if (this.tool) {
-            this.tool.onStageUp({
-                canvasCoords: this.canvasCoordsFromEvent(event),
-                stageCoords: this.stageCoordsFromEvent(event),
-                canvas: this
-            });
+            this.tool.onStageUp(this.createCanvasMouseEvent(event));
         }
         event.stopPropagation();
     }
@@ -167,11 +160,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         var canvasPosition = this.canvasCoordsFromEvent(event);
         this._mouseLocation = stagePosition;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
-            this.tool.onStageMove({
-                canvasCoords: this.canvasCoordsFromEvent(event),
-                stageCoords: this.stageCoordsFromEvent(event),
-                canvas: this
-            });
+            this.tool.onStageMove(this.createCanvasMouseEvent(event));
         }
         event.stopPropagation();
     }
@@ -263,4 +252,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this._stage.y = (this.elementDimensions.y / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
     }
 
+    private createCanvasMouseEvent(event : MouseEvent) : CanvasMouseEvent {
+        return {
+            canvasCoords: this.canvasCoordsFromEvent(event),
+            stageCoords: this.stageCoordsFromEvent(event),
+            canvas: this
+        }
+    }
 }
