@@ -58,3 +58,32 @@ export function drawGrid(centerPosition : Vector, gridDimension : Vector, cellDi
         graphics.lineTo(curX, centerPosition.y + halfY);
     }
 }
+
+/**
+ * Draws the background to a canvas
+ * @param  centerPosition  Center point of the background
+ * @param  stageDimensions Dimensions of the stage on the canvas
+ * @param  graphics        Graphics object used to draw
+ */
+export function drawCanvasBackground(centerPosition : Vector, stageDimensions : Vector, graphics : Graphics) {
+    graphics.beginFill(0xFFFFFF, 1);
+    drawRectangle(
+        centerPosition,
+        stageDimensions,
+        graphics);
+    graphics.endFill();
+}
+
+/**
+ * Draws the border to a canvas
+ * @param  centerPosition  Center point of the border
+ * @param  stageDimensions Dimensions of the stage on the canvas
+ * @param  graphics        Graphics object used to draw
+ */
+export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vector, graphics : Graphics) {
+    graphics.lineColor = 0xAAAAAA;
+    drawRectangle(
+        centerPosition,
+        stageDimensions,
+        graphics);
+}

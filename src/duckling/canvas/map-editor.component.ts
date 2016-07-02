@@ -14,7 +14,7 @@ import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {StoreService} from '../state';
 import {Canvas} from './canvas.component';
 import {EntityDrawerService} from './drawing/entity-drawer.service';
-import {drawRectangle, drawGrid} from './drawing/util';
+import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
 import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
@@ -97,7 +97,8 @@ export class MapEditorComponent implements AfterViewInit {
     canvasDisplayObject : Container = new Container();
 
     private _entitiesDisplayObject : DisplayObject;
-    private _bgDisplayObjects : {bg: DisplayObject, border: DisplayObject};
+    private _canvasBackgroundDisplayObject : DisplayObject;
+    private _canvasBorderDisplayObject : DisplayObject;
     private _gridDisplayObject : DisplayObject;
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
@@ -156,7 +157,8 @@ export class MapEditorComponent implements AfterViewInit {
     }
 
     private redrawAllDisplayObjects() {
-        this._bgDisplayObjects = this.buildBGDisplayObjects();
+        this._canvasBackgroundDisplayObject = this.buildCanvasBackground();
+        this._canvasBorderDisplayObject = this.buildCanvasBorder();
         this._gridDisplayObject = this.buildGrid();
         this.canvasDisplayObject = this.buildCanvasDisplayObject();
     }
@@ -172,12 +174,30 @@ export class MapEditorComponent implements AfterViewInit {
         return graphics;
     }
 
-    private buildCanvasDisplayObject() : Container {
+    private buildCanvasBackground() : DisplayObject {
+        var bg = new Graphics();
+        drawCanvasBackground(
+            {x: 0, y: 0},
+            this.stageDimensions,
+            bg);
+        return bg;
+    }
 
+    private buildCanvasBorder() : DisplayObject {
+        var border = new Graphics();
+        border.lineWidth = 1 / this.scale;
+        drawCanvasBorder(
+            {x: 0, y: 0},
+            this.stageDimensions,
+            border);
+        return border;
+    }
+
+    private buildCanvasDisplayObject() : Container {
         var canvasDrawnElements : Container = new Container();
 
-        if (this._bgDisplayObjects.bg) {
-            canvasDrawnElements.addChild(this._bgDisplayObjects.bg);
+        if (this._canvasBackgroundDisplayObject) {
+            canvasDrawnElements.addChild(this._canvasBackgroundDisplayObject);
         }
         if (this._entitiesDisplayObject) {
             canvasDrawnElements.addChild(this._entitiesDisplayObject);
@@ -185,27 +205,10 @@ export class MapEditorComponent implements AfterViewInit {
         if (this.showGrid && this._gridDisplayObject) {
             canvasDrawnElements.addChild(this._gridDisplayObject);
         }
-        if (this._bgDisplayObjects.border) {
-            canvasDrawnElements.addChild(this._bgDisplayObjects.border);
+        if (this._canvasBorderDisplayObject) {
+            canvasDrawnElements.addChild(this._canvasBorderDisplayObject);
         }
 
         return canvasDrawnElements;
-    }
-
-    private buildBGDisplayObjects() : {bg: DisplayObject, border: DisplayObject} {
-        var bg = new Graphics();
-        bg.beginFill(0xFFFFFF, 1);
-        drawRectangle(
-            {x: 0, y: 0},
-            {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            bg);
-        bg.endFill();
-        var border = new Graphics();
-        border.lineStyle(1 / this.scale, 0xAAAAAA, 1);
-        drawRectangle(
-            {x: 0, y: 0},
-            {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            border);
-        return {bg: bg, border: border};
     }
 }
