@@ -8,6 +8,7 @@ import {
 } from '../../entitysystem';
 import {Vector} from '../../math';
 import {newMergeKey} from '../../state';
+import {SelectionService} from '../../selection';
 import {BaseTool} from './base-tool';
 
 @Injectable()
@@ -17,13 +18,15 @@ export class EntityMoveTool extends BaseTool {
 
     constructor(private _entitySelectionService: EntitySelectionService,
                 private _entitySystemService : EntitySystemService,
-                private _entityPositionSetService : EntityPositionSetService) {
+                private _entityPositionSetService : EntityPositionSetService,
+                private _selectionService : SelectionService) {
         super();
     }
 
     onStageDown(position : Vector) {
         this._selection = this._entitySelectionService.getEntityKey(position);
         this._mergeKey = newMergeKey();
+        this._selectionService.select(this._selection, this._mergeKey);
     }
 
     onStageMove(position : Vector) {

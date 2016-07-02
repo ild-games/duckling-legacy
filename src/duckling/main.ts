@@ -26,12 +26,14 @@ import {
 } from './canvas/tools';
 
 import {
-    Action, StoreService, DucklingState
-} from './state';
+    SelectionService,
+    CopyPasteService
+} from './selection';
 
-import {
-    projectReducer, ProjectService, MapParserService
-} from './project';
+import {Action, StoreService} from './state';
+import {mainReducer} from './main.reducer';
+
+import {projectReducer, ProjectService, MapParserService} from './project';
 
 import {bootstrapGameComponents} from './game/index';
 import {ProjectSerializerService} from './splash/project-serializer.service';
@@ -44,16 +46,7 @@ import {ElectronWindowService} from '../electron/util/electron-window.service';
 
 remote.getCurrentWindow().removeAllListeners();
 
-// Bootstrap the Redux Store
-function mainReducer(state : DucklingState = {}, action : Action) : DucklingState {
-    return {
-        entitySystem : entitySystemReducer(state.entitySystem, action),
-        project : projectReducer(state.project, action)
-    }
-}
 var storeService = new StoreService(mainReducer, mergeEntityAction);
-
-// Create the Entity System
 var entitySystemService = new EntitySystemService(storeService);
 
 // Bootstrap game specific behavior
@@ -62,7 +55,6 @@ var entityDrawerService = new EntityDrawerService();
 var entityBoxService = new EntityBoxService();
 var attributeDefaultService = new AttributeDefaultService();
 var entityPositionSetService = new EntityPositionSetService(entitySystemService);
-var entityCreatorTool = new EntityCreatorTool(attributeDefaultService, entitySystemService, entityPositionSetService);
 
 /**
  * Eventually we want to support multiple different games.  This means any component specific
@@ -91,7 +83,6 @@ bootstrap(ShellComponent, [
     provideInstance(attributeDefaultService, AttributeDefaultService),
     provideInstance(entityPositionSetService, EntityPositionSetService),
     provideInstance(entitySystemService, EntitySystemService),
-    provideInstance(entityCreatorTool, EntityCreatorTool),
     provideClass(ElectronDialogService, DialogService),
     provideClass(ElectronWindowService, WindowService),
     EntitySelectionService,
@@ -99,5 +90,7 @@ bootstrap(ShellComponent, [
     PathService,
     ProjectSerializerService,
     ProjectService,
-    MapParserService
+    MapParserService,
+    SelectionService,
+    CopyPasteService
 ]);

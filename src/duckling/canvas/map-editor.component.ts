@@ -10,8 +10,9 @@ import {EntityDrawerService} from './drawing/entity-drawer.service';
 import {BaseTool, TOOL_PROVIDERS, ToolService} from './tools';
 import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
+import {Vector} from '../math';
+import {CopyPasteService, SelectionService} from '../selection';
 import {TopToolbarComponent} from './_toolbars';
-
 
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
@@ -31,6 +32,8 @@ import {TopToolbarComponent} from './_toolbars';
 
                 <dk-canvas
                     class="canvas"
+                    (elementCopy)="copyEntity()"
+                    (elementPaste)="pasteEntity($event)"
                     [tool]="tool"
                     [stage]="mapStage">
                 </dk-canvas>
@@ -49,11 +52,23 @@ export class MapEditorComponent {
     constructor(private _entitySystemService : EntitySystemService,
                 public toolService : ToolService,
                 public store : StoreService,
-                private _entityDrawerService : EntityDrawerService) {
+                private _entityDrawerService : EntityDrawerService,
+                private _selection : SelectionService,
+                private _copyPaste : CopyPasteService) {
+
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe(stage => this.mapStage = stage);
         this.tool = this.toolService.defaultTool;
+    }
+
+    copyEntity() {
+        var selection = this._selection.selection.value;
+        this._copyPaste.copy(selection.selectedEntity);
+    }
+
+    pasteEntity(position : Vector) {
+        this._copyPaste.paste(position);
     }
 
     onToolSelected(newTool : BaseTool) {

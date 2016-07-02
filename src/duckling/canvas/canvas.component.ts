@@ -7,7 +7,9 @@ import {
     AfterViewInit,
     SimpleChange,
     ViewChild,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    EventEmitter,
+    Output
 } from 'angular2/core';
 import {Observable} from 'rxjs';
 import {autoDetectRenderer, DisplayObject, WebGLRenderer, CanvasRenderer} from 'pixi.js';
@@ -26,10 +28,13 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
         <div #canvasContainerDiv class="canvas-container">
             <canvas
                 #canvas
+                contentEditable="true"
                 (mousedown)="onMouseDown($event)"
                 (mouseup)="onMouseUp($event)"
                 (mousemove)="onMouseDrag($event)"
                 (mouseout)="onMouseOut()"
+                (copy)="onCopy($event)"
+                (paste)="onPaste($event)"
                 [height]="height"
                 [width]="width">
             </canvas>
@@ -39,14 +44,25 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     width : number = 500;
     height : number = 400;
+
     @Input() stage : DisplayObject;
     @Input() tool : BaseTool;
 
     @ViewChild('canvas') canvasRoot : ElementRef;
     @ViewChild('canvasContainerDiv') canvasContainerDiv : ElementRef;
 
-    private _renderer : WebGLRenderer | CanvasRenderer;
+    /**
+     * Event that is published when a user trys to copy something in the canvas.
+     */
+    @Output() elementCopy : EventEmitter<any> = new EventEmitter();
 
+    /**
+     * Event that is published whenever a user trys to paste something in the canvas.
+     */
+    @Output() elementPaste : EventEmitter<Vector> = new EventEmitter();
+
+    private _renderer : WebGLRenderer | CanvasRenderer;
+    private _mouseLocation : Vector = {x: 0, y: 0};
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _window : WindowService) {
@@ -66,7 +82,16 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this._renderer.destroy();
     }
 
+    onCopy(event : ClipboardEvent) {
+        this.elementCopy.emit(null);
+    }
+
+    onPaste(event : ClipboardEvent) {
+        this.elementPaste.emit(this._mouseLocation);
+    }
+
     onMouseDown(event : MouseEvent) {
+        this.canvasRoot.nativeElement.focus();
         if (this.tool) {
             this.tool.onStageDown(this.positionFromEvent(event));
         }
@@ -79,10 +104,13 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onMouseDrag(event : MouseEvent) {
+        var position = this.positionFromEvent(event);
+        this._mouseLocation = position;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
-            this.tool.onStageMove(this.positionFromEvent(event));
+            this.tool.onStageMove(position);
         }
     }
+
 
     onMouseOut() {
         if (this.tool) {

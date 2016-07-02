@@ -107,7 +107,7 @@ function applyReducer<T>(rootReducer : Reducer<T>,
 
     return {
         stateHistory : baseState.stateHistory.push(baseState.state),
-        state : rootReducer(baseState.state, action),
+        state : rootReducer(state.state, action),
         lastAction : action
     }
 }

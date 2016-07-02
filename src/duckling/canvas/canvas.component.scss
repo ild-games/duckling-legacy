@@ -4,4 +4,13 @@
 
 .canvas-container {
     height: 100%;
+    cursor: default;
+}
+
+.canvas-container canvas {
+    cursor: default;
+}
+
+.canvas-container canvas, .canvas-container canvas:focus {
+     outline: 0 solid transparent;
 }
