@@ -99,7 +99,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this._viewInited = true;
         this._window.onResize(() => this.onResize());
         this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
-        this._toolService.getTool<MapMoveTool>("MapMoveTool").draggedElement = this.canvasContainerDiv.nativeElement.parentElement;
 
         this._renderer = new CanvasRenderer(this.elementDimensions.x, this.elementDimensions.y, {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
@@ -143,14 +142,22 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     onMouseDown(event : MouseEvent) {
         this.canvasContainerDiv.nativeElement.focus();
         if (this.tool) {
-            this.tool.onStageDown({canvasCoords: this.canvasCoordsFromEvent(event), stageCoords: this.stageCoordsFromEvent(event)});
+            this.tool.onStageDown({
+                canvasCoords: this.canvasCoordsFromEvent(event),
+                stageCoords: this.stageCoordsFromEvent(event),
+                canvas: this
+            });
         }
         event.stopPropagation();
     }
 
     onMouseUp(event : MouseEvent) {
         if (this.tool) {
-            this.tool.onStageUp({canvasCoords: this.canvasCoordsFromEvent(event), stageCoords: this.stageCoordsFromEvent(event)});
+            this.tool.onStageUp({
+                canvasCoords: this.canvasCoordsFromEvent(event),
+                stageCoords: this.stageCoordsFromEvent(event),
+                canvas: this
+            });
         }
         event.stopPropagation();
     }
@@ -160,7 +167,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         var canvasPosition = this.canvasCoordsFromEvent(event);
         this._mouseLocation = stagePosition;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
-            this.tool.onStageMove({canvasCoords: this.canvasCoordsFromEvent(event), stageCoords: this.stageCoordsFromEvent(event)});
+            this.tool.onStageMove({
+                canvasCoords: this.canvasCoordsFromEvent(event),
+                stageCoords: this.stageCoordsFromEvent(event),
+                canvas: this
+            });
         }
         event.stopPropagation();
     }
@@ -185,6 +196,18 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     forwardContainingDivEvent(event : MouseEvent) {
         this.canvasRoot.nativeElement.dispatchEvent(new MouseEvent(event.type, event));
+    }
+
+    scrollTo(scrollToCoords : Vector) {
+        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = scrollToCoords.x;
+        this.canvasContainerDiv.nativeElement.parentElement.scrollTop = scrollToCoords.y;
+    }
+
+    get scrollPosition() : Vector {
+        return {
+            x: this.canvasContainerDiv.nativeElement.parentElement.scrollLeft,
+            y: this.canvasContainerDiv.nativeElement.parentElement.scrollTop,
+        };
     }
 
     private resizeCanvasElements() {

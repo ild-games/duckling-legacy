@@ -1,6 +1,7 @@
 import {DisplayObject} from 'pixi.js';
 
 import {Vector} from '../../math';
+import {Canvas} from '../canvas.component';
 
 export class BaseTool {
 
@@ -37,7 +38,22 @@ export class BaseTool {
     }
 }
 
+/**
+ * Event describing a mouse action on the canvas
+ */
 export class CanvasMouseEvent {
+    /**
+     * Coordinate of the mouse event in respect to the canvas element
+     */
     canvasCoords : Vector;
+
+    /**
+     * Coordinate of the mouse event in respect to the virtual stage
+     */
     stageCoords : Vector;
+
+    /**
+     * Canvas component the event came from
+     */
+    canvas : Canvas;
 }
