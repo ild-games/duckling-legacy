@@ -1,7 +1,7 @@
 import {Injectable} from 'angular2/core';
 
 import {ToolbarOption} from '../../controls';
-import {EntityCreatorTool, BaseTool, EntityMoveTool} from '../tools';
+import {EntityCreatorTool, BaseTool, EntityMoveTool, MapMoveTool} from '../tools';
 
 /**
  * Provide access to tools for the canvas.
@@ -13,10 +13,12 @@ export class ToolService {
     private _default : BaseTool;
 
     constructor(entityCreator : EntityCreatorTool,
-                entityMoveTool : EntityMoveTool) {
+                entityMoveTool : EntityMoveTool,
+                mapMoveTool : MapMoveTool) {
         this._default = entityMoveTool;
         this.addTool(entityCreator);
         this.addTool(entityMoveTool);
+        this.addTool(mapMoveTool);
     }
 
     /**
@@ -46,8 +48,8 @@ export class ToolService {
      * @param  key Key of the tool that should be retrieved.
      * @return A tool instance.
      */
-    getTool(key : string) : BaseTool {
-        return this._tools[key];
+    getTool<T extends BaseTool>(key : string) : T {
+        return <T>this._tools[key];
     }
 
     /**

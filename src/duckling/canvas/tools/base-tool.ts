@@ -1,6 +1,7 @@
 import {DisplayObject} from 'pixi.js';
 
 import {Vector} from '../../math';
+import {Canvas} from '../canvas.component';
 
 export class BaseTool {
 
@@ -8,19 +9,15 @@ export class BaseTool {
         return null;
     }
 
-    onLeftClick(position : Vector) {
+    onStageDown(event : CanvasMouseEvent) {
 
     }
 
-    onStageDown(position : Vector) {
+    onStageUp(event : CanvasMouseEvent) {
 
     }
 
-    onStageUp(position : Vector) {
-
-    }
-
-    onStageMove(position : Vector) {
+    onStageMove(event : CanvasMouseEvent) {
 
     }
 
@@ -37,6 +34,26 @@ export class BaseTool {
     }
 
     get icon() : string {
-        throw new Error("");
+        throw new Error("Not yet implemented");
     }
+}
+
+/**
+ * Event describing a mouse action on the canvas
+ */
+export interface CanvasMouseEvent {
+    /**
+     * Coordinate of the mouse event in respect to the canvas element
+     */
+    canvasCoords : Vector;
+
+    /**
+     * Coordinate of the mouse event in respect to the virtual stage
+     */
+    stageCoords : Vector;
+
+    /**
+     * Canvas component the event came from
+     */
+    canvas : Canvas;
 }

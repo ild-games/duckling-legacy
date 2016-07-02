@@ -16,6 +16,7 @@
   "dependencies": {
     "@angular2-material/button": "2.0.0-alpha.3",
     "@angular2-material/card": "2.0.0-alpha.3",
+    "@angular2-material/checkbox": "2.0.0-alpha.3",
     "@angular2-material/core": "2.0.0-alpha.3",
     "@angular2-material/input": "2.0.0-alpha.3",
     "@angular2-material/list": "2.0.0-alpha.3",
@@ -25,6 +26,7 @@
     "gulp-sass": "^2.2.0",
     "gulp-watch": "^4.3.5",
     "immutable": "^3.8.1",
+    "open-iconic": "^1.1.1",
     "pixi.js": "^3.0.11",
     "redux": "^3.5.2",
     "reflect-metadata": "0.1.2",

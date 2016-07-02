@@ -1,4 +1,6 @@
 @import '../misc-mixins';
+@import '../colors';
+@import '../../../node_modules/@angular2-material/core/style/core.css';
 
 :host {
     height: 100%;
@@ -6,30 +8,40 @@
 }
 
 $canvas-top-bar-height: 35px;
-$canvas-bottom-bar-height: 35px;
+$canvas-bottom-bar-height: 50px;
+$canvas-left-right-border-width: $canvas-top-bar-height / 2;
+
+.canvas-toolbar {
+    background-color: #EBEBEB;
+}
 
 md-card {
     padding: 0;
     height: 100%;
+    z-index: 1;
+    min-width: 650px;
 
     .canvas-top-toolbar {
+        @extend .canvas-toolbar;
         width: 100%;
         height: $canvas-top-bar-height;
     }
 
     .canvas {
-        background-color: red;
-
+        overflow: auto;
         position: absolute;
         top: $canvas-top-bar-height;
-        left: 0;
         right: 0;
         bottom: $canvas-bottom-bar-height;
+        left: 0;
     }
 
     .canvas-bottom-toolbar {
+        @extend .canvas-toolbar;
         width: 100%;
         height: $canvas-bottom-bar-height;
+        padding: 5px 5px 5px 5px;
+        box-sizing: border-box;
         position: absolute;
         bottom: 0;
     }

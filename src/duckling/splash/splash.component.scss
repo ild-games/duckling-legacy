@@ -50,6 +50,10 @@ $splash-small-font: $font-size-normal;
             @include clean-link;
             font-size: $splash-medium-font;
             font-weight: 300;
+
+            .new-button-icon {
+                font-size: $splash-small-font;
+            }
         }
     }
 

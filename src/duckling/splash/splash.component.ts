@@ -45,11 +45,10 @@ const MAX_SPLASH_ENTRIES : number = 8;
 
                 <div class="actions">
                     <a (click)="onNewProjectClick($event)">
-                        <img
-                            src="resources/open-iconic-svg/file.svg"
-                            width="16px"
-                            height="16px"
-                            alt="file" />
+                        <span
+                            class="oi new-button-icon"
+                            data-glyph="file">
+                        </span>
                         New
                     </a>
                 </div>

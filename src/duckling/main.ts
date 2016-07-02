@@ -60,6 +60,9 @@ var entityBoxService = new EntityBoxService();
 var attributeDefaultService = new AttributeDefaultService();
 var entityPositionSetService = new EntityPositionSetService(entitySystemService);
 
+// Setup window defaults
+var electronWindowService = new ElectronWindowService();
+
 /**
  * Eventually we want to support multiple different games.  This means any component specific
  * behavior needs to be loosely coupled. This function will register component specific implementations
@@ -87,8 +90,8 @@ bootstrap(ShellComponent, [
     provideInstance(attributeDefaultService, AttributeDefaultService),
     provideInstance(entityPositionSetService, EntityPositionSetService),
     provideInstance(entitySystemService, EntitySystemService),
+    provideInstance(electronWindowService, WindowService),
     provideClass(ElectronDialogService, DialogService),
-    provideClass(ElectronWindowService, WindowService),
     EntitySelectionService,
     JsonLoaderService,
     PathService,

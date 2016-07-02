@@ -10,6 +10,11 @@ $spacer-unit: 13px;
     padding: $form-label-padding;
 }
 
+.inlineEntryField {
+    display: inline-block;
+    margin-right: 35px;
+}
+
 @mixin action {
     &:hover {
       cursor: pointer;

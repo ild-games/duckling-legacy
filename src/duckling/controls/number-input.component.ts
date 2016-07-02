@@ -13,7 +13,7 @@ var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
  * Validated input that only publishes events when the input contains a number.
  */
 @Component({
-    selector: "number-input",
+    selector: "dk-number-input",
     directives: [ValidatedInput],
     template:`
         <validated-input
