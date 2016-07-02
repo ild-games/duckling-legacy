@@ -24,11 +24,11 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
                     Delete
                 </button>
             </span>
-            <dk-entity-component *ngIf="selection?.selectedEntity"
+            <dk-entity-component
                 [entity]="selection.entity"
                 (entityChanged)="onEntityChanged($event)">
             </dk-entity-component>
-            <dk-attribute-selector *ngIf="selection?.selectedEntity"
+            <dk-attribute-selector
                 (addAttribute)="addAttribute($event)"
                 [entity]="selection.entity">
             </dk-attribute-selector>

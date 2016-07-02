@@ -18,14 +18,19 @@ import {changeType, ChangeType} from '../state';
     selector: "dk-attribute-selector",
     directives: [ArraySelect],
     template: `
-        <dk-array-select
-            [value]="selected"
-            (selection)="select($event)"
-            [options]="options">
-        </dk-array-select>
-        <button (click)="onAddClicked()">
-            Add
-        </button>
+        <div *ngIf="options.length">
+            <dk-array-select
+                [value]="selected"
+                (selection)="select($event)"
+                [options]="options">
+            </dk-array-select>
+            <button (click)="onAddClicked()">
+                Add
+            </button>
+        </div>
+        <div *ngIf="!options.length">
+            No Other Attributes Available
+        </div>
     `
 })
 export class AttributeSelectorComponent implements OnChanges {
