@@ -10,7 +10,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from 'angular2/core';
-import {Attribute, AttributeKey} from './entity';
+import {Attribute, AttributeKey} from '../entitysystem';
 import {AttributeComponentService} from './attribute-component.service';
 
 var logcount = 0;
@@ -27,9 +27,20 @@ var logcount = 0;
 export class AttributeComponent {
     private _childComponent : ComponentRef;
 
+    /**
+     * The key of the attribute being displayed.
+     */
     @Input() key: AttributeKey;
+
+    /**
+     * The Attribute being displayed.
+     * @return {[type]} [description]
+     */
     @Input() attribute: Attribute;
 
+    /**
+     * Event fired when the user modifies an attribute.
+     */
     @Output() attributeChanged : EventEmitter<Attribute> = new EventEmitter();
 
     constructor(private _attributeComponentService : AttributeComponentService,

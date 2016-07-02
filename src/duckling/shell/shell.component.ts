@@ -1,6 +1,7 @@
 import {Component, Input, ChangeDetectorRef} from 'angular2/core';
 
-import {Entity, EntityComponent} from '../entitysystem';
+import {Entity} from '../entitysystem';
+import {EntityEditorComponent} from '../entityeditor';
 import {MapEditorComponent} from '../canvas/map-editor.component';
 import {SplashComponent} from '../splash/splash.component';
 import {ProjectService} from '../project';
@@ -10,7 +11,7 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
 @Component({
     selector: 'duckling-shell',
     directives: [
-        EntityComponent,
+        EntityEditorComponent,
         SplashComponent,
         MapEditorComponent
     ],
@@ -34,9 +35,8 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
                 </dk-map-editor>
             </div>
             <div class="entity-editor-container">
-                <dk-entity-component
-                    [entity]="_entity">
-                </dk-entity-component>
+                <dk-entity-editor>
+                </dk-entity-editor>
             </div>
         </div>
     `

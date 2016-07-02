@@ -1,6 +1,5 @@
 import {Component, Injectable} from 'angular2/core';
-import {BaseAttributeService} from './base-attribute-service';
-import {AttributeKey} from './entity';
+import {AttributeKey, BaseAttributeService} from '../entitysystem';
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class

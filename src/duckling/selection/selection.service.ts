@@ -38,6 +38,14 @@ export class SelectionService {
         this._store.dispatch(selectionAction(entityKey), mergeKey);
     }
 
+    /**
+     * Clear the current selection.
+     * @param  mergeKey  Optional mergeKey, describes which commands the action should be merged with.
+     */
+    deselect(mergeKey? : any) {
+        this.select("", mergeKey);
+    }
+
     private _getSelection(selectedEntity : EntityKey) : Selection {
         if (selectedEntity) {
             return {

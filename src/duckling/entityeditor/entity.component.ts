@@ -8,9 +8,10 @@ import {
 } from 'angular2/core';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
-import {Entity, AttributeKey, Attribute, TaggedAttribute} from './entity';
-import {AttributeComponent} from './attribute.component';
-import {immutableAssign, toTitleCase} from '../util';
+import {Entity, AttributeKey, Attribute, TaggedAttribute}  from '../entitysystem';
+import {immutableAssign, immutableDelete, toTitleCase} from '../util';
+
+import {AttributeComponent} from '../entityeditor';
 
 /**
  * Display a form that allows for editting the attributes attached to a component.
@@ -18,11 +19,18 @@ import {immutableAssign, toTitleCase} from '../util';
 @Component({
     selector: "dk-entity-component",
     directives: [AttributeComponent, MD_CARD_DIRECTIVES],
-    styleUrls: ['./duckling/entitysystem/entity.component.css'],
+    styleUrls: ['./duckling/entityeditor/entity.component.css'],
     template: `
         <div *ngFor="#key of keys()">
             <md-card>
-                <md-card-title>{{formatCardTitle(key)}}</md-card-title>
+                <md-card-title>
+                    <div>
+                        {{formatCardTitle(key)}}
+                        <button md-button title="Delete Attribute" (click)="deleteAttribute(key)">
+                            Delete
+                        </button>
+                    </div>
+                </md-card-title>
                 <md-card-content>
                     <attribute-component
                         [key]="key"
@@ -36,12 +44,22 @@ import {immutableAssign, toTitleCase} from '../util';
     changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class EntityComponent {
+    /**
+     * The entity to display.
+     */
     @Input() entity : Entity;
 
+    /**
+     * Output when the entity is changed.
+     */
     @Output() entityChanged : EventEmitter<Entity> = new EventEmitter();
 
     keys() {
         return Object.keys(this.entity);
+    }
+
+    deleteAttribute(key : AttributeKey) {
+        this.entityChanged.emit(immutableDelete(this.entity, key));
     }
 
     onAttributeChanged(key : AttributeKey, attribute : Attribute) {

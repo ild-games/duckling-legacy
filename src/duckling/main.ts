@@ -9,7 +9,6 @@ import {ShellComponent} from './shell/shell.component';
 import {EntityDrawerService} from './canvas/drawing/entity-drawer.service';
 
 import {
-    AttributeComponentService,
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
@@ -17,8 +16,13 @@ import {
     EntitySelectionService,
     entitySystemReducer,
     mergeEntityAction,
-    createEntitySystem
+    createEntitySystem,
+    AvailableAttributeService
 } from './entitysystem';
+
+import {
+    AttributeComponentService
+} from './entityeditor';
 
 import {
     EntityCreatorTool,
@@ -92,5 +96,6 @@ bootstrap(ShellComponent, [
     ProjectService,
     MapParserService,
     SelectionService,
-    CopyPasteService
+    CopyPasteService,
+    AvailableAttributeService
 ]);
