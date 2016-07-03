@@ -18,6 +18,9 @@ import {collisionBoundingBox} from './collision/collision-box';
 import {defaultCamera, CAMERA_KEY} from './camera/camera-attribute';
 import {CameraComponent} from './camera/camera.component';
 
+import {defaultDrawable, DRAWABLE_KEY} from './drawable/drawable-attribute';
+import {DrawableComponent} from './drawable/drawable.component';
+
 /**
  * Initialize the Services used by duckling to interact with the attribute implementations.
  */
@@ -42,4 +45,8 @@ export function bootstrapGameComponents(services: {
     //Bootstrap Camera
     services.attributeComponentService.register(CAMERA_KEY, CameraComponent);
     services.attributeDefaultService.register(CAMERA_KEY, {createByDefault: false, default: defaultCamera});
+
+    //Bootstrap Drawable
+    services.attributeComponentService.register(DRAWABLE_KEY, DrawableComponent);
+    services.attributeDefaultService.register(DRAWABLE_KEY, {createByDefault: true, default: defaultDrawable});
 }
