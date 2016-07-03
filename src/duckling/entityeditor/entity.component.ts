@@ -5,7 +5,7 @@ import {
     EventEmitter,
     OnChanges,
     ChangeDetectionStrategy
-} from 'angular2/core';
+} from '@angular/core';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {Entity, AttributeKey, Attribute, TaggedAttribute}  from '../entitysystem';
@@ -52,7 +52,7 @@ export class EntityComponent {
     /**
      * Output when the entity is changed.
      */
-    @Output() entityChanged : EventEmitter<Entity> = new EventEmitter();
+    @Output() entityChanged = new EventEmitter<Entity>();
 
     keys() {
         return Object.keys(this.entity);

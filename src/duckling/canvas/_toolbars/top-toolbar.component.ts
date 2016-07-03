@@ -4,7 +4,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 import {MdButton} from '@angular2-material/button';
 
 import {BaseTool, ToolService} from '../tools';
@@ -54,7 +54,7 @@ import {ToolbarButton, ToolbarButtonGroup, ToolbarOption} from '../../controls';
 export class TopToolbarComponent {
     toolOptions : ToolbarOption[];
 
-    @Output() toolSelection : EventEmitter<BaseTool> = new EventEmitter();
+    @Output() toolSelection = new EventEmitter<BaseTool>();
 
     constructor(public store : StoreService,
                 public project : ProjectService,

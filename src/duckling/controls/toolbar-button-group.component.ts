@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 import {MdButton} from '@angular2-material/button';
 
 import {ToolbarButton} from './toolbar-button.component';

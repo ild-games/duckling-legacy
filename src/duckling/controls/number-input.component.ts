@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 
 import {ValidatedInput} from './validated-input.component';
 
@@ -36,7 +36,7 @@ export class NumberInput {
     /**
      * Event published when the user enters a valid input.
      */
-    @Output() validInput : EventEmitter<number> = new EventEmitter();
+    @Output() validInput = new EventEmitter<number>();
 
     onInput(value : string) {
         this.validInput.emit(parseFloat(value));

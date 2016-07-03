@@ -1,4 +1,4 @@
-import {Injectable, NgZone} from 'angular2/core';
+import {Injectable, NgZone} from '@angular/core';
 import {remote} from 'electron';
 
 import {DialogService} from '../../duckling/util/dialog.service';

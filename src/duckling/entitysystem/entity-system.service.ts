@@ -1,4 +1,4 @@
-import {Injectable, EventEmitter} from 'angular2/core';
+import {Injectable, EventEmitter} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {StoreService, clearUndoHistoryAction} from '../state';

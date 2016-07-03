@@ -3,7 +3,7 @@ import {
     Component,
     ElementRef,
     ViewChild
-} from 'angular2/core';
+} from '@angular/core';
 import {
     Container,
     DisplayObject,

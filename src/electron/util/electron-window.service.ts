@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 import {remote} from 'electron';
 
 import {WindowService} from '../../duckling/util/window.service';

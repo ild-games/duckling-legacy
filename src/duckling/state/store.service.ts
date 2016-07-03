@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 import {createStore, Store, Reducer} from 'redux';
 import {BehaviorSubject} from 'rxjs';
 

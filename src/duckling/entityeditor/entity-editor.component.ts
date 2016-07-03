@@ -1,6 +1,6 @@
 import {
     Component
-} from 'angular2/core';
+} from '@angular/core';
 
 import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, AttributeKey} from '../entitysystem';
 import {SelectionService, Selection} from '../selection';

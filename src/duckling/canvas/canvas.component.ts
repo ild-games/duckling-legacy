@@ -10,7 +10,7 @@ import {
     ChangeDetectorRef,
     EventEmitter,
     Output
-} from 'angular2/core';
+} from '@angular/core';
 import {Observable} from 'rxjs';
 import {
     autoDetectRenderer,
@@ -77,12 +77,12 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     /**
      * Event that is published when a user trys to copy something in the canvas.
      */
-    @Output() elementCopy : EventEmitter<any> = new EventEmitter();
+    @Output() elementCopy = new EventEmitter<any>();
 
     /**
      * Event that is published whenever a user trys to paste something in the canvas.
      */
-    @Output() elementPaste : EventEmitter<Vector> = new EventEmitter();
+    @Output() elementPaste = new EventEmitter<Vector>();
 
     private _mouseLocation : Vector = {x: 0, y: 0};
     private _stage : Container = new Container();

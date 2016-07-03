@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 
 /**
  * Select control that accepts an array of options.
@@ -32,7 +32,7 @@ export class ArraySelect {
     /**
      * Event that is published with the new value whenever the user changes it.
      */
-    @Output() selection : EventEmitter<String> = new EventEmitter();
+    @Output() selection = new EventEmitter<String>();
 
     onSelectionChanged(index : number) {
         this.selection.emit(this.options[index].value);

@@ -3,7 +3,7 @@ import {
     Component,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
 import {ProjectSerializerService} from './project-serializer.service';
@@ -77,8 +77,7 @@ export class SplashComponent implements OnInit {
     /**
      * EventEmitter that will be invoked when a project is selected.
      */
-    @Output()
-    projectOpened : EventEmitter<string> = new EventEmitter();
+    @Output() projectOpened = new EventEmitter<string>();
 
     constructor(private _path : PathService,
                 private _window : WindowService,

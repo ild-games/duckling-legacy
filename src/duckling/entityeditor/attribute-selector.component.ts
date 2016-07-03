@@ -4,7 +4,7 @@ import {
     Input,
     Output,
     OnChanges
-} from 'angular2/core';
+} from '@angular/core';
 
 import {ArraySelect, SelectOption} from '../controls';
 import {Entity, AvailableAttributeService, AttributeKey} from '../entitysystem';

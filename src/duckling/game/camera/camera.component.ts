@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 
 import {CameraAttribute} from './camera-attribute';
 import {VectorInput} from '../../controls/vector-input.component';
@@ -25,5 +25,5 @@ export class CameraComponent {
 
     @Input() attribute : CameraAttribute;
 
-    @Output() attributeChanged: EventEmitter<CameraAttribute> = new EventEmitter();
+    @Output() attributeChanged = new EventEmitter<CameraAttribute>();
 }

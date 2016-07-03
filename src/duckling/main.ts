@@ -1,8 +1,8 @@
 import {
     Provider,
     Type
-} from 'angular2/core';
-import {bootstrap} from 'angular2/platform/browser';
+} from '@angular/core';
+import {bootstrap} from '@angular/platform-browser-dynamic';
 import {remote} from 'electron';
 
 import {ShellComponent} from './shell/shell.component';

@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {NumberInput, VectorInput} from '../../controls';
@@ -54,10 +54,10 @@ export class BottomToolbarComponent {
     @Input() scale : number;
     @Input() showGrid : boolean;
 
-    @Output() stageDimensionsChanged: EventEmitter<Vector> = new EventEmitter();
-    @Output() gridSizeChanged: EventEmitter<number> = new EventEmitter();
-    @Output() scaleChanged: EventEmitter<number> = new EventEmitter();
-    @Output() showGridChanged: EventEmitter<boolean> = new EventEmitter();
+    @Output() stageDimensionsChanged = new EventEmitter<Vector>();
+    @Output() gridSizeChanged = new EventEmitter<number>();
+    @Output() scaleChanged = new EventEmitter<number>();
+    @Output() showGridChanged = new EventEmitter<boolean>();
 
     onStageDimensionsInput(stageDimensions : Vector) {
         this.stageDimensionsChanged.emit(stageDimensions);
