@@ -12,7 +12,7 @@ import {
     selector: "dk-array-select",
     template:`
         <select [ngModel]="value" (input)="onSelectionChanged($event.target.selectedIndex)">
-            <option *ngFor="#option of options" [value]="option.value">
+            <option *ngFor="let option of options" [value]="option.value">
                 {{option.title}}
             </option>
         </select>

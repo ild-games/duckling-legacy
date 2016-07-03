@@ -20,7 +20,7 @@ import {changeType, ChangeType} from '../state';
     template: `
         <div *ngIf="options.length">
             <dk-array-select
-                [value]="selected"
+                [value]="options[0].value"
                 (selection)="select($event)"
                 [options]="options">
             </dk-array-select>

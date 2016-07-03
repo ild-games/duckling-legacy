@@ -36,7 +36,7 @@ const MAX_SPLASH_ENTRIES : number = 8;
                 <md-nav-list>
                     <md-list-item
                     md-list-item
-                    *ngFor="#project of _projects"
+                    *ngFor="let project of _projects"
                     (click)="openProject({title: project.title, path: project.path})">
                         <p md-line class="project-title"> {{project.title}} </p>
                         <p md-line class="project-path"> {{project.path}} </p>
