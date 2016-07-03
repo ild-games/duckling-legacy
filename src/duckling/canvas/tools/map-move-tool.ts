@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 
 import {Vector} from '../../math';
 import {BaseTool, CanvasMouseEvent} from './base-tool';

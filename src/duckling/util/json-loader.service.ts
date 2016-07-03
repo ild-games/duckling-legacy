@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 import * as fs from 'fs';
 
 import {PathService} from './path.service';

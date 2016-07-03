@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 
 import {Vector} from '../math/vector';
 import {immutableAssign} from '../util/model';
@@ -39,7 +39,7 @@ export class VectorInput {
     /**
      * Event published when the user enters a valid input.
      */
-    @Output() validInput : EventEmitter<Vector> = new EventEmitter();
+    @Output() validInput = new EventEmitter<Vector>();
 
     onXInput(x : number) {
         this.validInput.emit(immutableAssign(this.value, {x}));

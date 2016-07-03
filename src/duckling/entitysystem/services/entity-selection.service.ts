@@ -1,4 +1,4 @@
-import {Component, Injectable} from 'angular2/core';
+import {Component, Injectable} from '@angular/core';
 import {EntityKey, Entity} from '../entity';
 import {EntityBoxService} from './entity-box.service';
 import {EntitySystemService} from '../entity-system.service';

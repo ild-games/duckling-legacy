@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 import {MdButton} from '@angular2-material/button';
 
 import {ToolbarButton} from './toolbar-button.component';
@@ -12,7 +12,7 @@ import {ToolbarButton} from './toolbar-button.component';
     selector: "dk-toolbar-button-group",
     directives: [MdButton, ToolbarButton],
     template: `
-        <span *ngFor="#option of options">
+        <span *ngFor="let option of options">
             <dk-toolbar-button
                 [color]="selectedValue === option.value ? 'primary' : 'none'"
                 [icon]="option.icon"

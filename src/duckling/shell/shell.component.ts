@@ -1,4 +1,4 @@
-import {Component, Input, ChangeDetectorRef} from 'angular2/core';
+import {Component, Input, ChangeDetectorRef} from '@angular/core';
 
 import {Entity} from '../entitysystem';
 import {EntityEditorComponent} from '../entityeditor';

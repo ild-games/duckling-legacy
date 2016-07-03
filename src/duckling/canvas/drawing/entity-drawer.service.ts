@@ -1,4 +1,4 @@
-import {Component, Injectable} from 'angular2/core';
+import {Component, Injectable} from '@angular/core';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
 import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';

@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 
 import {PositionAttribute} from './position-attribute';
 import {VectorInput, FormLabel} from '../../controls';
@@ -36,7 +36,7 @@ export class PositionComponent {
 
     @Input() attribute : PositionAttribute;
 
-    @Output() attributeChanged: EventEmitter<PositionAttribute> = new EventEmitter();
+    @Output() attributeChanged = new EventEmitter<PositionAttribute>();
 
     onPositionInput(position : Vector) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {position}));

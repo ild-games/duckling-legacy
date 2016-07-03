@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 
 /**
@@ -37,7 +37,7 @@ export class ValidatedInput {
     /**
      * Event published when the user enters a valid input.
      */
-    @Output() validInput : EventEmitter<String> = new EventEmitter();
+    @Output() validInput = new EventEmitter<String>();
 
     onUserInput(newValue : string) {
         if (this.validator(newValue)) {

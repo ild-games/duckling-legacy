@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 
 import {AttributeDefaultService, EntitySystemService, EntityPositionSetService} from '../../entitysystem';
 import {Vector} from '../../math';

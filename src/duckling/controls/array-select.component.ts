@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 
 /**
  * Select control that accepts an array of options.
@@ -12,7 +12,7 @@ import {
     selector: "dk-array-select",
     template:`
         <select [ngModel]="value" (input)="onSelectionChanged($event.target.selectedIndex)">
-            <option *ngFor="#option of options" [value]="option.value">
+            <option *ngFor="let option of options" [value]="option.value">
                 {{option.title}}
             </option>
         </select>
@@ -32,7 +32,7 @@ export class ArraySelect {
     /**
      * Event that is published with the new value whenever the user changes it.
      */
-    @Output() selection : EventEmitter<String> = new EventEmitter();
+    @Output() selection = new EventEmitter<String>();
 
     onSelectionChanged(index : number) {
         this.selection.emit(this.options[index].value);

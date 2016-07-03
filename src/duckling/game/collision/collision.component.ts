@@ -3,7 +3,7 @@ import {
     Input,
     Output,
     EventEmitter
-} from 'angular2/core';
+} from '@angular/core';
 
 import {VectorInput, FormLabel} from '../../controls';
 import {EnumSelect} from '../../controls/enum-select.component';
@@ -51,7 +51,7 @@ import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute
 })
 export class CollisionComponent {
     @Input() attribute : CollisionAttribute;
-    @Output() attributeChanged: EventEmitter<CollisionAttribute> = new EventEmitter();
+    @Output() attributeChanged = new EventEmitter<CollisionAttribute>();
 
     bodyTypes = BodyType;
     collisionType = CollisionType;

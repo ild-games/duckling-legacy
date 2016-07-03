@@ -4,7 +4,7 @@ import {
     Input,
     Output,
     EventEmitter,
-} from 'angular2/core';
+} from '@angular/core';
 
 import {SelectOption, ArraySelect} from './array-select.component';
 import {isInteger} from '../math/number-utils';
@@ -38,7 +38,7 @@ export class EnumSelect {
     /**
      * Event published with the new enum value when the user changes their selection.
      */
-    @Output() selection : EventEmitter<number> = new EventEmitter();
+    @Output() selection = new EventEmitter<number>();
 
     enumOptions() {
         var options : SelectOption[] = [];

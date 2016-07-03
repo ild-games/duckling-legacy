@@ -1,7 +1,7 @@
 import {
     Component,
     Input
-} from 'angular2/core';
+} from '@angular/core';
 
 /**
  * A simple label for a form

@@ -5,7 +5,7 @@ import {
     EventEmitter,
     OnChanges,
     ChangeDetectionStrategy
-} from 'angular2/core';
+} from '@angular/core';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {Entity, AttributeKey, Attribute, TaggedAttribute}  from '../entitysystem';
@@ -21,7 +21,7 @@ import {AttributeComponent} from '../entityeditor';
     directives: [AttributeComponent, MD_CARD_DIRECTIVES],
     styleUrls: ['./duckling/entityeditor/entity.component.css'],
     template: `
-        <div *ngFor="#key of keys()">
+        <div *ngFor="let key of keys()">
             <md-card>
                 <md-card-title>
                     <div>
@@ -52,7 +52,7 @@ export class EntityComponent {
     /**
      * Output when the entity is changed.
      */
-    @Output() entityChanged : EventEmitter<Entity> = new EventEmitter();
+    @Output() entityChanged = new EventEmitter<Entity>();
 
     keys() {
         return Object.keys(this.entity);

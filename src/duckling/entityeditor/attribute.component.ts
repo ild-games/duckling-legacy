@@ -1,15 +1,16 @@
 import {
     Component,
-    ElementRef,
+    ViewContainerRef,
     EventEmitter,
     DynamicComponentLoader,
     ComponentRef,
     Input,
     Output,
     SimpleChange,
+    ComponentResolver,
     ChangeDetectionStrategy,
     ChangeDetectorRef
-} from 'angular2/core';
+} from '@angular/core';
 import {Attribute, AttributeKey} from '../entitysystem';
 import {AttributeComponentService} from './attribute-component.service';
 
@@ -25,7 +26,7 @@ var logcount = 0;
     changeDetection : ChangeDetectionStrategy.OnPush,
 })
 export class AttributeComponent {
-    private _childComponent : ComponentRef;
+    private _childComponent : ComponentRef<AttributeComponent>;
 
     /**
      * The key of the attribute being displayed.
@@ -41,11 +42,12 @@ export class AttributeComponent {
     /**
      * Event fired when the user modifies an attribute.
      */
-    @Output() attributeChanged : EventEmitter<Attribute> = new EventEmitter();
+    @Output() attributeChanged = new EventEmitter<Attribute>();
 
     constructor(private _attributeComponentService : AttributeComponentService,
                 private _dcl : DynamicComponentLoader,
-                private _elementRef : ElementRef,
+                private _componentResolver : ComponentResolver,
+                private _elementRef : ViewContainerRef,
                 private _changeDetector : ChangeDetectorRef) {
     }
 
@@ -58,15 +60,16 @@ export class AttributeComponent {
     }
 
     switchToType(key : AttributeKey) {
-        console.log(`Switched ${logcount++}`);
-        this._dcl.loadNextToLocation(
-            this._attributeComponentService.getComponentType(key),
-            this._elementRef
-        ).then((ref: ComponentRef) =>  {
-            this._childComponent = ref;
-            var childInstance : AttributeComponent = this._childComponent.instance;
-            childInstance.attribute = this.attribute;
-            childInstance.attributeChanged.subscribe((event : Attribute) => this.attributeChanged.emit(event));
+        var type = this._attributeComponentService.getComponentType(key);
+        this._componentResolver.resolveComponent(type).then((componentFactory) => {
+            var childComponent : ComponentRef<AttributeComponent>;
+            childComponent = this._elementRef.createComponent(componentFactory, 0, this._elementRef.injector);
+
+            childComponent.instance.attribute = this.attribute;
+            childComponent.instance.key= this.key;
+            childComponent.instance.attributeChanged.subscribe((event : Attribute) => this.attributeChanged.emit(event));
+
+            this._childComponent = childComponent;
             this._detectChanges();
         });
     }

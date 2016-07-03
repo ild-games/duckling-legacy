@@ -4,7 +4,7 @@ import {
     Input,
     Output,
     OnChanges
-} from 'angular2/core';
+} from '@angular/core';
 
 import {ArraySelect, SelectOption} from '../controls';
 import {Entity, AvailableAttributeService, AttributeKey} from '../entitysystem';
@@ -20,7 +20,7 @@ import {changeType, ChangeType} from '../state';
     template: `
         <div *ngIf="options.length">
             <dk-array-select
-                [value]="selected"
+                [value]="options[0].value"
                 (selection)="select($event)"
                 [options]="options">
             </dk-array-select>

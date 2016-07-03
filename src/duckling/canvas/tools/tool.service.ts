@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 
 import {ToolbarOption} from '../../controls';
 import {EntityCreatorTool, BaseTool, EntityMoveTool, MapMoveTool} from '../tools';
