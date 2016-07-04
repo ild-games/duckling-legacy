@@ -6,13 +6,14 @@ import {
 } from '@angular/core';
 import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
-import {EnumChoiceComponent} from '../../controls';
+import {EnumChoiceComponent, VectorInput, FormLabel} from '../../controls';
 import {immutableAssign} from '../../util';
 
 import {DrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType} from './drawable';
 import {defaultShapeDrawable} from './shape-drawable';
 import {ShapeDrawableComponent} from './shape-drawable.component';
+import {GenericDrawableComponent} from './generic-drawable.component';
 
 @Component({
     selector: "dk-drawable-component",
@@ -21,9 +22,16 @@ import {ShapeDrawableComponent} from './shape-drawable.component';
         NgSwitchCase,
         NgSwitchDefault,
         EnumChoiceComponent,
+        GenericDrawableComponent,
         ShapeDrawableComponent
     ],
     template: `
+        <dk-generic-drawable-component
+            *ngIf="attribute.topDrawable?.type !== null"
+            [drawable]="attribute.topDrawable"
+            (drawableChanged)="specificDrawableChanged($event)">
+        </dk-generic-drawable-component>
+
         <div [ngSwitch]="attribute.topDrawable?.type">
             <dk-enum-choice
                 *ngSwitchDefault

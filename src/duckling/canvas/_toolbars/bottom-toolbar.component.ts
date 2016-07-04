@@ -43,7 +43,7 @@ import {Vector} from '../../math/vector';
         <md-checkbox
             class="showGrid"
             [checked]="showGrid"
-            (change)="onShowGridPressed($event)">
+            (change)="onShowGridPressed($event.checked)">
             Show Grid?
         </md-checkbox>
     `
@@ -72,6 +72,6 @@ export class BottomToolbarComponent {
     }
 
     onShowGridPressed(showGrid : boolean) {
-        this.showGridChanged.emit(this.showGrid);
+        this.showGridChanged.emit(showGrid);
     }
 }

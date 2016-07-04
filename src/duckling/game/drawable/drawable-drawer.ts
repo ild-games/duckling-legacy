@@ -2,7 +2,7 @@ import {Graphics} from 'pixi.js';
 
 import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
-import {Vector} from '../../math';
+import {Vector, degreesToRadians} from '../../math';
 import {drawEllipse, drawRectangle} from '../../canvas/drawing/util';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
@@ -26,27 +26,36 @@ function drawDrawable(drawable : Drawable, position : Vector) {
         return null;
     }
 
+    var graphics = new Graphics();
+    applyDrawableProperties(drawable, position, graphics);
     switch (drawable.type) {
         case DrawableType.Shape:
-            return drawShapeDrawable((drawable as ShapeDrawable).shape, position);
+            return drawShapeDrawable((drawable as ShapeDrawable).shape, drawable.color, graphics);
         default:
             return null;
     }
 }
 
-function drawShapeDrawable(shape : Shape, position : Vector) {
-    var graphics = new Graphics();
-    graphics.beginFill(0x000000, 1)
+function drawShapeDrawable(shape : Shape, color : string, graphics : Graphics) {
+    graphics.beginFill(parseInt(color, 16), 1);
     switch (shape.type) {
         case ShapeType.Circle:
             var radius = (shape as Circle).radius;
-            drawEllipse(position, radius, radius, graphics);
+            drawEllipse({x: 0, y: 0}, radius, radius, graphics);
             break;
         case ShapeType.Rectangle:
             var dimension = (shape as Rectangle).dimension;
-            drawRectangle(position, dimension, graphics);
+            drawRectangle({x: 0, y: 0}, dimension, graphics);
             break;
     }
     graphics.endFill();
     return graphics;
+}
+
+function applyDrawableProperties(drawable : Drawable, position : Vector, graphics : Graphics) {
+    graphics.position.x = position.x;
+    graphics.position.y = position.y;
+    graphics.scale.x = drawable.scale.x;
+    graphics.scale.y = drawable.scale.y;
+    graphics.rotation = degreesToRadians(drawable.rotation);
 }

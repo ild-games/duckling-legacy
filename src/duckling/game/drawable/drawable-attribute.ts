@@ -16,7 +16,13 @@ export interface DrawableAttribute extends Attribute {
 
 export var defaultDrawableAttribute : DrawableAttribute = {
     topDrawable: {
-        type: null
+        type: null,
+        scale: {
+            x: 1,
+            y: 1
+        },
+        rotation: 0,
+        color: "000000"
     }
 };
 
