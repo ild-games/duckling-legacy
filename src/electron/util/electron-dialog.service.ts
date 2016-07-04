@@ -11,7 +11,7 @@ export class ElectronDialogService implements DialogService {
     private _dialog : Electron.Dialog;
 
     constructor(protected _zone : NgZone) {
-        this._dialog = remote.require('dialog');
+        this._dialog = remote.dialog;
     }
 
     /**

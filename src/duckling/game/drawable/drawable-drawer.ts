@@ -1,4 +1,4 @@
-import {Graphics} from 'pixi.js';
+import {Graphics, Container} from 'pixi.js';
 
 import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
@@ -30,21 +30,41 @@ function drawDrawable(drawable : Drawable, position : Vector) {
     applyDrawableProperties(drawable, position, graphics);
     switch (drawable.type) {
         case DrawableType.Shape:
-            return drawShapeDrawable((drawable as ShapeDrawable).shape, drawable.color, graphics);
+            drawShapeDrawable(drawable as ShapeDrawable, graphics);
+            break;
         default:
             return null;
     }
+    var container = new Container();
+    container.addChild(graphics);
+    graphics.updateTransform();
+    graphics.updateLocalBounds();
+    container.addChild(drawDrawableBounds(graphics.getBounds(), position, drawable));
+    return container;
 }
 
-function drawShapeDrawable(shape : Shape, color : string, graphics : Graphics) {
-    graphics.beginFill(parseInt(color, 16), 1);
-    switch (shape.type) {
+function drawDrawableBounds(bounds: PIXI.Rectangle, position : Vector, drawable : Drawable) {
+    var graphics = new Graphics();
+    drawable.bounds = {
+        x: bounds.width,
+        y: bounds.height
+    }
+    graphics.position.x = position.x;
+    graphics.position.y = position.y;
+    graphics.lineStyle(2, 0x000000);
+    drawRectangle({x: 0, y: 0}, drawable.bounds, graphics);
+    return graphics;
+}
+
+function drawShapeDrawable(shapeDrawable : ShapeDrawable, graphics : Graphics) {
+    graphics.beginFill(parseInt(shapeDrawable.color, 16), 1);
+    switch (shapeDrawable.shape.type) {
         case ShapeType.Circle:
-            var radius = (shape as Circle).radius;
+            var radius = (shapeDrawable.shape as Circle).radius;
             drawEllipse({x: 0, y: 0}, radius, radius, graphics);
             break;
         case ShapeType.Rectangle:
-            var dimension = (shape as Rectangle).dimension;
+            var dimension = (shapeDrawable.shape as Rectangle).dimension;
             drawRectangle({x: 0, y: 0}, dimension, graphics);
             break;
     }

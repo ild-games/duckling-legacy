@@ -20,13 +20,15 @@ import {immutableAssign} from '../../util/model';
     directives: [VectorInput, FormLabel],
     styleUrls: ['./duckling/game/position/position.component.css'],
     template: `
-        <dk-form-label title="Position"></dk-form-label>
         <dk-vector-input
+            xLabel="Position X"
+            yLabel="Position Y"
             [value]="attribute.position"
             (validInput)="onPositionInput($event)">
         </dk-vector-input>
-        <dk-form-label title="Velocity"></dk-form-label>
         <dk-vector-input
+            xLabel="Velocity X"
+            yLabel="Velocity Y"
             [value]="attribute.velocity"
             (validInput)="onVelocityInput($event)">
         </dk-vector-input>

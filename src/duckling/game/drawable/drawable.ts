@@ -7,7 +7,8 @@ export enum DrawableType {
 
 export interface Drawable {
     type : DrawableType;
+    renderPriority : number;
     scale: Vector;
     rotation: number;
-    color: string;
+    bounds: Vector;
 }

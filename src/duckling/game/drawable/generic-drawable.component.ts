@@ -21,34 +21,33 @@ import {Drawable} from './drawable';
         MD_INPUT_DIRECTIVES
     ],
     template: `
-        <dk-form-label title="Scale"></dk-form-label>
+        <dk-number-input
+            label="Render Priority"
+            [value]="drawable.renderPriority"
+            (validInput)="onRenderPriorityInput($event)">
+        </dk-number-input>
+
         <dk-vector-input
-            xLabel="X"
-            yLabel="Y"
+            xLabel="Scale X"
+            yLabel="Scale Y"
             [value]="drawable.scale"
             (validInput)="onScaleInput($event)">
         </dk-vector-input>
 
-        <div>
-            <dk-number-input
-                label="Rotation"
-                [value]="drawable.rotation"
-                (validInput)="onRotationInput($event)">
-            </dk-number-input>
-        </div>
-
-        <div>
-            <md-input
-                placeholder="Color"
-                [value]="drawable.color"
-                (input)="onColorInput($event.target.value)">
-            </md-input>
-        </div>
+        <dk-number-input
+            label="Rotation"
+            [value]="drawable.rotation"
+            (validInput)="onRotationInput($event)">
+        </dk-number-input>
     `
 })
 export class GenericDrawableComponent {
     @Input() drawable : Drawable;
     @Output() drawableChanged = new EventEmitter<Drawable>();
+
+    onRenderPriorityInput(newRenderPriority : number) {
+        this.drawableChanged.emit(immutableAssign(this.drawable, {renderPriority: newRenderPriority}));
+    }
 
     onScaleInput(newScale : Vector) {
         this.drawableChanged.emit(immutableAssign(this.drawable, {scale: newScale}));
@@ -56,9 +55,5 @@ export class GenericDrawableComponent {
 
     onRotationInput(newRotation : number) {
         this.drawableChanged.emit(immutableAssign(this.drawable, {rotation: newRotation}));
-    }
-
-    onColorInput(newColor : number) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {color: newColor}));
     }
 }

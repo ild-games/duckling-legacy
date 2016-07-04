@@ -21,15 +21,15 @@ import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute
     directives: [VectorInput, EnumSelect, FormLabel],
     styleUrls: ['./duckling/game/collision/collision.component.css'],
     template: `
-        <dk-form-label title="Dimension"></dk-form-label>
         <dk-vector-input
             xLabel="Width"
             yLabel="Height"
             [value]="attribute.dimension.dimension"
             (validInput)="onDimensionInput($event)">
         </dk-vector-input>
-        <dk-form-label title="One Way Normal"></dk-form-label>
         <dk-vector-input
+            xLabel="One Way Normal X"
+            yLabel="One Way Normal Y"
             [value]="attribute.oneWayNormal"
             (validInput)="onOneWayNormalInput($event)">
         </dk-vector-input>
