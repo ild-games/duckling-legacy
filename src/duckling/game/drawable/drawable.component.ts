@@ -12,7 +12,9 @@ import {immutableAssign} from '../../util';
 import {DrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType} from './drawable';
 import {defaultShapeDrawable} from './shape-drawable';
+import {defaultContainerDrawable} from './container-drawable';
 import {ShapeDrawableComponent} from './shape-drawable.component';
+import {ContainerDrawableComponent} from './container-drawable.component';
 import {GenericDrawableComponent} from './generic-drawable.component';
 
 @Component({
@@ -23,7 +25,8 @@ import {GenericDrawableComponent} from './generic-drawable.component';
         NgSwitchDefault,
         EnumChoiceComponent,
         GenericDrawableComponent,
-        ShapeDrawableComponent
+        ShapeDrawableComponent,
+        ContainerDrawableComponent
     ],
     template: `
         <dk-generic-drawable-component
@@ -46,9 +49,11 @@ import {GenericDrawableComponent} from './generic-drawable.component';
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-shape-drawable-component>
 
-            <div *ngSwitchCase="DrawableType.Container">
-                Hello im container drawable hi
-            </div>
+            <dk-container-drawable-component
+                *ngSwitchCase="DrawableType.Container"
+                [containerDrawable]="attribute.topDrawable"
+                (drawableChanged)="specificDrawableChanged($event)">
+            </dk-container-drawable-component>
         </div>
     `
 })
@@ -76,6 +81,8 @@ export class DrawableComponent {
                 return null;
             case DrawableType.Shape:
                 return defaultShapeDrawable;
+            case DrawableType.Container:
+                return defaultContainerDrawable;
         }
     }
 }

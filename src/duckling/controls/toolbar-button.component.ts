@@ -12,9 +12,9 @@ import {MdButton} from '@angular2-material/button';
     styleUrls: ['./duckling/controls/toolbar-button.component.css'],
     template: `
         <button
-        md-button
-        title="{{tooltip}}"
-        color="{{color}}">
+            md-button
+            title="{{tooltip}}"
+            color="{{color}}">
             &nbsp;
             <span
                 class="oi icon-button"
