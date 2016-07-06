@@ -6,9 +6,14 @@ export enum DrawableType {
 }
 
 export interface Drawable {
+    __cpp_type: string;
     type : DrawableType;
+    key : string
     renderPriority : number;
-    scale: Vector;
-    rotation: number;
-    bounds: Vector;
+    scale : Vector;
+    rotation : number;
+    bounds : Vector;
+    inactive : boolean;
+    positionOffset : Vector;
+    priorityOffset : number;
 }

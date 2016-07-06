@@ -10,6 +10,9 @@ import {immutableAssign} from '../../util';
 
 import {Circle} from './circle';
 
+/**
+ * Component used to edit a Circle shape
+ */
 @Component({
     selector: "dk-circle-component",
     directives: [

@@ -11,6 +11,9 @@ import {Vector} from '../../math';
 
 import {Rectangle} from './rectangle';
 
+/**
+ * Component used to edit a Rectangle shape
+ */
 @Component({
     selector: "dk-rectangle-component",
     directives: [

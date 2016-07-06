@@ -6,9 +6,14 @@ import {
 } from '@angular/core';
 import {MdButton} from '@angular2-material/button';
 
+import {Icon} from './icon.component';
+
+/**
+ * Component for buttons displayed in a toolbar
+ */
 @Component({
     selector: "dk-toolbar-button",
-    directives: [MdButton],
+    directives: [Icon, MdButton],
     styleUrls: ['./duckling/controls/toolbar-button.component.css'],
     template: `
         <button
@@ -16,10 +21,10 @@ import {MdButton} from '@angular2-material/button';
             title="{{tooltip}}"
             color="{{color}}">
             &nbsp;
-            <span
-                class="oi icon-button"
-                attr.data-glyph="{{icon}}">
-            </span>
+            <dk-icon
+                class="icon-button"
+                [iconKey]="icon">
+            </dk-icon>
             <span
                 *ngIf="text"
                 class="button-text">

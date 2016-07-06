@@ -5,6 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
+import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {VectorInput, NumberInput, FormLabel} from '../../controls';
 import {Vector} from '../../math';
@@ -12,15 +13,27 @@ import {immutableAssign} from '../../util';
 
 import {Drawable} from './drawable';
 
+/**
+ * Component to edit the shared properties of all shapes
+ */
 @Component({
     selector: "dk-generic-drawable-component",
+    styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
     directives: [
         VectorInput,
         FormLabel,
         NumberInput,
-        MD_INPUT_DIRECTIVES
+        MD_INPUT_DIRECTIVES,
+        MdCheckbox
     ],
     template: `
+        <md-checkbox
+            class="inactive-checkbox form-label"
+            [checked]="drawable.inactive"
+            (change)="onInactivePressed($event.checked)">
+            Inactive?
+        </md-checkbox>
+
         <dk-number-input
             label="Render Priority"
             [value]="drawable.renderPriority"
@@ -55,5 +68,9 @@ export class GenericDrawableComponent {
 
     onRotationInput(newRotation : number) {
         this.drawableChanged.emit(immutableAssign(this.drawable, {rotation: newRotation}));
+    }
+
+    onInactivePressed(inactive : boolean) {
+        this.drawableChanged.emit(immutableAssign(this.drawable, {inactive: inactive}));
     }
 }

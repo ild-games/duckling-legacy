@@ -8,6 +8,10 @@ import {
 import {EnumSelect} from './enum-select.component';
 import {SelectOption} from './array-select.component';
 
+/**
+ * Component used to display a select element of the options in an enum along with a
+ * button to add the currently selected element.
+ */
 @Component({
     selector: "dk-enum-choice",
     directives: [EnumSelect],
