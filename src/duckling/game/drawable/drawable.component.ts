@@ -17,6 +17,17 @@ import {ShapeDrawableComponent} from './shape-drawable.component';
 import {ContainerDrawableComponent} from './container-drawable.component';
 import {GenericDrawableComponent} from './generic-drawable.component';
 
+export function getDefaultDrawable(type : DrawableType) : Drawable {
+    switch (type) {
+        default:
+            return null;
+        case DrawableType.Shape:
+            return defaultShapeDrawable;
+        case DrawableType.Container:
+            return defaultContainerDrawable;
+    }
+}
+
 @Component({
     selector: "dk-drawable-component",
     directives: [
@@ -30,12 +41,12 @@ import {GenericDrawableComponent} from './generic-drawable.component';
     ],
     template: `
         <dk-generic-drawable-component
-            *ngIf="attribute.topDrawable?.type !== null"
-            [drawable]="attribute.topDrawable"
+            *ngIf="drawable?.type !== null"
+            [drawable]="drawable"
             (drawableChanged)="specificDrawableChanged($event)">
         </dk-generic-drawable-component>
 
-        <div [ngSwitch]="attribute.topDrawable?.type">
+        <div [ngSwitch]="drawable?.type">
             <dk-enum-choice
                 *ngSwitchDefault
                 [enum]="DrawableType"
@@ -45,13 +56,13 @@ import {GenericDrawableComponent} from './generic-drawable.component';
 
             <dk-shape-drawable-component
                 *ngSwitchCase="DrawableType.Shape"
-                [shapeDrawable]="attribute.topDrawable"
+                [shapeDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-shape-drawable-component>
 
             <dk-container-drawable-component
                 *ngSwitchCase="DrawableType.Container"
-                [containerDrawable]="attribute.topDrawable"
+                [containerDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-container-drawable-component>
         </div>
@@ -61,28 +72,14 @@ export class DrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
 
-    @Input() attribute : DrawableAttribute;
-    @Output() attributeChanged = new EventEmitter<DrawableAttribute>();
+    @Input() drawable : Drawable;
+    @Output() drawableChanged = new EventEmitter<Drawable>();
 
     onDrawableTypePicked(pickedType : DrawableType) {
-        var patch : DrawableAttribute = {
-            topDrawable: this.getDefaultDrawable(pickedType)
-        };
-        this.attributeChanged.emit(immutableAssign(this.attribute, patch));
+        this.drawableChanged.emit(immutableAssign(this.drawable, getDefaultDrawable(pickedType)));
     }
 
-    specificDrawableChanged(drawable : Drawable) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {topDrawable: drawable}));
-    }
-
-    private getDefaultDrawable(type : DrawableType) : Drawable {
-        switch (type) {
-            default:
-                return null;
-            case DrawableType.Shape:
-                return defaultShapeDrawable;
-            case DrawableType.Container:
-                return defaultContainerDrawable;
-        }
+    specificDrawableChanged(newDrawable : Drawable) {
+        this.drawableChanged.emit(immutableAssign(this.drawable, newDrawable));
     }
 }

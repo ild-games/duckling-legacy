@@ -21,6 +21,7 @@ var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
             [value]="value"
             [validator]="isNumber"
             (validInput)="onInput($event)">
+        </dk-validated-input>
     `
 })
 export class NumberInput {

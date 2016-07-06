@@ -16,7 +16,10 @@ export interface DrawableAttribute extends Attribute {
 
 export var defaultDrawableAttribute : DrawableAttribute = {
     topDrawable: {
+        __cpp_type: null,
         type: null,
+        key: "TopDrawable",
+        inactive: false,
         renderPriority: 0,
         scale: {
             x: 1,
@@ -26,7 +29,12 @@ export var defaultDrawableAttribute : DrawableAttribute = {
         bounds: {
             x: 0,
             y: 0
-        }
+        },
+        positionOffset: {
+            x: 0,
+            y: 0
+        },
+        priorityOffset: 0
     }
 };
 

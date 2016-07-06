@@ -7,3 +7,6 @@ export * from './vector-input.component';
 export * from './toolbar-button.component';
 export * from './toolbar-button-group.component';
 export * from './form-label.component';
+export * from './card-list-element.component';
+export * from './color-input.component';
+export * from './icon.component';

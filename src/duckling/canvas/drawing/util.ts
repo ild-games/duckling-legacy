@@ -102,3 +102,22 @@ export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vect
         stageDimensions,
         graphics);
 }
+
+/**
+ * Converts an rgb color to a hex string
+ * @param  r red portion of the color (0-255)
+ * @param  g green portion of the color (0-255)
+ * @param  b blue portion of the color (0-255)
+ * @return hex string of the given rgb color (no # at the beginning)
+ */
+export function rgbToHex(r : number, g : number, b : number) : string {
+    function numberToHex(num : number) : string {
+        var hex = (+num).toString(16);
+        if (hex.length == 1) {
+            hex = "0" + hex;
+        }
+        return hex;
+    }
+
+    return numberToHex(r) + numberToHex(g) + numberToHex(b);
+}
