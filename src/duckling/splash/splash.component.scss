@@ -1,0 +1,87 @@
+@import '../colors';
+@import '../fonts';
+@import '../forms';
+@import '../misc-mixins';
+
+$project-title-color: $primary-text-color;
+$project-path-color: $secondary-text-color;
+
+$splash-background-color: #FFFFFF;
+$project-list-background-color: $ultra-light-primary-color;
+$project-list-border-color: $light-primary-color;
+
+$splash-large-font: $font-size-massive;
+$splash-medium-font: $font-size-heading;
+$splash-small-font: $font-size-normal;
+
+.splash-screen {
+    @include fill;
+
+    overflow: hidden;
+    background-color: $splash-background-color;
+
+    .left-section {
+        float: left;
+        height: 100%;
+        border-right: 1px solid $project-list-border-color;
+
+        md-nav-list {
+            background-color: $project-list-background-color;
+            width: 375px;
+            height: 100%;
+
+            .project-title {
+                color: $project-title-color;
+            }
+
+            .project-path {
+                color: $project-path-color;
+                font-size: $splash-small-font;
+            }
+        }
+
+        .actions {
+            position: absolute;
+            bottom: $spacer-unit;
+            left: $spacer-unit;
+        }
+
+        .actions > a {
+            @include clean-link;
+            font-size: $splash-medium-font;
+            font-weight: 300;
+
+            .new-button-icon {
+                font-size: $splash-small-font;
+            }
+        }
+    }
+
+    .right-section {
+        float: left;
+
+        .duckling-title {
+            padding-left:2*$spacer-unit;
+        }
+
+        .duckling-name {
+            font-size: $splash-large-font;
+            font-weight: 100;
+        }
+
+        .duckling-version {
+            font-size: $splash-medium-font;
+            font-weight: 300;
+            margin-left: 7px;
+        }
+    }
+
+    .the-duck {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 545px;
+        height: 515px;
+        background: url(./resources/duckling_icon.svg);
+    }
+}

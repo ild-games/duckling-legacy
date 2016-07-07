@@ -1,0 +1,11 @@
+@import "../../colors";
+
+:host {
+    display: block;
+}
+
+.separator {
+    border-left: 1px solid $light-primary-color;
+    padding: 1px 0 1px 2px;
+    width: 5px;
+}

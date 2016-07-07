@@ -1,9 +1,0 @@
-include select_control
-
-mixin drawable_type(selectId)
-    div.associated-form-element.form-group.input-group(role="group")
-        +select(selectId, "Drawable Type", "form-element input-group-picker")
-        button.btn.btn-success.no-left-radius(type="button", rv-command-add-drawable)
-            span &nbsp;
-            i.fa.fa-plus
-            span &nbsp;
