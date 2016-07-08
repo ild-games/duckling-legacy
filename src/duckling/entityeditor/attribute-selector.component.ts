@@ -3,10 +3,11 @@ import {
     EventEmitter,
     Input,
     Output,
-    OnChanges
+    OnChanges,
+    AfterViewInit
 } from '@angular/core';
 
-import {ArraySelect, SelectOption} from '../controls';
+import {ArrayChoiceComponent, SelectOption} from '../controls';
 import {Entity, AvailableAttributeService, AttributeKey} from '../entitysystem';
 import {toTitleCase} from '../util';
 import {changeType, ChangeType} from '../state';
@@ -16,24 +17,21 @@ import {changeType, ChangeType} from '../state';
  */
 @Component({
     selector: "dk-attribute-selector",
-    directives: [ArraySelect],
+    directives: [ArrayChoiceComponent],
     template: `
         <div *ngIf="options.length">
-            <dk-array-select
-                [value]="options[0].value"
-                (selection)="select($event)"
-                [options]="options">
-            </dk-array-select>
-            <button (click)="onAddClicked()">
-                Add
-            </button>
+            <dk-array-choice
+                [options]="options"
+                [selected]="selection"
+                (addClicked)="onAddClicked($event)">
+            </dk-array-choice>
         </div>
         <div *ngIf="!options.length">
             No Other Attributes Available
         </div>
     `
 })
-export class AttributeSelectorComponent implements OnChanges {
+export class AttributeSelectorComponent implements OnChanges, AfterViewInit {
     /**
      * The entity the user will add attributes to.
      */
@@ -45,21 +43,21 @@ export class AttributeSelectorComponent implements OnChanges {
      */
     @Output() addAttribute = new EventEmitter<AttributeKey>();
 
+    selection : string;
     options : SelectOption[] = [];
-    selection : AttributeKey = "";
 
     constructor(private _availableAttribute : AvailableAttributeService) {
-
     }
 
-    onAddClicked() {
-        if (this.selection) {
-            this.addAttribute.emit(this.selection);
+    ngAfterViewInit() {
+        if (this.options[0]) {
+            this.selection = this.options[0].value;
         }
     }
 
-    select(key : AttributeKey) {
-        this.selection = key;
+    onAddClicked(selection : string) {
+        this.selection = selection;
+        this.addAttribute.emit(this.selection);
     }
 
     newOptions() : SelectOption[] {

@@ -17,7 +17,7 @@ import {NumberInput} from './number-input.component';
     directives: [NumberInput],
     styleUrls: ['./duckling/controls/vector-input.component.css'],
     template:`
-        <table>
+        <table class="field-table">
             <tr>
                 <td>
                     <dk-number-input

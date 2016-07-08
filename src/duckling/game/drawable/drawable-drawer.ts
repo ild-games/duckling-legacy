@@ -25,9 +25,12 @@ export function drawDrawableAttribute(entity : Entity) : DisplayObject {
         return null;
     }
 
+    var drawable = drawDrawable(drawableAttribute.topDrawable);
+    if (!drawable) {
+        return null;
+    }
+
     var container = new Container();
-    var drawable = new DisplayObject();
-    drawable = drawDrawable(drawableAttribute.topDrawable);
     container.addChild(drawable);
     drawable.updateTransform();
     container.addChild(drawDrawableBounds(drawable.getBounds()));
@@ -38,7 +41,7 @@ export function drawDrawableAttribute(entity : Entity) : DisplayObject {
 
 function drawDrawable(drawable : Drawable) : DisplayObject {
     if (drawable.inactive) {
-        return new DisplayObject();
+        return null;
     }
 
     var drawableContainer = new Container();
@@ -83,9 +86,12 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable) : DisplayO
         return new Container();
     }
 
-    var container = new Container();
+    let container = new Container();
     containerDrawable.drawables.map((drawable : Drawable) => {
-        container.addChild(drawDrawable(drawable));
+        let childDrawable = drawDrawable(drawable);
+        if (childDrawable) {
+            container.addChild(childDrawable);
+        }
     });
     return container;
 }

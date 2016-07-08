@@ -1,4 +1,5 @@
 export * from './array-select.component';
+export * from './array-choice.component';
 export * from './enum-select.component';
 export * from './enum-choice.component';
 export * from './number-input.component';
