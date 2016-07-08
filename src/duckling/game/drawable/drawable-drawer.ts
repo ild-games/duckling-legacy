@@ -87,12 +87,12 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable) : DisplayO
     }
 
     let container = new Container();
-    containerDrawable.drawables.map((drawable : Drawable) => {
+    for (let drawable of containerDrawable.drawables) {
         let childDrawable = drawDrawable(drawable);
         if (childDrawable) {
             container.addChild(childDrawable);
         }
-    });
+    }
     return container;
 }
 

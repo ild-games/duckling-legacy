@@ -7,6 +7,10 @@ export function immutableAssign<T>(existingObject : T, patch : any) : T {
     return Object.assign({}, existingObject, patch);
 }
 
+export function immutableArrayAssign<T>(existingArray : T[], patch : T[]) : T[] {
+    return Object.assign([], existingArray, patch);
+}
+
 /**
  * Create a new object that is a copy of the existingObject with the specific key removed.
  * @returns A new object of the same type as the original object with the key removed.

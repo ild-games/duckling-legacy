@@ -11,12 +11,12 @@ import {immutableAssign} from '../util';
 import {Icon} from './icon.component';
 
 /**
- * Component used as a movable, deletable, expandable card element in a list.
+ * Component used as an element within an accordian
  */
 @Component({
-    selector: "dk-card-list-element",
+    selector: "dk-accordian-element",
     directives: [Icon, MD_BUTTON_DIRECTIVES],
-    styleUrls: ['./duckling/controls/card-list-element.component.css'],
+    styleUrls: ['./duckling/controls/accordian-element.component.css'],
     template: `
         <div
             class="header md-elevation-z3"
@@ -60,7 +60,7 @@ import {Icon} from './icon.component';
         </div>
     `
 })
-export class CardListElementComponent {
+export class AccordianElement {
     @Input() title : string;
     @Input() first : boolean;
     @Input() last : boolean;

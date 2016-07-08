@@ -26,6 +26,8 @@ import {NumberInput} from './number-input.component';
                         (validInput)="onXInput($event)">
                     </dk-number-input>
                 </td>
+                <td class="spacer">
+                </td>
                 <td>
                     <dk-number-input
                         [label]="yLabel"
