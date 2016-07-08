@@ -16,11 +16,8 @@ import {Rectangle} from './rectangle';
  */
 @Component({
     selector: "dk-rectangle-component",
-    directives: [
-        VectorInput, FormLabel
-    ],
+    directives: [VectorInput],
     template: `
-        <dk-form-label title="Dimension"></dk-form-label>
         <dk-vector-input
             xLabel="Width"
             yLabel="Height"

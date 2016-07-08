@@ -23,7 +23,7 @@ import {Icon} from './icon.component';
             &nbsp;
             <dk-icon
                 class="icon-button"
-                [iconKey]="icon">
+                [iconClass]="icon">
             </dk-icon>
             <span
                 *ngIf="text"

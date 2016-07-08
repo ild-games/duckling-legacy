@@ -2,7 +2,7 @@ import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
 import {Box2} from '../../math';
 
-import {getDrawableAttribute} from './drawable-attribute';
+import {drawDrawableAttribute} from './drawable-drawer';
 
 /**
  * Get the bounding box for an entity with a drawable attribute.
@@ -10,20 +10,24 @@ import {getDrawableAttribute} from './drawable-attribute';
  * @return A Box2 bounding box for the entity's drawable attribute.
  */
 export function drawableBoundingBox(entity : Entity) : Box2 {
-    var positionAttribute = getPosition(entity);
-    var drawableAttribute = getDrawableAttribute(entity);
+    let positionAttribute = getPosition(entity);
+    let entityDisplayObject = drawDrawableAttribute(entity);
 
-    if (!drawableAttribute.topDrawable.bounds) {
+    if (!positionAttribute || !entityDisplayObject) {
         return {
             position: {x: 0, y: 0},
             dimension: {x: 0, y: 0},
             rotation: 0
         };
     }
+    let bounds = entityDisplayObject.getBounds();
 
     return {
         position: positionAttribute.position,
-        dimension: drawableAttribute.topDrawable.bounds,
-        rotation: drawableAttribute.topDrawable.rotation
+        dimension: {
+            x: bounds.width,
+            y: bounds.height
+        },
+        rotation: 0
     }
 }

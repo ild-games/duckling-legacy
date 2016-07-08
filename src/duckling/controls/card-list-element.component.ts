@@ -18,44 +18,46 @@ import {Icon} from './icon.component';
     directives: [Icon, MD_BUTTON_DIRECTIVES],
     styleUrls: ['./duckling/controls/card-list-element.component.css'],
     template: `
-        <button
-            *ngIf="!opened"
-            md-button
-            class="row-header-button"
-            (click)="onToggle(true)">
-            <dk-icon iconKey="caret-right"></dk-icon>
-        </button>
-        <button
-            *ngIf="opened"
-            md-button
-            class="row-header-button"
-            (click)="onToggle(false)">
-            <dk-icon iconKey="caret-bottom"></dk-icon>
-        </button>
-        {{title}}
-        <div class="arrow-buttons">
-            <button
-                *ngIf="!first"
-                md-button
-                class="row-header-button"
-                (click)="onMoved(false)">
-                <dk-icon iconKey="arrow-thick-top"></dk-icon>
-            </button>
-            <button
-                *ngIf="!last"
-                md-button
-                class="row-header-button"
-                (click)="onMoved(true)">
-                <dk-icon iconKey="arrow-thick-bottom"></dk-icon>
-            </button>
-            <button
-                md-button
-                class="row-header-button"
-                (click)="onDelete()">
-                <dk-icon iconKey="x"></dk-icon>
-            </button>
+        <div
+            class="header md-elevation-z3"
+            (click)="onToggle(!opened)">
+            <span class="title">{{title}}</span>
+            <div class="arrow-buttons">
+                <button
+                    md-button
+                    *ngIf="!first"
+                    class="row-header-button toggle-visibility"
+                    (click)="onMoved(false, $event)">
+                    <dk-icon iconClass="arrow-up"></dk-icon>
+                </button>
+                <button
+                    md-button
+                    *ngIf="!last"
+                    class="row-header-button toggle-visibility"
+                    (click)="onMoved(true, $event)">
+                    <dk-icon iconClass="arrow-down"></dk-icon>
+                </button>
+                <button
+                    md-button
+                    class="row-header-button toggle-visibility"
+                    (click)="onDelete($event)">
+                    <dk-icon iconClass="trash"></dk-icon>
+                </button>
+                <dk-icon
+                    *ngIf="!opened"
+                    class="row-header-button"
+                    iconClass="plus-circle">
+                </dk-icon>
+                <dk-icon
+                    *ngIf="opened"
+                    class="row-header-button"
+                    iconClass="minus-circle">
+                </dk-icon>
+            </div>
         </div>
-        <ng-content *ngIf="opened"></ng-content>
+        <div *ngIf="opened" class="body">
+            <ng-content></ng-content>
+        </div>
     `
 })
 export class CardListElementComponent {
@@ -72,11 +74,13 @@ export class CardListElementComponent {
         this.toggled.emit(opened);
     }
 
-    onDelete() {
+    onDelete(event : MouseEvent) {
+        event.stopPropagation();
         this.deleted.emit(true);
     }
 
-    onMoved(down : boolean) {
+    onMoved(down : boolean, event : MouseEvent) {
+        event.stopPropagation();
         this.moved.emit(down);
     }
 }

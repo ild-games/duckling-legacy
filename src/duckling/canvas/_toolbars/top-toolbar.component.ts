@@ -18,12 +18,12 @@ import {ToolbarButton, ToolbarButtonGroup, ToolbarOption} from '../../controls';
     styleUrls: ['./duckling/canvas/_toolbars/top-toolbar.component.css'],
     template: `
         <dk-toolbar-button
-            icon="hard-drive"
+            icon="floppy-o"
             tooltip="Save Project"
             (click)="project.save()">
         </dk-toolbar-button>
         <dk-toolbar-button
-            icon="reload"
+            icon="refresh"
             tooltip="Reload Project"
             (click)="project.reload()">
         </dk-toolbar-button>
@@ -31,12 +31,12 @@ import {ToolbarButton, ToolbarButtonGroup, ToolbarOption} from '../../controls';
         <span class="separator"></span>
 
         <dk-toolbar-button
-            icon="action-undo"
+            icon="undo"
             tooltip="Undo"
             (click)="store.undo()">
         </dk-toolbar-button>
         <dk-toolbar-button
-            icon="action-redo"
+            icon="repeat"
             tooltip="Redo"
             (click)="store.redo()">
         </dk-toolbar-button>

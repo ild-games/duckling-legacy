@@ -17,6 +17,7 @@ import {Color} from '../canvas/drawing/color';
 @Component({
     selector: "dk-color-component",
     directives: [ValidatedInput],
+    styleUrls: ['./duckling/controls/color-input.component.css'],
     template: `
         <dk-validated-input
             label="Color R"
@@ -24,28 +25,24 @@ import {Color} from '../canvas/drawing/color';
             [validator]="isRGBAValue"
             (validInput)="onColorRInput($event)">
         </dk-validated-input>
-        <br />
         <dk-validated-input
             label="Color G"
             [value]="color.g"
             [validator]="isRGBAValue"
             (validInput)="onColorGInput($event)">
         </dk-validated-input>
-        <br />
         <dk-validated-input
             label="Color B"
             [value]="color.b"
             [validator]="isRGBAValue"
             (validInput)="onColorBInput($event)">
         </dk-validated-input>
-        <br />
         <dk-validated-input
             label="Color A"
             [value]="color.a"
             [validator]="isRGBAValue"
             (validInput)="onColorAInput($event)">
         </dk-validated-input>
-        <br />
     `
 })
 export class ColorInput {

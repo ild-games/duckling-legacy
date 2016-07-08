@@ -29,6 +29,7 @@
     "@angular2-material/input": "2.0.0-alpha.6",
     "@angular2-material/list": "2.0.0-alpha.6",
     "es6-shim": "^0.35.0",
+    "font-awesome": "^4.6.3",
     "gulp": "^3.9.1",
     "gulp-sass": "^2.2.0",
     "gulp-watch": "^4.3.5",

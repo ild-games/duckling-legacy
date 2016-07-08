@@ -12,7 +12,6 @@ export interface Drawable {
     renderPriority : number;
     scale : Vector;
     rotation : number;
-    bounds : Vector;
     inactive : boolean;
     positionOffset : Vector;
     priorityOffset : number;

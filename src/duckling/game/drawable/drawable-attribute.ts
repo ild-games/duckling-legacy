@@ -26,10 +26,6 @@ export var defaultDrawableAttribute : DrawableAttribute = {
             y: 1
         },
         rotation: 0,
-        bounds: {
-            x: 0,
-            y: 0
-        },
         positionOffset: {
             x: 0,
             y: 0

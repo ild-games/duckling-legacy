@@ -9,12 +9,10 @@ import {
 @Component({
     selector: "dk-icon",
     template: `
-        <span
-            class="oi"
-            attr.data-glyph="{{iconKey}}">
-        </span>
+        <i class="fa fa-{{iconClass}}">
+        </i>
     `
 })
 export class Icon {
-    @Input() iconKey : string;
+    @Input() iconClass : string;
 }

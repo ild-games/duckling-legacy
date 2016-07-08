@@ -1,15 +1,45 @@
+@import '../../../node_modules/@angular2-material/core/style/core.css';
+@import '../colors';
+
+$height: 32px;
+
 :host {
     display: block;
-    padding: 4px 0;
 }
 
 .row-header-button {
+    padding: 2px;
     width: 16px;
     min-width: 16px;
-    line-height: 16px;
-    padding: 0;
+    line-width: 16px;
+    text-align: center;
+
+}
+
+.toggle-visibility {
+    display: none;
+}
+
+.header:hover .toggle-visibility {
+    display: inline-block;
 }
 
 .arrow-buttons {
     float: right;
+}
+
+.header {
+    padding: 2px 8px;
+    cursor: pointer;
+    background-color: $header-color;
+    height: $height;
+    line-height: $height;
+
+    .title {
+        font-size: 14px;
+    }
+}
+
+.body {
+    padding: 8px;
 }

@@ -49,11 +49,8 @@ $splash-small-font: $font-size-normal;
         .actions > a {
             @include clean-link;
             font-size: $splash-medium-font;
+            line-height: $splash-medium-font;
             font-weight: 300;
-
-            .new-button-icon {
-                font-size: $splash-small-font;
-            }
         }
     }
 

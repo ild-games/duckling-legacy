@@ -20,10 +20,6 @@ export var defaultContainerDrawable : ContainerDrawable = {
         y: 0
     },
     priorityOffset: 0,
-    bounds: {
-        x: 0,
-        y: 0
-    },
     drawables: [
     ]
 }

@@ -36,7 +36,9 @@ import {Drawable, DrawableType} from './drawable';
             (addClicked)="onNewDrawableClicked($event)">
         </dk-enum-choice>
 
-        <div class="drawables-card">
+        <md-card
+            *ngIf="containerDrawable?.drawables?.length > 0"
+            class="drawables-card">
             <div *ngFor="let key of keys()">
                 <dk-card-list-element
                     [title]="containerDrawable?.drawables[key].key"
@@ -51,9 +53,8 @@ import {Drawable, DrawableType} from './drawable';
                         (drawableChanged)="onChildDrawableChanged(key, $event)">
                     </dk-drawable-component>
                 </dk-card-list-element>
-                <md-divider *ngIf="lastChildDrawable(key)"></md-divider>
             </div>
-        </div>
+        </md-card>
     `
 })
 export class ContainerDrawableComponent {
@@ -65,8 +66,9 @@ export class ContainerDrawableComponent {
     cardsOpen : boolean[] = [];
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        var patch = this.containerDrawable.drawables;
-        patch[index] = newDrawable;
+        var head = this.containerDrawable.drawables.slice(0, index);
+        var tail = this.containerDrawable.drawables.slice(index + 1, this.containerDrawable.drawables.length);
+        var patch : Drawable[] = head.concat([newDrawable]).concat(tail);
         this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: patch}));
     }
 
@@ -99,21 +101,23 @@ export class ContainerDrawableComponent {
     }
 
     onNewDrawableClicked(pickedType : DrawableType) {
+        var defaultDrawable = getDefaultDrawable(pickedType);
+        var newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType)});
         this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
-            drawables: this.containerDrawable.drawables.concat([getDefaultDrawable(pickedType)])
+            drawables: this.containerDrawable.drawables.concat(newDrawable)
         }));
     }
 
     findNextUniqueKey(pickedType : DrawableType) {
         var lastKey = 0;
-        this.containerDrawable.drawables.map((drawable) => {
+        for (let drawable of this.containerDrawable.drawables) {
             if (drawable.type === pickedType) {
                 var keyNum : number = +drawable.key.substr(drawable.key.length - 1, drawable.key.length);
                 if (keyNum > lastKey) {
                     lastKey = keyNum;
                 }
             }
-        });
+        }
         return ++lastKey;
     }
 
@@ -134,6 +138,6 @@ export class ContainerDrawableComponent {
     }
 
     lastChildDrawable(index : number) : boolean {
-        return index !== this.containerDrawable.drawables.length - 1;
+        return index === this.containerDrawable.drawables.length - 1;
     }
 }

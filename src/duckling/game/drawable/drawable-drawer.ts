@@ -30,7 +30,7 @@ export function drawDrawableAttribute(entity : Entity) : DisplayObject {
     drawable = drawDrawable(drawableAttribute.topDrawable);
     container.addChild(drawable);
     drawable.updateTransform();
-    container.addChild(drawDrawableBounds(drawable.getBounds(), drawableAttribute.topDrawable));
+    container.addChild(drawDrawableBounds(drawable.getBounds()));
     container.position.x = positionAttribute.position.x;
     container.position.y = positionAttribute.position.y;
     return container;
@@ -52,14 +52,10 @@ function drawDrawable(drawable : Drawable) : DisplayObject {
     return drawableContainer;
 }
 
-function drawDrawableBounds(bounds: PIXI.Rectangle, drawable : Drawable) : DisplayObject {
+function drawDrawableBounds(bounds: PIXI.Rectangle) : DisplayObject {
     var graphics = new Graphics();
-    drawable.bounds = {
-        x: bounds.width,
-        y: bounds.height
-    }
     graphics.lineStyle(1, 0x000000);
-    drawRectangle({x: 0, y: 0}, drawable.bounds, graphics);
+    drawRectangle({x: 0, y: 0}, {x: bounds.width, y: bounds.height}, graphics);
     return graphics;
 }
 
