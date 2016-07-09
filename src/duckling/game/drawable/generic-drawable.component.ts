@@ -28,7 +28,7 @@ import {Drawable} from './drawable';
     ],
     template: `
         <md-checkbox
-            class="inactive-checkbox form-label"
+            class="inactive-checkbox"
             [checked]="drawable.inactive"
             (change)="onInactivePressed($event.checked)">
             Inactive?

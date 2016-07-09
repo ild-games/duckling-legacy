@@ -18,7 +18,7 @@ import {Color} from '../canvas/drawing/color';
     selector: "dk-color-component",
     directives: [ValidatedInput],
     styleUrls: ['./duckling/controls/color-input.component.css'],
-    template: `
+    template:`
         <dk-validated-input
             label="Color R"
             [value]="color.r"

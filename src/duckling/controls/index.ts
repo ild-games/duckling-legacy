@@ -3,6 +3,7 @@ export * from './array-choice.component';
 export * from './enum-select.component';
 export * from './enum-choice.component';
 export * from './number-input.component';
+export * from './input.component';
 export * from './validated-input.component';
 export * from './vector-input.component';
 export * from './toolbar-button.component';

@@ -1,9 +1,10 @@
 @import '../forms';
 
-.field-table {
-    border-collapse: collapse;
+:host {
+    display: block;
 }
 
-.spacer {
-    width: 5px;
+dk-number-input {
+    display: inline-block;
+    width: 49%;
 }

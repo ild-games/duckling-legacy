@@ -8,6 +8,8 @@ $spacer-unit: 13px;
 
 .form-label {
     padding: $form-label-padding;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .inline-entry-field {

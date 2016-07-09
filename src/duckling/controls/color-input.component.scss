@@ -1,3 +1,8 @@
-dk-validated-input {
+:host {
     display: block;
+}
+
+dk-validated-input {
+    width: 80px;
+    display: inline-block;
 }

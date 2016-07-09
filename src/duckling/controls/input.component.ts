@@ -12,8 +12,10 @@ import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 @Component({
     selector: "dk-input",
     directives: [MD_INPUT_DIRECTIVES],
+    styleUrls: ['./duckling/controls/input.component.css'],
     template:`
         <md-input
+            [disabled]="disabled"
             [placeholder]="label"
             value="{{value}}"
             (input)="onUserInput($event.target.value)">
@@ -29,6 +31,10 @@ export class InputComponent {
      * The value stored in the control.
      */
     @Input() value : string;
+    /**
+     * True if the input element is disabled.
+     */
+    @Input() disabled : boolean;
     /**
      * Event published when the user enters input.
      */

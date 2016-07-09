@@ -13,6 +13,7 @@ import {InputComponent} from './input.component';
 @Component({
     selector: "dk-validated-input",
     directives: [InputComponent],
+    styleUrls: ['./duckling/controls/validated-input.component.css'],
     template:`
         <dk-input
             [label]="label"

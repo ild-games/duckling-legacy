@@ -98,4 +98,11 @@ export class PathService {
                 }
             });
     }
+
+    /**
+     * Get the OS dependent folder separator
+     */
+    get folderSeparator() : string {
+        return npath.sep;
+    }
 }

@@ -2,7 +2,8 @@ import {Vector} from '../../math';
 
 export enum DrawableType {
     Shape,
-    Container
+    Container,
+    Image
 }
 
 export interface Drawable {
