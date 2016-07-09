@@ -8,7 +8,7 @@ import {
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
-import {AccordianElement, FormLabel, EnumChoiceComponent} from '../../controls';
+import {Accordian, FormLabel, EnumChoiceComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 
 
@@ -24,7 +24,7 @@ import {Drawable, DrawableType} from './drawable';
     styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
     directives: [
         MD_CARD_DIRECTIVES,
-        AccordianElement,
+        Accordian,
         FormLabel,
         EnumChoiceComponent,
         forwardRef(() => DrawableComponent)],
@@ -39,21 +39,20 @@ import {Drawable, DrawableType} from './drawable';
         <md-card
             *ngIf="containerDrawable?.drawables?.length > 0"
             class="drawables-card">
-            <div *ngFor="let key of keys()">
-                <dk-accordian-element
-                    [title]="containerDrawable?.drawables[key].key"
-                    [opened]="cardsOpen[key]"
-                    [first]="firstChildDrawable(key)"
-                    [last]="lastChildDrawable(key)"
-                    (deleted)="onChildCardDeleted(key, $event)"
-                    (toggled)="onChildCardToggled(key, $event)"
-                    (moved)="onChildCardMoved(key, $event)">
+            <dk-accordian
+                [elements]="containerDrawable?.drawables"
+                titleProperty="key"
+                (elementDeleted)="onChildDrawablesChanged($event)"
+                (elementMovedDown)="onChildDrawablesChanged($event)"
+                (elementMovedUp)="onChildDrawablesChanged($event)">
+
+                <template let-drawable="element" let-index="index">
                     <dk-drawable-component
-                        [drawable]="containerDrawable?.drawables[key]"
-                        (drawableChanged)="onChildDrawableChanged(key, $event)">
+                        [drawable]="drawable"
+                        (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable-component>
-                </dk-accordian-element>
-            </div>
+                </template>
+            </dk-accordian>
         </md-card>
     `
 })
@@ -66,62 +65,14 @@ export class ContainerDrawableComponent {
     cardsOpen : boolean[] = [];
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        var head = this.containerDrawable.drawables.slice(0, index);
-        var tail = this.containerDrawable.drawables.slice(index + 1, this.containerDrawable.drawables.length);
-        var patch : Drawable[] = head.concat([newDrawable]).concat(tail);
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: patch}));
-    }
-
-    onChildCardDeleted(index : number, deleted : boolean) {
-        if (!deleted) {
-            return;
-        }
-        var head = this.containerDrawable.drawables.slice(0, index);
-        var tail = this.containerDrawable.drawables.slice(index + 1, this.containerDrawable.drawables.length);
-        var patch : Drawable[] = head.concat(tail);
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: patch}));
-    }
-
-    onChildCardToggled(index : number, opened : boolean) {
-        this.cardsOpen[index] = opened;
-    }
-
-    onChildCardMoved(index : number, down : boolean) {
-        if (down) {
-            this._onChildCardMovedDown(index);
-        } else {
-            this._onChildCardMovedUp(index);
-        }
-    }
-
-    _onChildCardMovedDown(index : number) {
-        let patch : Drawable[] = [];
         let head = this.containerDrawable.drawables.slice(0, index);
-        let tail = this.containerDrawable.drawables.slice(index + 2, this.containerDrawable.drawables.length);
-        patch = immutableArrayAssign(
-            patch,
-            head.concat([this.containerDrawable.drawables[index + 1], this.containerDrawable.drawables[index]]).concat(tail));
-
-        var bankedOpened = this.cardsOpen[index + 1];
-        this.cardsOpen[index + 1] = this.cardsOpen[index];
-        this.cardsOpen[index] = bankedOpened;
-
+        let tail = this.containerDrawable.drawables.slice(index + 1, this.containerDrawable.drawables.length);
+        let patch : Drawable[] = head.concat([newDrawable]).concat(tail);
         this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: patch}));
     }
 
-    _onChildCardMovedUp(index : number) {
-        let patch : Drawable[] = []
-        let head = this.containerDrawable.drawables.slice(0, index - 1);
-        let tail = this.containerDrawable.drawables.slice(index + 1, this.containerDrawable.drawables.length);
-        patch = immutableArrayAssign(
-            patch,
-            head.concat([this.containerDrawable.drawables[index], this.containerDrawable.drawables[index - 1]]).concat(tail));
-
-        var bankedOpened = this.cardsOpen[index - 1];
-        this.cardsOpen[index - 1] = this.cardsOpen[index];
-        this.cardsOpen[index] = bankedOpened;
-
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: patch}));
+    onChildDrawablesChanged(newDrawables : Drawable[]) {
+        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newDrawables}));
     }
 
     onNewDrawableClicked(pickedType : DrawableType) {
@@ -143,25 +94,5 @@ export class ContainerDrawableComponent {
             }
         }
         return ++lastKey;
-    }
-
-    keys() {
-        if (!this.containerDrawable) {
-            return [];
-        }
-
-        var keys = new Array(this.containerDrawable.drawables.length);
-        for (var i = 0; i < keys.length; i++) {
-            keys[i] = i;
-        }
-        return keys;
-    }
-
-    firstChildDrawable(index : number) : boolean {
-        return index === 0;
-    }
-
-    lastChildDrawable(index : number) : boolean {
-        return index === this.containerDrawable.drawables.length - 1;
     }
 }

@@ -2,16 +2,37 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    ContentChild,
+    TemplateRef,
+    Directive,
+    ViewContainerRef
 } from '@angular/core';
 
 import {immutableAssign, immutableArrayAssign} from '../util';
 
 import {AccordianElement} from './accordian-element.component';
 
+@Directive({
+    selector: '[ngElementWrapper]'
+})
+export class NgElementWrapper {
+    @Input() wrappedElement : any;
+    @Input() index : any;
+
+    constructor(private _viewContainer : ViewContainerRef) {
+    }
+
+    @Input() set ngElementWrapper(templateRef : TemplateRef<any>) {
+        let embeddedViewRef = this._viewContainer.createEmbeddedView(templateRef);
+        embeddedViewRef.context.element = this.wrappedElement;
+        embeddedViewRef.context.index = this.index;
+    }
+}
+
 @Component({
     selector: "dk-accordian",
-    directives: [AccordianElement],
+    directives: [AccordianElement, NgElementWrapper],
     template: `
         <div *ngFor="let index of indices()">
             <dk-accordian-element
@@ -24,15 +45,16 @@ import {AccordianElement} from './accordian-element.component';
                 (moved)="onElementMoved(index, $event)">
 
                 <template
-                    [ngTemplateOutlet]="template"
-                    [ngOutletContext]="elements[index]">
+                    [ngElementWrapper]="elementTemplate"
+                    [index]="index"
+                    [wrappedElement]="elements[index]">
                 </template>
             </dk-accordian-element>
         </div>
     `
 })
 export class Accordian<T> {
-
+    @ContentChild(TemplateRef) elementTemplate : TemplateRef<any>;
     /**
      * The list of elements to be displayed in the accordian
      */
@@ -41,10 +63,6 @@ export class Accordian<T> {
      * The property on the element being displayed in the accordian used for the title
      */
     @Input() titleProperty : string;
-    /**
-     * Template element to display for each accordian element
-     */
-    @Input() template : any;
     /**
      * Function emitted when an element has been deleted, passes the new elements array up
      */
