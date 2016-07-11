@@ -1,9 +1,12 @@
 import {Graphics} from 'pixi.js';
 
+import {drawRectangle, drawX} from '../../canvas/drawing/util';
 import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
+import {AssetService} from '../../project';
+
 import {getCollision} from './collision-attribute';
-import {drawRectangle, drawX} from '../../canvas/drawing/util';
+
 
 const blue = 0x00ccff;
 
@@ -12,7 +15,7 @@ const blue = 0x00ccff;
  * @param  entity The entity the component belongs to.
  * @return A DisplayObject representing the collision component.
  */
-export function drawCollision(entity : Entity) {
+export function drawCollision(entity : Entity, assetService : AssetService) {
     var positionAttribute = getPosition(entity);
     var collisionAttribute = getCollision(entity);
 

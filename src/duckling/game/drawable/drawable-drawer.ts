@@ -1,5 +1,8 @@
-import {Graphics, Container, DisplayObject} from 'pixi.js';
+import {ReflectiveInjector} from '@angular/core';
 
+import {Sprite, Graphics, Container, DisplayObject} from 'pixi.js';
+
+import {AssetService} from '../../project';
 import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
@@ -9,6 +12,7 @@ import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType} from './drawable';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
+import {ImageDrawable} from './image-drawable';
 import {ShapeType, Shape} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
@@ -18,14 +22,14 @@ import {Rectangle} from './rectangle';
  * @param  entity The entity with the drawable attribute
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawableAttribute(entity : Entity) : DisplayObject {
+export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DisplayObject {
     var positionAttribute = getPosition(entity);
     var drawableAttribute = getDrawableAttribute(entity);
     if (!positionAttribute || !drawableAttribute.topDrawable) {
         return null;
     }
 
-    var drawable = drawDrawable(drawableAttribute.topDrawable);
+    var drawable = drawDrawable(drawableAttribute.topDrawable, assetService);
     if (!drawable) {
         return null;
     }
@@ -39,7 +43,7 @@ export function drawDrawableAttribute(entity : Entity) : DisplayObject {
     return container;
 }
 
-function drawDrawable(drawable : Drawable) : DisplayObject {
+function drawDrawable(drawable : Drawable, assetService : AssetService) : DisplayObject {
     if (drawable.inactive) {
         return null;
     }
@@ -49,7 +53,12 @@ function drawDrawable(drawable : Drawable) : DisplayObject {
         case DrawableType.Shape:
             drawableContainer.addChild(drawShapeDrawable(drawable as ShapeDrawable));
         case DrawableType.Container:
-            drawableContainer.addChild(drawContainerDrawable(drawable as ContainerDrawable));
+            drawableContainer.addChild(drawContainerDrawable(drawable as ContainerDrawable, assetService));
+        case DrawableType.Image:
+            drawableContainer.addChild(drawImageDrawable(drawable as ImageDrawable, assetService));
+    }
+    if (drawableContainer.width === 0 && drawableContainer.height === 0) {
+        drawableContainer.interactiveChildren = false;
     }
     applyDrawableProperties(drawable, drawableContainer);
     return drawableContainer;
@@ -81,19 +90,34 @@ function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
     return graphics;
 }
 
-function drawContainerDrawable(containerDrawable : ContainerDrawable) : DisplayObject {
+function drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : DisplayObject {
     if (!containerDrawable.drawables) {
         return new Container();
     }
 
     let container = new Container();
     for (let drawable of containerDrawable.drawables) {
-        let childDrawable = drawDrawable(drawable);
+        let childDrawable = drawDrawable(drawable, assetService);
         if (childDrawable) {
             container.addChild(childDrawable);
         }
     }
     return container;
+}
+
+function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
+    if (!imageDrawable.textureKey) {
+        return new DisplayObject();
+    }
+
+    let texture = assetService.get(imageDrawable.textureKey);
+    if (!texture) {
+        return new DisplayObject();
+    }
+    let sprite = new Sprite(texture);
+    sprite.x = -sprite.width / 2;
+    sprite.y = -sprite.height / 2;
+    return sprite;
 }
 
 function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DisplayObject) {

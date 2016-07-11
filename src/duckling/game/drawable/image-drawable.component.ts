@@ -10,7 +10,7 @@ import {MdButton} from '@angular2-material/button';
 
 import {FormLabel, InputComponent} from '../../controls';
 import {immutableAssign, DialogService, PathService} from '../../util';
-import {ProjectService} from '../../project';
+import {ProjectService, AssetService} from '../../project';
 
 import {ImageDrawable} from './image-drawable';
 /**
@@ -50,6 +50,7 @@ export class ImageDrawableComponent {
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _dialog : DialogService,
                 private _path : PathService,
+                private _assets : AssetService,
                 private _project : ProjectService) {
         this._dialogOptions = {
             defaultPath: this._project.project.home,
@@ -71,6 +72,7 @@ export class ImageDrawableComponent {
     onImageFilePicked(file : string) {
         let homeResourceString = this._path.join(this._project.project.home, 'resources');
         let newTextureKey = file.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
+        this._assets.add({type: "TexturePNG", key: newTextureKey});
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: newTextureKey}));
     }
 }

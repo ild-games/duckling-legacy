@@ -5,6 +5,7 @@ import {
 import {disableDeprecatedForms, provideForms} from '@angular/forms';
 import {bootstrap} from '@angular/platform-browser-dynamic';
 import {remote} from 'electron';
+import {SCALE_MODES} from 'pixi.js';
 
 import {ShellComponent} from './shell/shell.component';
 import {EntityDrawerService} from './canvas/drawing/entity-drawer.service';
@@ -38,7 +39,7 @@ import {
 import {Action, StoreService} from './state';
 import {mainReducer} from './main.reducer';
 
-import {projectReducer, ProjectService, MapParserService} from './project';
+import {projectReducer, ProjectService, MapParserService, AssetService} from './project';
 
 import {bootstrapGameComponents} from './game/index';
 import {ProjectSerializerService} from './splash/project-serializer.service';
@@ -53,11 +54,12 @@ remote.getCurrentWindow().removeAllListeners();
 
 var storeService = new StoreService(mainReducer, mergeEntityAction);
 var entitySystemService = new EntitySystemService(storeService);
+var assetService = new AssetService(storeService);
 
 // Bootstrap game specific behavior
 var attributeComponentService = new AttributeComponentService();
-var entityDrawerService = new EntityDrawerService();
-var entityBoxService = new EntityBoxService();
+var entityDrawerService = new EntityDrawerService(assetService);
+var entityBoxService = new EntityBoxService(assetService);
 var attributeDefaultService = new AttributeDefaultService();
 var entityPositionSetService = new EntityPositionSetService(entitySystemService);
 
@@ -87,6 +89,7 @@ bootstrap(ShellComponent, [
     provideInstance(storeService, StoreService),
     provideInstance(attributeComponentService, AttributeComponentService),
     provideInstance(entityDrawerService, EntityDrawerService),
+    provideInstance(assetService, AssetService),
     provideInstance(entityBoxService, EntityBoxService),
     provideInstance(attributeDefaultService, AttributeDefaultService),
     provideInstance(entityPositionSetService, EntityPositionSetService),
@@ -105,3 +108,5 @@ bootstrap(ShellComponent, [
     disableDeprecatedForms(),
     provideForms()
 ]);
+
+SCALE_MODES.DEFAULT = SCALE_MODES.NEAREST;

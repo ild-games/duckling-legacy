@@ -1,6 +1,7 @@
 import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
 import {Box2} from '../../math';
+import {AssetService} from '../../project';
 
 import {drawDrawableAttribute} from './drawable-drawer';
 
@@ -9,9 +10,9 @@ import {drawDrawableAttribute} from './drawable-drawer';
  * @param entity The entity the bounding box will be built for.
  * @return A Box2 bounding box for the entity's drawable attribute.
  */
-export function drawableBoundingBox(entity : Entity) : Box2 {
+export function drawableBoundingBox(entity : Entity, assetService : AssetService) : Box2 {
     let positionAttribute = getPosition(entity);
-    let entityDisplayObject = drawDrawableAttribute(entity);
+    let entityDisplayObject = drawDrawableAttribute(entity, assetService);
 
     if (!positionAttribute || !entityDisplayObject) {
         return {

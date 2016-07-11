@@ -1,6 +1,7 @@
 import {Component, Injectable} from '@angular/core';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
+import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
 import {Container, DisplayObject} from 'pixi.js';
 
@@ -15,6 +16,10 @@ export type AttributeDrawer = (entity : Entity, oldDrawable? : any) => any;
  */
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
+    constructor(private _assets : AssetService) {
+        super();
+    }
+
     /**
      * Get a DisplayObject for the attribute.
      * @param key       Attribute key of the attribute that should be drawn.
@@ -24,7 +29,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     drawAttribute(key : AttributeKey, entity : Entity) : DisplayObject {
         var drawer = this.getImplementation(key);
         if (drawer) {
-            return drawer(entity);
+            return drawer(entity, this._assets);
         }
         return null;
     }
