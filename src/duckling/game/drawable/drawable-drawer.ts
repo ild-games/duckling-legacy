@@ -52,10 +52,13 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : Displa
     switch (drawable.type) {
         case DrawableType.Shape:
             drawableContainer.addChild(drawShapeDrawable(drawable as ShapeDrawable));
+            break;
         case DrawableType.Container:
             drawableContainer.addChild(drawContainerDrawable(drawable as ContainerDrawable, assetService));
+            break;
         case DrawableType.Image:
             drawableContainer.addChild(drawImageDrawable(drawable as ImageDrawable, assetService));
+            break;
     }
     if (drawableContainer.width === 0 && drawableContainer.height === 0) {
         drawableContainer.interactiveChildren = false;
