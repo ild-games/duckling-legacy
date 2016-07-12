@@ -1,6 +1,7 @@
 import {Attribute, Entity} from '../../entitysystem/entity';
+import {immutableAssign} from '../../util';
 
-import {Drawable} from './drawable';
+import {Drawable, defaultDrawable} from './drawable';
 
 export const DRAWABLE_KEY = "drawable";
 
@@ -14,25 +15,7 @@ export interface DrawableAttribute extends Attribute {
     topDrawable : Drawable;
 }
 
-export var defaultDrawableAttribute : DrawableAttribute = {
-    topDrawable: {
-        __cpp_type: null,
-        type: null,
-        key: "TopDrawable",
-        inactive: false,
-        renderPriority: 0,
-        scale: {
-            x: 1,
-            y: 1
-        },
-        rotation: 0,
-        positionOffset: {
-            x: 0,
-            y: 0
-        },
-        priorityOffset: 0
-    }
-};
+export var defaultDrawableAttribute : DrawableAttribute = immutableAssign({}, {topDrawable: defaultDrawable}) as DrawableAttribute;
 
 /**
  * Retrieve the drawable attribute from the entity.

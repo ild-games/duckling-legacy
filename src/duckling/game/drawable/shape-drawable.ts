@@ -1,26 +1,17 @@
-import {Drawable, DrawableType} from './drawable';
+import {immutableAssign} from '../../util';
+
+import {Drawable, DrawableType, defaultDrawable} from './drawable';
 import {Shape} from './shape';
+
 
 export interface ShapeDrawable extends Drawable {
     shape: Shape;
 }
 
-export var defaultShapeDrawable : ShapeDrawable = {
+export var defaultShapeDrawable : ShapeDrawable = immutableAssign(defaultDrawable as ShapeDrawable, {
     __cpp_type: "ild::ShapeDrawable",
     type: DrawableType.Shape,
     key: "ShapeDrawable",
-    inactive: false,
-    renderPriority: 0,
-    scale: {
-        x: 1,
-        y: 1
-    },
-    rotation: 0,
-    positionOffset: {
-        x: 0,
-        y: 0
-    },
-    priorityOffset: 0,
     shape: {
         __cpp_type: null,
         fillColor: {
@@ -31,4 +22,4 @@ export var defaultShapeDrawable : ShapeDrawable = {
         },
         type: null,
     }
-}
+});

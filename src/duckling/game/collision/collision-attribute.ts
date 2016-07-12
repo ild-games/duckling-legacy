@@ -1,50 +1,12 @@
 import {Attribute, Entity} from '../../entitysystem/entity';
 import {Vector} from '../../math/vector';
 import {Box2} from '../../math/box2';
-import {SelectOption} from '../../controls';
+import {SelectOption, toSelectOptions} from '../../controls';
 
 export const COLLISION_KEY = "collision";
 
-/**
- * Describes how the entity behaves in the solid body system.
- */
-export type BodyType = "none" | "solid" | "environment";
-export var BodyTypeSelect : SelectOption[] = [
-    {
-        value: "none",
-        title: "None"
-    },
-    {
-        value: "solid",
-        title: "Solid"
-    },
-    {
-        value: "environment",
-        title: "Environment"
-    }
-];
-
-
-
-
-/**
- * Describes what actions are taken for the entity on collision.
- */
-export type CollisionType = "none" | "player" | "ground";
-export var CollisionTypeSelect : SelectOption[] = [
-    {
-        value: "none",
-        title: "None"
-    },
-    {
-        value: "player",
-        title: "Player"
-    },
-    {
-        value: "ground",
-        title: "Ground"
-    }
-];
+export var BodyTypeSelect : SelectOption[] = toSelectOptions(["none", "solid", "environment"]);
+export var CollisionTypeSelect : SelectOption[] = toSelectOptions(["none", "player", "ground"]);
 
 
 /**
@@ -57,13 +19,13 @@ export interface CollisionAttribute extends Attribute {
      */
     dimension : Box2;
     /**
-     * @See BodyType
+     * Describes how the entity behaves in the solid body system.
      */
-    bodyType : BodyType;
+    bodyType : string;
     /**
-     * @See CollisionType
+     * Describes what actions are taken for the entity on collision.
      */
-    collisionType : CollisionType;
+    collisionType : string;
     /**
      * Used to implement one way platforms and walls.  The normal vector should point
      * towards the direction other entities are unable to pass through.

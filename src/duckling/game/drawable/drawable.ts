@@ -16,3 +16,21 @@ export interface Drawable {
     positionOffset : Vector;
     priorityOffset : number;
 }
+
+export var defaultDrawable : Drawable = {
+    __cpp_type: null,
+    type: null,
+    key: "TopDrawable",
+    inactive: false,
+    renderPriority: 0,
+    scale: {
+        x: 1,
+        y: 1
+    },
+    rotation: 0,
+    positionOffset: {
+        x: 0,
+        y: 0
+    },
+    priorityOffset: 0
+};

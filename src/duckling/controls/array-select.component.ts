@@ -50,3 +50,34 @@ export interface SelectOption {
     value: string;
     title: string;
 }
+
+/**
+ * Takes an array of values and returns SelectOptions for those values. This will
+ * set the values to be all lowercase and the title of the SelectOptions will
+ * have the first letter in uppercase
+ *
+ * @param values string array of values to turn into SelectOptions
+ * @return array of SelectOptions based on the values
+ */
+export function toSelectOptions(values : string[]) : SelectOption[] {
+    let selectOptions : SelectOption[] = [];
+    for (let value of values) {
+        selectOptions.push(toSelectOption(value));
+    }
+    return selectOptions;
+}
+
+/**
+ * Takes a value and returns a SelectOption for the value. This will
+ * set the value to be all lowercase and the title of the SelectOption will
+ * have the first letter in uppercase
+ *
+ * @param value string value to turn into a SelectOption
+ * @return SelectOption based on the value
+ */
+export function toSelectOption(value : string) : SelectOption {
+    return {
+        value: value.toLowerCase(),
+        title: value.substring(0, 1).toUpperCase() + value.substring(1)
+    };
+}

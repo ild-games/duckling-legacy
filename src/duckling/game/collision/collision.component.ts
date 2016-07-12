@@ -9,7 +9,7 @@ import {VectorInput, FormLabel, ArraySelect} from '../../controls';
 import {EnumSelect} from '../../controls/enum-select.component';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
-import {CollisionAttribute, BodyType, BodyTypeSelect, CollisionType, CollisionTypeSelect} from './collision-attribute';
+import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collision-attribute';
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -65,11 +65,11 @@ export class CollisionComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {dimension: newBox}));
     }
 
-    onBodyTypeInput(bodyType : BodyType) {
+    onBodyTypeInput(bodyType : string) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {bodyType}));
     }
 
-    onCollisionTypeInput(collisionType : CollisionType) {
+    onCollisionTypeInput(collisionType : string) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {collisionType}));
     }
 }

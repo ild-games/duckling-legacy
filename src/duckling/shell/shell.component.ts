@@ -7,8 +7,6 @@ import {SplashComponent} from '../splash/splash.component';
 import {ProjectService} from '../project';
 import {WindowService} from '../util';
 
-import {BodyType, CollisionType} from '../game/collision/collision-attribute';
-
 @Component({
     selector: 'duckling-shell',
     directives: [

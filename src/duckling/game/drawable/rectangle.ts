@@ -1,22 +1,17 @@
+import {immutableAssign} from '../../util';
 import {Vector} from '../../math';
 
-import {Shape, ShapeType} from './shape';
+import {Shape, ShapeType, defaultShape} from './shape';
 
 export interface Rectangle extends Shape {
     dimension: Vector;
 }
 
-export var defaultRectangle : Rectangle = {
+export var defaultRectangle : Rectangle = immutableAssign(defaultShape as Rectangle, {
     __cpp_type: "sf::RectangleShape",
     type: ShapeType.Rectangle,
-    fillColor: {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 255
-    },
     dimension: {
         x: 10,
         y: 10
     }
-};
+});

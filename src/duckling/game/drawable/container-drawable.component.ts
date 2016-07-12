@@ -45,7 +45,6 @@ import {Drawable, DrawableType} from './drawable';
                 (elementDeleted)="onChildDrawablesChanged($event)"
                 (elementMovedDown)="onChildDrawablesChanged($event)"
                 (elementMovedUp)="onChildDrawablesChanged($event)">
-
                 <template let-drawable="element" let-index="index">
                     <dk-drawable-component
                         [drawable]="drawable"
@@ -62,7 +61,6 @@ export class ContainerDrawableComponent {
 
     @Input() containerDrawable : ContainerDrawable;
     @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
-    cardsOpen : boolean[] = [];
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let head = this.containerDrawable.drawables.slice(0, index);

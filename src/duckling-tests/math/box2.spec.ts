@@ -85,4 +85,7 @@ describe("Box2", function() {
             expect(box.rotation).toBe(0);
         });
     });
+
+    describe("boxUnion", function() {
+    });
 });

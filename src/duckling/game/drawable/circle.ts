@@ -1,17 +1,13 @@
-import {Shape, ShapeType} from './shape';
+import {immutableAssign} from '../../util';
+
+import {Shape, ShapeType, defaultShape} from './shape';
 
 export interface Circle extends Shape {
     radius: number;
 }
 
-export var defaultCircle : Circle = {
+export var defaultCircle : Circle = immutableAssign(defaultShape as Circle, {
     __cpp_type: "sf::CircleShape",
     type: ShapeType.Circle,
-    fillColor: {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 255
-    },
     radius: 10
-};
+});

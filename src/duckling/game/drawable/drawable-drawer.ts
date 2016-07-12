@@ -3,7 +3,7 @@ import {Graphics, Container, DisplayObject} from 'pixi.js';
 import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
-import {drawEllipse, drawRectangle, rgbToHex} from '../../canvas/drawing/util';
+import {colorToHex, drawEllipse, drawRectangle} from '../../canvas/drawing';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType} from './drawable';
@@ -64,7 +64,7 @@ function drawDrawableBounds(bounds: PIXI.Rectangle) : DisplayObject {
 
 function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
     var graphics = new Graphics();
-    var colorHex = rgbToHex(shapeDrawable.shape.fillColor.r, shapeDrawable.shape.fillColor.g, shapeDrawable.shape.fillColor.b);
+    var colorHex = colorToHex(shapeDrawable.shape.fillColor);
     graphics.beginFill(parseInt(colorHex, 16), 1);
     graphics.fillAlpha = shapeDrawable.shape.fillColor.a / 255;
     switch (shapeDrawable.shape.type) {

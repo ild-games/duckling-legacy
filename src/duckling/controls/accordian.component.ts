@@ -4,53 +4,33 @@ import {
     Output,
     EventEmitter,
     ContentChild,
-    TemplateRef,
-    Directive,
-    ViewContainerRef
+    TemplateRef
 } from '@angular/core';
 
-import {immutableAssign, immutableArrayAssign} from '../util';
+import {immutableArrayAssign, immutableArrayDelete} from '../util';
 
 import {AccordianElement} from './accordian-element.component';
-
-@Directive({
-    selector: '[ngElementWrapper]'
-})
-export class NgElementWrapper {
-    @Input() wrappedElement : any;
-    @Input() index : any;
-
-    constructor(private _viewContainer : ViewContainerRef) {
-    }
-
-    @Input() set ngElementWrapper(templateRef : TemplateRef<any>) {
-        let embeddedViewRef = this._viewContainer.createEmbeddedView(templateRef);
-        embeddedViewRef.context.element = this.wrappedElement;
-        embeddedViewRef.context.index = this.index;
-    }
-}
+import {TemplateWrapper} from './template-wrapper';
 
 @Component({
     selector: "dk-accordian",
-    directives: [AccordianElement, NgElementWrapper],
+    directives: [AccordianElement, TemplateWrapper],
     template: `
-        <div *ngFor="let index of indices()">
-            <dk-accordian-element
-                [title]="elements[index][titleProperty]"
-                [opened]="sleevesOpen[index]"
-                [first]="index === 0"
-                [last]="index === elements.length - 1"
-                (deleted)="onElementDeleted(index, $event)"
-                (toggled)="onElementToggled(index, $event)"
-                (moved)="onElementMoved(index, $event)">
-
-                <template
-                    [ngElementWrapper]="elementTemplate"
-                    [index]="index"
-                    [wrappedElement]="elements[index]">
-                </template>
-            </dk-accordian-element>
-        </div>
+        <dk-accordian-element
+            *ngFor="let index of indices()"
+            [title]="elements[index][titleProperty]"
+            [opened]="sleevesOpen[index]"
+            [first]="index === 0"
+            [last]="index === elements.length - 1"
+            (deleted)="onElementDeleted(index, $event)"
+            (toggled)="onElementToggled(index, $event)"
+            (moved)="onElementMoved(index, $event)">
+            <template
+                [templateWrapper]="elementTemplate"
+                [index]="index"
+                [wrappedElement]="elements[index]">
+            </template>
+        </dk-accordian-element>
     `
 })
 export class Accordian<T> {
@@ -86,10 +66,7 @@ export class Accordian<T> {
         if (!deleted) {
             return;
         }
-        var head = this.elements.slice(0, index);
-        var tail = this.elements.slice(index + 1, this.elements.length);
-        var patch : T[] = head.concat(tail);
-        this.elementDeleted.emit(immutableArrayAssign(this.elements, patch));
+        this.elementDeleted.emit(immutableArrayDelete(this.elements, index));
     }
 
     onElementToggled(index : number, opened : boolean) {

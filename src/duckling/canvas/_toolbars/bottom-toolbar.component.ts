@@ -41,7 +41,7 @@ import {Vector} from '../../math/vector';
         </dk-number-input>
 
         <md-checkbox
-            class="showGrid"
+            class="show-grid"
             [checked]="showGrid"
             (change)="onShowGridPressed($event.checked)">
             Show Grid?
