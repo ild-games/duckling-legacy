@@ -16,11 +16,12 @@ export class AssetService {
     constructor(private _store : StoreService) {
     }
 
-    private _loadedAssets : {[key : string] : any};
     private _assets : Asset[] = [];
 
     add(asset : Asset) {
-        this._assets.push(asset);
+        if (!loader.resources[asset.key]) {
+            this._assets.push(asset);
+        }
     }
 
     get(key : string) : any {

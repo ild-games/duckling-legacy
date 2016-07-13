@@ -13,3 +13,4 @@ export * from './accordian.component';
 export * from './accordian-element.component';
 export * from './color-input.component';
 export * from './icon.component';
+export * from './box2.component';

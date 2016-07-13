@@ -7,9 +7,11 @@ import {
     ChangeDetectorRef
 } from '@angular/core';
 import {MdButton} from '@angular2-material/button';
+import {MdCheckbox} from '@angular2-material/checkbox';
 
-import {FormLabel, InputComponent} from '../../controls';
+import {FormLabel, InputComponent, NumberInput, Box2Component} from '../../controls';
 import {immutableAssign, DialogService, PathService} from '../../util';
+import {Box2} from '../../math';
 import {ProjectService, AssetService} from '../../project';
 
 import {ImageDrawable} from './image-drawable';
@@ -21,7 +23,10 @@ import {ImageDrawable} from './image-drawable';
     directives: [
         FormLabel,
         MdButton,
-        InputComponent
+        NumberInput,
+        InputComponent,
+        MdCheckbox,
+        Box2Component
     ],
     styleUrls: ['./duckling/game/drawable/image-drawable.component.css'],
     template: `
@@ -39,6 +44,24 @@ import {ImageDrawable} from './image-drawable';
             (click)="onBrowseClicked()">
             Browse
         </button>
+
+        <md-card class="partial-image">
+            <div
+                class="header md-elevation-z3"
+                (click)="onIsWholeImageChanged(!imageDrawable.isWholeImage)">
+                <md-checkbox
+                    disabled="true"
+                    [checked]="!imageDrawable.isWholeImage">
+                    Partial Image?
+                </md-checkbox>
+            </div>
+            <dk-box2-component
+                *ngIf="!imageDrawable.isWholeImage"
+                class="body"
+                [value]="imageDrawable.textureRect"
+                (boxChanged)="onTextureRectChanged($event)">
+            </dk-box2-component>
+        </md-card>
     `
 })
 export class ImageDrawableComponent {
@@ -66,7 +89,11 @@ export class ImageDrawableComponent {
     onBrowseClicked() {
         this._dialog.showOpenDialog(
             this._dialogOptions,
-            (fileNames : string[]) => this.onImageFilePicked(fileNames[0]));
+            (fileNames : string[]) => {
+                if (fileNames[0]) {
+                    this.onImageFilePicked(fileNames[0])
+                }
+            });
     }
 
     onImageFilePicked(file : string) {
@@ -74,5 +101,13 @@ export class ImageDrawableComponent {
         let newTextureKey = file.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
         this._assets.add({type: "TexturePNG", key: newTextureKey});
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: newTextureKey}));
+    }
+
+    onIsWholeImageChanged(newIsWholeImage : boolean) {
+        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {isWholeImage: newIsWholeImage}));
+    }
+
+    onTextureRectChanged(newTextureRect : Box2) {
+        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureRect: newTextureRect}));
     }
 }

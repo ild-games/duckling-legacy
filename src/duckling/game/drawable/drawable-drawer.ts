@@ -1,6 +1,7 @@
 import {ReflectiveInjector} from '@angular/core';
 
-import {Sprite, Graphics, Container, DisplayObject} from 'pixi.js';
+import {Texture, Sprite, Graphics, Container, DisplayObject} from 'pixi.js';
+import * as PIXI from 'pixi.js';
 
 import {AssetService} from '../../project';
 import {getPosition} from '../position/position-attribute';
@@ -113,9 +114,18 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
         return new DisplayObject();
     }
 
-    let texture = assetService.get(imageDrawable.textureKey);
-    if (!texture) {
+    let baseTexture = assetService.get(imageDrawable.textureKey);
+    if (!baseTexture) {
         return new DisplayObject();
+    }
+    let texture = new Texture(baseTexture);
+    if (!imageDrawable.isWholeImage) {
+        texture.crop = new PIXI.Rectangle(
+            imageDrawable.textureRect.position.x,
+            imageDrawable.textureRect.position.y,
+            imageDrawable.textureRect.dimension.x,
+            imageDrawable.textureRect.dimension.y);
+        texture.update();
     }
     let sprite = new Sprite(texture);
     sprite.x = -sprite.width / 2;
