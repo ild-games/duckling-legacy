@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {loader} from 'pixi.js';
-
+import {loader, Texture} from 'pixi.js';
+import {BehaviorSubject} from 'rxjs';
 
 import {StoreService} from '../state';
 
@@ -17,6 +17,7 @@ export class AssetService {
     }
 
     private _assets : Asset[] = [];
+    numberOfAssets : BehaviorSubject<number> = new BehaviorSubject(0);
 
     add(asset : Asset) {
         if (!loader.resources[asset.key]) {
@@ -28,14 +29,19 @@ export class AssetService {
         if (loader.resources[key]) {
             return loader.resources[key].texture;
         } else {
-            loader.add(key, this._store.getState().project.home + "/resources/" + key + ".png");
-            loader.load();
+            loader
+                .add(key, this._store.getState().project.home + "/resources/" + key + ".png")
+                .after(() => this.onAssetLoaded())
+                .load();
             return null;
         }
     }
 
-
     get assets() : Asset[] {
         return this._assets;
+    }
+
+    onAssetLoaded() {
+        this.numberOfAssets.next(this.numberOfAssets.value + 1);
     }
 }

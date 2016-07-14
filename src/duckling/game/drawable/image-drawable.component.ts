@@ -46,12 +46,10 @@ import {ImageDrawable} from './image-drawable';
         </button>
 
         <md-card class="partial-image">
-            <div
-                class="header md-elevation-z3"
-                (click)="onIsWholeImageChanged(!imageDrawable.isWholeImage)">
+            <div class="header md-elevation-z3">
                 <md-checkbox
-                    disabled="true"
-                    [checked]="!imageDrawable.isWholeImage">
+                    [checked]="!imageDrawable.isWholeImage"
+                    (change)="onPartialImageChanged($event.checked)">
                     Partial Image?
                 </md-checkbox>
             </div>
@@ -103,11 +101,13 @@ export class ImageDrawableComponent {
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: newTextureKey}));
     }
 
-    onIsWholeImageChanged(newIsWholeImage : boolean) {
-        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {isWholeImage: newIsWholeImage}));
+    onPartialImageChanged(partialImage : boolean) {
+        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {isWholeImage: !partialImage}));
     }
 
     onTextureRectChanged(newTextureRect : Box2) {
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureRect: newTextureRect}));
     }
+
+    noop() {}
 }

@@ -27,12 +27,14 @@ import {Drawable} from './drawable';
         MdCheckbox
     ],
     template: `
-        <md-checkbox
-            class="inactive-checkbox"
-            [checked]="drawable.inactive"
-            (change)="onInactivePressed($event.checked)">
-            Inactive?
-        </md-checkbox>
+        <div class="inactive-checkbox">
+            <md-checkbox
+                class="inactive-checkbox"
+                [checked]="drawable.inactive"
+                (change)="onInactivePressed($event.checked)">
+                Inactive?
+            </md-checkbox>
+        </div>
 
         <dk-number-input
             label="Render Priority"

@@ -118,14 +118,15 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
     if (!baseTexture) {
         return new DisplayObject();
     }
-    let texture = new Texture(baseTexture);
-    if (!imageDrawable.isWholeImage) {
-        texture.crop = new PIXI.Rectangle(
+    let texture : Texture;
+    if (imageDrawable.isWholeImage) {
+        texture = new Texture(baseTexture);
+    } else {
+        texture = new Texture(baseTexture, new PIXI.Rectangle(
             imageDrawable.textureRect.position.x,
             imageDrawable.textureRect.position.y,
             imageDrawable.textureRect.dimension.x,
-            imageDrawable.textureRect.dimension.y);
-        texture.update();
+            imageDrawable.textureRect.dimension.y));
     }
     let sprite = new Sprite(texture);
     sprite.x = -sprite.width / 2;
