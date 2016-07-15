@@ -13,9 +13,11 @@ import {DrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType} from './drawable';
 import {defaultShapeDrawable} from './shape-drawable';
 import {defaultContainerDrawable} from './container-drawable';
+import {defaultAnimatedDrawable} from './animated-drawable';
 import {defaultImageDrawable} from './image-drawable';
 import {ShapeDrawableComponent} from './shape-drawable.component';
 import {ContainerDrawableComponent} from './container-drawable.component';
+import {AnimatedDrawableComponent} from './animated-drawable.component';
 import {ImageDrawableComponent} from './image-drawable.component';
 import {GenericDrawableComponent} from './generic-drawable.component';
 
@@ -34,6 +36,8 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
             return defaultContainerDrawable;
         case DrawableType.Image:
             return defaultImageDrawable;
+        case DrawableType.Animated:
+            return defaultAnimatedDrawable;
     }
 }
 
@@ -50,7 +54,8 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
         GenericDrawableComponent,
         ShapeDrawableComponent,
         ContainerDrawableComponent,
-        ImageDrawableComponent
+        ImageDrawableComponent,
+        AnimatedDrawableComponent
     ],
     template: `
         <dk-generic-drawable-component
@@ -84,6 +89,12 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
                 [imageDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-image-drawable-component>
+
+            <dk-animated-drawable-component
+                *ngSwitchCase="DrawableType.Animated"
+                [animatedDrawable]="drawable"
+                (drawableChanged)="specificDrawableChanged($event)">
+            </dk-animated-drawable-component>
         </div>
     `
 })

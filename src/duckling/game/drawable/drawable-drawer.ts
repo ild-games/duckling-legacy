@@ -105,6 +105,14 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable, assetServi
     return container;
 }
 
+function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : DisplayObject {
+    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
+        return new DisplayObject();
+    }
+
+    return drawDrawable(animatedDrawable.frames[animatedDrawable.curFrame], assetService);
+}
+
 function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
     if (!imageDrawable.textureKey) {
         return new DisplayObject();
