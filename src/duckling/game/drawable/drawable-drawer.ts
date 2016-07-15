@@ -14,6 +14,7 @@ import {Drawable, DrawableType} from './drawable';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
+import {AnimatedDrawable} from './animated-drawable';
 import {ShapeType, Shape} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
@@ -55,6 +56,9 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : Displa
             break;
         case DrawableType.Image:
             drawableContainer.addChild(drawImageDrawable(drawable as ImageDrawable, assetService));
+            break;
+        case DrawableType.Animated:
+            drawableContainer.addChild(drawAnimatedDrawable(drawable as AnimatedDrawable, assetService));
             break;
     }
     if (drawableContainer.width === 0 && drawableContainer.height === 0) {
@@ -103,6 +107,14 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable, assetServi
         }
     }
     return container;
+}
+
+function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : DisplayObject {
+    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
+        return new DisplayObject();
+    }
+
+    return drawDrawable(animatedDrawable.frames[animatedDrawable.curFrame], assetService);
 }
 
 function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
