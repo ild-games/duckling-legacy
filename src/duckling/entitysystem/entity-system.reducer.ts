@@ -19,11 +19,11 @@ export interface EntityUpdateAction extends Action {
  * @return A new EntityUpdateAction.
  */
 export function updateEntityAction(entity : Entity, entityKey : EntityKey) : EntityUpdateAction {
-        return {
-            type : ACTION_UPDATE_ENTITY,
-            entity,
-            entityKey
-        }
+    return {
+        type : ACTION_UPDATE_ENTITY,
+        entity,
+        entityKey
+    }
 }
 
 function isUpdateEntityAction(action : Action): action is EntityUpdateAction  {

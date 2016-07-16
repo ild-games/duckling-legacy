@@ -10,7 +10,7 @@ import {EnumChoiceComponent, VectorInput, FormLabel} from '../../controls';
 import {immutableAssign} from '../../util';
 
 import {DrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType} from './drawable';
+import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
 import {defaultShapeDrawable} from './shape-drawable';
 import {defaultContainerDrawable} from './container-drawable';
 import {defaultAnimatedDrawable} from './animated-drawable';
@@ -59,12 +59,12 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
     ],
     template: `
         <dk-generic-drawable-component
-            *ngIf="drawable?.type !== null"
+            *ngIf="drawable?.__cpp_type !== null"
             [drawable]="drawable"
             (drawableChanged)="specificDrawableChanged($event)">
         </dk-generic-drawable-component>
 
-        <div [ngSwitch]="drawable?.type">
+        <div [ngSwitch]="cppTypeToDrawableType(drawable?.__cpp_type)">
             <dk-enum-choice
                 *ngSwitchDefault
                 [enum]="DrawableType"
@@ -101,6 +101,7 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
 export class DrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
+    cppTypeToDrawableType = cppTypeToDrawableType;
 
     @Input() drawable : Drawable;
     @Output() drawableChanged = new EventEmitter<Drawable>();

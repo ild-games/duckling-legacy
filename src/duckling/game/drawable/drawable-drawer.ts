@@ -10,12 +10,12 @@ import {Vector, degreesToRadians} from '../../math';
 import {colorToHex, drawEllipse, drawRectangle} from '../../canvas/drawing';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType, cppTypeToType} from './drawable';
+import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
 import {AnimatedDrawable} from './animated-drawable';
-import {ShapeType, Shape} from './shape';
+import {ShapeType, Shape, cppTypeToShapeType} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
 
@@ -47,7 +47,7 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : Displa
     }
 
     let drawableContainer = new Container();
-    let drawableType = cppTypeToType(drawable.__cpp_type);
+    let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
     switch (drawableType) {
         case DrawableType.Shape:
             drawableContainer.addChild(drawShapeDrawable(drawable as ShapeDrawable));
@@ -81,7 +81,8 @@ function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
     var colorHex = colorToHex(shapeDrawable.shape.fillColor);
     graphics.beginFill(parseInt(colorHex, 16), 1);
     graphics.fillAlpha = shapeDrawable.shape.fillColor.a / 255;
-    switch (shapeDrawable.shape.type) {
+    let shapeType = cppTypeToShapeType(shapeDrawable.shape.__cpp_type)
+    switch (shapeType) {
         case ShapeType.Circle:
             var radius = (shapeDrawable.shape as Circle).radius;
             drawEllipse({x: 0, y: 0}, radius, radius, graphics);
@@ -111,7 +112,7 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable, assetServi
 }
 
 function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : DisplayObject {
-    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
+    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0 || isNaN(animatedDrawable.curFrame)) {
         return new DisplayObject();
     }
 

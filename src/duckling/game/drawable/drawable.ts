@@ -7,7 +7,7 @@ export enum DrawableType {
     Animated
 }
 
-export function cppTypeToType(cppType : string) : DrawableType {
+export function cppTypeToDrawableType(cppType : string) : DrawableType {
     switch (cppType) {
         case "ild::ShapeDrawable":
             return DrawableType.Shape;
@@ -20,7 +20,7 @@ export function cppTypeToType(cppType : string) : DrawableType {
     }
 }
 
-export function typeToCppType(type : DrawableType) : string {
+export function drawableTypeToCppType(type : DrawableType) : string {
     switch (type) {
         case DrawableType.Shape:
             return "ild::ShapeDrawable";
