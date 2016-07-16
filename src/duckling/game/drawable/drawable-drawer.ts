@@ -10,7 +10,7 @@ import {Vector, degreesToRadians} from '../../math';
 import {colorToHex, drawEllipse, drawRectangle} from '../../canvas/drawing';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType} from './drawable';
+import {Drawable, DrawableType, cppTypeToType} from './drawable';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
@@ -46,8 +46,9 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : Displa
         return null;
     }
 
-    var drawableContainer = new Container();
-    switch (drawable.type) {
+    let drawableContainer = new Container();
+    let drawableType = cppTypeToType(drawable.__cpp_type);
+    switch (drawableType) {
         case DrawableType.Shape:
             drawableContainer.addChild(drawShapeDrawable(drawable as ShapeDrawable));
             break;

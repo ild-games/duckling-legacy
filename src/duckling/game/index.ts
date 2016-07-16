@@ -18,6 +18,9 @@ import {collisionBoundingBox} from './collision/collision-box';
 import {defaultCamera, CAMERA_KEY} from './camera/camera-attribute';
 import {CameraComponent} from './camera/camera.component';
 
+import {defaultAction, ACTION_KEY} from './action/action-attribute';
+import {ActionComponent} from './action/action.component';
+
 import {defaultDrawableAttribute, DRAWABLE_KEY} from './drawable/drawable-attribute';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
 import {drawDrawableAttribute} from './drawable/drawable-drawer';
@@ -53,4 +56,8 @@ export function bootstrapGameComponents(services: {
     services.attributeDefaultService.register(DRAWABLE_KEY, {createByDefault: true, default: defaultDrawableAttribute});
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
     services.entityDrawerService.register(DRAWABLE_KEY, drawDrawableAttribute);
+
+    //Bootstrap Action
+    services.attributeComponentService.register(ACTION_KEY, ActionComponent);
+    services.attributeDefaultService.register(ACTION_KEY, {createByDefault: false, default: defaultAction});
 }

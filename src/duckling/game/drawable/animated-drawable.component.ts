@@ -15,7 +15,7 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 
 import {AnimatedDrawable} from './animated-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';
-import {Drawable, DrawableType} from './drawable';
+import {Drawable, DrawableType, typeToCppType} from './drawable';
 
 /**
  * Component used to edit an Aniamted Drawable including all its children drawables
@@ -71,7 +71,9 @@ export class AnimatedDrawableComponent implements AfterViewInit {
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
     ngAfterViewInit() {
-        setInterval(() => this.nextFrame(), this.animatedDrawable.duration * 1000);
+        setInterval(() => {
+            this.nextFrame();
+        }, this.animatedDrawable.duration * 1000)
     }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
@@ -100,7 +102,7 @@ export class AnimatedDrawableComponent implements AfterViewInit {
     findNextUniqueKey(pickedType : DrawableType) {
         let lastKey = 0;
         for (let drawable of this.animatedDrawable.frames) {
-            if (drawable.type === pickedType) {
+            if (drawable.__cpp_type === typeToCppType(pickedType)) {
                 var keyNum : number = +drawable.key.substr(drawable.key.length - 1, drawable.key.length);
                 if (keyNum > lastKey) {
                     lastKey = keyNum;

@@ -10,7 +10,6 @@ export interface AnimatedDrawable extends Drawable {
 
 export var defaultAnimatedDrawable : AnimatedDrawable = immutableAssign(defaultDrawable as AnimatedDrawable, {
     __cpp_type: "ild::AnimatedDrawable",
-    type: DrawableType.Animated,
     key: "AnimatedDrawable",
     duration: 0,
     curFrame: 0,
