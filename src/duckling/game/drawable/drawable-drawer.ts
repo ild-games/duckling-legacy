@@ -10,10 +10,11 @@ import {Vector, degreesToRadians} from '../../math';
 import {colorToHex, drawEllipse, drawRectangle} from '../../canvas/drawing';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType} from './drawable';
+import {Drawable, DrawableType, cppTypeToType} from './drawable';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
+import {AnimatedDrawable} from './animated-drawable';
 import {ShapeType, Shape} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
@@ -45,8 +46,9 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : Displa
         return null;
     }
 
-    var drawableContainer = new Container();
-    switch (drawable.type) {
+    let drawableContainer = new Container();
+    let drawableType = cppTypeToType(drawable.__cpp_type);
+    switch (drawableType) {
         case DrawableType.Shape:
             drawableContainer.addChild(drawShapeDrawable(drawable as ShapeDrawable));
             break;
@@ -55,6 +57,9 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : Displa
             break;
         case DrawableType.Image:
             drawableContainer.addChild(drawImageDrawable(drawable as ImageDrawable, assetService));
+            break;
+        case DrawableType.Animated:
+            drawableContainer.addChild(drawAnimatedDrawable(drawable as AnimatedDrawable, assetService));
             break;
     }
     if (drawableContainer.width === 0 && drawableContainer.height === 0) {
