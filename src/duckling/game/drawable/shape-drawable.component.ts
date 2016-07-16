@@ -13,7 +13,7 @@ import {NumberInput} from '../../controls/number-input.component';
 
 import {ShapeDrawable} from './shape-drawable';
 import {GenericShapeComponent} from './generic-shape.component';
-import {Shape, ShapeType} from './shape';
+import {Shape, ShapeType, cppTypeToShapeType} from './shape';
 import {defaultCircle} from './circle';
 import {CircleComponent} from './circle.component';
 import {defaultRectangle} from './rectangle';
@@ -35,12 +35,12 @@ import {RectangleComponent} from './rectangle.component';
     ],
     template: `
         <dk-generic-shape-component
-            *ngIf="shapeDrawable.shape?.type !== null"
+            *ngIf="shapeDrawable.shape?.__cpp_type !== null"
             [shape]="shapeDrawable.shape"
             (shapeChanged)="specificShapeChanged($event)">
         </dk-generic-shape-component>
 
-        <div [ngSwitch]="shapeDrawable.shape?.type">
+        <div [ngSwitch]="cppTypeToShapeType(shapeDrawable.shape?.__cpp_type)">
             <dk-enum-choice
                 *ngSwitchDefault
                 [enum]="ShapeType"
@@ -65,6 +65,7 @@ import {RectangleComponent} from './rectangle.component';
 export class ShapeDrawableComponent {
     // hoist ShapeType so template can access it
     ShapeType = ShapeType;
+    cppTypeToShapeType = cppTypeToShapeType;
 
     @Input() shapeDrawable : ShapeDrawable;
     @Output() drawableChanged = new EventEmitter<ShapeDrawable>();

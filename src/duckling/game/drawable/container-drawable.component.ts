@@ -12,7 +12,7 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 
 import {ContainerDrawable} from './container-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';
-import {Drawable, DrawableType, typeToCppType} from './drawable';
+import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
 
 /**
  * Component used to edit a Container Drawable including all its children drawables
@@ -82,7 +82,7 @@ export class ContainerDrawableComponent {
     findNextUniqueKey(pickedType : DrawableType) {
         var lastKey = 0;
         for (let drawable of this.containerDrawable.drawables) {
-            if (drawable.__cpp_type === typeToCppType(pickedType)) {
+            if (drawable.__cpp_type === drawableTypeToCppType(pickedType)) {
                 var keyNum : number = +drawable.key.substr(drawable.key.length - 1, drawable.key.length);
                 if (keyNum > lastKey) {
                     lastKey = keyNum;
