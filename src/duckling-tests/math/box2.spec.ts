@@ -1,4 +1,4 @@
-import {Box2, boxContainsPoint, Vector, boxFromEdges} from '../../duckling/math';
+import {Box2, boxContainsPoint, Vector, boxFromEdges, boxUnion} from '../../duckling/math';
 
 function squareVector(size : number) : Vector {
     return {x: size, y: size};
@@ -87,5 +87,58 @@ describe("Box2", function() {
     });
 
     describe("boxUnion", function() {
+        it("Two identical boxes produce the same box", function() {
+            let box1 = {
+                position: { x: 0, y: 0},
+                dimension: { x: 10, y: 10},
+                rotation: 0
+            }
+            let box2 = {
+                position: { x: 0, y: 0},
+                dimension: { x: 10, y: 10},
+                rotation: 0
+            }
+            expect(boxUnion(box1, box2)).toEqual({
+                position: { x: 0, y: 0},
+                dimension: { x: 10, y: 10},
+                rotation: 0
+            });
+        });
+        it("A box fully containing another produces the outer box", function() {
+            let box1 = {
+                position: { x: 0, y: 0},
+                dimension: { x: 10, y: 10},
+                rotation: 0
+            }
+            let box2 = {
+                position: { x: 0, y: 0},
+                dimension: { x: 9, y: 9},
+                rotation: 0
+            }
+            let result = boxUnion(box1, box2);
+            expect(boxUnion(box1, box2)).toEqual({
+                position: { x: 0, y: 0},
+                dimension: { x: 10, y: 10},
+                rotation: 0
+            });
+        });
+        it("Two boxes disconnected from each other produce a box surrounding both box's boundaries", function() {
+            let box1 = {
+                position: { x: 0, y: 0},
+                dimension: { x: 10, y: 10},
+                rotation: 0
+            }
+            let box2 = {
+                position: { x: 20, y: 20},
+                dimension: { x: 10, y: 10},
+                rotation: 0
+            }
+            let result = boxUnion(box1, box2);
+            expect(boxUnion(box1, box2)).toEqual({
+                position: { x: 10, y: 10},
+                dimension: { x: 30, y: 30},
+                rotation: 0
+            });
+        });
     });
 });
