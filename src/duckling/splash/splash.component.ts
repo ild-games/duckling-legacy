@@ -20,7 +20,7 @@ interface ProjectModel {
 /**
  * Specifies the number of projects can be displayed on the splash screen.
  */
-const MAX_SPLASH_ENTRIES : number = 8;
+const MAX_SPLASH_ENTRIES : number = 7;
 
 /**
  * The splash screen component allows the user to select a project they wish to edit.

@@ -19,7 +19,7 @@ import {TemplateWrapper} from './template-wrapper';
         <dk-accordian-element
             *ngFor="let index of indices()"
             [title]="elements[index][titleProperty]"
-            [opened]="sleevesOpen[index]"
+            [opened]="openedElements[keyForIndex(index)]"
             [first]="index === 0"
             [last]="index === elements.length - 1"
             (deleted)="onElementDeleted(index, $event)"
@@ -43,6 +43,10 @@ export class Accordian<T> {
      */
     @Input() titleProperty : string;
     /**
+     * The property on the element that is used to uniquely identify the element
+     */
+    @Input() keyProperty : string;
+    /**
      * Function emitted when an element has been deleted, passes the new elements array up
      */
     @Output() elementDeleted = new EventEmitter<T[]>();
@@ -57,9 +61,9 @@ export class Accordian<T> {
 
 
     /**
-     * Keeps track of what sleeves of the accordian are open
+     * Keeps track of what elements are currently opened
      */
-    sleevesOpen : boolean[] = [];
+    openedElements : {[key : string] : boolean} = {};
 
     onElementDeleted(index : number, deleted : boolean) {
         if (!deleted) {
@@ -69,15 +73,11 @@ export class Accordian<T> {
     }
 
     onElementToggled(index : number, opened : boolean) {
-        this.sleevesOpen[index] = opened;
+        this.openedElements[this.keyForIndex(index)] = opened;
     }
 
     onElementMoved(index : number, down : boolean) {
         let newIndex : number = down ? index + 1 : index - 1;
-        let bankedOpened = this.sleevesOpen[newIndex];
-        this.sleevesOpen[newIndex] = this.sleevesOpen[index];
-        this.sleevesOpen[index] = bankedOpened;
-
         if (down) {
             this.elementMovedDown.emit(immutableSwapElements(this.elements, index, newIndex));
         } else {
@@ -102,5 +102,10 @@ export class Accordian<T> {
             $index: index,
             $element : this.elements[index]
         }
+    }
+
+    keyForIndex(index : number) : string {
+        let element : any = this.elements[index];
+        return element[this.keyProperty] as string;
     }
 }

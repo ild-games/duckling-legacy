@@ -42,6 +42,7 @@ import {Drawable, DrawableType} from './drawable';
             <dk-accordian
                 [elements]="containerDrawable?.drawables"
                 titleProperty="key"
+                keyProperty="key"
                 (elementDeleted)="onChildDrawablesChanged($event)"
                 (elementMovedDown)="onChildDrawablesChanged($event)"
                 (elementMovedUp)="onChildDrawablesChanged($event)">
