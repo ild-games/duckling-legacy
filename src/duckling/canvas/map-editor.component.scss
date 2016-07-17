@@ -12,7 +12,7 @@ $canvas-bottom-bar-height: 50px;
 $canvas-left-right-border-width: $canvas-top-bar-height / 2;
 
 .canvas-toolbar {
-    background-color: #EBEBEB;
+    background-color: $header-color;
 }
 
 md-card {

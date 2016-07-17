@@ -18,7 +18,7 @@ import {Vector} from '../../math/vector';
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
         <dk-vector-input
-            class="inlineEntryField"
+            class="inline-entry-field"
             title="Dimension"
             xLabel="Stage Width"
             yLabel="Stage Height"
@@ -27,23 +27,23 @@ import {Vector} from '../../math/vector';
         </dk-vector-input>
 
         <dk-number-input
-            class="inlineEntryField"
+            class="inline-entry-field"
             label="Grid Size"
             [value]="gridSize"
             (validInput)="onGridSizeInput($event)">
         </dk-number-input>
 
         <dk-number-input
-            class="inlineEntryField"
+            class="inline-entry-field"
             label="Scale"
             [value]="scale"
             (validInput)="onScaleInput($event)">
         </dk-number-input>
 
         <md-checkbox
-            class="showGrid"
+            class="show-grid"
             [checked]="showGrid"
-            (change)="onShowGridPressed($event)">
+            (change)="onShowGridPressed($event.checked)">
             Show Grid?
         </md-checkbox>
     `
@@ -72,6 +72,6 @@ export class BottomToolbarComponent {
     }
 
     onShowGridPressed(showGrid : boolean) {
-        this.showGridChanged.emit(this.showGrid);
+        this.showGridChanged.emit(showGrid);
     }
 }

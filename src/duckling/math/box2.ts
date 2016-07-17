@@ -30,9 +30,9 @@ export function boxContainsPoint(box : Box2, position : Vector) {
  */
 export function boxUnion(left : Box2, right : Box2) : Box2 {
     var minX = Math.min(boxMinX(left), boxMinX(right));
-    var maxX = Math.min(boxMaxX(left), boxMaxX(right));
+    var maxX = Math.max(boxMaxX(left), boxMaxX(right));
     var minY = Math.min(boxMinY(left), boxMinY(right));
-    var maxY = Math.min(boxMaxY(left), boxMaxY(right));
+    var maxY = Math.max(boxMaxY(left), boxMaxY(right));
     return boxFromEdges(minX, maxX, minY, maxY);
 }
 

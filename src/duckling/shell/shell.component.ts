@@ -7,8 +7,6 @@ import {SplashComponent} from '../splash/splash.component';
 import {ProjectService} from '../project';
 import {WindowService} from '../util';
 
-import {BodyType, CollisionType} from '../game/collision/collision-attribute';
-
 @Component({
     selector: 'duckling-shell',
     directives: [
@@ -43,33 +41,6 @@ import {BodyType, CollisionType} from '../game/collision/collision-attribute';
     `
 })
 export class ShellComponent {
-    private _entity : Entity = {
-        position: {
-            position: {
-                x: 0,
-                y: 0
-            },
-            velocity: {
-                x: 0,
-                y: 0
-            }
-        },
-        collision: {
-            dimension: {
-                dimension: {
-                    x: 0,
-                    y: 0
-                }
-            },
-            oneWayNormal: {
-                x: 0,
-                y: 0
-            },
-            collisionType: CollisionType.Ground,
-            bodyType: BodyType.Environment
-        }
-    }
-
     constructor(public projectService : ProjectService,
                 private _windowService : WindowService) {
         this._windowService.setMinimumSize(0, 0);

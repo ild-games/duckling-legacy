@@ -10,6 +10,7 @@ import {ProjectSerializerService} from './project-serializer.service';
 import {PathService} from '../util/path.service';
 import {DialogService} from '../util/dialog.service';
 import {WindowService} from '../util/window.service';
+import {Icon} from '../controls';
 
 interface ProjectModel {
     title : string,
@@ -19,7 +20,7 @@ interface ProjectModel {
 /**
  * Specifies the number of projects can be displayed on the splash screen.
  */
-const MAX_SPLASH_ENTRIES : number = 8;
+const MAX_SPLASH_ENTRIES : number = 7;
 
 /**
  * The splash screen component allows the user to select a project they wish to edit.
@@ -27,6 +28,7 @@ const MAX_SPLASH_ENTRIES : number = 8;
 @Component({
     selector: 'dk-splash-screen',
     directives: [
+        Icon,
         MD_LIST_DIRECTIVES
     ],
     styleUrls: [ './duckling/splash/splash.component.css' ],
@@ -45,10 +47,8 @@ const MAX_SPLASH_ENTRIES : number = 8;
 
                 <div class="actions">
                     <a (click)="onNewProjectClick($event)">
-                        <span
-                            class="oi new-button-icon"
-                            data-glyph="file">
-                        </span>
+                        <dk-icon iconClass="file-o">
+                        </dk-icon>
                         New
                     </a>
                 </div>
@@ -136,13 +136,14 @@ export class SplashComponent implements OnInit {
     private openProject(project : ProjectModel) {
         this.reorderProject(project);
         this.saveProjects();
-        this.maximizeWindow();
-        this.projectOpened.emit(project.path);
+        this.maximizeWindow().then(() => this.projectOpened.emit(project.path));
     }
 
-    private maximizeWindow() {
+    private maximizeWindow() : Promise<any> {
         this._window.setResizable(true);
         this._window.maximize();
+
+        return new Promise(resolve => setTimeout(resolve, 100));
     }
 
     private reorderProject(openedProject : ProjectModel) {

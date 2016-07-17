@@ -16,11 +16,12 @@ var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
     selector: "dk-number-input",
     directives: [ValidatedInput],
     template:`
-        <validated-input
+        <dk-validated-input
             [label]="label"
             [value]="value"
             [validator]="isNumber"
             (validInput)="onInput($event)">
+        </dk-validated-input>
     `
 })
 export class NumberInput {

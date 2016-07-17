@@ -1,4 +1,4 @@
-import {isInteger, isNumber} from '../../duckling/math/number-utils';
+import {isInteger, isNumber, degreesToRadians, radiansToDegrees} from '../../duckling/math/number-utils';
 
 describe("isInteger", function() {
     it("0 is an integer", function() {
@@ -57,5 +57,66 @@ describe("isNumber", function() {
 
     it("NaN is not a number", function() {
         expect(isNumber(NaN)).toBe(false);
+    });
+});
+
+describe("degreesToRadians", function() {
+    it("handles 0", function() {
+        expect(degreesToRadians(0)).toBe(0);
+    });
+
+    it("handles 90", function() {
+        expect(degreesToRadians(90)).toBe(Math.PI / 2);
+    });
+
+    it("handles 180", function() {
+        expect(degreesToRadians(180)).toBe(Math.PI);
+    });
+
+    it("handles 270", function() {
+        expect(degreesToRadians(270)).toBe(Math.PI + Math.PI / 2);
+    });
+
+    it("handles 360", function() {
+        expect(degreesToRadians(360)).toBe(Math.PI * 2);
+    });
+
+    it("handles over 360", function() {
+        expect(degreesToRadians(450)).toBe((Math.PI * 2) + (Math.PI / 2));
+    });
+
+    it("handles negatives", function() {
+        expect(degreesToRadians(-90)).toBe(-Math.PI / 2);
+    });
+});
+
+describe("radiansToDegrees", function() {
+    it("handles 0", function() {
+        expect(radiansToDegrees(0)).toBe(0);
+    });
+
+    it("handles 90", function() {
+        expect(radiansToDegrees(Math.PI / 2)).toBe(90);
+    });
+
+    it("handles 180", function() {
+        expect(radiansToDegrees(Math.PI)).toBe(180);
+    });
+
+    it("handles 270", function() {
+        expect(radiansToDegrees(Math.PI + Math.PI / 2)).toBe(270);
+    });
+
+    it("handles 360", function() {
+        expect(radiansToDegrees(Math.PI * 2)).toBe(360);
+    });
+
+    it("handles over 360", function() {
+        expect(radiansToDegrees((Math.PI * 2) + (Math.PI / 2))).toBe(450);
+    });
+
+    it("handles negatives", function() {
+        expect(degreesToRadians(-90)).toBe(-Math.PI / 2);
+        expect(radiansToDegrees(-Math.PI / 2)).toBe(-90);
     });
 });

@@ -2,7 +2,7 @@ import {
     Provider,
     Type
 } from '@angular/core';
-import { disableDeprecatedForms, provideForms } from '@angular/forms';
+import {disableDeprecatedForms, provideForms} from '@angular/forms';
 import {bootstrap} from '@angular/platform-browser-dynamic';
 import {remote} from 'electron';
 

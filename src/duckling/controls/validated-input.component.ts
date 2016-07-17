@@ -4,20 +4,21 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
+
+import {InputComponent} from './input.component';
 
 /**
  * Helper component used to implement input controls that only accept certain inputs.
  */
 @Component({
-    selector: "validated-input",
-    directives: [MD_INPUT_DIRECTIVES],
+    selector: "dk-validated-input",
+    directives: [InputComponent],
     template:`
-        <md-input
-            [placeholder]="label"
-            value="{{value}}"
-            (input)="onUserInput($event.target.value)">
-        </md-input>
+        <dk-input
+            [label]="label"
+            [value]="value"
+            (inputChanged)="onUserInput($event)">
+        </dk-input>
     `
 })
 export class ValidatedInput {

@@ -5,11 +5,11 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {VectorInput, FormLabel} from '../../controls';
+import {VectorInput, FormLabel, ArraySelect} from '../../controls';
 import {EnumSelect} from '../../controls/enum-select.component';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
-import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute';
+import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collision-attribute';
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -18,43 +18,43 @@ import {CollisionAttribute, BodyType, CollisionType} from './collision-attribute
  */
 @Component({
     selector: "dk-collision-component",
-    directives: [VectorInput, EnumSelect, FormLabel],
+    directives: [ArraySelect, VectorInput, EnumSelect, FormLabel],
     styleUrls: ['./duckling/game/collision/collision.component.css'],
     template: `
-        <dk-form-label title="Dimension"></dk-form-label>
         <dk-vector-input
             xLabel="Width"
             yLabel="Height"
             [value]="attribute.dimension.dimension"
             (validInput)="onDimensionInput($event)">
         </dk-vector-input>
-        <dk-form-label title="One Way Normal"></dk-form-label>
         <dk-vector-input
+            xLabel="One Way Normal X"
+            yLabel="One Way Normal Y"
             [value]="attribute.oneWayNormal"
             (validInput)="onOneWayNormalInput($event)">
         </dk-vector-input>
 
         <div class="form-label">Body Type</div>
-        <dk-enum-select
+        <dk-array-select
             [value]="attribute.bodyType"
-            [enum]="bodyTypes"
+            [options]="bodyTypes"
             (selection)="onBodyTypeInput($event)">
-        </dk-enum-select>
+        </dk-array-select>
 
         <div class="form-label">Collision Type</div>
-        <dk-enum-select
+        <dk-array-select
             [value]="attribute.collisionType"
-            [enum]="collisionType"
+            [options]="collisionTypes"
             (selection)="onCollisionTypeInput($event)">
-        </dk-enum-select>
+        </dk-array-select>
     `
 })
 export class CollisionComponent {
     @Input() attribute : CollisionAttribute;
     @Output() attributeChanged = new EventEmitter<CollisionAttribute>();
 
-    bodyTypes = BodyType;
-    collisionType = CollisionType;
+    bodyTypes = BodyTypeSelect;
+    collisionTypes = CollisionTypeSelect;
 
     onOneWayNormalInput(oneWayNormal : Vector) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {oneWayNormal}));
@@ -65,11 +65,11 @@ export class CollisionComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {dimension: newBox}));
     }
 
-    onBodyTypeInput(bodyType : BodyType) {
+    onBodyTypeInput(bodyType : string) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {bodyType}));
     }
 
-    onCollisionTypeInput(collisionType : CollisionType) {
+    onCollisionTypeInput(collisionType : string) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {collisionType}));
     }
 }

@@ -52,7 +52,7 @@ export class EntityMoveTool extends BaseTool {
     }
 
     get icon() {
-        return "move";
+        return "arrows";
     }
 
     private _cancel() {

@@ -1,26 +1,16 @@
 import {Attribute, Entity} from '../../entitysystem/entity';
 import {Vector} from '../../math/vector';
 import {Box2} from '../../math/box2';
+import {SelectOption, toSelectOptions} from '../../controls';
 
 export const COLLISION_KEY = "collision";
 
-/**
- * Describes how the entity behaves in the solid body system.
- */
-export enum BodyType {
-    None,
-    Solid,
-    Environment
-}
 
-/**
- * Describes what actions are taken for the entity on collision.
- */
-export enum CollisionType {
-    None,
-    Player,
-    Ground
-}
+export type BodyType = "none" | "solid" | "environment";
+export var BodyTypeSelect : SelectOption[] = toSelectOptions<BodyType>("none", "solid", "environment");
+export type CollisionType = "none" | "player" | "ground";
+export var CollisionTypeSelect : SelectOption[] = toSelectOptions<CollisionType>("none", "player", "ground");
+
 
 /**
  * CollisionAttribute should be attached to entities that need solid body physics.
@@ -32,11 +22,11 @@ export interface CollisionAttribute extends Attribute {
      */
     dimension : Box2;
     /**
-     * @See BodyType
+     * Describes how the entity behaves in the solid body system.
      */
-    bodyType : BodyType
+    bodyType : BodyType;
     /**
-     * @See CollisionType
+     * Describes what actions are taken for the entity on collision.
      */
     collisionType : CollisionType;
     /**
@@ -58,8 +48,8 @@ export var defaultCollison : CollisionAttribute = {
         },
         rotation: 0
     },
-    bodyType: BodyType.Environment,
-    collisionType: CollisionType.Ground,
+    bodyType: "environment",
+    collisionType: "none",
     oneWayNormal: {
         x: 0,
         y: 0

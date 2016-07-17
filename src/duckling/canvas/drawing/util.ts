@@ -17,6 +17,22 @@ export function drawRectangle(centerPosition : Vector, dimension : Vector, graph
 }
 
 /**
+ * Draw an ellipse centered at the given position
+ * @param centerPosition Center of the rectangle.
+ * @param xRadius        Radius of the ellipse on the x axis
+ * @param yRadius        Radius of the ellipse on the y axis
+ * @param graphics       Graphics object used to draw.
+ */
+export function drawEllipse(centerPosition : Vector, xRadius : number, yRadius : number, graphics : Graphics) {
+    graphics.drawEllipse(
+        centerPosition.x,
+        centerPosition.y,
+        xRadius,
+        yRadius
+    );
+}
+
+/**
  * Draw an x centered at the given position.
  * @param centerPosition Center of the x.
  * @param dimension      Dimensions of the x.
