@@ -22,35 +22,33 @@ import {Icon} from './icon.component';
             class="header md-elevation-z3"
             (click)="onToggle(!opened)">
             <span class="title">{{title}}</span>
-            <div class="arrow-buttons">
+            <div class="right-buttons">
                 <button
                     md-button
                     *ngIf="!first"
-                    class="row-header-button toggle-visibility"
+                    class="display-on-hover"
                     (click)="onMoved(false, $event)">
                     <dk-icon iconClass="arrow-up"></dk-icon>
                 </button>
                 <button
                     md-button
                     *ngIf="!last"
-                    class="row-header-button toggle-visibility"
+                    class="display-on-hover"
                     (click)="onMoved(true, $event)">
                     <dk-icon iconClass="arrow-down"></dk-icon>
                 </button>
                 <button
                     md-button
-                    class="row-header-button toggle-visibility"
+                    class="display-on-hover"
                     (click)="onDelete($event)">
                     <dk-icon iconClass="trash"></dk-icon>
                 </button>
                 <dk-icon
                     *ngIf="!opened"
-                    class="row-header-button"
                     iconClass="plus-circle">
                 </dk-icon>
                 <dk-icon
                     *ngIf="opened"
-                    class="row-header-button"
                     iconClass="minus-circle">
                 </dk-icon>
             </div>

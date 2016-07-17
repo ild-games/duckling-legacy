@@ -1,4 +1,4 @@
-import {Attribute} from '../../entitysystem/entity';
+import {EntityKey, Attribute} from '../../entitysystem/entity';
 import {Vector} from '../../math';
 
 export const CAMERA_KEY = "camera";
@@ -11,7 +11,7 @@ export interface CameraAttribute extends Attribute {
     scale : number,
     size : Vector,
     default : boolean,
-    follows : string
+    follows : EntityKey
 }
 
 export var defaultCamera : CameraAttribute = {

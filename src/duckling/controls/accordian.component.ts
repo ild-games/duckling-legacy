@@ -7,7 +7,7 @@ import {
     TemplateRef
 } from '@angular/core';
 
-import {immutableArrayAssign, immutableArrayDelete} from '../util';
+import {immutableArrayAssign, immutableArrayDelete, immutableSwapElements} from '../util';
 
 import {AccordianElement} from './accordian-element.component';
 import {TemplateWrapper} from './template-wrapper';
@@ -74,41 +74,16 @@ export class Accordian<T> {
     }
 
     onElementMoved(index : number, down : boolean) {
+        let newIndex : number = down ? index + 1 : index - 1;
+        let bankedOpened = this.sleevesOpen[newIndex];
+        this.sleevesOpen[newIndex] = this.sleevesOpen[index];
+        this.sleevesOpen[index] = bankedOpened;
+
         if (down) {
-            this._onElementMovedDown(index);
+            this.elementMovedDown.emit(immutableSwapElements(this.elements, index, newIndex));
         } else {
-            this._onElementMovedUp(index);
+            this.elementMovedUp.emit(immutableSwapElements(this.elements, index, newIndex));
         }
-    }
-
-    _onElementMovedDown(index : number) {
-        let patch : T[] = [];
-        let head = this.elements.slice(0, index);
-        let tail = this.elements.slice(index + 2, this.elements.length);
-        patch = immutableArrayAssign(
-            patch,
-            head.concat([this.elements[index + 1], this.elements[index]]).concat(tail));
-
-        var bankedOpened = this.sleevesOpen[index + 1];
-        this.sleevesOpen[index + 1] = this.sleevesOpen[index];
-        this.sleevesOpen[index] = bankedOpened;
-
-        this.elementMovedDown.emit(immutableArrayAssign(this.elements, patch));
-    }
-
-    _onElementMovedUp(index : number) {
-        let patch : T[] = []
-        let head = this.elements.slice(0, index - 1);
-        let tail = this.elements.slice(index + 1, this.elements.length);
-        patch = immutableArrayAssign(
-            patch,
-            head.concat([this.elements[index], this.elements[index - 1]]).concat(tail));
-
-        var bankedOpened = this.sleevesOpen[index - 1];
-        this.sleevesOpen[index - 1] = this.sleevesOpen[index];
-        this.sleevesOpen[index] = bankedOpened;
-
-        this.elementMovedUp.emit(immutableArrayAssign(this.elements, patch));
     }
 
     indices() {

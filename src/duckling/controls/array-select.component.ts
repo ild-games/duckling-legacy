@@ -59,7 +59,7 @@ export interface SelectOption {
  * @param values string array of values to turn into SelectOptions
  * @return array of SelectOptions based on the values
  */
-export function toSelectOptions(values : string[]) : SelectOption[] {
+export function toSelectOptions<T extends string>(...values : T[]) : SelectOption[] {
     let selectOptions : SelectOption[] = [];
     for (let value of values) {
         selectOptions.push(toSelectOption(value));
@@ -75,7 +75,7 @@ export function toSelectOptions(values : string[]) : SelectOption[] {
  * @param value string value to turn into a SelectOption
  * @return SelectOption based on the value
  */
-export function toSelectOption(value : string) : SelectOption {
+export function toSelectOption<T extends string>(value : T) : SelectOption {
     return {
         value: value.toLowerCase(),
         title: value.substring(0, 1).toUpperCase() + value.substring(1)

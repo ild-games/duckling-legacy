@@ -32,14 +32,14 @@ export class TemplateWrapper implements OnChanges {
                 this._embeddedViewRef.destroy();
             }
             this._embeddedViewRef = this._viewContainer.createEmbeddedView(this.templateWrapper, {
-                element: this.wrappedElement,
-                index: this.index
+                $element: this.wrappedElement,
+                $index: this.index
             });
         }
 
         if (this._embeddedViewRef) {
-            this._embeddedViewRef.context.element = this.wrappedElement;
-            this._embeddedViewRef.context.index = this.index;
+            this._embeddedViewRef.context.$element = this.wrappedElement;
+            this._embeddedViewRef.context.$index = this.index;
         }
     }
 }

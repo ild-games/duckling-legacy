@@ -5,8 +5,11 @@ import {SelectOption, toSelectOptions} from '../../controls';
 
 export const COLLISION_KEY = "collision";
 
-export var BodyTypeSelect : SelectOption[] = toSelectOptions(["none", "solid", "environment"]);
-export var CollisionTypeSelect : SelectOption[] = toSelectOptions(["none", "player", "ground"]);
+
+export type BodyType = "none" | "solid" | "environment";
+export var BodyTypeSelect : SelectOption[] = toSelectOptions<BodyType>("none", "solid", "environment");
+export type CollisionType = "none" | "player" | "ground";
+export var CollisionTypeSelect : SelectOption[] = toSelectOptions<CollisionType>("none", "player", "ground");
 
 
 /**
@@ -21,11 +24,11 @@ export interface CollisionAttribute extends Attribute {
     /**
      * Describes how the entity behaves in the solid body system.
      */
-    bodyType : string;
+    bodyType : BodyType;
     /**
      * Describes what actions are taken for the entity on collision.
      */
-    collisionType : string;
+    collisionType : CollisionType;
     /**
      * Used to implement one way platforms and walls.  The normal vector should point
      * towards the direction other entities are unable to pass through.

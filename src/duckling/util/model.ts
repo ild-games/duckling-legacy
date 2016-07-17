@@ -35,3 +35,15 @@ export function immutableArrayDelete<T>(existingArray : T[], elementToRemove : n
     let tail = existingArray.slice(elementToRemove + 1, existingArray.length);
     return head.concat(tail);
 }
+
+/**
+ * Create a new array with two indices swapped
+ * @returns A new array with the two specified indices swapped
+ */
+export function immutableSwapElements<T>(existingArray : T[], firstIndex : number, secondIndex : number) {
+    let copiedArray = Array.from(existingArray);
+    let bankedItem = copiedArray[firstIndex];
+    copiedArray[firstIndex] = copiedArray[secondIndex];
+    copiedArray[secondIndex] = bankedItem;
+    return copiedArray;
+}
