@@ -45,10 +45,10 @@ import {Drawable, DrawableType} from './drawable';
                 (elementDeleted)="onChildDrawablesChanged($event)"
                 (elementMovedDown)="onChildDrawablesChanged($event)"
                 (elementMovedUp)="onChildDrawablesChanged($event)">
-                <template>
+                <template let-element="$element" let-index="$index">
                     <dk-drawable-component
-                        [drawable]="$element"
-                        (drawableChanged)="onChildDrawableChanged($index, $event)">
+                        [drawable]="element"
+                        (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable-component>
                 </template>
             </dk-accordian>

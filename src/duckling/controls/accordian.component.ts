@@ -27,8 +27,7 @@ import {TemplateWrapper} from './template-wrapper';
             (moved)="onElementMoved(index, $event)">
             <template
                 [templateWrapper]="elementTemplate"
-                [index]="index"
-                [wrappedElement]="elements[index]">
+                [context]="elementContext(index)">
             </template>
         </dk-accordian-element>
     `
@@ -96,5 +95,12 @@ export class Accordian<T> {
             indices[i] = i;
         }
         return indices;
+    }
+
+    elementContext(index : number) {
+        return {
+            $index: index,
+            $element : this.elements[index]
+        }
     }
 }

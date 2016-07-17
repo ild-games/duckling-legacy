@@ -19,8 +19,7 @@ import {
 export class TemplateWrapper implements OnChanges {
     private _embeddedViewRef : EmbeddedViewRef<any>
 
-    @Input() wrappedElement : any;
-    @Input() index : any;
+    @Input() context : any;
     @Input() templateWrapper : TemplateRef<any>;
 
     constructor(private _viewContainer : ViewContainerRef) {
@@ -31,15 +30,11 @@ export class TemplateWrapper implements OnChanges {
             if (this._embeddedViewRef) {
                 this._embeddedViewRef.destroy();
             }
-            this._embeddedViewRef = this._viewContainer.createEmbeddedView(this.templateWrapper, {
-                $element: this.wrappedElement,
-                $index: this.index
-            });
+            this._embeddedViewRef = this._viewContainer.createEmbeddedView(this.templateWrapper, this.context);
         }
 
         if (this._embeddedViewRef) {
-            this._embeddedViewRef.context.$element = this.wrappedElement;
-            this._embeddedViewRef.context.$index = this.index;
+            Object.assign(this._embeddedViewRef.context, this.context);
         }
     }
 }
