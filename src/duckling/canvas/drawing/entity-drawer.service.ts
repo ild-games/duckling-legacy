@@ -3,7 +3,29 @@ import {Component, Injectable} from '@angular/core';
 import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
 import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
+import {DrawableAttribute, getDrawableAttribute, drawableAttributeSorter} from '../../game/drawable/drawable-attribute';
 import {Container, DisplayObject} from 'pixi.js';
+
+/**
+ * Sorts the entity system so the render priorities of the entities drawable attributes are
+ * respected.
+ * @param  entitySystem EntitySystem to sort for drawing
+ * @return Array of entities sorted for drawing
+ */
+export function sortedDrawableEntities(entitySystem : EntitySystem) : Array<Entity> {
+    let sortedDrawableAttributeEntities : Entity[] = [];
+    let otherEntities : Entity[] = [];
+    entitySystem.forEach((entity : Entity) => {
+        let drawable : DrawableAttribute = getDrawableAttribute(entity);
+        if (drawable && drawable.topDrawable) {
+            sortedDrawableAttributeEntities.push(entity);
+        } else {
+            otherEntities.push(entity)
+        }
+    });
+    sortedDrawableAttributeEntities.sort(drawableAttributeSorter);
+    return sortedDrawableAttributeEntities.concat(otherEntities);
+}
 
 /**
  * Function type used to draw attributes.
@@ -56,14 +78,16 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
      */
     getSystemMapper() {
         return (entitySystem : EntitySystem) : DisplayObject => {
-            var stage = new Container();
-            entitySystem.forEach((entity : Entity) => {
-                var drawable = this.drawEntity(entity);
-                if (drawable) {
-                    stage.addChild(drawable);
-                }
-            });
+            let stage = new Container();
+            sortedDrawableEntities(entitySystem).forEach(entity => this.addDrawableToStage(entity, stage));
             return stage;
+        }
+    }
+
+    private addDrawableToStage(entity : Entity, stage : Container) {
+        let drawable = this.drawEntity(entity);
+        if (drawable) {
+            stage.addChild(drawable);
         }
     }
 }

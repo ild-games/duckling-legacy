@@ -30,14 +30,12 @@ import {ImageDrawable} from './image-drawable';
     ],
     styleUrls: ['./duckling/game/drawable/image-drawable.component.css'],
     template: `
-        <div style="width: 100%">
-            <dk-input
-                disabled="true"
-                class="texture-key"
-                placeholder="Image File"
-                [value]="imageDrawable.textureKey ? imageDrawable.textureKey  : 'No file selected'">
-            </dk-input>
-        </div>
+        <dk-input
+            disabled="true"
+            class="texture-key"
+            placeholder="Image File"
+            [value]="imageDrawable.textureKey ? imageDrawable.textureKey  : 'No file selected'">
+        </dk-input>
         <button
             md-raised-button
             title="Browse"
@@ -96,6 +94,12 @@ export class ImageDrawableComponent {
 
     onImageFilePicked(file : string) {
         let homeResourceString = this._path.join(this._project.project.home, 'resources');
+        if (file.indexOf(homeResourceString) === -1) {
+            this._dialog.showErrorDialog(
+                "Unable to load image asset",
+                "You must select assets from the resources/ folder in the root of your project");
+            return;
+        }
         let newTextureKey = file.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
         this._assets.add({type: "TexturePNG", key: newTextureKey});
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: newTextureKey}));
@@ -108,6 +112,4 @@ export class ImageDrawableComponent {
     onTextureRectChanged(newTextureRect : Box2) {
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureRect: newTextureRect}));
     }
-
-    noop() {}
 }

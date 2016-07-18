@@ -3,6 +3,7 @@ import {EntityKey, Entity} from '../entity';
 import {EntityBoxService} from './entity-box.service';
 import {EntitySystemService} from '../entity-system.service';
 import {Vector, boxContainsPoint} from '../../math';
+import {sortedDrawableEntities} from '../../canvas/drawing/entity-drawer.service';
 
 /**
  * The EntitySelectionService is used to select entities.
@@ -22,10 +23,10 @@ export class EntitySelectionService {
      * @return The key of the entity contained at the position.
      */
     getEntityKey(position : Vector) : EntityKey {
-        var key = this._entitySystemService
-            .entitySystem
-            .getValue()
-            .findKey(entity => this._entityContainsPoint(entity, position));
+        let entities = Array.from(sortedDrawableEntities(this._entitySystemService.entitySystem.getValue()));
+        entities.reverse();
+        let entity = entities.find(entity => this._entityContainsPoint(entity, position));
+        let key = this._entitySystemService.getKey(entity);
 
         if (key) {
             return key;

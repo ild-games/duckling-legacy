@@ -37,15 +37,15 @@ export class MapParserService {
      * @return An EntitySystem with the entities contained in the map.
      */
     mapToSystem(map : RawMapFile) : EntitySystem {
-        var entities : {[entityKey : string] : Entity} = {};
+        let entities : {[entityKey : string] : Entity} = {};
 
-        for (var entityKey of map.entities) {
+        for (let entityKey of map.entities) {
             entities[entityKey] = {};
         }
 
-        for (var systemKey in map.systems) {
-            var system = map.systems[systemKey];
-            for (var entityKey in system.components) {
+        for (let systemKey in map.systems) {
+            let system = map.systems[systemKey];
+            for (let entityKey in system.components) {
                 if (!entities[entityKey]) {
                     entities[entityKey] = {};
                 }
@@ -58,7 +58,7 @@ export class MapParserService {
         }
 
         return createEntitySystem().withMutations(system => {
-            for (var key in entities) {
+            for (let key in entities) {
                 system.set(key, entities[key])
             }
         });
@@ -71,12 +71,12 @@ export class MapParserService {
      * @return An object that can be serialized into a map.
      */
     systemToMap(mapKey : string, system : EntitySystem) : RawMapFile {
-        var systems : {[systemKey : string] : RawSystem} = {};
-        var entities : EntityKey[] = [];
+        let systems : {[systemKey : string] : RawSystem} = {};
+        let entities : EntityKey[] = [];
 
         system.forEach((entity : Entity, entityKey : EntityKey) => {
             entities.push(entityKey);
-            for (var systemKey in entity) {
+            for (let systemKey in entity) {
                 if (!systems[systemKey]) {
                     systems[systemKey] = {components: {}};
                 }
@@ -84,11 +84,15 @@ export class MapParserService {
             }
         });
 
+        let assetList : Asset[] = [];
+        for (let assetKey in this._assets.assets) {
+            assetList.push(this._assets.assets[assetKey]);
+        }
         return {
             key : mapKey,
             systems : systems,
             entities : entities,
-            assets : this._assets.assets,
+            assets : assetList
         }
     }
 }

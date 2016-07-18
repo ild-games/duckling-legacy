@@ -124,7 +124,7 @@ export class MapEditorComponent implements AfterViewInit {
                 this.canvasDisplayObject = this.buildCanvasDisplayObject();
             });
 
-        this._assetService.numberOfAssets.subscribe((numAssets) => {
+        this._assetService.assetLoaded.subscribe(() => {
             let stage = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
             this._entitiesDisplayObject = stage;
             this.canvasDisplayObject = this.buildCanvasDisplayObject();

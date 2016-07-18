@@ -16,12 +16,12 @@ export class AssetService {
     constructor(private _store : StoreService) {
     }
 
-    private _assets : Asset[] = [];
-    numberOfAssets : BehaviorSubject<number> = new BehaviorSubject(0);
+    private _assets : {[key : string] : Asset} = {};
+    assetLoaded : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     add(asset : Asset) {
-        if (!loader.resources[asset.key]) {
-            this._assets.push(asset);
+        if (!this._assets[asset.key]) {
+            this._assets[asset.key] = asset;
         }
     }
 
@@ -37,11 +37,11 @@ export class AssetService {
         }
     }
 
-    get assets() : Asset[] {
+    get assets() : {[key : string] : Asset} {
         return this._assets;
     }
 
     onAssetLoaded() {
-        this.numberOfAssets.next(this.numberOfAssets.value + 1);
+        this.assetLoaded.next(true);
     }
 }
