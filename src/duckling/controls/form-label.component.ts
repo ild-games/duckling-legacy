@@ -10,7 +10,7 @@ import {
     selector: "dk-form-label",
     styleUrls: ['./duckling/controls/form-label.component.css'],
     template:`
-        <div [title]="title" class="form-label">{{title}}</div>
+        <div class="form-label">{{title}}</div>
     `
 })
 export class FormLabel {
