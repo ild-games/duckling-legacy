@@ -9,6 +9,7 @@ import {SCALE_MODES} from 'pixi.js';
 
 import {ShellComponent} from './shell/shell.component';
 import {EntityDrawerService} from './canvas/drawing/entity-drawer.service';
+import {RenderPriorityService} from './canvas/drawing/render-priority.service';
 
 import {
     AttributeDefaultService,
@@ -49,22 +50,24 @@ import {PathService} from './util/path.service';
 import {WindowService} from './util/window.service';
 import {ElectronDialogService} from '../electron/util/electron-dialog.service';
 import {ElectronWindowService} from '../electron/util/electron-window.service';
+import {AnconaSFMLRenderPriorityService} from './game/ancona-sfml-render-priority.service';
 
 remote.getCurrentWindow().removeAllListeners();
 
-var storeService = new StoreService(mainReducer, mergeEntityAction);
-var entitySystemService = new EntitySystemService(storeService);
-var assetService = new AssetService(storeService);
+let storeService = new StoreService(mainReducer, mergeEntityAction);
+let entitySystemService = new EntitySystemService(storeService);
+let assetService = new AssetService(storeService);
 
 // Bootstrap game specific behavior
-var attributeComponentService = new AttributeComponentService();
-var entityDrawerService = new EntityDrawerService(assetService);
-var entityBoxService = new EntityBoxService(assetService);
-var attributeDefaultService = new AttributeDefaultService();
-var entityPositionSetService = new EntityPositionSetService(entitySystemService);
+let attributeComponentService = new AttributeComponentService();
+let anconaSFMLRenderPriorityService = new AnconaSFMLRenderPriorityService();
+let entityDrawerService = new EntityDrawerService(assetService, anconaSFMLRenderPriorityService);
+let entityBoxService = new EntityBoxService(assetService);
+let attributeDefaultService = new AttributeDefaultService();
+let entityPositionSetService = new EntityPositionSetService(entitySystemService);
 
 // Setup window defaults
-var electronWindowService = new ElectronWindowService();
+let electronWindowService = new ElectronWindowService();
 
 /**
  * Eventually we want to support multiple different games.  This means any component specific
@@ -95,6 +98,7 @@ bootstrap(ShellComponent, [
     provideInstance(entityPositionSetService, EntityPositionSetService),
     provideInstance(entitySystemService, EntitySystemService),
     provideInstance(electronWindowService, WindowService),
+    provideInstance(anconaSFMLRenderPriorityService, RenderPriorityService),
     provideClass(ElectronDialogService, DialogService),
     EntitySelectionService,
     JsonLoaderService,

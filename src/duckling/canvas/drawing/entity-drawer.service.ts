@@ -1,31 +1,11 @@
 import {Component, Injectable} from '@angular/core';
+import {Container, DisplayObject} from 'pixi.js';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
 import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
-import {DrawableAttribute, getDrawableAttribute, drawableAttributeSorter} from '../../game/drawable/drawable-attribute';
-import {Container, DisplayObject} from 'pixi.js';
 
-/**
- * Sorts the entity system so the render priorities of the entities drawable attributes are
- * respected.
- * @param  entitySystem EntitySystem to sort for drawing
- * @return Array of entities sorted for drawing
- */
-export function sortedDrawableEntities(entitySystem : EntitySystem) : Array<Entity> {
-    let sortedDrawableAttributeEntities : Entity[] = [];
-    let otherEntities : Entity[] = [];
-    entitySystem.forEach((entity : Entity) => {
-        let drawable : DrawableAttribute = getDrawableAttribute(entity);
-        if (drawable && drawable.topDrawable) {
-            sortedDrawableAttributeEntities.push(entity);
-        } else {
-            otherEntities.push(entity)
-        }
-    });
-    sortedDrawableAttributeEntities.sort(drawableAttributeSorter);
-    return sortedDrawableAttributeEntities.concat(otherEntities);
-}
+import {RenderPriorityService} from './render-priority.service';
 
 /**
  * Function type used to draw attributes.
@@ -38,7 +18,8 @@ export type AttributeDrawer = (entity : Entity, oldDrawable? : any) => any;
  */
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
-    constructor(private _assets : AssetService) {
+    constructor(private _assets : AssetService,
+                private _renderPriority : RenderPriorityService) {
         super();
     }
 
@@ -79,7 +60,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     getSystemMapper() {
         return (entitySystem : EntitySystem) : DisplayObject => {
             let stage = new Container();
-            sortedDrawableEntities(entitySystem).forEach(entity => this.addDrawableToStage(entity, stage));
+            this._renderPriority.sortEntities(entitySystem).forEach(entity => this.addDrawableToStage(entity, stage));
             return stage;
         }
     }

@@ -1,9 +1,10 @@
 import {Component, Injectable} from '@angular/core';
 import {EntityKey, Entity} from '../entity';
-import {EntityBoxService} from './entity-box.service';
 import {EntitySystemService} from '../entity-system.service';
 import {Vector, boxContainsPoint} from '../../math';
-import {sortedDrawableEntities} from '../../canvas/drawing/entity-drawer.service';
+import {RenderPriorityService} from '../../canvas/drawing/render-priority.service';
+
+import {EntityBoxService} from './entity-box.service';
 
 /**
  * The EntitySelectionService is used to select entities.
@@ -12,7 +13,8 @@ import {sortedDrawableEntities} from '../../canvas/drawing/entity-drawer.service
 export class EntitySelectionService {
 
     constructor(private _entitySystemService : EntitySystemService,
-                private _entityBoxService : EntityBoxService) {
+                private _entityBoxService : EntityBoxService,
+                private _renderPriority : RenderPriorityService) {
 
     }
 
@@ -23,7 +25,7 @@ export class EntitySelectionService {
      * @return The key of the entity contained at the position.
      */
     getEntityKey(position : Vector) : EntityKey {
-        let entities = Array.from(sortedDrawableEntities(this._entitySystemService.entitySystem.getValue()));
+        let entities = Array.from(this._renderPriority.sortEntities(this._entitySystemService.entitySystem.getValue()));
         entities.reverse();
         let entity = entities.find(entity => this._entityContainsPoint(entity, position));
         let key = this._entitySystemService.getKey(entity);
