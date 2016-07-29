@@ -5,7 +5,9 @@
     "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
     "test": "tsc && jasmine",
     "build": "gulp && tsc",
-    "watch": "concurrently \"gulp watch\" \"npm run tsc:w\"",
+    "watch": "concurrently \"npm run gulp:w\" \"npm run tsc:w\"",
+    "gulp": "gulp",
+    "gulp:w": "gulp watch",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "typings": "typings",
@@ -44,8 +46,10 @@
     "zone.js": "^0.6.12"
   },
   "devDependencies": {
-    "electron-prebuilt": "^1.2.5",
     "concurrently": "^2.0.0",
+    "electron-prebuilt": "^1.2.5",
+    "gulp": "^3.9.1",
+    "typescript": "^1.8.10",
     "typings": "^1.0.4"
   }
 }
