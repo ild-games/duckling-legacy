@@ -1,7 +1,8 @@
 import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
-import {getCollision} from './collision-attribute';
 import {Box2} from '../../math';
+
+import {getCollision} from './collision-attribute';
 
 /**
  * Get the bounding box for an entity with a collision attribute.

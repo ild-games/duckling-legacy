@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 
 import {createEntitySystem, Entity, EntitySystem, EntityKey} from '../entitysystem';
 
+import {Asset, AssetService} from './asset.service'
+
 /**
  * Interface describing the structure of an attribute in the map file.
  */
@@ -11,7 +13,7 @@ export type RawAttribute = any;
  * Interface describing the structure of a system in a map file.
  */
 export interface RawSystem {
-    components : {[entityName:string]:RawAttribute};
+    components : {[entityName : string] : RawAttribute};
 }
 
 /**
@@ -20,27 +22,30 @@ export interface RawSystem {
 export interface RawMapFile {
     key : string,
     entities : string [],
-    assets: any [],
-    systems : {[systemName:string]: RawSystem}
+    assets: Asset[],
+    systems : {[systemName : string] : RawSystem}
 }
 
 @Injectable()
 export class MapParserService {
+    constructor(private _assets : AssetService) {
+    }
+
     /**
      * Take an object deserialized from a map and transform it into an entity system.
      * @param  map Object deserialized from a map file.
      * @return An EntitySystem with the entities contained in the map.
      */
     mapToSystem(map : RawMapFile) : EntitySystem {
-        var entities : {[entityKey:string]:Entity} = {};
+        let entities : {[entityKey : string] : Entity} = {};
 
-        for (var entityKey of map.entities) {
+        for (let entityKey of map.entities) {
             entities[entityKey] = {};
         }
 
-        for (var systemKey in map.systems) {
-            var system = map.systems[systemKey];
-            for (var entityKey in system.components) {
+        for (let systemKey in map.systems) {
+            let system = map.systems[systemKey];
+            for (let entityKey in system.components) {
                 if (!entities[entityKey]) {
                     entities[entityKey] = {};
                 }
@@ -48,8 +53,12 @@ export class MapParserService {
             }
         }
 
+        for (let asset of map.assets) {
+            this._assets.add(asset);
+        }
+
         return createEntitySystem().withMutations(system => {
-            for (var key in entities) {
+            for (let key in entities) {
                 system.set(key, entities[key])
             }
         });
@@ -62,12 +71,12 @@ export class MapParserService {
      * @return An object that can be serialized into a map.
      */
     systemToMap(mapKey : string, system : EntitySystem) : RawMapFile {
-        var systems : {[systemKey:string]:RawSystem} = {};
-        var entities : EntityKey[] = [];
+        let systems : {[systemKey : string] : RawSystem} = {};
+        let entities : EntityKey[] = [];
 
         system.forEach((entity : Entity, entityKey : EntityKey) => {
             entities.push(entityKey);
-            for (var systemKey in entity) {
+            for (let systemKey in entity) {
                 if (!systems[systemKey]) {
                     systems[systemKey] = {components: {}};
                 }
@@ -75,11 +84,15 @@ export class MapParserService {
             }
         });
 
+        let assetList : Asset[] = [];
+        for (let assetKey in this._assets.assets) {
+            assetList.push(this._assets.assets[assetKey]);
+        }
         return {
             key : mapKey,
             systems : systems,
             entities : entities,
-            assets : [],
+            assets : assetList
         }
     }
 }

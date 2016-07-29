@@ -1,13 +1,16 @@
 import {Component, Injectable} from '@angular/core';
+import {Container, DisplayObject} from 'pixi.js';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
+import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
-import {Container, DisplayObject} from 'pixi.js';
+
+import {RenderPriorityService} from './render-priority.service';
 
 /**
  * Function type used to draw attributes.
  */
-export type AttributeDrawer = (entity : Entity, oldDrawable? : any) => any;
+export type AttributeDrawer = (entity : Entity, assetService? : any) => any;
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class
@@ -15,6 +18,11 @@ export type AttributeDrawer = (entity : Entity, oldDrawable? : any) => any;
  */
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
+    constructor(private _assets : AssetService,
+                private _renderPriority : RenderPriorityService) {
+        super();
+    }
+
     /**
      * Get a DisplayObject for the attribute.
      * @param key       Attribute key of the attribute that should be drawn.
@@ -24,7 +32,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     drawAttribute(key : AttributeKey, entity : Entity) : DisplayObject {
         var drawer = this.getImplementation(key);
         if (drawer) {
-            return drawer(entity);
+            return drawer(entity, this._assets);
         }
         return null;
     }
@@ -51,14 +59,16 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
      */
     getSystemMapper() {
         return (entitySystem : EntitySystem) : DisplayObject => {
-            var stage = new Container();
-            entitySystem.forEach((entity : Entity) => {
-                var drawable = this.drawEntity(entity);
-                if (drawable) {
-                    stage.addChild(drawable);
-                }
-            });
+            let stage = new Container();
+            this._renderPriority.sortEntities(entitySystem).forEach(entity => this.addDrawableToStage(entity, stage));
             return stage;
+        }
+    }
+
+    private addDrawableToStage(entity : Entity, stage : Container) {
+        let drawable = this.drawEntity(entity);
+        if (drawable) {
+            stage.addChild(drawable);
         }
     }
 }

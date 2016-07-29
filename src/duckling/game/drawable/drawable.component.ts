@@ -13,8 +13,10 @@ import {DrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType} from './drawable';
 import {defaultShapeDrawable} from './shape-drawable';
 import {defaultContainerDrawable} from './container-drawable';
+import {defaultImageDrawable} from './image-drawable';
 import {ShapeDrawableComponent} from './shape-drawable.component';
 import {ContainerDrawableComponent} from './container-drawable.component';
+import {ImageDrawableComponent} from './image-drawable.component';
 import {GenericDrawableComponent} from './generic-drawable.component';
 
 /**
@@ -30,6 +32,8 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
             return defaultShapeDrawable;
         case DrawableType.Container:
             return defaultContainerDrawable;
+        case DrawableType.Image:
+            return defaultImageDrawable;
     }
 }
 
@@ -45,7 +49,8 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
         EnumChoiceComponent,
         GenericDrawableComponent,
         ShapeDrawableComponent,
-        ContainerDrawableComponent
+        ContainerDrawableComponent,
+        ImageDrawableComponent
     ],
     template: `
         <dk-generic-drawable-component
@@ -73,6 +78,12 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
                 [containerDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-container-drawable-component>
+
+            <dk-image-drawable-component
+                *ngSwitchCase="DrawableType.Image"
+                [imageDrawable]="drawable"
+                (drawableChanged)="specificDrawableChanged($event)">
+            </dk-image-drawable-component>
         </div>
     `
 })

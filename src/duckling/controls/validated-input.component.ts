@@ -13,10 +13,12 @@ import {InputComponent} from './input.component';
 @Component({
     selector: "dk-validated-input",
     directives: [InputComponent],
+    styleUrls: ['./duckling/controls/validated-input.component.css'],
     template:`
         <dk-input
             [label]="label"
             [value]="value"
+            [dividerColor]="valid ? 'primary' : 'warn'"
             (inputChanged)="onUserInput($event)">
         </dk-input>
     `
@@ -40,9 +42,14 @@ export class ValidatedInput {
      */
     @Output() validInput = new EventEmitter<String>();
 
+    valid : boolean = true;
+
     onUserInput(newValue : string) {
         if (this.validator(newValue)) {
+            this.valid = true;
             this.validInput.emit(newValue);
+        } else {
+            this.valid = false;
         }
     }
 }

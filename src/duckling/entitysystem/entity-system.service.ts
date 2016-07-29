@@ -30,6 +30,17 @@ export class EntitySystemService {
     }
 
     /**
+     * Retrieve a key for given entity.
+     * @param  entity Entity to find the key for
+     * @return Key used to identify entity
+     */
+    getKey(entity : Entity) : string {
+        return this._system.findKey((entity1) => {
+            return entity === entity1;
+        });
+    }
+
+    /**
      * Update the entity. Can be used to create new entities.
      * @param  key    Key of the entity to update.
      * @param  entity Entity that will be stored with the key.

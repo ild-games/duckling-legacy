@@ -12,15 +12,17 @@ import {
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {StoreService} from '../state';
-import {Canvas} from './canvas.component';
-import {EntityDrawerService} from './drawing/entity-drawer.service';
-import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
-import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
+import {AssetService} from '../project';
 import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
 import {Vector} from '../math';
 import {CopyPasteService, SelectionService} from '../selection';
+
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
+import {Canvas} from './canvas.component';
+import {EntityDrawerService} from './drawing/entity-drawer.service';
+import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
+import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
 
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
@@ -107,6 +109,7 @@ export class MapEditorComponent implements AfterViewInit {
                 private _selection : SelectionService,
                 private _copyPaste : CopyPasteService,
                 private _toolService : ToolService,
+                private _assetService : AssetService,
                 private _entityDrawerService : EntityDrawerService) {
         this.tool = this._toolService.defaultTool;
     }
@@ -120,6 +123,12 @@ export class MapEditorComponent implements AfterViewInit {
                 this._entitiesDisplayObject = stage;
                 this.canvasDisplayObject = this.buildCanvasDisplayObject();
             });
+
+        this._assetService.assetLoaded.subscribe(() => {
+            let stage = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
+            this._entitiesDisplayObject = stage;
+            this.canvasDisplayObject = this.buildCanvasDisplayObject();
+        });
     }
 
     copyEntity() {

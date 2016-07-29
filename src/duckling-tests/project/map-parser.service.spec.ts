@@ -1,7 +1,9 @@
 import "reflect-metadata";
 
-import {createEntitySystem} from '../../duckling/entitysystem';
-import {RawMapFile, MapParserService} from '../../duckling/project';
+import {createEntitySystem, mergeEntityAction} from '../../duckling/entitysystem';
+import {RawMapFile, MapParserService, AssetService} from '../../duckling/project';
+import {StoreService} from '../../duckling/state';
+import {mainReducer} from '../../duckling/main.reducer';
 import {immutableAssign} from '../../duckling/util';
 
 var emptyMap : RawMapFile = {
@@ -29,7 +31,12 @@ var entityB = {
 var basicMap : RawMapFile = {
     key : "aBasicMap",
     entities : ["ea", "eb", "ec"],
-    assets : [],
+    assets : [
+        {
+            type: "TexturePNG",
+            key: "texture/test"
+        }
+    ],
     systems : {
         sa : {
             components : {
@@ -53,7 +60,8 @@ var basicMap : RawMapFile = {
 
 describe("MapLoaderService", function() {
     beforeEach(function() {
-        this.parser = new MapParserService();
+        var storeService = new StoreService(mainReducer, mergeEntityAction);
+        this.parser = new MapParserService(new AssetService(storeService));
     });
 
     it("turns an empty map into an empty system", function() {

@@ -25,3 +25,18 @@ export var defaultDrawableAttribute : DrawableAttribute = immutableAssign({}, {t
 export function getDrawableAttribute(entity : Entity) : DrawableAttribute {
     return <DrawableAttribute>entity[DRAWABLE_KEY];
 }
+
+/**
+ * Given two entities with drawable attribute, provide a sorting algorithm
+ */
+export function drawableAttributeSorter(entity1 : Entity, entity2 : Entity) {
+    let drawable1 : DrawableAttribute = getDrawableAttribute(entity1);
+    let drawable2 : DrawableAttribute = getDrawableAttribute(entity2);
+    if (drawable1.topDrawable.renderPriority > drawable2.topDrawable.renderPriority) {
+        return 1;
+    }
+    if (drawable1.topDrawable.renderPriority < drawable2.topDrawable.renderPriority) {
+        return -1;
+    }
+    return 0;
+}

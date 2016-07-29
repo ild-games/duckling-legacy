@@ -17,26 +17,16 @@ import {NumberInput} from './number-input.component';
     directives: [NumberInput],
     styleUrls: ['./duckling/controls/vector-input.component.css'],
     template:`
-        <table class="field-table">
-            <tr>
-                <td>
-                    <dk-number-input
-                        [label]="xLabel"
-                        [value]="value.x"
-                        (validInput)="onXInput($event)">
-                    </dk-number-input>
-                </td>
-                <td class="spacer">
-                </td>
-                <td>
-                    <dk-number-input
-                        [label]="yLabel"
-                        [value]="value.y"
-                        (validInput)="onYInput($event)">
-                    </dk-number-input>
-                </td>
-            </tr>
-        </table>
+        <dk-number-input
+            [label]="xLabel"
+            [value]="value.x"
+            (validInput)="onXInput($event)">
+        </dk-number-input>
+        <dk-number-input
+            [label]="yLabel"
+            [value]="value.y"
+            (validInput)="onYInput($event)">
+        </dk-number-input>
     `
 })
 export class VectorInput {

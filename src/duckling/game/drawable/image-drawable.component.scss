@@ -1,0 +1,29 @@
+@import '../../../../node_modules/@angular2-material/core/style/core.css';
+@import '../../colors';
+@import '../../forms';
+
+.texture-key {
+    display: block;
+}
+
+.partial-image {
+    padding: 0;
+    margin-top: $spacer-unit;
+
+    .header {
+        padding: 2px 8px;
+        background-color: $header-color;
+        height: 32px;
+        line-height: 32px;
+        display: flex;
+        align-items: center;
+
+        md-checkbox {
+            display: inline-block;
+        }
+    }
+
+    .body {
+        padding: 8px;
+    }
+}

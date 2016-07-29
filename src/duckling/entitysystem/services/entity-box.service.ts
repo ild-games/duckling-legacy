@@ -1,18 +1,24 @@
 import {Component, Injectable} from '@angular/core';
+
 import {BaseAttributeService} from '../base-attribute-service';
 import {AttributeKey, Entity} from '../entity';
+import {AssetService} from '../../project';
 import {Box2, boxUnion} from '../../math';
 
 /**
  * Function type that provides a bounding box for an attribute.
  */
-export type AttributeBoundingBox = (entity : Entity) => any;
+export type AttributeBoundingBox = (entity : Entity, assetService? : AssetService) => any;
 
 /**
  * The EntityBoxService is used to create boudning boxes for attributes and entitites.
  */
 @Injectable()
 export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox> {
+    constructor(private _asset : AssetService) {
+        super();
+    }
+
     /**
      * Get the component class for the attribute.
      * @param  key The key of the attribute the component will be retrieved for.
@@ -21,7 +27,7 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
     getAttributeBox(key : AttributeKey, entity : Entity) : any {
         var getBox = this.getImplementation(key);
         if (getBox) {
-            return getBox(entity);
+            return getBox(entity, this._asset);
         }
         return null;
     }

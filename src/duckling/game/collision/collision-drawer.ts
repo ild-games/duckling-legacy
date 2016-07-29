@@ -1,9 +1,12 @@
 import {Graphics} from 'pixi.js';
 
+import {drawRectangle, drawX} from '../../canvas/drawing/util';
 import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
+import {AssetService} from '../../project';
+
 import {getCollision} from './collision-attribute';
-import {drawRectangle, drawX} from '../../canvas/drawing/util';
+
 
 const blue = 0x00ccff;
 
