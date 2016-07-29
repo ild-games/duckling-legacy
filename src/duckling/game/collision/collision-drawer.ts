@@ -15,7 +15,7 @@ const blue = 0x00ccff;
  * @param  entity The entity the component belongs to.
  * @return A DisplayObject representing the collision component.
  */
-export function drawCollision(entity : Entity, assetService : AssetService) {
+export function drawCollision(entity : Entity) {
     var positionAttribute = getPosition(entity);
     var collisionAttribute = getCollision(entity);
 

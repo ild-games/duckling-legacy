@@ -10,7 +10,7 @@ import {RenderPriorityService} from './render-priority.service';
 /**
  * Function type used to draw attributes.
  */
-export type AttributeDrawer = (entity : Entity, oldDrawable? : any) => any;
+export type AttributeDrawer = (entity : Entity, assetService? : any) => any;
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class

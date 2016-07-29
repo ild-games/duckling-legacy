@@ -8,7 +8,7 @@ import {Box2, boxUnion} from '../../math';
 /**
  * Function type that provides a bounding box for an attribute.
  */
-export type AttributeBoundingBox = (entity : Entity) => any;
+export type AttributeBoundingBox = (entity : Entity, assetService? : AssetService) => any;
 
 /**
  * The EntityBoxService is used to create boudning boxes for attributes and entitites.
