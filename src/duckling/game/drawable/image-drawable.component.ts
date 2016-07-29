@@ -7,9 +7,8 @@ import {
     ChangeDetectorRef
 } from '@angular/core';
 import {MdButton} from '@angular2-material/button';
-import {MdCheckbox} from '@angular2-material/checkbox';
 
-import {FormLabel, InputComponent, NumberInput, Box2Component} from '../../controls';
+import {FormLabel, InputComponent, NumberInput, Box2Component, CheckboxComponent} from '../../controls';
 import {immutableAssign, DialogService, PathService} from '../../util';
 import {Box2} from '../../math';
 import {ProjectService, AssetService} from '../../project';
@@ -25,7 +24,7 @@ import {ImageDrawable} from './image-drawable';
         MdButton,
         NumberInput,
         InputComponent,
-        MdCheckbox,
+        CheckboxComponent,
         Box2Component
     ],
     styleUrls: ['./duckling/game/drawable/image-drawable.component.css'],
@@ -45,11 +44,11 @@ import {ImageDrawable} from './image-drawable';
 
         <md-card class="partial-image">
             <div class="header md-elevation-z3">
-                <md-checkbox
+                <dk-checkbox
                     [checked]="!imageDrawable.isWholeImage"
-                    (change)="onPartialImageChanged($event.checked)">
-                    Partial Image?
-                </md-checkbox>
+                    text="Partial Image?"
+                    (input)="onPartialImageChanged($event)">
+                </dk-checkbox>
             </div>
             <dk-box2-component
                 *ngIf="!imageDrawable.isWholeImage"
