@@ -35,13 +35,9 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
         return null;
     }
 
-    var container = new Container();
-    container.addChild(drawable);
-    drawable.updateTransform();
-    container.addChild(drawDrawableBounds(drawable.getBounds()));
-    container.position.x = positionAttribute.position.x;
-    container.position.y = positionAttribute.position.y;
-    return container;
+    drawable.position.x = positionAttribute.position.x;
+    drawable.position.y = positionAttribute.position.y;
+    return drawable;
 }
 
 function drawDrawable(drawable : Drawable, assetService : AssetService) : DisplayObject {
