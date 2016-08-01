@@ -50,12 +50,13 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
             <dk-accordian
                 [elements]="animatedDrawable?.frames"
                 titleProperty="key"
+                keyProperty="key"
                 (elementDeleted)="onChildDrawablesChanged($event)"
                 (elementMovedDown)="onChildDrawablesChanged($event)"
                 (elementMovedUp)="onChildDrawablesChanged($event)">
-                <template let-drawable="element" let-index="index">
+                <template let-element="$element" let-index="$index">
                     <dk-drawable-component
-                        [drawable]="drawable"
+                        [drawable]="element"
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable-component>
                 </template>
@@ -63,18 +64,12 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
         </md-card>
     `
 })
-export class AnimatedDrawableComponent implements AfterViewInit {
+export class AnimatedDrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
 
     @Input() animatedDrawable : AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
-
-    ngAfterViewInit() {
-        setInterval(() => {
-            this.nextFrame();
-        }, this.animatedDrawable.duration * 1000)
-    }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let head = this.animatedDrawable.frames.slice(0, index);
@@ -110,13 +105,5 @@ export class AnimatedDrawableComponent implements AfterViewInit {
             }
         }
         return ++lastKey;
-    }
-
-    nextFrame() {
-        this.animatedDrawable.curFrame++;
-        if (this.animatedDrawable.curFrame >= this.animatedDrawable.frames.length) {
-            this.animatedDrawable.curFrame = 0;
-        }
-        this.drawableChanged.emit(this.animatedDrawable);
     }
 }

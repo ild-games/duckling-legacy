@@ -1,13 +1,13 @@
 import {ReflectiveInjector} from '@angular/core';
 
-import {Texture, Sprite, Graphics, Container, DisplayObject} from 'pixi.js';
+import {Texture, Sprite, Graphics, DisplayObject, Container} from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
 import {AssetService} from '../../project';
 import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
-import {colorToHex, drawEllipse, drawRectangle} from '../../canvas/drawing';
+import {colorToHex, drawEllipse, drawRectangle, Animation, DrawnConstruct, isAnimation} from '../../canvas/drawing';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
@@ -24,56 +24,43 @@ import {Rectangle} from './rectangle';
  * @param  entity The entity with the drawable attribute
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DisplayObject {
-    var positionAttribute = getPosition(entity);
-    var drawableAttribute = getDrawableAttribute(entity);
+export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct[] {
+    let positionAttribute = getPosition(entity);
+    let drawableAttribute = getDrawableAttribute(entity);
     if (!positionAttribute || !drawableAttribute.topDrawable) {
-        return null;
+        return [];
     }
 
-    var drawable = drawDrawable(drawableAttribute.topDrawable, assetService);
-    if (!drawable) {
-        return null;
-    }
+    let drawableParts = drawDrawable(drawableAttribute.topDrawable, assetService);
+    setNonInteractive(drawableParts);
+    setPosition(drawableParts, positionAttribute.position);
 
-    drawable.position.x = positionAttribute.position.x;
-    drawable.position.y = positionAttribute.position.y;
-    return drawable;
+    return drawableParts;
 }
 
-function drawDrawable(drawable : Drawable, assetService : AssetService) : DisplayObject {
+function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct[] {
     if (drawable.inactive) {
-        return null;
+        return [];
     }
 
-    let drawableContainer = new Container();
+    let drawnObjects : DrawnConstruct[] = [];
     let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
     switch (drawableType) {
         case DrawableType.Shape:
-            drawableContainer.addChild(drawShapeDrawable(drawable as ShapeDrawable));
+            drawnObjects.push(drawShapeDrawable(drawable as ShapeDrawable));
             break;
         case DrawableType.Container:
-            drawableContainer.addChild(drawContainerDrawable(drawable as ContainerDrawable, assetService));
+            drawnObjects = drawnObjects.concat(drawContainerDrawable(drawable as ContainerDrawable, assetService));
             break;
         case DrawableType.Image:
-            drawableContainer.addChild(drawImageDrawable(drawable as ImageDrawable, assetService));
+            drawnObjects.push(drawImageDrawable(drawable as ImageDrawable, assetService));
             break;
         case DrawableType.Animated:
-            drawableContainer.addChild(drawAnimatedDrawable(drawable as AnimatedDrawable, assetService));
+            drawnObjects.push(drawAnimatedDrawable(drawable as AnimatedDrawable, assetService));
             break;
     }
-    if (drawableContainer.width === 0 && drawableContainer.height === 0) {
-        drawableContainer.interactiveChildren = false;
-    }
-    applyDrawableProperties(drawable, drawableContainer);
-    return drawableContainer;
-}
-
-function drawDrawableBounds(bounds: PIXI.Rectangle) : DisplayObject {
-    var graphics = new Graphics();
-    graphics.lineStyle(1, 0x000000);
-    drawRectangle({x: 0, y: 0}, {x: bounds.width, y: bounds.height}, graphics);
-    return graphics;
+    applyDrawableProperties(drawable, drawnObjects);
+    return drawnObjects;
 }
 
 function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
@@ -96,27 +83,39 @@ function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
     return graphics;
 }
 
-function drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : DisplayObject {
-    if (!containerDrawable.drawables) {
-        return new Container();
+function drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : DrawnConstruct[] {
+    if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
+        return [];
     }
 
-    let container = new Container();
+    let containedDrawnConstructs : DrawnConstruct[] = []
     for (let drawable of containerDrawable.drawables) {
-        let childDrawable = drawDrawable(drawable, assetService);
-        if (childDrawable) {
-            container.addChild(childDrawable);
-        }
+        containedDrawnConstructs = containedDrawnConstructs.concat(drawDrawable(drawable, assetService));
     }
-    return container;
+    return containedDrawnConstructs;
 }
 
-function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : DisplayObject {
-    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0 || isNaN(animatedDrawable.curFrame)) {
-        return new DisplayObject();
+function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : Animation {
+    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
+        return {
+            duration: 0,
+            frames: []
+        }
     }
 
-    return drawDrawable(animatedDrawable.frames[animatedDrawable.curFrame], assetService);
+    let framesDisplayObjects : DisplayObject[] = [];
+    for (let frame of animatedDrawable.frames) {
+        let drawnFramePieces = drawDrawable(frame, assetService) as DisplayObject[];
+        let drawnFrame = new Container();
+        for (let drawnFramePiece of drawnFramePieces) {
+            drawnFrame.addChild(drawnFramePiece);
+        }
+        framesDisplayObjects.push(drawnFrame);
+    }
+    return {
+        duration: animatedDrawable.duration,
+        frames: framesDisplayObjects
+    }
 }
 
 function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
@@ -141,11 +140,48 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
     let sprite = new Sprite(texture);
     sprite.x = -sprite.width / 2;
     sprite.y = -sprite.height / 2;
-    return sprite;
+    let container = new Container();
+    container.addChild(sprite);
+    return container;
 }
 
-function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DisplayObject) {
-    drawableDisplayObject.scale.x = drawable.scale.x;
-    drawableDisplayObject.scale.y = drawable.scale.y;
-    drawableDisplayObject.rotation = degreesToRadians(drawable.rotation);
+function applyDrawableProperties(drawable : Drawable, drawableDisplayObjects : DrawnConstruct[]) {
+    function applyDisplayObjectProperties(displayObject : DisplayObject) {
+        displayObject.scale.x *= drawable.scale.x;
+        displayObject.scale.y *= drawable.scale.y;
+        displayObject.rotation += degreesToRadians(drawable.rotation);
+    }
+
+    for (let drawableDisplayObject of drawableDisplayObjects) {
+        if (isAnimation(drawableDisplayObject)) {
+            (drawableDisplayObject as Animation).frames.forEach(frame => applyDisplayObjectProperties(frame));
+        } else {
+            applyDisplayObjectProperties(drawableDisplayObject as DisplayObject);
+        }
+    }
+}
+
+function setNonInteractive(drawables : DrawnConstruct[]) {
+    for (let drawable of drawables) {
+        if (isAnimation(drawable)) {
+            (drawable as Animation).frames.forEach(frame => frame.interactiveChildren = false);
+        } else {
+            (drawable as DisplayObject).interactiveChildren = false;
+        }
+    }
+}
+
+function setPosition(drawables : DrawnConstruct[], position : Vector) {
+    function setDisplayObjectPosition(displayObject : DisplayObject) {
+        displayObject.position.x += position.x;
+        displayObject.position.y += position.y;
+    }
+
+    for (let drawable of drawables) {
+        if (isAnimation(drawable)) {
+            (drawable as Animation).frames.forEach(frame => setDisplayObjectPosition(frame));
+        } else {
+            setDisplayObjectPosition(drawable as DisplayObject);
+        }
+    }
 }

@@ -19,7 +19,7 @@ import {CopyPasteService, SelectionService} from '../selection';
 
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {Canvas} from './canvas.component';
-import {EntityDrawerService} from './drawing/entity-drawer.service';
+import {EntityDrawerService, DrawnConstruct, Animation, isAnimation} from './drawing';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
 
@@ -101,6 +101,9 @@ export class MapEditorComponent implements AfterViewInit {
     private _canvasBackgroundDisplayObject : DisplayObject;
     private _canvasBorderDisplayObject : DisplayObject;
     private _gridDisplayObject : DisplayObject;
+    private _frameRate = 33.33; // 30 fps
+    private _totalMillis = 0;
+    private _lastDrawnConstructs : DrawnConstruct[] = [];
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
 
@@ -118,16 +121,49 @@ export class MapEditorComponent implements AfterViewInit {
 
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
-            .subscribe((stage) => {
-                this._entitiesDisplayObject = stage;
-                this.canvasDisplayObject = this.buildCanvasDisplayObject();
+            .subscribe((drawnConstructs) => {
+                this._lastDrawnConstructs = drawnConstructs;
+                this.createEntitiesDisplayObject(drawnConstructs)
             });
 
         this._assetService.assetLoaded.subscribe(() => {
-            let stage = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDisplayObject = stage;
-            this.canvasDisplayObject = this.buildCanvasDisplayObject();
+            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
+            this._lastDrawnConstructs = drawnConstructs;
+            this.createEntitiesDisplayObject(drawnConstructs)
         });
+
+        setInterval(() => this.drawFrame(), this._frameRate);
+    }
+
+    drawFrame() {
+        this._totalMillis += this._frameRate;
+        this.createEntitiesDisplayObject(this._lastDrawnConstructs);
+    }
+
+    private createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
+        let entitiesDrawnContainer = new Container();
+        for (let entitiesDrawnConstruct of entitiesDrawnConstructs) {
+            if (isAnimation(entitiesDrawnConstruct)) {
+                entitiesDrawnContainer.addChild(this.determineAnimationDisplayObject(entitiesDrawnConstruct as Animation));
+            } else {
+                entitiesDrawnContainer.addChild(this._entitiesDisplayObject = entitiesDrawnConstruct as DisplayObject);
+            }
+        }
+        entitiesDrawnContainer.interactiveChildren = false;
+        this._entitiesDisplayObject = entitiesDrawnContainer;
+        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+    }
+
+    private determineAnimationDisplayObject(animation : Animation) : DisplayObject {
+        let curFrame = 0;
+        if (animation.duration !== 0) {
+            curFrame = Math.trunc(this._totalMillis / animation.duration) % animation.frames.length;
+        }
+
+        if (animation.frames[curFrame]) {
+            return animation.frames[curFrame];
+        }
+        return new DisplayObject();
     }
 
     copyEntity() {
