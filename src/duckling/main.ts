@@ -30,7 +30,7 @@ import {EntityCreatorTool, ToolService} from './canvas/tools';
 import {SelectionService, CopyPasteService} from './selection';
 import {Action, StoreService} from './state';
 import {mainReducer} from './main.reducer';
-import {projectReducer, ProjectService, MapParserService, AssetService} from './project';
+import {projectReducer, ProjectService, MapParserService, AssetService, RequiredAssetService} from './project';
 import {bootstrapGameComponents} from './game/index';
 import {ProjectSerializerService} from './splash/project-serializer.service';
 import {DialogService} from './util/dialog.service';
@@ -46,6 +46,7 @@ remote.getCurrentWindow().removeAllListeners();
 let storeService = new StoreService(mainReducer, mergeEntityAction);
 let entitySystemService = new EntitySystemService(storeService);
 let assetService = new AssetService(storeService);
+let requiredAssetService = new RequiredAssetService();
 
 // Setup window defaults
 let electronWindowService = new ElectronWindowService();
@@ -53,7 +54,7 @@ let electronWindowService = new ElectronWindowService();
 // Bootstrap game specific behavior
 let attributeComponentService = new AttributeComponentService();
 let anconaSFMLRenderPriorityService = new AnconaSFMLRenderPriorityService();
-let entityDrawerService = new EntityDrawerService(assetService, anconaSFMLRenderPriorityService);
+let entityDrawerService = new EntityDrawerService(assetService, requiredAssetService, anconaSFMLRenderPriorityService);
 let entityBoxService = new EntityBoxService(assetService);
 let attributeDefaultService = new AttributeDefaultService();
 let entityPositionSetService = new EntityPositionSetService(entitySystemService);
@@ -68,7 +69,8 @@ bootstrapGameComponents({
     entityDrawerService,
     entityBoxService,
     attributeDefaultService,
-    entityPositionSetService
+    entityPositionSetService,
+    requiredAssetService
 });
 
 function provideInstance(instance : any, base : Type) {
@@ -92,6 +94,7 @@ function provideClass(implementationClass : Type, base : Type) {
         provideInstance(attributeComponentService, AttributeComponentService),
         provideInstance(entityDrawerService, EntityDrawerService),
         provideInstance(assetService, AssetService),
+        provideInstance(requiredAssetService, RequiredAssetService),
         provideInstance(entityBoxService, EntityBoxService),
         provideInstance(attributeDefaultService, AttributeDefaultService),
         provideInstance(entityPositionSetService, EntityPositionSetService),

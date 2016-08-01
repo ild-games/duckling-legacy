@@ -6,6 +6,7 @@ import {
 } from '../entitysystem';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
+import {RequiredAssetService} from '../project';
 
 import {defaultPosition, POSITION_KEY} from './position/position-attribute';
 import {setPosition} from './position/set-position';
@@ -25,6 +26,8 @@ import {defaultDrawableAttribute, DRAWABLE_KEY} from './drawable/drawable-attrib
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
 import {drawDrawableAttribute} from './drawable/drawable-drawer';
 import {drawableBoundingBox} from './drawable/drawable-bounding-box';
+import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
+
 
 /**
  * Initialize the Services used by duckling to interact with the attribute implementations.
@@ -34,8 +37,8 @@ export function bootstrapGameComponents(services: {
         entityPositionSetService : EntityPositionSetService,
         entityBoxService: EntityBoxService,
         attributeComponentService: AttributeComponentService,
-        entityDrawerService: EntityDrawerService}) {
-
+        entityDrawerService: EntityDrawerService,
+        requiredAssetService  : RequiredAssetService}) {
     //Bootstrap Position
     services.attributeComponentService.register(POSITION_KEY, PositionComponent);
     services.attributeDefaultService.register(POSITION_KEY, {createByDefault: true, default: defaultPosition});
@@ -60,4 +63,7 @@ export function bootstrapGameComponents(services: {
     //Bootstrap Action
     services.attributeComponentService.register(ACTION_KEY, ActionComponent);
     services.attributeDefaultService.register(ACTION_KEY, {createByDefault: false, default: defaultAction});
+
+    //Bootstrap Required Assets
+    services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
 }

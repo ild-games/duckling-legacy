@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {createEntitySystem, Entity, EntitySystem, EntityKey} from '../entitysystem';
 
 import {Asset, AssetService} from './asset.service'
+import {RequiredAssetService} from './required-asset.service'
 
 /**
  * Interface describing the structure of an attribute in the map file.
@@ -28,7 +29,8 @@ export interface RawMapFile {
 
 @Injectable()
 export class MapParserService {
-    constructor(private _assets : AssetService) {
+    constructor(private _assets : AssetService,
+                private _requiredAssets : RequiredAssetService) {
     }
 
     /**
@@ -85,9 +87,11 @@ export class MapParserService {
         });
 
         let assetList : Asset[] = [];
-        for (let assetKey in this._assets.assets) {
-            assetList.push(this._assets.assets[assetKey]);
+        let assetMap = this._requiredAssets.assetsForEntitySystem(system);
+        for (let assetKey in assetMap) {
+            assetList.push(assetMap[assetKey]);
         }
+
         return {
             key : mapKey,
             systems : systems,

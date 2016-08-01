@@ -9,7 +9,8 @@ export type AssetType = "TexturePNG" | "FontTTF" | "TextureJPEG";
 export interface Asset {
     type : AssetType,
     key : string
-}
+};
+export type AssetMap = {[key: string] : Asset};
 
 @Injectable()
 export class AssetService {
@@ -22,26 +23,32 @@ export class AssetService {
     add(asset : Asset) {
         if (!this._assets[asset.key]) {
             this._assets[asset.key] = asset;
+            loader
+                .add(asset.key, this._store.getState().project.home + "/resources/" + asset.key + ".png")
+                .after(() => this.onAssetLoaded(asset))
+                .load();
         }
     }
 
     get(key : string) : any {
         if (loader.resources[key]) {
             return loader.resources[key].texture;
-        } else {
-            loader
-                .add(key, this._store.getState().project.home + "/resources/" + key + ".png")
-                .after(() => this.onAssetLoaded())
-                .load();
-            return null;
         }
+        return null;
+    }
+
+    isLoaded(key : string) : boolean {
+        if (loader.resources[key]) {
+            return true;
+        }
+        return false;
     }
 
     get assets() : {[key : string] : Asset} {
         return this._assets;
     }
 
-    onAssetLoaded() {
+    onAssetLoaded(asset : Asset) {
         this.assetLoaded.next(true);
     }
 }
