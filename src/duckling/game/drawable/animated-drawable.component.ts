@@ -32,7 +32,7 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
         forwardRef(() => DrawableComponent)],
     template: `
         <dk-number-input
-            label="Duration"
+            label="Duration (seconds)"
             [value]="animatedDrawable.duration"
             (validInput)="onDurationChanged($event)">
         </dk-number-input>

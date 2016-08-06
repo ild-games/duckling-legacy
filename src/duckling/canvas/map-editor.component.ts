@@ -160,7 +160,7 @@ export class MapEditorComponent implements AfterViewInit {
     private determineAnimationDisplayObject(animation : Animation) : DisplayObject {
         let curFrame = 0;
         if (animation.duration !== 0) {
-            curFrame = Math.trunc(this._totalMillis / animation.duration) % animation.frames.length;
+            curFrame = Math.trunc(this._totalMillis / (animation.duration * 1000)) % animation.frames.length;
         }
 
         if (animation.frames[curFrame]) {
