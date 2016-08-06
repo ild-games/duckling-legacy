@@ -150,6 +150,8 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObjects : D
         displayObject.scale.x *= drawable.scale.x;
         displayObject.scale.y *= drawable.scale.y;
         displayObject.rotation += degreesToRadians(drawable.rotation);
+        displayObject.position.x += drawable.positionOffset.x;
+        displayObject.position.y += drawable.positionOffset.y;
     }
 
     for (let drawableDisplayObject of drawableDisplayObjects) {
