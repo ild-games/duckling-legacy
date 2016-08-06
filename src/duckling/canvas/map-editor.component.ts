@@ -122,20 +122,23 @@ export class MapEditorComponent implements AfterViewInit {
         this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe((drawnConstructs) => {
-                this._lastDrawnConstructs = drawnConstructs;
-                this.createEntitiesDisplayObject(drawnConstructs)
+                this.entitiesDrawnConstructsChanged(drawnConstructs);
             });
 
         this._assetService.assetLoaded.subscribe(() => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._lastDrawnConstructs = drawnConstructs;
-            this.createEntitiesDisplayObject(drawnConstructs)
+            this.entitiesDrawnConstructsChanged(drawnConstructs);
         });
 
         setInterval(() => this.drawFrame(), this._frameRate);
     }
 
-    drawFrame() {
+    private entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {
+        this._lastDrawnConstructs = newDrawnConstructs;
+        this.createEntitiesDisplayObject(newDrawnConstructs)
+    }
+
+    private drawFrame() {
         this._totalMillis += this._frameRate;
         this.createEntitiesDisplayObject(this._lastDrawnConstructs);
     }

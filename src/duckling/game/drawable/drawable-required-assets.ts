@@ -7,6 +7,11 @@ import {ImageDrawable} from './image-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {AnimatedDrawable} from './animated-drawable';
 
+/**
+ * Gets the required assets for a given entity's DrawableAttribute
+ * @param  entity Entity to get the assets for
+ * @return Map of asset keys to Assets for the given entity's DrawableAttribute
+ */
 export function entityRequiredDrawableAssets(entity : Entity) : AssetMap {
     let drawableAttribute = getDrawableAttribute(entity);
     if (!drawableAttribute.topDrawable) {

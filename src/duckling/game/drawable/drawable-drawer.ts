@@ -163,6 +163,12 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObjects : D
     }
 }
 
+/**
+ * pixi.js considers Container's children to be interactive (clickable, draggable, etc. via
+ * pixi operations). Since we handle the interactive operations, we need to set the children as
+ * non-interactive so pixi doesn't throw benign js errors all the time.
+ * @param  drawables List of DrawnConstructs to make non-interactive
+ */
 function setNonInteractive(drawables : DrawnConstruct[]) {
     for (let drawable of drawables) {
         if (isAnimation(drawable)) {

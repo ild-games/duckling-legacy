@@ -11,7 +11,7 @@ import {Animation, DrawnConstruct} from './drawn-construct';
 /**
  * Function type used to draw attributes.
  */
-export type AttributeDrawer = (entity : Entity, assetService? : any) => DrawnConstruct[];
+export type AttributeDrawer = (entity : Entity, assetService? : any) => DrawnConstruct[] | DrawnConstruct;
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class
@@ -31,7 +31,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
      * @param attribute Attribute that needs to be drawn.
      * @return A DisplayObject for the entity.
      */
-    drawAttribute(key : AttributeKey, entity : Entity) : DrawnConstruct[] {
+    drawAttribute(key : AttributeKey, entity : Entity) : DrawnConstruct[] | DrawnConstruct {
         let drawer = this.getImplementation(key);
         if (drawer) {
             let requiredAssets = this._requiredAssets.assetsForAttribute(key, entity);
@@ -60,7 +60,11 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
         for (let key in entity) {
             let drawablePieces = this.drawAttribute(key, entity);
             if (drawablePieces) {
-                drawnConstructs = drawnConstructs.concat(drawablePieces);
+                if (Array.isArray(drawablePieces)) {
+                    drawnConstructs = drawnConstructs.concat(drawablePieces as DrawnConstruct[]);
+                } else {
+                    drawnConstructs.push(drawablePieces as DrawnConstruct);
+                }
             }
         }
         return drawnConstructs;
