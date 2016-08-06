@@ -72,17 +72,17 @@ export class ContainerDrawableComponent {
 
     onNewDrawableClicked(pickedType : DrawableType) {
         var defaultDrawable = getDefaultDrawable(pickedType);
-        var newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType)});
+        var newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType, defaultDrawable.key)});
         this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
             drawables: this.containerDrawable.drawables.concat(newDrawable)
         }));
     }
 
-    findNextUniqueKey(pickedType : DrawableType) {
-        var lastKey = 0;
+    findNextUniqueKey(pickedType : DrawableType, defaultKey : string) {
+        let lastKey = 0;
         for (let drawable of this.containerDrawable.drawables) {
             if (drawable.__cpp_type === drawableTypeToCppType(pickedType)) {
-                var keyNum : number = +drawable.key.substr(drawable.key.length - 1, drawable.key.length);
+                let keyNum : number = +drawable.key.split(defaultKey)[1];
                 if (keyNum > lastKey) {
                     lastKey = keyNum;
                 }

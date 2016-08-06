@@ -24,6 +24,13 @@ import {Icon} from './icon.component';
             <div class="right-buttons">
                 <button
                     md-button
+                    *ngIf="clone"
+                    class="display-on-hover"
+                    (click)="onCloned(false, $event)">
+                    <dk-icon iconClass="clone"></dk-icon>
+                </button>
+                <button
+                    md-button
                     *ngIf="!first"
                     class="display-on-hover"
                     [disableRipple]=true
@@ -65,8 +72,10 @@ export class AccordianElement {
     @Input() first : boolean;
     @Input() last : boolean;
     @Input() opened = false;
+    @Input() clone = false;
     @Output() deleted = new EventEmitter<boolean>();
     @Output() moved = new EventEmitter<boolean>();
+    @Output() cloned = new EventEmitter();
     @Output() toggled = new EventEmitter<boolean>();
 
     onToggle(opened : boolean) {
@@ -82,5 +91,10 @@ export class AccordianElement {
     onMoved(down : boolean, event : MouseEvent) {
         event.stopPropagation();
         this.moved.emit(down);
+    }
+
+    onCloned() {
+        event.stopPropagation();
+        this.cloned.emit(true);
     }
 }
