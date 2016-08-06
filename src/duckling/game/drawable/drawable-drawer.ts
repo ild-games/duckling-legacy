@@ -106,11 +106,15 @@ function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService 
     let framesDisplayObjects : DisplayObject[] = [];
     for (let frame of animatedDrawable.frames) {
         let drawnFramePieces = drawDrawable(frame, assetService) as DisplayObject[];
-        let drawnFrame = new Container();
-        for (let drawnFramePiece of drawnFramePieces) {
-            drawnFrame.addChild(drawnFramePiece);
+        if (drawnFramePieces.length === 1) {
+            framesDisplayObjects.push(drawnFramePieces[0]);
+        } else {
+            let drawnFrame = new Container();
+            for (let drawnFramePiece of drawnFramePieces) {
+                drawnFrame.addChild(drawnFramePiece);
+            }
+            framesDisplayObjects.push(drawnFrame);
         }
-        framesDisplayObjects.push(drawnFrame);
     }
     return {
         duration: animatedDrawable.duration,
