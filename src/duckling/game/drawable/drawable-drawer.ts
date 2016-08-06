@@ -7,7 +7,16 @@ import {AssetService} from '../../project';
 import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
-import {colorToHex, drawEllipse, drawRectangle, Animation, DrawnConstruct, isAnimation} from '../../canvas/drawing';
+import {
+    colorToHex,
+    drawEllipse,
+    drawRectangle,
+    AnimationConstruct,
+    DrawnConstruct,
+    isAnimationConstruct,
+    isContainerContruct,
+    ContainerConstruct
+} from '../../canvas/drawing';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
@@ -24,43 +33,43 @@ import {Rectangle} from './rectangle';
  * @param  entity The entity with the drawable attribute
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct[] {
+export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct {
     let positionAttribute = getPosition(entity);
     let drawableAttribute = getDrawableAttribute(entity);
     if (!positionAttribute || !drawableAttribute.topDrawable) {
-        return [];
+        return null;
     }
 
-    let drawableParts = drawDrawable(drawableAttribute.topDrawable, assetService);
-    setNonInteractive(drawableParts);
-    setPosition(drawableParts, positionAttribute.position);
+    let drawable = drawDrawable(drawableAttribute.topDrawable, assetService);
+    setNonInteractive(drawable);
+    setPosition(drawable, positionAttribute.position);
 
-    return drawableParts;
+    return drawable;
 }
 
-function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct[] {
+function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
     if (drawable.inactive) {
-        return [];
+        return new DisplayObject();
     }
 
-    let drawnObjects : DrawnConstruct[] = [];
+    let drawnObject : DrawnConstruct = new DisplayObject();
     let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
     switch (drawableType) {
         case DrawableType.Shape:
-            drawnObjects.push(drawShapeDrawable(drawable as ShapeDrawable));
+            drawnObject = drawShapeDrawable(drawable as ShapeDrawable);
             break;
         case DrawableType.Container:
-            drawnObjects = drawnObjects.concat(drawContainerDrawable(drawable as ContainerDrawable, assetService));
+            drawnObject = drawContainerDrawable(drawable as ContainerDrawable, assetService);
             break;
         case DrawableType.Image:
-            drawnObjects.push(drawImageDrawable(drawable as ImageDrawable, assetService));
+            drawnObject = drawImageDrawable(drawable as ImageDrawable, assetService);
             break;
         case DrawableType.Animated:
-            drawnObjects.push(drawAnimatedDrawable(drawable as AnimatedDrawable, assetService));
+            drawnObject = drawAnimatedDrawable(drawable as AnimatedDrawable, assetService);
             break;
     }
-    applyDrawableProperties(drawable, drawnObjects);
-    return drawnObjects;
+    applyDrawableProperties(drawable, drawnObject);
+    return drawnObject;
 }
 
 function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
@@ -83,19 +92,19 @@ function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
     return graphics;
 }
 
-function drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : DrawnConstruct[] {
+function drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : ContainerConstruct {
     if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
-        return [];
+        return { childConstructs: [] };
     }
 
-    let containedDrawnConstructs : DrawnConstruct[] = []
+    let childConstructs : DrawnConstruct[] = []
     for (let drawable of containerDrawable.drawables) {
-        containedDrawnConstructs = containedDrawnConstructs.concat(drawDrawable(drawable, assetService));
+        childConstructs = childConstructs.concat(drawDrawable(drawable, assetService));
     }
-    return containedDrawnConstructs;
+    return { childConstructs: childConstructs };
 }
 
-function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : Animation {
+function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : AnimationConstruct {
     if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
         return {
             duration: 0,
@@ -103,19 +112,11 @@ function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService 
         }
     }
 
-    let framesDisplayObjects : DisplayObject[] = [];
+    let framesDisplayObjects : DrawnConstruct[] = [];
     for (let frame of animatedDrawable.frames) {
-        let drawnFramePieces = drawDrawable(frame, assetService) as DisplayObject[];
-        if (drawnFramePieces.length === 1) {
-            framesDisplayObjects.push(drawnFramePieces[0]);
-        } else {
-            let drawnFrame = new Container();
-            for (let drawnFramePiece of drawnFramePieces) {
-                drawnFrame.addChild(drawnFramePiece);
-            }
-            framesDisplayObjects.push(drawnFrame);
-        }
+        framesDisplayObjects.push(drawDrawable(frame, assetService));
     }
+
     return {
         duration: animatedDrawable.duration,
         frames: framesDisplayObjects
@@ -149,7 +150,7 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
     return container;
 }
 
-function applyDrawableProperties(drawable : Drawable, drawableDisplayObjects : DrawnConstruct[]) {
+function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
     function applyDisplayObjectProperties(displayObject : DisplayObject) {
         displayObject.scale.x *= drawable.scale.x;
         displayObject.scale.y *= drawable.scale.y;
@@ -158,12 +159,16 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObjects : D
         displayObject.position.y += drawable.positionOffset.y;
     }
 
-    for (let drawableDisplayObject of drawableDisplayObjects) {
-        if (isAnimation(drawableDisplayObject)) {
-            (drawableDisplayObject as Animation).frames.forEach(frame => applyDisplayObjectProperties(frame));
-        } else {
-            applyDisplayObjectProperties(drawableDisplayObject as DisplayObject);
+    if (isAnimationConstruct(drawableDisplayObject)) {
+        for (let frame of (drawableDisplayObject as AnimationConstruct).frames) {
+            applyDrawableProperties(drawable, frame);
         }
+    } else if (isContainerContruct(drawableDisplayObject)) {
+        for (let child of (drawableDisplayObject as ContainerConstruct).childConstructs) {
+            applyDrawableProperties(drawable, child);
+        }
+    } else {
+        applyDisplayObjectProperties(drawableDisplayObject as DisplayObject);
     }
 }
 
@@ -171,29 +176,37 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObjects : D
  * pixi.js considers Container's children to be interactive (clickable, draggable, etc. via
  * pixi operations). Since we handle the interactive operations, we need to set the children as
  * non-interactive so pixi doesn't throw benign js errors all the time.
- * @param  drawables List of DrawnConstructs to make non-interactive
+ * @param  drawableDrawnConstruct to make non-interactive
  */
-function setNonInteractive(drawables : DrawnConstruct[]) {
-    for (let drawable of drawables) {
-        if (isAnimation(drawable)) {
-            (drawable as Animation).frames.forEach(frame => frame.interactiveChildren = false);
-        } else {
-            (drawable as DisplayObject).interactiveChildren = false;
+function setNonInteractive(drawable : DrawnConstruct) {
+    if (isAnimationConstruct(drawable)) {
+        for (let frame of (drawable as AnimationConstruct).frames) {
+            setNonInteractive(frame);
         }
+    } else if (isContainerContruct(drawable)) {
+        for (let child of (drawable as ContainerConstruct).childConstructs) {
+            setNonInteractive(child);
+        }
+    } else {
+        (drawable as DisplayObject).interactiveChildren = false;
     }
 }
 
-function setPosition(drawables : DrawnConstruct[], position : Vector) {
+function setPosition(drawable : DrawnConstruct, position : Vector) {
     function setDisplayObjectPosition(displayObject : DisplayObject) {
         displayObject.position.x += position.x;
         displayObject.position.y += position.y;
     }
 
-    for (let drawable of drawables) {
-        if (isAnimation(drawable)) {
-            (drawable as Animation).frames.forEach(frame => setDisplayObjectPosition(frame));
-        } else {
-            setDisplayObjectPosition(drawable as DisplayObject);
+    if (isAnimationConstruct(drawable)) {
+        for (let frame of (drawable as AnimationConstruct).frames) {
+            setPosition(frame, position);
         }
+    } else if (isContainerContruct(drawable)) {
+        for (let child of (drawable as ContainerConstruct).childConstructs) {
+            setPosition(child, position);
+        }
+    } else {
+        setDisplayObjectPosition(drawable as DisplayObject);
     }
 }
