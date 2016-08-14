@@ -5,6 +5,7 @@ import {Container, DisplayObject} from 'pixi.js';
  * the animation along with a duration for the animation.
  */
 export type AnimationConstruct = {
+    type: "ANIMATION",
     duration: number,
     frames: DrawnConstruct[]
 };
@@ -13,6 +14,7 @@ export type AnimationConstruct = {
  * Containers contain multiple drawn elements that are manipulated as a group
  */
 export type ContainerConstruct = {
+    type: "CONTAINER",
     childConstructs: DrawnConstruct[]
 };
 
@@ -28,7 +30,7 @@ export type DrawnConstruct = AnimationConstruct | ContainerConstruct | DisplayOb
  * @return True if the DrawnConstruct is an animation, otherwise false.
  */
 export function isAnimationConstruct(object : DrawnConstruct) : boolean {
-    return object !== undefined && object.hasOwnProperty('duration') && object.hasOwnProperty('frames');
+    return object !== undefined && (object as AnimationConstruct).type === "ANIMATION";
 }
 
 /**
@@ -37,5 +39,5 @@ export function isAnimationConstruct(object : DrawnConstruct) : boolean {
  * @return True if the DrawnConstruct is a container, otherwise false.
  */
 export function isContainerContruct(object : DrawnConstruct) : boolean {
-    return object !== undefined && object.hasOwnProperty('childConstructs');
+    return object !== undefined && (object as ContainerConstruct).type === "CONTAINER";
 }

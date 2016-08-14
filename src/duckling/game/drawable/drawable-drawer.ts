@@ -94,19 +94,26 @@ function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
 
 function drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : ContainerConstruct {
     if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
-        return { childConstructs: [] };
+        return {
+            type: "CONTAINER",
+            childConstructs: []
+        };
     }
 
     let childConstructs : DrawnConstruct[] = []
     for (let drawable of containerDrawable.drawables) {
         childConstructs = childConstructs.concat(drawDrawable(drawable, assetService));
     }
-    return { childConstructs: childConstructs };
+    return {
+        type: "CONTAINER",
+        childConstructs: childConstructs
+    };
 }
 
 function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : AnimationConstruct {
     if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
         return {
+            type: "ANIMATION",
             duration: 0,
             frames: []
         }
@@ -118,6 +125,7 @@ function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService 
     }
 
     return {
+        type: "ANIMATION",
         duration: animatedDrawable.duration,
         frames: framesDisplayObjects
     }
