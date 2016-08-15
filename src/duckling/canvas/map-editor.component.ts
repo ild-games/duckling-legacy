@@ -2,13 +2,16 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    ViewChild
+    ViewChild,
+    OnDestroy
 } from '@angular/core';
 import {
     Container,
     DisplayObject,
     Graphics
 } from 'pixi.js';
+import {Subscriber} from 'rxjs';
+import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
 import {AssetService} from '../project';
@@ -66,7 +69,7 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
         </md-card>
     `
 })
-export class MapEditorComponent implements AfterViewInit {
+export class MapEditorComponent implements AfterViewInit, OnDestroy {
     /**
      * Current tool in use
      */
@@ -104,6 +107,9 @@ export class MapEditorComponent implements AfterViewInit {
     private _frameRate = 33.33; // 30 fps
     private _totalMillis = 0;
     private _lastDrawnConstructs : DrawnConstruct[] = [];
+    private _entitySystemSubscription : Subscriber<any>;
+    private _assetServiceSubscription : Subscriber<any>;
+    private _redrawInterval : Subscriber<any>;
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
 
@@ -119,18 +125,26 @@ export class MapEditorComponent implements AfterViewInit {
     ngAfterViewInit() {
         this.redrawAllDisplayObjects();
 
-        this._entitySystemService.entitySystem
+        this._entitySystemSubscription = this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe((drawnConstructs) => {
                 this.entitiesDrawnConstructsChanged(drawnConstructs);
-            });
+            }) as Subscriber<any>;
 
-        this._assetService.assetLoaded.subscribe(() => {
+        this._assetServiceSubscription = this._assetService.assetLoaded.subscribe(() => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
             this.entitiesDrawnConstructsChanged(drawnConstructs);
-        });
+        }) as Subscriber<any>;
 
-        setInterval(() => this.drawFrame(), this._frameRate);
+        this._redrawInterval = TimerObservable
+            .create(0, this._frameRate)
+            .subscribe(() => this.drawFrame()) as Subscriber<any>;
+    }
+
+    ngOnDestroy() {
+        this._entitySystemSubscription.unsubscribe();
+        this._assetServiceSubscription.unsubscribe();
+        this._redrawInterval.unsubscribe();
     }
 
     private entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {
