@@ -2,7 +2,7 @@ import {DisplayObject, Container} from 'pixi.js';
 
 import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
-import {Box2, boxUnion} from '../../math';
+import {Box2, boxUnion, EMPTY_BOX} from '../../math';
 import {AssetService} from '../../project';
 import {isAnimationConstruct, AnimationConstruct, ContainerConstruct, isContainerContruct, DrawnConstruct} from '../../canvas/drawing';
 
@@ -17,11 +17,7 @@ export function drawableBoundingBox(entity : Entity, assetService : AssetService
     let positionAttribute = getPosition(entity);
     let entityDrawnConstruct = drawDrawableAttribute(entity, assetService);
     if (!positionAttribute || !entityDrawnConstruct) {
-        return {
-            position: {x: 0, y: 0},
-            dimension: {x: 0, y: 0},
-            rotation: 0
-        };
+        return EMPTY_BOX;
     }
 
     let bounds : Box2 = getDrawnConstructBounds(entityDrawnConstruct);
@@ -57,34 +53,17 @@ function getDisplayObjectBounds(displayObject : DisplayObject) : Box2 {
 }
 
 function getContainerBounds(container : ContainerConstruct) : Box2 {
-    let entireBoundingBox = {
-        position: {x: 0, y: 0},
-        dimension: {x: 0, y: 0},
-        rotation: 0
-    };
-
-    for (let childConstruct of container.childConstructs) {
-        entireBoundingBox = boxUnion(entireBoundingBox, getDrawnConstructBounds(childConstruct));
-    }
-
-    return entireBoundingBox;
+    return getUnionedBounds(container.childConstructs);
 }
 
 function getAnimationBounds(animation : AnimationConstruct) : Box2 {
-    let bounds = {
-        position: {x: 0, y: 0},
-        dimension: {x: 0, y: 0},
-        rotation: 0
-    };
-    for (let frame of animation.frames) {
-        let frameBounds = getDrawnConstructBounds(frame);
+    return getUnionedBounds(animation.frames);
+}
 
-        if (frameBounds.dimension.x > bounds.dimension.x) {
-            bounds.dimension.x = frameBounds.dimension.x;
-        }
-        if (frameBounds.dimension.y > bounds.dimension.y) {
-            bounds.dimension.y = frameBounds.dimension.y;
-        }
+function getUnionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
+    let entireBoundingBox = EMPTY_BOX;
+    for (let construct of drawnConstructs) {
+        entireBoundingBox = boxUnion(entireBoundingBox, getDrawnConstructBounds(construct));
     }
-    return bounds;
+    return entireBoundingBox;
 }

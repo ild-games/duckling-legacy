@@ -10,6 +10,15 @@ export interface Box2 {
 }
 
 /**
+ * An empty Box2 for initialization
+ */
+export const EMPTY_BOX : Box2 = {
+    position: {x: 0, y: 0},
+    dimension: {x: 0, y: 0},
+    rotation: 0
+};
+
+/**
  * Check if the point is contained in the box. Returns false if box or position are null.
  * @param box      The box that may or may not contain the point.
  * @param position The position to test if it is in the box.
