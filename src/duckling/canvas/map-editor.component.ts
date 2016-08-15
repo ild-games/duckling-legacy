@@ -20,9 +20,17 @@ import {EntitySystemService} from '../entitysystem/';
 import {Vector} from '../math';
 import {CopyPasteService, SelectionService} from '../selection';
 
+import {
+    EntityDrawerService,
+    DrawnConstruct,
+    AnimationConstruct,
+    isAnimationConstruct,
+    ContainerConstruct,
+    isContainerContruct,
+    displayObjectsForDrawnConstructs
+} from './drawing';
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {Canvas} from './canvas.component';
-import {EntityDrawerService, DrawnConstruct, AnimationConstruct, isAnimationConstruct, ContainerConstruct, isContainerContruct} from './drawing';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
 
@@ -159,44 +167,13 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
 
     private createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
         let entitiesDrawnContainer = new Container();
-        for (let entitiesDrawnConstruct of entitiesDrawnConstructs) {
-            entitiesDrawnContainer.addChild(this.drawnConstructToDisplayObject(entitiesDrawnConstruct));
+        for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, this._totalMillis)) {
+            entitiesDrawnContainer.addChild(entityDisplayObject);
         }
         entitiesDrawnContainer.interactiveChildren = false;
 
         this._entitiesDisplayObject = entitiesDrawnContainer;
         this.canvasDisplayObject = this.buildCanvasDisplayObject();
-    }
-
-    private drawnConstructToDisplayObject(drawnConstruct : DrawnConstruct) : DisplayObject {
-        let displayObject : DisplayObject;
-
-        if (isAnimationConstruct(drawnConstruct)) {
-            displayObject = this.determineAnimationDisplayObject(drawnConstruct as AnimationConstruct);
-        } else if (isContainerContruct(drawnConstruct)) {
-            let container = new Container();
-            for (let childConstruct of (drawnConstruct as ContainerConstruct).childConstructs) {
-                container.addChild(this.drawnConstructToDisplayObject(childConstruct));
-            }
-            displayObject = container;
-        } else {
-            displayObject = drawnConstruct as DisplayObject;
-        }
-
-        return displayObject;
-    }
-
-    private determineAnimationDisplayObject(animation : AnimationConstruct) : DisplayObject {
-        let curFrameIndex = 0;
-        if (animation.duration !== 0) {
-            curFrameIndex = Math.trunc(this._totalMillis / (animation.duration * 1000)) % animation.frames.length;
-        }
-
-        let curFrame = animation.frames[curFrameIndex];
-        if (curFrame) {
-            return this.drawnConstructToDisplayObject(curFrame);
-        }
-        return new DisplayObject();
     }
 
     copyEntity() {
