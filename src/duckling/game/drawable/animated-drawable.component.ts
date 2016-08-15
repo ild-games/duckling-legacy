@@ -72,10 +72,9 @@ export class AnimatedDrawableComponent {
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        let head = this.animatedDrawable.frames.slice(0, index);
-        let tail = this.animatedDrawable.frames.slice(index + 1, this.animatedDrawable.frames.length);
-        let patch : Drawable[] = head.concat([newDrawable]).concat(tail);
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: patch}));
+        let newFrames = this.animatedDrawable.frames.slice(0);
+        newFrames[index] = newDrawable;
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newFrames}));
     }
 
     onChildDrawablesChanged(newDrawables : Drawable[]) {

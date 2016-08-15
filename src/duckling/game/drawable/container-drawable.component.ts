@@ -61,10 +61,9 @@ export class ContainerDrawableComponent {
     @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        let head = this.containerDrawable.drawables.slice(0, index);
-        let tail = this.containerDrawable.drawables.slice(index + 1, this.containerDrawable.drawables.length);
-        let patch : Drawable[] = head.concat([newDrawable]).concat(tail);
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: patch}));
+        let newChildren = this.containerDrawable.drawables.slice(0);
+        newChildren[index] = newDrawable;
+        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newChildren}));
     }
 
     onChildDrawablesChanged(newDrawables : Drawable[]) {
