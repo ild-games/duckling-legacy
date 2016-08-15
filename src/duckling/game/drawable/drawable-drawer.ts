@@ -41,6 +41,9 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
     }
 
     let drawable = drawDrawable(drawableAttribute.topDrawable, assetService);
+    if (!drawable) {
+        return null;
+    }
     setNonInteractive(drawable);
     setPosition(drawable, positionAttribute.position);
 
@@ -49,10 +52,10 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
 
 function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
     if (drawable.inactive) {
-        return new DisplayObject();
+        return null;
     }
 
-    let drawnObject : DrawnConstruct = new DisplayObject();
+    let drawnObject : DrawnConstruct;
     let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
     switch (drawableType) {
         case DrawableType.Shape:
@@ -67,8 +70,14 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnC
         case DrawableType.Animated:
             drawnObject = drawAnimatedDrawable(drawable as AnimatedDrawable, assetService);
             break;
+        default:
+            drawnObject = null;
+            break;
     }
-    applyDrawableProperties(drawable, drawnObject);
+
+    if (drawnObject) {
+        applyDrawableProperties(drawable, drawnObject);
+    }
     return drawnObject;
 }
 
