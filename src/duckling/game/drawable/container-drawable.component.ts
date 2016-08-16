@@ -5,8 +5,6 @@ import {
     EventEmitter,
     forwardRef
 } from '@angular/core';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
 import {Accordian, FormLabel, EnumChoiceComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
@@ -23,7 +21,6 @@ import {Drawable, DrawableType} from './drawable';
     selector: "dk-container-drawable-component",
     styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
     directives: [
-        MD_CARD_DIRECTIVES,
         Accordian,
         FormLabel,
         EnumChoiceComponent,

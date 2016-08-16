@@ -6,7 +6,6 @@ import {
     AfterViewInit,
     ChangeDetectorRef
 } from '@angular/core';
-import {MdButton} from '@angular2-material/button';
 
 import {FormLabel, InputComponent, NumberInput, Box2Component, CheckboxComponent} from '../../controls';
 import {immutableAssign, DialogService, PathService} from '../../util';
@@ -21,7 +20,6 @@ import {ImageDrawable} from './image-drawable';
     selector: "dk-image-drawable-component",
     directives: [
         FormLabel,
-        MdButton,
         NumberInput,
         InputComponent,
         CheckboxComponent,

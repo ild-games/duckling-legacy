@@ -5,7 +5,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MdButton} from '@angular2-material/button';
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
@@ -14,7 +13,7 @@ import {ToolbarButton, ToolbarButtonGroup, ToolbarOption} from '../../controls';
 
 @Component({
     selector: "dk-top-toolbar",
-    directives: [MdButton, ToolbarButton, ToolbarButtonGroup],
+    directives: [ToolbarButton, ToolbarButtonGroup],
     styleUrls: ['./duckling/canvas/_toolbars/top-toolbar.component.css'],
     template: `
         <dk-toolbar-button

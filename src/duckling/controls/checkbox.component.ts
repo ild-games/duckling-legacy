@@ -4,14 +4,12 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_CHECKBOX_DIRECTIVES} from '@angular2-material/checkbox';
 
 /**
  * Helper component used to implement checkboxes
  */
 @Component({
     selector: "dk-checkbox",
-    directives: [MD_CHECKBOX_DIRECTIVES],
     template:`
         <md-checkbox
             [checked]="checked"
