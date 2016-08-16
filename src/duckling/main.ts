@@ -51,6 +51,9 @@ let requiredAssetService = new RequiredAssetService();
 // Setup window defaults
 let electronWindowService = new ElectronWindowService();
 
+// Setup window defaults
+let electronWindowService = new ElectronWindowService();
+
 // Bootstrap game specific behavior
 let attributeComponentService = new AttributeComponentService();
 let anconaSFMLRenderPriorityService = new AnconaSFMLRenderPriorityService();
