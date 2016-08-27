@@ -60,7 +60,9 @@ export function isDisplayObject(object : DrawnConstruct) : object is DisplayObje
 export function displayObjectsForDrawnConstructs(drawnConstructs : DrawnConstruct[], totalMillis : number = 0) : DisplayObject[] {
     let displayObjects : DisplayObject[] = [];
     for (let drawnConstruct of drawnConstructs) {
-        displayObjects.push(displayObjectForDrawnConstruct(drawnConstruct, totalMillis));
+        if (drawnConstruct) {
+            displayObjects.push(displayObjectForDrawnConstruct(drawnConstruct, totalMillis));
+        }
     }
     return displayObjects;
 }

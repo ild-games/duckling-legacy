@@ -85,7 +85,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Output() elementPaste = new EventEmitter<Vector>();
 
     private _mouseLocation : Vector = {x: 0, y: 0};
-    private _stage : Container = new Container();
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
     private _viewInited = false;
@@ -104,7 +103,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this._renderer.backgroundColor = 0xDFDFDF;
 
         this.resizeCanvasElements();
-        this.repositionStage();
         this.centerStage();
         this.render();
     }
@@ -117,11 +115,9 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
         if (changes.stageDimensions) {
             this.resizeCanvasElements();
-            this.repositionStage();
             this.centerStage();
         } else if (changes.scale) {
             this.resizeCanvasElements();
-            this.repositionStage();
         }
 
         this.render();
@@ -156,9 +152,8 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onMouseDrag(event : MouseEvent) {
-        var stagePosition = this.stageCoordsFromEvent(event);
-        var canvasPosition = this.canvasCoordsFromEvent(event);
-        this._mouseLocation = stagePosition;
+        let stageCoords = this.stageCoordsFromEvent(event);
+        this._mouseLocation = stageCoords;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
             this.tool.onStageMove(this.createCanvasMouseEvent(event));
         }
@@ -179,7 +174,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onScroll() {
-        this.repositionStage();
         this.render();
     }
 
@@ -204,7 +198,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.elementDimensions.y = this.canvasContainerDiv.nativeElement.clientHeight;
         this.scrollerDimensions.x = this.elementDimensions.x * 2 + (this.stageDimensions.x * this.scale) - (this._scrollStageOffset * 2);
         this.scrollerDimensions.y = this.elementDimensions.y * 2 + (this.stageDimensions.y * this.scale) - (this._scrollStageOffset * 2);
-        this.repositionStage();
         if (this._renderer) {
             this._renderer.view.style.width = this.elementDimensions.x + "px";
             this._renderer.view.style.height = this.elementDimensions.y + "px";
@@ -219,10 +212,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     private stageCoordsFromEvent(event : MouseEvent) : Vector {
-        var localPoint = this._stage.toLocal(new Point(event.offsetX, event.offsetY));
+        var position = this._stagePosition;
         return {
-            x: localPoint.x,
-            y: localPoint.y
+            x: (event.offsetX / this.scale) - position.x,
+            y: (event.offsetY / this.scale) - position.y
         }
     }
 
@@ -235,21 +228,31 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     private render() {
         if (this._renderer) {
-            this._stage.removeChildren();
-            this._stage.addChild(this.canvasDisplayObject);
-            this._stage.scale = new Point(this.scale, this.scale);
-            this._renderer.render(this._stage);
+
+            let position = this._stagePosition
+            let stage = new Container();
+
+            stage.addChild(this.canvasDisplayObject);
+            this.canvasDisplayObject.position.x = position.x;
+            this.canvasDisplayObject.position.y = position.y;
+            this.canvasDisplayObject.updateTransform();
+            stage.scale = new Point(this.scale, this.scale);
+
+            this._renderer.preserveDrawingBuffer = false;
+            this._renderer.render(stage);
         }
     }
 
     /**
      * Used to reposition the virtual stage when the canvas has been scrolled
      */
-    private repositionStage() {
+    get _stagePosition() {
         var canvasScrollDifferenceWidth = this.scrollerDimensions.x - this.elementDimensions.x;
         var canvasScrollDifferenceHeight = this.scrollerDimensions.y - this.elementDimensions.y;
-        this._stage.x = (this.elementDimensions.x / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft;
-        this._stage.y = (this.elementDimensions.y / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop;
+        return {
+            x: (this.elementDimensions.x / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft,
+            y: (this.elementDimensions.y / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop
+        }
     }
 
     private createCanvasMouseEvent(event : MouseEvent) : CanvasMouseEvent {
