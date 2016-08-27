@@ -4,7 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MdButton} from '@angular2-material/button';
 
 import {Icon} from './icon.component';
 
@@ -13,7 +12,7 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-toolbar-button",
-    directives: [Icon, MdButton],
+    directives: [Icon],
     styleUrls: ['./duckling/controls/toolbar-button.component.css'],
     template: `
         <button

@@ -4,7 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {VectorInput, NumberInput} from '../../controls';
 import {Vector} from '../../math/vector';
@@ -20,7 +19,7 @@ import {CameraAttribute} from './camera-attribute';
 @Component({
     selector: "dk-camera-component",
     styleUrls: ['./duckling/game/camera/camera.component.css'],
-    directives: [VectorInput, MdCheckbox, NumberInput],
+    directives: [VectorInput, NumberInput],
     template: `
         <div class="default-checkbox">
             <md-checkbox

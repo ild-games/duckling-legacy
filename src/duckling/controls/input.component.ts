@@ -4,14 +4,12 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 
 /**
  * Helper component used to implement input controls
  */
 @Component({
     selector: "dk-input",
-    directives: [MD_INPUT_DIRECTIVES],
     styleUrls: ['./duckling/controls/input.component.css'],
     template:`
         <md-input

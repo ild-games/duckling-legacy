@@ -4,7 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button';
 
 import {immutableAssign} from '../util';
 
@@ -15,7 +14,7 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-accordian-element",
-    directives: [Icon, MD_BUTTON_DIRECTIVES],
+    directives: [Icon],
     styleUrls: ['./duckling/controls/accordian-element.component.css'],
     template: `
         <div

@@ -6,7 +6,6 @@ import {
     AfterViewInit
 } from '@angular/core';
 import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 
 import {EnumChoiceComponent, SelectOption, FormLabel} from '../../controls';
 import {immutableAssign} from '../../util/model';

@@ -4,7 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button';
 
 import {ArraySelect} from './array-select.component';
 import {SelectOption} from './array-select.component';
@@ -16,7 +15,7 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-array-choice",
-    directives: [ArraySelect, MD_BUTTON_DIRECTIVES, Icon],
+    directives: [ArraySelect, Icon],
     template: `
         <dk-array-select
             [value]="selected"

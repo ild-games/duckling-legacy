@@ -4,8 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
-import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {VectorInput, NumberInput, FormLabel} from '../../controls';
 import {Vector} from '../../math';
@@ -22,9 +20,7 @@ import {Drawable} from './drawable';
     directives: [
         VectorInput,
         FormLabel,
-        NumberInput,
-        MD_INPUT_DIRECTIVES,
-        MdCheckbox
+        NumberInput
     ],
     template: `
         <div class="inactive-checkbox">

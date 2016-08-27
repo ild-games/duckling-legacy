@@ -6,7 +6,6 @@ import {
     OnChanges,
     ChangeDetectionStrategy
 } from '@angular/core';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {Entity, AttributeKey, Attribute, TaggedAttribute}  from '../entitysystem';
 import {immutableAssign, immutableDelete, toTitleCase} from '../util';
@@ -18,7 +17,7 @@ import {AttributeComponent} from '../entityeditor';
  */
 @Component({
     selector: "dk-entity-component",
-    directives: [AttributeComponent, MD_CARD_DIRECTIVES],
+    directives: [AttributeComponent],
     styleUrls: ['./duckling/entityeditor/entity.component.css'],
     template: `
         <div *ngFor="let key of keys()">

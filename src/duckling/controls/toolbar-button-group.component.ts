@@ -4,13 +4,12 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MdButton} from '@angular2-material/button';
 
 import {ToolbarButton} from './toolbar-button.component';
 
 @Component({
     selector: "dk-toolbar-button-group",
-    directives: [MdButton, ToolbarButton],
+    directives: [ToolbarButton],
     template: `
         <span *ngFor="let option of options">
             <dk-toolbar-button

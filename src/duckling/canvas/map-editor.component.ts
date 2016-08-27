@@ -9,7 +9,6 @@ import {
     DisplayObject,
     Graphics
 } from 'pixi.js';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {StoreService} from '../state';
 import {AssetService} from '../project';
@@ -29,7 +28,7 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
  */
 @Component({
     selector: "dk-map-editor",
-    directives: [Canvas, TopToolbarComponent, BottomToolbarComponent, MD_CARD_DIRECTIVES],
+    directives: [Canvas, TopToolbarComponent, BottomToolbarComponent],
     providers : [TOOL_PROVIDERS],
     styleUrls: ['./duckling/canvas/map-editor.component.css'],
     template: `

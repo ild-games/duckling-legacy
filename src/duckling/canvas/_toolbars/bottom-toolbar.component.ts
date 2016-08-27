@@ -4,7 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {NumberInput, VectorInput} from '../../controls';
 import {Vector} from '../../math/vector';
@@ -14,7 +13,7 @@ import {Vector} from '../../math/vector';
  */
 @Component({
     selector: "dk-bottom-toolbar",
-    directives: [VectorInput, NumberInput, MdCheckbox],
+    directives: [VectorInput, NumberInput],
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
         <dk-vector-input

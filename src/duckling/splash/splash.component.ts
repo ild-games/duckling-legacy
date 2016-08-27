@@ -4,7 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
 import {ProjectSerializerService} from './project-serializer.service';
 import {PathService} from '../util/path.service';
@@ -28,8 +27,7 @@ const MAX_SPLASH_ENTRIES : number = 7;
 @Component({
     selector: 'dk-splash-screen',
     directives: [
-        Icon,
-        MD_LIST_DIRECTIVES
+        Icon
     ],
     styleUrls: [ './duckling/splash/splash.component.css' ],
     template: `

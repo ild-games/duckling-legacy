@@ -4,7 +4,6 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import {MD_BUTTON_DIRECTIVES} from '@angular2-material/button';
 
 import {EnumSelect} from './enum-select.component';
 import {SelectOption} from './array-select.component';
@@ -16,7 +15,7 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-enum-choice",
-    directives: [EnumSelect, MD_BUTTON_DIRECTIVES, Icon],
+    directives: [EnumSelect, Icon],
     template: `
         <dk-enum-select
             [value]="selected"
