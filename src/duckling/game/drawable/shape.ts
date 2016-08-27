@@ -26,12 +26,10 @@ export function shapeTypeToCppType(type : ShapeType) : string {
 export interface Shape {
     __cpp_type: string,
     fillColor: Color,
-    type: ShapeType
 }
 
 export var defaultShape : Shape = {
     __cpp_type: "",
-    type: null,
     fillColor: {
         r: 0,
         g: 0,
