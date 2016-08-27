@@ -72,6 +72,10 @@ export function displayObjectsForDrawnConstructs(drawnConstructs : DrawnConstruc
  * @return DisplayObject for rendering.
  */
 export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, totalMillis : number = 0) : DisplayObject {
+    if (!drawnConstruct) {
+        return null;
+    }
+
     let displayObject : DisplayObject = null;
 
     if (isAnimationConstruct(drawnConstruct)) {
@@ -79,7 +83,10 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     } else if (isContainerContruct(drawnConstruct)) {
         let container = new Container();
         for (let childConstruct of drawnConstruct.childConstructs) {
-            container.addChild(displayObjectForDrawnConstruct(childConstruct));
+            let child = displayObjectForDrawnConstruct(childConstruct);
+            if (child) {
+                container.addChild(child);
+            }
         }
         displayObject = container;
     } else if (isDisplayObject(drawnConstruct)) {

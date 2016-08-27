@@ -176,6 +176,9 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : Dr
         displayObject.position.x += drawable.positionOffset.x;
         displayObject.position.y += drawable.positionOffset.y;
     }
+    if (!drawableDisplayObject) {
+        return;
+    }
 
     if (isAnimationConstruct(drawableDisplayObject)) {
         for (let frame of drawableDisplayObject.frames) {
@@ -199,6 +202,10 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : Dr
  * @param  drawableDrawnConstruct to make non-interactive
  */
 function setNonInteractive(drawable : DrawnConstruct) {
+    if (!drawable) {
+        return;
+    }
+
     if (isAnimationConstruct(drawable)) {
         for (let frame of drawable.frames) {
             setNonInteractive(frame);
@@ -218,6 +225,9 @@ function setPosition(drawable : DrawnConstruct, position : Vector) {
     function setDisplayObjectPosition(displayObject : DisplayObject) {
         displayObject.position.x += position.x;
         displayObject.position.y += position.y;
+    }
+    if (!drawable) {
+        return;
     }
 
     if (isAnimationConstruct(drawable)) {

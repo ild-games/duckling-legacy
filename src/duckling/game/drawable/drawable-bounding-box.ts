@@ -26,6 +26,10 @@ export function drawableBoundingBox(entity : Entity, assetService : AssetService
 }
 
 function getDrawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
+    if (!drawnConstruct) {
+        return EMPTY_BOX;
+    }
+
     let bounds : Box2;
     if (isAnimationConstruct(drawnConstruct)) {
         bounds = getAnimationBounds(drawnConstruct);
