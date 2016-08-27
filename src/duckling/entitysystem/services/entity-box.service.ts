@@ -38,10 +38,10 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
      * @return A new bounding box instance.
      */
     getEntityBox(entity : Entity) {
-        var box : Box2;
+        let box : Box2;
 
-        for (var key in entity) {
-            var attributeBox = this.getAttributeBox(key, entity);
+        for (let key in entity) {
+            let attributeBox = this.getAttributeBox(key, entity);
             if (attributeBox) {
                 if (!box) {
                     box = attributeBox;

@@ -4,6 +4,7 @@ import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
 import {Box2, boxUnion, EMPTY_BOX} from '../../math';
 import {AssetService} from '../../project';
+import {immutableAssign} from '../../util';
 import {isAnimationConstruct, AnimationConstruct, ContainerConstruct, isContainerContruct, isDisplayObject, DrawnConstruct} from '../../canvas/drawing';
 
 import {drawDrawableAttribute} from './drawable-drawer';
@@ -14,20 +15,22 @@ import {drawDrawableAttribute} from './drawable-drawer';
  * @return A Box2 bounding box for the entity's drawable attribute.
  */
 export function drawableBoundingBox(entity : Entity, assetService : AssetService) : Box2 {
-    let positionAttribute = getPosition(entity);
     let entityDrawnConstruct = drawDrawableAttribute(entity, assetService);
-    if (!positionAttribute || !entityDrawnConstruct) {
-        return EMPTY_BOX;
+    let position = getPosition(entity);
+    if (!position || !entityDrawnConstruct) {
+        return null;
     }
 
     let bounds : Box2 = getDrawnConstructBounds(entityDrawnConstruct);
-    bounds.position = positionAttribute.position;
-    return bounds;
+    if (!bounds) {
+        return null;
+    }
+    return immutableAssign(bounds, {position: position.position});
 }
 
 function getDrawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
     if (!drawnConstruct) {
-        return EMPTY_BOX;
+        return null;
     }
 
     let bounds : Box2;
@@ -69,7 +72,10 @@ function getAnimationBounds(animation : AnimationConstruct) : Box2 {
 function getUnionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
     let entireBoundingBox = EMPTY_BOX;
     for (let construct of drawnConstructs) {
-        entireBoundingBox = boxUnion(entireBoundingBox, getDrawnConstructBounds(construct));
+        let childBox = getDrawnConstructBounds(construct);
+        if (childBox) {
+            entireBoundingBox = boxUnion(entireBoundingBox, childBox);
+        }
     }
     return entireBoundingBox;
 }
