@@ -85,6 +85,7 @@ function provideClass(implementationClass : Type, base : Type) {
         AngularMaterialModule
     ],
     declarations: [
+        ShellComponent
     ],
     providers: [
         provideInstance(storeService, StoreService),
