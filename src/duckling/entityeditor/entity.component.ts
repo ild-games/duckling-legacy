@@ -25,7 +25,11 @@ import {AttributeComponent} from '../entityeditor';
                 <md-card-title>
                     <div>
                         {{formatCardTitle(key)}}
-                        <button md-button title="Delete Attribute" (click)="deleteAttribute(key)">
+                        <button
+                            md-button
+                            title="Delete Attribute"
+                            [disableRipple]=true
+                            (click)="deleteAttribute(key)">
                             Delete
                         </button>
                     </div>
