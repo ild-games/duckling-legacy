@@ -15,6 +15,7 @@ import {
     DrawnConstruct,
     isAnimationConstruct,
     isContainerContruct,
+    isDisplayObject,
     ContainerConstruct
 } from '../../canvas/drawing';
 
@@ -177,15 +178,17 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : Dr
     }
 
     if (isAnimationConstruct(drawableDisplayObject)) {
-        for (let frame of (drawableDisplayObject as AnimationConstruct).frames) {
+        for (let frame of drawableDisplayObject.frames) {
             applyDrawableProperties(drawable, frame);
         }
     } else if (isContainerContruct(drawableDisplayObject)) {
-        for (let child of (drawableDisplayObject as ContainerConstruct).childConstructs) {
+        for (let child of drawableDisplayObject.childConstructs) {
             applyDrawableProperties(drawable, child);
         }
+    } else if (isDisplayObject(drawableDisplayObject)) {
+        applyDisplayObjectProperties(drawableDisplayObject);
     } else {
-        applyDisplayObjectProperties(drawableDisplayObject as DisplayObject);
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::applyDrawableProperties");
     }
 }
 
@@ -197,15 +200,17 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : Dr
  */
 function setNonInteractive(drawable : DrawnConstruct) {
     if (isAnimationConstruct(drawable)) {
-        for (let frame of (drawable as AnimationConstruct).frames) {
+        for (let frame of drawable.frames) {
             setNonInteractive(frame);
         }
     } else if (isContainerContruct(drawable)) {
-        for (let child of (drawable as ContainerConstruct).childConstructs) {
+        for (let child of drawable.childConstructs) {
             setNonInteractive(child);
         }
+    } else if (isDisplayObject(drawable)) {
+        drawable.interactiveChildren = false;
     } else {
-        (drawable as DisplayObject).interactiveChildren = false;
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::setNonInteractive");
     }
 }
 
@@ -216,14 +221,16 @@ function setPosition(drawable : DrawnConstruct, position : Vector) {
     }
 
     if (isAnimationConstruct(drawable)) {
-        for (let frame of (drawable as AnimationConstruct).frames) {
+        for (let frame of drawable.frames) {
             setPosition(frame, position);
         }
     } else if (isContainerContruct(drawable)) {
-        for (let child of (drawable as ContainerConstruct).childConstructs) {
+        for (let child of drawable.childConstructs) {
             setPosition(child, position);
         }
+    } else if (isDisplayObject(drawable)) {
+        setDisplayObjectPosition(drawable);
     } else {
-        setDisplayObjectPosition(drawable as DisplayObject);
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::setPosition");
     }
 }

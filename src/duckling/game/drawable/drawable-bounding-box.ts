@@ -4,7 +4,7 @@ import {Entity} from '../../entitysystem/entity';
 import {getPosition} from '../position/position-attribute';
 import {Box2, boxUnion, EMPTY_BOX} from '../../math';
 import {AssetService} from '../../project';
-import {isAnimationConstruct, AnimationConstruct, ContainerConstruct, isContainerContruct, DrawnConstruct} from '../../canvas/drawing';
+import {isAnimationConstruct, AnimationConstruct, ContainerConstruct, isContainerContruct, isDisplayObject, DrawnConstruct} from '../../canvas/drawing';
 
 import {drawDrawableAttribute} from './drawable-drawer';
 
@@ -28,11 +28,13 @@ export function drawableBoundingBox(entity : Entity, assetService : AssetService
 function getDrawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
     let bounds : Box2;
     if (isAnimationConstruct(drawnConstruct)) {
-        bounds = getAnimationBounds(drawnConstruct as AnimationConstruct);
+        bounds = getAnimationBounds(drawnConstruct);
     } else if (isContainerContruct(drawnConstruct)) {
-        bounds = getContainerBounds(drawnConstruct as ContainerConstruct);
+        bounds = getContainerBounds(drawnConstruct);
+    } else if (isDisplayObject(drawnConstruct)) {
+        bounds = getDisplayObjectBounds(drawnConstruct);
     } else {
-        bounds = getDisplayObjectBounds(drawnConstruct as DisplayObject);
+        throw Error("Unknown DrawnConstruct type in drawable-bounding-box::getDrawnConstructBounds");
     }
     return bounds;
 }

@@ -29,8 +29,8 @@ export type DrawnConstruct = AnimationConstruct | ContainerConstruct | DisplayOb
  * @param  object DrawnConstruct used to determine if it is an animation
  * @return True if the DrawnConstruct is an animation, otherwise false.
  */
-export function isAnimationConstruct(object : DrawnConstruct) : boolean {
-    return object !== undefined && (object as AnimationConstruct).type === "ANIMATION";
+export function isAnimationConstruct(object : DrawnConstruct) : object is AnimationConstruct {
+    return object && (object as AnimationConstruct).type === "ANIMATION";
 }
 
 /**
@@ -38,8 +38,17 @@ export function isAnimationConstruct(object : DrawnConstruct) : boolean {
  * @param  object DrawnConstruct used to determine if it is a container
  * @return True if the DrawnConstruct is a container, otherwise false.
  */
-export function isContainerContruct(object : DrawnConstruct) : boolean {
-    return object !== undefined && (object as ContainerConstruct).type === "CONTAINER";
+export function isContainerContruct(object : DrawnConstruct) : object is ContainerConstruct {
+    return object && (object as ContainerConstruct).type === "CONTAINER";
+}
+
+/**
+ * Determines if a given DrawnConstruct is a DisplayObject
+ * @param  object DrawnConstruct used to determine if it is a DisplayObject
+ * @return True if the DrawnConstruct is a DisplayObject, otherwise false.
+ */
+export function isDisplayObject(object : DrawnConstruct) : object is DisplayObject {
+    return object && !isAnimationConstruct(object) && !isContainerContruct(object);
 }
 
 /**
@@ -63,18 +72,20 @@ export function displayObjectsForDrawnConstructs(drawnConstructs : DrawnConstruc
  * @return DisplayObject for rendering.
  */
 export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, totalMillis : number = 0) : DisplayObject {
-    let displayObject : DisplayObject;
+    let displayObject : DisplayObject = null;
 
     if (isAnimationConstruct(drawnConstruct)) {
-        displayObject = determineAnimationDisplayObject(drawnConstruct as AnimationConstruct, totalMillis);
+        displayObject = determineAnimationDisplayObject(drawnConstruct, totalMillis);
     } else if (isContainerContruct(drawnConstruct)) {
         let container = new Container();
-        for (let childConstruct of (drawnConstruct as ContainerConstruct).childConstructs) {
+        for (let childConstruct of drawnConstruct.childConstructs) {
             container.addChild(displayObjectForDrawnConstruct(childConstruct));
         }
         displayObject = container;
+    } else if (isDisplayObject(drawnConstruct)) {
+        displayObject = drawnConstruct;
     } else {
-        displayObject = drawnConstruct as DisplayObject;
+        throw Error("Unknown DrawnConstruct type in drawn-construct::displayObjectForDrawnConstruct");
     }
 
     return displayObject;
