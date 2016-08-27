@@ -6,6 +6,7 @@ import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, Attribu
 import {SelectionService, Selection} from '../selection';
 import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
+import {Icon} from '../controls/icon.component';
 
 import {EntityComponent} from './entity.component';
 import {AttributeSelectorComponent} from './attribute-selector.component';
@@ -15,16 +16,18 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
  */
 @Component({
     selector: "dk-entity-editor",
-    directives: [EntityComponent, AttributeSelectorComponent],
+    directives: [EntityComponent, AttributeSelectorComponent, Icon],
     template: `
         <div *ngIf="selection?.selectedEntity">
             <span>
                 Entity {{selection.selectedEntity}}
                 <button
                     [disableRipple]=true
-                    md-button title="Delete Entity"
+                    md-mini-fab
+                    title="Delete Entity"
+                    color="warn"
                     (click)="deleteEntity()">
-                    Delete
+                    <dk-icon iconClass="trash"></dk-icon>
                 </button>
             </span>
             <dk-entity-component
