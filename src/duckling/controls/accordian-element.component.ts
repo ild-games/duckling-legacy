@@ -26,6 +26,8 @@ import {Icon} from './icon.component';
                     md-button
                     *ngIf="clone"
                     class="display-on-hover"
+                    title="Copy"
+                    [disableRipple]=true
                     (click)="onCloned(false, $event)">
                     <dk-icon iconClass="clone"></dk-icon>
                 </button>
@@ -33,6 +35,7 @@ import {Icon} from './icon.component';
                     md-button
                     *ngIf="!first"
                     class="display-on-hover"
+                    title="Move up"
                     [disableRipple]=true
                     (click)="onMoved(false, $event)">
                     <dk-icon iconClass="arrow-up"></dk-icon>
@@ -41,6 +44,7 @@ import {Icon} from './icon.component';
                     md-button
                     *ngIf="!last"
                     class="display-on-hover"
+                    title="Move down"
                     [disableRipple]=true
                     (click)="onMoved(true, $event)">
                     <dk-icon iconClass="arrow-down"></dk-icon>
@@ -48,17 +52,18 @@ import {Icon} from './icon.component';
                 <button
                     md-button
                     class="display-on-hover"
+                    title="Delete"
                     [disableRipple]=true
                     (click)="onDelete($event)">
                     <dk-icon iconClass="trash"></dk-icon>
                 </button>
                 <dk-icon
                     *ngIf="!opened"
-                    iconClass="plus-circle">
+                    iconClass="chevron-down">
                 </dk-icon>
                 <dk-icon
                     *ngIf="opened"
-                    iconClass="minus-circle">
+                    iconClass="chevron-up">
                 </dk-icon>
             </div>
         </div>

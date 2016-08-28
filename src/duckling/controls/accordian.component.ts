@@ -5,7 +5,6 @@ import {
     EventEmitter,
     ContentChild,
     TemplateRef,
-    OnChanges,
     SimpleChange
 } from '@angular/core';
 
@@ -36,7 +35,7 @@ import {TemplateWrapper} from './template-wrapper';
         </dk-accordian-element>
     `
 })
-export class Accordian<T> implements OnChanges {
+export class Accordian<T> {
     @ContentChild(TemplateRef) elementTemplate : TemplateRef<any>;
     /**
      * The list of elements to be displayed in the accordian
@@ -76,21 +75,6 @@ export class Accordian<T> implements OnChanges {
      */
     openedElements : {[key : string] : boolean} = {};
 
-    private indiceTogglesToProcess : {index : number, open : boolean}[] = [];
-
-    ngOnChanges(changes : {[key : string] : SimpleChange}) {
-        if (changes['elements']) {
-            this.processIndexStateChanges();
-        }
-    }
-
-    private processIndexStateChanges() {
-        for (let indexToggleObj of this.indiceTogglesToProcess) {
-            this.openedElements[this.keyForIndex(indexToggleObj.index)] = indexToggleObj.open;
-        }
-        this.indiceTogglesToProcess = [];
-    }
-
     onElementDeleted(index : number, deleted : boolean) {
         if (!deleted) {
             return;
@@ -113,14 +97,6 @@ export class Accordian<T> implements OnChanges {
 
     onElementCloned(index : number) {
         this.elementCloned.emit(immutableArrayAssign(this.elements, this.elements.concat(this.elements[index])));
-        this.indiceTogglesToProcess.push({
-            index: this.elements.length,
-            open: true
-        });
-        this.indiceTogglesToProcess.push({
-            index: index,
-            open: false
-        });
     }
 
     indices() {
