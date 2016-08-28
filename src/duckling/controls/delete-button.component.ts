@@ -5,38 +5,31 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {Icon} from './icon.component';
+import {IconButton} from './icon-button.component';
 
 /**
  * Component for a general purpose delete button
  */
 @Component({
     selector: "dk-delete-button",
-    directives: [Icon],
+    directives: [IconButton],
     styleUrls: ['./duckling/controls/delete-button.component.css'],
     template: `
         <div class="hover">
-            <button
-                md-button
+            <dk-icon-button
                 class="non-hover-button"
-                title="Delete"
-                [disableRipple]=true
+                tooltip="Delete"
+                icon="trash"
                 (click)="onClick()">
-                &nbsp;
-                <dk-icon iconClass="trash"></dk-icon>
-                &nbsp;
-            </button>
-            <button
-                md-raised-button
+            </dk-icon-button>
+            <dk-icon-button
                 class="hover-button"
+                tooltip="Delete"
                 color="warn"
-                title="Delete"
-                [disableRipple]=true
+                icon="trash-o"
+                [isRaised]="true"
                 (click)="onClick()">
-                &nbsp;
-                <dk-icon iconClass="trash-o"></dk-icon>
-                &nbsp;
-            </button>
+            </dk-icon-button>
         </div>
     `
 })
