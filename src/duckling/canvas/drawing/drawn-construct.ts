@@ -85,7 +85,7 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     } else if (isContainerContruct(drawnConstruct)) {
         let container = new Container();
         for (let childConstruct of drawnConstruct.childConstructs) {
-            let child = displayObjectForDrawnConstruct(childConstruct);
+            let child = displayObjectForDrawnConstruct(childConstruct, totalMillis);
             if (child) {
                 container.addChild(child);
             }

@@ -35,6 +35,10 @@ function drawableRequiredAssets(drawable : Drawable) : AssetMap {
 
 function imageDrawableRequiredAssets(imageDrawable : ImageDrawable) : AssetMap {
     let assets : AssetMap = {};
+    if (!imageDrawable.textureKey) {
+        return assets;
+    }
+    
     assets[imageDrawable.textureKey] = {
         type: "TexturePNG",
         key: imageDrawable.textureKey
