@@ -38,12 +38,14 @@ import {EntityComponent} from './entity.component'; import {AttributeSelectorCom
                     <span class="entity-name-text">Entity:</span>
                     <dk-input
                         [value]="entityName"
+                        [dividerColor]="validNewName ? 'primary' : 'warn'"
                         (keyup.enter)="onSaveEntityName()"
                         (inputChanged)="onEntityNameInput($event)">
                     </dk-input>
                     <dk-icon-button
                         icon="save"
-                        tooltip="Save entity name"
+                        [tooltip]="getSaveNameTooltip()"
+                        [disabled]="!validNewName"
                         (click)="onSaveEntityName()">
                     </dk-icon-button>
                 </div>
@@ -71,6 +73,7 @@ export class EntityEditorComponent {
     selection : Selection;
     isEditingName : boolean = false;
     entityName : string;
+    validNewName : boolean = true;
 
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
@@ -113,11 +116,44 @@ export class EntityEditorComponent {
     }
 
     onSaveEntityName() {
+        if (!this.validNewName) {
+            return;
+        }
+
         this.renameEntity(this.entityName);
         this.isEditingName = false;
     }
 
     onEntityNameInput(newEntityName : string) {
-        this.entityName = newEntityName;
+        if (this._validEntityName(newEntityName)) {
+            this.validNewName = true;
+            this.entityName = newEntityName;
+        } else {
+            this.validNewName = false;
+        }
+    }
+
+    private _validEntityName(newEntityName : string) : boolean {
+        if (!newEntityName || newEntityName === "") {
+            return false;
+        }
+        if (newEntityName === this.entityName) {
+            return true;
+        }
+
+        let currentEntity = this._entitySystem.getEntity(newEntityName);
+        if (currentEntity) {
+            return false;
+        }
+
+        return true;
+    }
+
+    getSaveNameTooltip() {
+        if (this.validNewName) {
+            return "Save entity name";
+        } else {
+            return "Entity name cannot be a duplicate or blank";
+        }
     }
 }

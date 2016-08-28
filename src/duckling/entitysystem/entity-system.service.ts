@@ -20,7 +20,8 @@ export class EntitySystemService {
         });
     }
 
-    /** * Retrieve a single entity.
+    /**
+     * Retrieve a single entity.
      * @param  key Key of the entitity to retrieve.
      * @return The entity.
      */

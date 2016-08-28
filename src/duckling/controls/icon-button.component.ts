@@ -20,6 +20,7 @@ import {Icon} from './icon.component';
             md-button
             [title]="tooltip"
             [disableRipple]=true
+            [disabled]="disabled"
             [color]="color">
             &nbsp;
             <dk-icon [iconClass]="icon"></dk-icon>
@@ -30,6 +31,7 @@ import {Icon} from './icon.component';
             md-raised-button
             [title]="tooltip"
             [disableRipple]=true
+            [disabled]="disabled"
             [color]="color">
             &nbsp;
             <dk-icon [iconClass]="icon"></dk-icon>
@@ -42,4 +44,5 @@ export class IconButton {
     @Input() color : string = "";
     @Input() tooltip : string = "";
     @Input() isRaised : boolean = false;
+    @Input() disabled : boolean = false;
 }
