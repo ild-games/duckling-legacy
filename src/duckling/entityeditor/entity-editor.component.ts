@@ -36,7 +36,9 @@ import {EntityComponent} from './entity.component'; import {AttributeSelectorCom
                 </div>
                 <div *ngIf="isEditingName" class="entity-name">
                     <span class="entity-name-text">Entity:</span>
-                    <dk-input [value]="entityName">
+                    <dk-input
+                        [value]="entityName"
+                        (inputChanged)="onEntityNameInput($event)">
                     </dk-input>
                     <dk-icon-button
                         icon="save"
@@ -83,18 +85,24 @@ export class EntityEditorComponent {
     }
 
     deleteEntity() {
-        var mergeKey = newMergeKey();
-        var entityKey = this.selection.selectedEntity;
+        let mergeKey = newMergeKey();
+        let entityKey = this.selection.selectedEntity;
         this._selection.deselect(mergeKey);
         this._entitySystem.deleteEntity(entityKey, mergeKey);
     }
 
-    addAttribute(key : AttributeKey) {
-        var defaultAttribute = this._attributeDefault.createAttribute(key);
+    renameEntity(newName : string) {
+        let mergeKey = newMergeKey();
+        this._entitySystem.renameEntity(this.selection.selectedEntity, this.entityName, mergeKey);
+        this._selection.select(newName, mergeKey);
+    }
 
-        var patch : any = {};
+    addAttribute(key : AttributeKey) {
+        let defaultAttribute = this._attributeDefault.createAttribute(key);
+
+        let patch : any = {};
         patch[key] = defaultAttribute;
-        var newEntity = immutableAssign(this.selection.entity, patch);
+        let newEntity = immutableAssign(this.selection.entity, patch);
         this.onEntityChanged(newEntity);
     }
 
@@ -103,6 +111,11 @@ export class EntityEditorComponent {
     }
 
     onSaveEntityName() {
+        this.renameEntity(this.entityName);
         this.isEditingName = false;
+    }
+
+    onEntityNameInput(newEntityName : string) {
+        this.entityName = newEntityName;
     }
 }
