@@ -6,7 +6,7 @@ import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, Attribu
 import {SelectionService, Selection} from '../selection';
 import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
-import {DeleteButton} from '../controls';
+import {DeleteButton, ToolbarButton, InputComponent} from '../controls';
 
 import {EntityComponent} from './entity.component';
 import {AttributeSelectorComponent} from './attribute-selector.component';
@@ -19,13 +19,34 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
     directives: [
         EntityComponent,
         AttributeSelectorComponent,
-        DeleteButton
+        DeleteButton,
+        ToolbarButton,
+        InputComponent
     ],
     styleUrls: ['./duckling/entityeditor/entity-editor.component.css'],
     template: `
         <div *ngIf="selection?.selectedEntity">
-            <span class="entity-name">
-                Entity {{selection.selectedEntity}}
+            <span class="entity-name-row">
+                <div *ngIf="!isEditingName">
+                    <span class="entity-name">Entity: {{selection.selectedEntity}}</span>
+                    <dk-icon-button
+                        icon="pencil"
+                        tooltip="Edit entity name"
+                        (click)="onEditEntityName()">
+                    </dk-icon-button>
+                </div>
+                <div *ngIf="isEditingName">
+                    <span class="entity-name">Entity:</span>
+                    <dk-input
+                        label="Entity name"
+                        [value]="entityName">
+                    </dk-input>
+                    <dk-icon-button
+                        icon="save"
+                        tooltip="Save entity name"
+                        (click)="onSaveEntityName()">
+                    </dk-icon-button>
+                </div>
                 <dk-delete-button (click)="deleteEntity()"></dk-delete-button>
             </span>
             <dk-entity-component
@@ -48,12 +69,16 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
 })
 export class EntityEditorComponent {
     selection : Selection;
+    isEditingName : boolean = false;
+    entityName : string;
 
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
                 private _attributeDefault : AttributeDefaultService) {
-        _selection.selection
-            .subscribe((selection) => this.selection = selection);
+        _selection.selection.subscribe((selection) => {
+            this.selection = selection
+            this.entityName = selection.selectedEntity;
+        });
     }
 
     onEntityChanged(entity : Entity) {
@@ -74,5 +99,9 @@ export class EntityEditorComponent {
         patch[key] = defaultAttribute;
         var newEntity = immutableAssign(this.selection.entity, patch);
         this.onEntityChanged(newEntity);
+    }
+
+    onEditEntityName() {
+        this.isEditingName = true;
     }
 }

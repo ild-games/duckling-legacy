@@ -1,6 +1,12 @@
 @import '../forms';
+@import '../fonts';
 
-.entity-name {
+.entity-name-row {
+    .entity-name {
+        font-size: $font-size-heading;
+        margin-right: $spacer-unit;
+    }
+
     display: flex;
     justify-content: space-between;
     align-items: center;
