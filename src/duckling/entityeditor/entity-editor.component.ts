@@ -8,8 +8,7 @@ import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
 import {DeleteButton, ToolbarButton, InputComponent} from '../controls';
 
-import {EntityComponent} from './entity.component';
-import {AttributeSelectorComponent} from './attribute-selector.component';
+import {EntityComponent} from './entity.component'; import {AttributeSelectorComponent} from './attribute-selector.component';
 
 /**
  * Component that allows the user to modify an entity.
@@ -27,19 +26,17 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
     template: `
         <div *ngIf="selection?.selectedEntity">
             <span class="entity-name-row">
-                <div *ngIf="!isEditingName">
-                    <span class="entity-name">Entity: {{selection.selectedEntity}}</span>
+                <div *ngIf="!isEditingName" class="entity-name">
+                    <span class="entity-name-text">Entity: {{selection.selectedEntity}}</span>
                     <dk-icon-button
                         icon="pencil"
                         tooltip="Edit entity name"
                         (click)="onEditEntityName()">
                     </dk-icon-button>
                 </div>
-                <div *ngIf="isEditingName">
-                    <span class="entity-name">Entity:</span>
-                    <dk-input
-                        label="Entity name"
-                        [value]="entityName">
+                <div *ngIf="isEditingName" class="entity-name">
+                    <span class="entity-name-text">Entity:</span>
+                    <dk-input [value]="entityName">
                     </dk-input>
                     <dk-icon-button
                         icon="save"
@@ -103,5 +100,9 @@ export class EntityEditorComponent {
 
     onEditEntityName() {
         this.isEditingName = true;
+    }
+
+    onSaveEntityName() {
+        this.isEditingName = false;
     }
 }
