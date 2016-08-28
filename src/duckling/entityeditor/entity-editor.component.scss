@@ -6,7 +6,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: $spacer-unit;
-    height: 100px;
+    height: 50px;
 
     .entity-name {
         display: flex;
@@ -15,7 +15,7 @@
 
         .entity-name-text {
             font-size: $font-size-heading;
-            margin-right: $spacer-unit;
+            margin-right: $spacer-unit / 2;
         }
     }
 }

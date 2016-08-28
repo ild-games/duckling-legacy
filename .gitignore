@@ -14,3 +14,6 @@ npm-debug.log
 
 # Ignore OSX files
 .DS_Store
+
+# Ignore TODO file
+TODO
