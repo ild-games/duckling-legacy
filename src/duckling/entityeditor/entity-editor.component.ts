@@ -38,6 +38,7 @@ import {EntityComponent} from './entity.component'; import {AttributeSelectorCom
                     <span class="entity-name-text">Entity:</span>
                     <dk-input
                         [value]="entityName"
+                        (keyup.enter)="onSaveEntityName()"
                         (inputChanged)="onEntityNameInput($event)">
                     </dk-input>
                     <dk-icon-button
@@ -77,6 +78,7 @@ export class EntityEditorComponent {
         _selection.selection.subscribe((selection) => {
             this.selection = selection
             this.entityName = selection.selectedEntity;
+            this.isEditingName = false;
         });
     }
 
