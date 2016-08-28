@@ -12,11 +12,11 @@ export interface Box2 {
 /**
  * An empty Box2 for initialization
  */
-export const EMPTY_BOX : Box2 = Object.freeze({
-    position: Object.freeze({x: 0, y: 0}),
-    dimension: Object.freeze({x: 0, y: 0}),
+export const EMPTY_BOX : Box2 = {
+    position: {x: 0, y: 0},
+    dimension: {x: 0, y: 0},
     rotation: 0
-});
+};
 
 /**
  * Check if the point is contained in the box. Returns false if box or position are null.
