@@ -74,6 +74,7 @@ export class EntityEditorComponent {
     isEditingName : boolean = false;
     entityName : string;
     validNewName : boolean = true;
+    beginEditName : string = "";
 
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
@@ -113,6 +114,7 @@ export class EntityEditorComponent {
 
     onEditEntityName() {
         this.isEditingName = true;
+        this.beginEditName = this.entityName;
     }
 
     onSaveEntityName() {
@@ -137,7 +139,7 @@ export class EntityEditorComponent {
         if (!newEntityName || newEntityName === "") {
             return false;
         }
-        if (newEntityName === this.entityName) {
+        if (newEntityName === this.beginEditName) {
             return true;
         }
 
