@@ -24,8 +24,18 @@ import {Icon} from './icon.component';
             <div class="right-buttons">
                 <button
                     md-button
+                    *ngIf="clone"
+                    class="display-on-hover"
+                    title="Copy"
+                    [disableRipple]=true
+                    (click)="onCloned(false, $event)">
+                    <dk-icon iconClass="clone"></dk-icon>
+                </button>
+                <button
+                    md-button
                     *ngIf="!first"
                     class="display-on-hover"
+                    title="Move up"
                     [disableRipple]=true
                     (click)="onMoved(false, $event)">
                     <dk-icon iconClass="arrow-up"></dk-icon>
@@ -34,6 +44,7 @@ import {Icon} from './icon.component';
                     md-button
                     *ngIf="!last"
                     class="display-on-hover"
+                    title="Move down"
                     [disableRipple]=true
                     (click)="onMoved(true, $event)">
                     <dk-icon iconClass="arrow-down"></dk-icon>
@@ -41,17 +52,18 @@ import {Icon} from './icon.component';
                 <button
                     md-button
                     class="display-on-hover"
+                    title="Delete"
                     [disableRipple]=true
                     (click)="onDelete($event)">
                     <dk-icon iconClass="trash"></dk-icon>
                 </button>
                 <dk-icon
                     *ngIf="!opened"
-                    iconClass="plus-circle">
+                    iconClass="chevron-down">
                 </dk-icon>
                 <dk-icon
                     *ngIf="opened"
-                    iconClass="minus-circle">
+                    iconClass="chevron-up">
                 </dk-icon>
             </div>
         </div>
@@ -65,8 +77,10 @@ export class AccordianElement {
     @Input() first : boolean;
     @Input() last : boolean;
     @Input() opened = false;
+    @Input() clone = false;
     @Output() deleted = new EventEmitter<boolean>();
     @Output() moved = new EventEmitter<boolean>();
+    @Output() cloned = new EventEmitter();
     @Output() toggled = new EventEmitter<boolean>();
 
     onToggle(opened : boolean) {
@@ -82,5 +96,10 @@ export class AccordianElement {
     onMoved(down : boolean, event : MouseEvent) {
         event.stopPropagation();
         this.moved.emit(down);
+    }
+
+    onCloned() {
+        event.stopPropagation();
+        this.cloned.emit(true);
     }
 }

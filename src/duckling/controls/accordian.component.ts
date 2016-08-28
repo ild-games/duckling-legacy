@@ -4,10 +4,11 @@ import {
     Output,
     EventEmitter,
     ContentChild,
-    TemplateRef
+    TemplateRef,
+    SimpleChange
 } from '@angular/core';
 
-import {immutableArrayAssign, immutableArrayDelete, immutableSwapElements} from '../util';
+import {immutableAssign, immutableArrayAssign, immutableArrayDelete, immutableSwapElements} from '../util';
 
 import {AccordianElement} from './accordian-element.component';
 import {TemplateWrapper} from './template-wrapper';
@@ -22,8 +23,10 @@ import {TemplateWrapper} from './template-wrapper';
             [opened]="openedElements[keyForIndex(index)]"
             [first]="index === 0"
             [last]="index === elements.length - 1"
+            [clone]="clone"
             (deleted)="onElementDeleted(index, $event)"
             (toggled)="onElementToggled(index, $event)"
+            (cloned)="onElementCloned(index)"
             (moved)="onElementMoved(index, $event)">
             <template
                 [templateWrapper]="elementTemplate"
@@ -47,6 +50,10 @@ export class Accordian<T> {
      */
     @Input() keyProperty : string;
     /**
+     * Whether the accordian can clone its elements.
+     */
+    @Input() clone : boolean;
+    /**
      * Function emitted when an element has been deleted, passes the new elements array up
      */
     @Output() elementDeleted = new EventEmitter<T[]>();
@@ -58,7 +65,10 @@ export class Accordian<T> {
      * Function emitted when an element has been moved down the accordian, passes the new elements array up
      */
     @Output() elementMovedUp = new EventEmitter<T[]>();
-
+    /**
+     * Function emitted when an element has been cloned to the bottom of the accordian
+     */
+    @Output() elementCloned = new EventEmitter<T[]>();
 
     /**
      * Keeps track of what elements are currently opened
@@ -83,6 +93,10 @@ export class Accordian<T> {
         } else {
             this.elementMovedUp.emit(immutableSwapElements(this.elements, index, newIndex));
         }
+    }
+
+    onElementCloned(index : number) {
+        this.elementCloned.emit(immutableArrayAssign(this.elements, this.elements.concat(this.elements[index])));
     }
 
     indices() {
