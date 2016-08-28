@@ -214,8 +214,8 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private stageCoordsFromEvent(event : MouseEvent) : Vector {
         var position = this._stagePosition;
         return {
-            x: (event.offsetX / this.scale) - position.x,
-            y: (event.offsetY / this.scale) - position.y
+            x: event.offsetX - position.x * this.scale,
+            y: event.offsetY - position.y * this.scale
         }
     }
 
@@ -235,8 +235,8 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             stage.addChild(this.canvasDisplayObject);
             this.canvasDisplayObject.position.x = position.x;
             this.canvasDisplayObject.position.y = position.y;
+            this.canvasDisplayObject.scale = new Point(this.scale, this.scale);
             this.canvasDisplayObject.updateTransform();
-            stage.scale = new Point(this.scale, this.scale);
 
             this._renderer.preserveDrawingBuffer = false;
             this._renderer.render(stage);
