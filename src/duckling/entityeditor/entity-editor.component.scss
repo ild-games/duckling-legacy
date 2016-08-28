@@ -1,0 +1,8 @@
+@import '../forms';
+
+.entity-name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacer-unit;
+}

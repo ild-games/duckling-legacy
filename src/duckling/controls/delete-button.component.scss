@@ -1,0 +1,23 @@
+button {
+    min-width: 40px;
+    font-size: 16px;
+    padding: 0;
+}
+
+.hover {
+    .non-hover-button {
+        display: block;
+    }
+    .hover-button {
+        display: none;
+    }
+}
+
+.hover:hover {
+    .non-hover-button {
+        display: none;
+    }
+    .hover-button {
+        display: block;
+    }
+}

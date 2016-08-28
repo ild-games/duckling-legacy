@@ -1,3 +1,15 @@
+@import '../forms';
+
 md-card {
     margin-bottom: 1em;
+
+    md-card-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        dk-delete-button {
+            margin-left: $spacer-unit;
+        }
+    }
 }
