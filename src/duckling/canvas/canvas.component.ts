@@ -152,10 +152,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onMouseDrag(event : MouseEvent) {
-        let stageCoords = this.stageCoordsFromEvent(event);
+        let canvasMouseEvent = this.createCanvasMouseEvent(event);
+        let stageCoords = canvasMouseEvent.stageCoords;
         this._mouseLocation = stageCoords;
         if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
-            this.tool.onStageMove(this.createCanvasMouseEvent(event));
+            this.tool.onStageMove(canvasMouseEvent);
         }
         event.stopPropagation();
     }
@@ -214,8 +215,8 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private stageCoordsFromEvent(event : MouseEvent) : Vector {
         var position = this._stagePosition;
         return {
-            x: event.offsetX - position.x * this.scale,
-            y: event.offsetY - position.y * this.scale
+            x: (event.offsetX - position.x) / this.scale,
+            y: (event.offsetY - position.y) / this.scale
         }
     }
 
