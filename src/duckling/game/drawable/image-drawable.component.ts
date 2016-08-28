@@ -36,6 +36,7 @@ import {ImageDrawable} from './image-drawable';
         <button
             md-raised-button
             title="Browse"
+            [disableRipple]=true
             (click)="onBrowseClicked()">
             Browse
         </button>

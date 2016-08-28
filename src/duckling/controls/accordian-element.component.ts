@@ -26,6 +26,7 @@ import {Icon} from './icon.component';
                     md-button
                     *ngIf="!first"
                     class="display-on-hover"
+                    [disableRipple]=true
                     (click)="onMoved(false, $event)">
                     <dk-icon iconClass="arrow-up"></dk-icon>
                 </button>
@@ -33,12 +34,14 @@ import {Icon} from './icon.component';
                     md-button
                     *ngIf="!last"
                     class="display-on-hover"
+                    [disableRipple]=true
                     (click)="onMoved(true, $event)">
                     <dk-icon iconClass="arrow-down"></dk-icon>
                 </button>
                 <button
                     md-button
                     class="display-on-hover"
+                    [disableRipple]=true
                     (click)="onDelete($event)">
                     <dk-icon iconClass="trash"></dk-icon>
                 </button>

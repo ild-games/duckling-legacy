@@ -10,8 +10,11 @@ import {getCollision} from './collision-attribute';
  * @return A Box2 bounding box for the entity's collision attribute.
  */
 export function collisionBoundingBox(entity : Entity) : Box2 {
-    var positionAttribute = getPosition(entity);
-    var collisionAttribute = getCollision(entity);
+    let positionAttribute = getPosition(entity);
+    let collisionAttribute = getCollision(entity);
+    if (!positionAttribute || !collisionAttribute) {
+        return null;
+    }
     return {
         position: positionAttribute.position,
         dimension: collisionAttribute.dimension.dimension,

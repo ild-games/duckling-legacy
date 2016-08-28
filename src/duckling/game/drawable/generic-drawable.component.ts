@@ -45,6 +45,13 @@ import {Drawable} from './drawable';
             (validInput)="onScaleInput($event)">
         </dk-vector-input>
 
+        <dk-vector-input
+            xLabel="Position Offset X"
+            yLabel="Position Offset Y"
+            [value]="drawable.positionOffset"
+            (validInput)="onPositionOffsetInput($event)">
+        </dk-vector-input>
+
         <dk-number-input
             label="Rotation"
             [value]="drawable.rotation"
@@ -62,6 +69,10 @@ export class GenericDrawableComponent {
 
     onScaleInput(newScale : Vector) {
         this.drawableChanged.emit(immutableAssign(this.drawable, {scale: newScale}));
+    }
+
+    onPositionOffsetInput(newPositionOffsetInput : Vector) {
+        this.drawableChanged.emit(immutableAssign(this.drawable, {positionOffset: newPositionOffsetInput}));
     }
 
     onRotationInput(newRotation : number) {

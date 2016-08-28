@@ -2,13 +2,16 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    ViewChild
+    ViewChild,
+    OnDestroy
 } from '@angular/core';
 import {
     Container,
     DisplayObject,
     Graphics
 } from 'pixi.js';
+import {Subscriber} from 'rxjs';
+import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
 import {AssetService} from '../project';
@@ -17,9 +20,17 @@ import {EntitySystemService} from '../entitysystem/';
 import {Vector} from '../math';
 import {CopyPasteService, SelectionService} from '../selection';
 
+import {
+    EntityDrawerService,
+    DrawnConstruct,
+    AnimationConstruct,
+    isAnimationConstruct,
+    ContainerConstruct,
+    isContainerContruct,
+    displayObjectsForDrawnConstructs
+} from './drawing';
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {Canvas} from './canvas.component';
-import {EntityDrawerService} from './drawing/entity-drawer.service';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
 
@@ -66,7 +77,7 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
         </md-card>
     `
 })
-export class MapEditorComponent implements AfterViewInit {
+export class MapEditorComponent implements AfterViewInit, OnDestroy {
     /**
      * Current tool in use
      */
@@ -101,6 +112,12 @@ export class MapEditorComponent implements AfterViewInit {
     private _canvasBackgroundDisplayObject : DisplayObject;
     private _canvasBorderDisplayObject : DisplayObject;
     private _gridDisplayObject : DisplayObject;
+    private _frameRate = 33.33; // 30 fps
+    private _totalMillis = 0;
+    private _lastDrawnConstructs : DrawnConstruct[] = [];
+    private _entitySystemSubscription : Subscriber<any>;
+    private _assetServiceSubscription : Subscriber<any>;
+    private _redrawInterval : Subscriber<any>;
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
 
@@ -116,18 +133,47 @@ export class MapEditorComponent implements AfterViewInit {
     ngAfterViewInit() {
         this.redrawAllDisplayObjects();
 
-        this._entitySystemService.entitySystem
+        this._entitySystemSubscription = this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
-            .subscribe((stage) => {
-                this._entitiesDisplayObject = stage;
-                this.canvasDisplayObject = this.buildCanvasDisplayObject();
-            });
+            .subscribe((drawnConstructs) => {
+                this.entitiesDrawnConstructsChanged(drawnConstructs);
+            }) as Subscriber<any>;
 
-        this._assetService.assetLoaded.subscribe(() => {
-            let stage = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDisplayObject = stage;
-            this.canvasDisplayObject = this.buildCanvasDisplayObject();
-        });
+        this._assetServiceSubscription = this._assetService.assetLoaded.subscribe(() => {
+            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
+            this.entitiesDrawnConstructsChanged(drawnConstructs);
+        }) as Subscriber<any>;
+
+        this._redrawInterval = TimerObservable
+            .create(0, this._frameRate)
+            .subscribe(() => this.drawFrame()) as Subscriber<any>;
+    }
+
+    ngOnDestroy() {
+        this._entitySystemSubscription.unsubscribe();
+        this._assetServiceSubscription.unsubscribe();
+        this._redrawInterval.unsubscribe();
+    }
+
+    private entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {
+        this._lastDrawnConstructs = newDrawnConstructs;
+        this.createEntitiesDisplayObject(newDrawnConstructs)
+    }
+
+    private drawFrame() {
+        this._totalMillis += this._frameRate;
+        this.createEntitiesDisplayObject(this._lastDrawnConstructs);
+    }
+
+    private createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
+        let entitiesDrawnContainer = new Container();
+        for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, this._totalMillis)) {
+            entitiesDrawnContainer.addChild(entityDisplayObject);
+        }
+        entitiesDrawnContainer.interactiveChildren = false;
+
+        this._entitiesDisplayObject = entitiesDrawnContainer;
+        this.canvasDisplayObject = this.buildCanvasDisplayObject();
     }
 
     copyEntity() {

@@ -2,15 +2,16 @@ import {Component, Injectable} from '@angular/core';
 import {Container, DisplayObject} from 'pixi.js';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
-import {AssetService} from '../../project';
+import {AssetService, RequiredAssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
 
 import {RenderPriorityService} from './render-priority.service';
+import {DrawnConstruct} from './drawn-construct';
 
 /**
  * Function type used to draw attributes.
  */
-export type AttributeDrawer = (entity : Entity, assetService? : any) => any;
+export type AttributeDrawer = (entity : Entity, assetService? : any) => DrawnConstruct;
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class
@@ -19,38 +20,50 @@ export type AttributeDrawer = (entity : Entity, assetService? : any) => any;
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     constructor(private _assets : AssetService,
+                private _requiredAssets : RequiredAssetService,
                 private _renderPriority : RenderPriorityService) {
         super();
     }
 
     /**
      * Get a DisplayObject for the attribute.
-     * @param key       Attribute key of the attribute that should be drawn.
+     * @param key Attribute key of the attribute that should be drawn.
      * @param attribute Attribute that needs to be drawn.
-     * @return A DisplayObject for the entity.
+     * @return A DrawnConstruct that describes how an entity is drawn.
      */
-    drawAttribute(key : AttributeKey, entity : Entity) : DisplayObject {
-        var drawer = this.getImplementation(key);
+    drawAttribute(key : AttributeKey, entity : Entity) : DrawnConstruct {
+        let drawer = this.getImplementation(key);
         if (drawer) {
-            return drawer(entity, this._assets);
+            let requiredAssets = this._requiredAssets.assetsForAttribute(key, entity);
+            let needsLoading = false;
+            for (let assetKey in requiredAssets) {
+                if (!this._assets.isLoaded(assetKey)) {
+                    needsLoading = true;
+                    this._assets.add(requiredAssets[assetKey]);
+                }
+            };
+            if (!needsLoading) {
+                return drawer(entity, this._assets);
+            }
         }
         return null;
     }
+
 
     /**
      * Get a DisplayObject for the entity.
      * @param entity Entity that needs to be drawn.
      * @return A DisplayObject for the entity.
      */
-    drawEntity(entity : Entity) : DisplayObject {
-        var container = new Container();
-        for (var key in entity) {
-            var drawable = this.drawAttribute(key, entity);
-            if (drawable) {
-                container.addChild(drawable);
+    drawEntity(entity : Entity) : DrawnConstruct[] {
+        let drawnConstructs : DrawnConstruct[] = [];
+        for (let key in entity) {
+            let drawableConstruct = this.drawAttribute(key, entity);
+            if (drawableConstruct) {
+                drawnConstructs.push(drawableConstruct);
             }
         }
-        return container;
+        return drawnConstructs;
     }
 
     /**
@@ -58,17 +71,10 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
      * @return A function that can be applied to map the system manager.
      */
     getSystemMapper() {
-        return (entitySystem : EntitySystem) : DisplayObject => {
-            let stage = new Container();
-            this._renderPriority.sortEntities(entitySystem).forEach(entity => this.addDrawableToStage(entity, stage));
-            return stage;
-        }
-    }
-
-    private addDrawableToStage(entity : Entity, stage : Container) {
-        let drawable = this.drawEntity(entity);
-        if (drawable) {
-            stage.addChild(drawable);
+        return (entitySystem : EntitySystem) : DrawnConstruct[] => {
+            let drawnConstructs : DrawnConstruct[] = [];
+            this._renderPriority.sortEntities(entitySystem).forEach(entity => drawnConstructs = drawnConstructs.concat(this.drawEntity(entity)));
+            return drawnConstructs;
         }
     }
 }

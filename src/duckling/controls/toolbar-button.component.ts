@@ -17,6 +17,7 @@ import {Icon} from './icon.component';
     template: `
         <button
             md-button
+            [disableRipple]=true
             title="{{tooltip}}"
             color="{{color}}">
             &nbsp;

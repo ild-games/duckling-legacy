@@ -20,7 +20,10 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
         <div *ngIf="selection?.selectedEntity">
             <span>
                 Entity {{selection.selectedEntity}}
-                <button md-button title="Delete Entity" (click)="deleteEntity()">
+                <button
+                    [disableRipple]=true
+                    md-button title="Delete Entity"
+                    (click)="deleteEntity()">
                     Delete
                 </button>
             </span>

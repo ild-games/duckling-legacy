@@ -3,30 +3,41 @@ import {
     Input,
     Output,
     EventEmitter,
-    forwardRef
+    forwardRef,
+    AfterViewInit
 } from '@angular/core';
+import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
+import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
-import {Accordian, FormLabel, EnumChoiceComponent} from '../../controls';
+import {Accordian, FormLabel, EnumChoiceComponent, NumberInput} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 
 
-import {ContainerDrawable} from './container-drawable';
+import {AnimatedDrawable} from './animated-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';
 import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
 
 /**
- * Component used to edit a Container Drawable including all its children drawables
+ * Component used to edit an Aniamted Drawable including all its children drawables
  */
 @Component({
-    selector: "dk-container-drawable-component",
-    styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
+    selector: "dk-animated-drawable-component",
+    styleUrls: ['./duckling/game/drawable/animated-drawable.component.css'],
     directives: [
+        MD_CARD_DIRECTIVES,
         Accordian,
         FormLabel,
         EnumChoiceComponent,
+        NumberInput,
         forwardRef(() => DrawableComponent)],
     template: `
-        <dk-form-label title="Add Drawable"></dk-form-label>
+        <dk-number-input
+            label="Duration (seconds)"
+            [value]="animatedDrawable.duration"
+            (validInput)="onDurationChanged($event)">
+        </dk-number-input>
+
+        <dk-form-label title="Add Frame"></dk-form-label>
         <dk-enum-choice
             [enum]="DrawableType"
             [selected]="DrawableType.Shape"
@@ -34,10 +45,10 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
         </dk-enum-choice>
 
         <md-card
-            *ngIf="containerDrawable?.drawables?.length > 0"
+            *ngIf="animatedDrawable?.frames?.length > 0"
             class="drawables-card">
             <dk-accordian
-                [elements]="containerDrawable?.drawables"
+                [elements]="animatedDrawable?.frames"
                 titleProperty="key"
                 keyProperty="key"
                 (elementDeleted)="onChildDrawablesChanged($event)"
@@ -53,34 +64,38 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
         </md-card>
     `
 })
-export class ContainerDrawableComponent {
+export class AnimatedDrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
 
-    @Input() containerDrawable : ContainerDrawable;
-    @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
+    @Input() animatedDrawable : AnimatedDrawable;
+    @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        let newChildren = this.containerDrawable.drawables.slice(0);
-        newChildren[index] = newDrawable;
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newChildren}));
+        let newFrames = this.animatedDrawable.frames.slice(0);
+        newFrames[index] = newDrawable;
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newFrames}));
     }
 
     onChildDrawablesChanged(newDrawables : Drawable[]) {
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newDrawables}));
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newDrawables}));
     }
 
     onNewDrawableClicked(pickedType : DrawableType) {
-        var defaultDrawable = getDefaultDrawable(pickedType);
-        var newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType)});
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
-            drawables: this.containerDrawable.drawables.concat(newDrawable)
+        let defaultDrawable = getDefaultDrawable(pickedType);
+        let newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType)});
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
+            frames: this.animatedDrawable.frames.concat(newDrawable)
         }));
     }
 
+    onDurationChanged(newDuration : number) {
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {duration: newDuration}));
+    }
+
     findNextUniqueKey(pickedType : DrawableType) {
-        var lastKey = 0;
-        for (let drawable of this.containerDrawable.drawables) {
+        let lastKey = 0;
+        for (let drawable of this.animatedDrawable.frames) {
             if (drawable.__cpp_type === drawableTypeToCppType(pickedType)) {
                 var keyNum : number = +drawable.key.substr(drawable.key.length - 1, drawable.key.length);
                 if (keyNum > lastKey) {

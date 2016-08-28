@@ -24,6 +24,7 @@ import {Icon} from './icon.component';
         </dk-array-select>
         <button
             md-icon-button
+            [disableRipple]=true
             (click)="onAddClicked()">
             <dk-icon iconClass="plus"></dk-icon>
         </button>
