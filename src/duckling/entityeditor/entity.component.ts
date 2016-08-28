@@ -9,7 +9,7 @@ import {
 
 import {Entity, AttributeKey, Attribute, TaggedAttribute}  from '../entitysystem';
 import {immutableAssign, immutableDelete, toTitleCase} from '../util';
-
+import {DeleteButton} from '../controls';
 import {AttributeComponent} from '../entityeditor';
 
 /**
@@ -17,22 +17,17 @@ import {AttributeComponent} from '../entityeditor';
  */
 @Component({
     selector: "dk-entity-component",
-    directives: [AttributeComponent],
+    directives: [
+        AttributeComponent,
+        DeleteButton
+    ],
     styleUrls: ['./duckling/entityeditor/entity.component.css'],
     template: `
         <div *ngFor="let key of keys()">
             <md-card>
                 <md-card-title>
-                    <div>
-                        {{formatCardTitle(key)}}
-                        <button
-                            md-button
-                            title="Delete Attribute"
-                            [disableRipple]=true
-                            (click)="deleteAttribute(key)">
-                            Delete
-                        </button>
-                    </div>
+                    {{formatCardTitle(key)}}
+                    <dk-delete-button (click)="deleteAttribute(key)"></dk-delete-button>
                 </md-card-title>
                 <md-card-content>
                     <attribute-component
