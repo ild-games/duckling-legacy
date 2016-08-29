@@ -6,9 +6,10 @@ import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, Attribu
 import {SelectionService, Selection} from '../selection';
 import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
-import {DeleteButton, ToolbarButton, InputComponent} from '../controls';
 
-import {EntityComponent} from './entity.component'; import {AttributeSelectorComponent} from './attribute-selector.component';
+import {EntityComponent} from './entity.component';
+import {EntityNameComponent} from './entity-name.component';
+import {AttributeSelectorComponent} from './attribute-selector.component';
 
 /**
  * Component that allows the user to modify an entity.
@@ -18,39 +19,15 @@ import {EntityComponent} from './entity.component'; import {AttributeSelectorCom
     directives: [
         EntityComponent,
         AttributeSelectorComponent,
-        DeleteButton,
-        ToolbarButton,
-        InputComponent
+        EntityNameComponent
     ],
-    styleUrls: ['./duckling/entityeditor/entity-editor.component.css'],
     template: `
         <div *ngIf="selection?.selectedEntity">
-            <span class="entity-name-row">
-                <div *ngIf="!isEditingName" class="entity-name">
-                    <span class="entity-name-text">Entity: {{selection.selectedEntity}}</span>
-                    <dk-icon-button
-                        icon="pencil"
-                        tooltip="Edit entity name"
-                        (click)="onEditEntityName()">
-                    </dk-icon-button>
-                </div>
-                <div *ngIf="isEditingName" class="entity-name">
-                    <span class="entity-name-text">Entity:</span>
-                    <dk-input
-                        [value]="entityName"
-                        [dividerColor]="validNewName ? 'primary' : 'warn'"
-                        (keyup.enter)="onSaveEntityName()"
-                        (inputChanged)="onEntityNameInput($event)">
-                    </dk-input>
-                    <dk-icon-button
-                        icon="save"
-                        [tooltip]="getSaveNameTooltip()"
-                        [disabled]="!validNewName"
-                        (click)="onSaveEntityName()">
-                    </dk-icon-button>
-                </div>
-                <dk-delete-button (click)="deleteEntity()"></dk-delete-button>
-            </span>
+            <dk-entity-name
+                [currentSelectedEntity]="selection.selectedEntity"
+                (deleteEntity)="onDeleteEntity()"
+                (renameEntity)="onRenameEntity($event)">
+            </dk-entity-name>
             <dk-entity-component
                 [entity]="selection.entity"
                 (entityChanged)="onEntityChanged($event)">
@@ -70,19 +47,13 @@ import {EntityComponent} from './entity.component'; import {AttributeSelectorCom
     `
 })
 export class EntityEditorComponent {
-    selection : Selection;
-    isEditingName : boolean = false;
-    entityName : string;
-    validNewName : boolean = true;
-    beginEditName : string = "";
+    selection : Selection = null;
 
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
                 private _attributeDefault : AttributeDefaultService) {
         _selection.selection.subscribe((selection) => {
             this.selection = selection
-            this.entityName = selection.selectedEntity;
-            this.isEditingName = false;
         });
     }
 
@@ -90,16 +61,16 @@ export class EntityEditorComponent {
         this._entitySystem.updateEntity(this.selection.selectedEntity, entity);
     }
 
-    deleteEntity() {
+    onDeleteEntity() {
         let mergeKey = newMergeKey();
         let entityKey = this.selection.selectedEntity;
         this._selection.deselect(mergeKey);
         this._entitySystem.deleteEntity(entityKey, mergeKey);
     }
 
-    renameEntity(newName : string) {
+    onRenameEntity(newName : string) {
         let mergeKey = newMergeKey();
-        this._entitySystem.renameEntity(this.selection.selectedEntity, this.entityName, mergeKey);
+        this._entitySystem.renameEntity(this.selection.selectedEntity, newName, mergeKey);
         this._selection.select(newName, mergeKey);
     }
 
@@ -110,52 +81,5 @@ export class EntityEditorComponent {
         patch[key] = defaultAttribute;
         let newEntity = immutableAssign(this.selection.entity, patch);
         this.onEntityChanged(newEntity);
-    }
-
-    onEditEntityName() {
-        this.isEditingName = true;
-        this.beginEditName = this.entityName;
-    }
-
-    onSaveEntityName() {
-        if (!this.validNewName) {
-            return;
-        }
-
-        this.renameEntity(this.entityName);
-        this.isEditingName = false;
-    }
-
-    onEntityNameInput(newEntityName : string) {
-        if (this._validEntityName(newEntityName)) {
-            this.validNewName = true;
-            this.entityName = newEntityName;
-        } else {
-            this.validNewName = false;
-        }
-    }
-
-    private _validEntityName(newEntityName : string) : boolean {
-        if (!newEntityName || newEntityName === "") {
-            return false;
-        }
-        if (newEntityName === this.beginEditName) {
-            return true;
-        }
-
-        let currentEntity = this._entitySystem.getEntity(newEntityName);
-        if (currentEntity) {
-            return false;
-        }
-
-        return true;
-    }
-
-    getSaveNameTooltip() {
-        if (this.validNewName) {
-            return "Save entity name";
-        } else {
-            return "Entity name cannot be a duplicate or blank";
-        }
     }
 }
