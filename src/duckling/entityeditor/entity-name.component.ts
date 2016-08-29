@@ -46,6 +46,7 @@ import {DeleteButton, InputComponent} from '../controls';
                 </dk-icon-button>
             </div>
             <dk-delete-button (click)="onDeleteClicked()"></dk-delete-button>
+        </span>
     `
 })
 export class EntityNameComponent implements OnChanges {
