@@ -6,6 +6,7 @@ import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, Attribu
 import {SelectionService, Selection} from '../selection';
 import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
+import {DeleteButton, ToolbarButton, InputComponent} from '../controls';
 
 import {EntityComponent} from './entity.component';
 import {EntityNameComponent} from './entity-name.component';
@@ -47,7 +48,7 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
     `
 })
 export class EntityEditorComponent {
-    selection : Selection = null;
+    selection : Selection;
 
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
