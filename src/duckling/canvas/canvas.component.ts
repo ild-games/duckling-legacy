@@ -1,7 +1,6 @@
 import {
     Component,
-    ElementRef,
-    Input,
+    ElementRef, Input,
     OnChanges,
     OnDestroy,
     AfterViewInit,
@@ -117,11 +116,20 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             this.resizeCanvasElements();
             this.centerStage();
         } else if (changes.scale) {
+            let stageCoordsAtCenterOfViewport = {
+                x: ((this.elementDimensions.x / 2) - this._stagePosition.x) / changes.scale.previousValue,
+                y: ((this.elementDimensions.y / 2) - this._stagePosition.y) / changes.scale.previousValue
+            };
             this.resizeCanvasElements();
+            this.scrollTo({
+                x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2) + (stageCoordsAtCenterOfViewport.x * this.scale),
+                y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2) + (stageCoordsAtCenterOfViewport.y * this.scale)
+            });
         }
 
         this.render();
     }
+
 
     ngOnDestroy() {
         this._renderer.destroy();
