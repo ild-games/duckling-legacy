@@ -10,6 +10,7 @@ export interface CameraAttribute extends Attribute {
     renderPriority : number,
     scale : number,
     size : Vector,
+    offset : Vector,
     default : boolean,
     follows : EntityKey
 }
@@ -20,6 +21,10 @@ export var defaultCamera : CameraAttribute = {
     size: {
         x: 1,
         y: 1
+    },
+    offset: {
+        x: 0,
+        y: 0
     },
     default: false,
     follows: ""
