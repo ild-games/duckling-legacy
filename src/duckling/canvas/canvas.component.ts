@@ -37,11 +37,11 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
             class="canvas-container"
             (copy)="onCopy($event)"
             (paste)="onPaste($event)"
-            (wheel)="onMouseWheel($event)"
-            (mousedown)="forwardContainingDivEvent($event)"
-            (mouseUp)="forwardContainingDivEvent($event)"
-            (mousemove)="forwardContainingDivEvent($event)"
-            (mouseout)="forwardContainingDivEvent($event)">
+            (wheel)="forwardContainingDivWheelEvent($event)"
+            (mousedown)="forwardContainingDivMouseEvent($event)"
+            (mouseUp)="forwardContainingDivMouseEvent($event)"
+            (mousemove)="forwardContainingDivMouseEvent($event)"
+            (mouseout)="forwardContainingDivMouseEvent($event)">
             <div
                 class="canvas-scroll"
                 [style.width]="scrollerDimensions.x"
@@ -54,6 +54,7 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
                 (mouseup)="onMouseUp($event)"
                 (mousemove)="onMouseDrag($event)"
                 (mouseout)="onMouseOut()"
+                (wheel)="onMouseWheel($event)"
                 [height]="height"
                 [width]="width">
             </canvas>
@@ -84,7 +85,13 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
      */
     @Output() elementPaste = new EventEmitter<Vector>();
 
+    /**
+     * Event that is published when the scale changes via the canvas (ctrl+scroll)
+     */
+    @Output() scaleChanged = new EventEmitter<number>();
+
     private _mouseLocation : Vector = {x: 0, y: 0};
+    private _zoomInStageCoords : Vector = null;
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
     private _viewInited = false;
@@ -124,15 +131,36 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onScaleChanged(oldScale : number, newScale : number) {
-        let stageCoordsAtCenterOfViewport = {
-            x: ((this.elementDimensions.x / 2) - this._stagePosition.x) / oldScale,
-            y: ((this.elementDimensions.y / 2) - this._stagePosition.y) / oldScale
-        };
-        this.resizeCanvasElements();
-        this.scrollTo({
-            x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2) + (stageCoordsAtCenterOfViewport.x * newScale),
-            y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2) + (stageCoordsAtCenterOfViewport.y * newScale)
-        });
+        if (!this._zoomInStageCoords) {
+            let stagePosition = this._stagePosition;
+            let centerScreenStageCoords = {
+                x: ((this.elementDimensions.x / 2) - stagePosition.x) / oldScale,
+                y: ((this.elementDimensions.y / 2) - stagePosition.y) / oldScale
+            };
+            this.resizeCanvasElements();
+            this.scrollTo({
+                x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2) + (centerScreenStageCoords.x * newScale),
+                y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2) + (centerScreenStageCoords.y * newScale)
+            });
+        } else {
+            let scaleChange = newScale / oldScale;
+            let offsetAmount = {
+                x: -(this._zoomInStageCoords.x * scaleChange),
+                y: -(this._zoomInStageCoords.y * scaleChange)
+            }
+            let stagePosition = this._stagePosition;
+            let centerScreenStageCoords = {
+                x: ((this.elementDimensions.x / 2) - stagePosition.x) / oldScale,
+                y: ((this.elementDimensions.y / 2) - stagePosition.y) / oldScale
+            };
+            this._zoomInStageCoords = null;
+            this.resizeCanvasElements();
+            this.scrollTo({
+                x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2) + (centerScreenStageCoords.x * newScale),
+                y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2) + (centerScreenStageCoords.y * newScale)
+            });
+            this.scrollPan(offsetAmount);
+        }
     }
 
     ngOnDestroy() {
@@ -182,9 +210,19 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     onMouseWheel(event : WheelEvent) {
         if (event.ctrlKey || event.metaKey) {
+            this._zoomInStageCoords = this.stageCoordsFromCanvasCoords({
+                x: event.offsetX,
+                y: event.offsetY
+            })
             let scaleAmount = Math.sign(event.deltaY) / 10 * -1;
-            this.scale += scaleAmount;
+            if (this.scale + scaleAmount < 0.1) {
+                this.scale = 0.1;
+            } else {
+                this.scale += scaleAmount;
+            }
+            this.scaleChanged.emit(this.scale);
         }
+        event.stopPropagation();
     }
 
     onResize() {
@@ -196,13 +234,22 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.render();
     }
 
-    forwardContainingDivEvent(event : MouseEvent) {
+    forwardContainingDivMouseEvent(event : MouseEvent) {
         this.canvasRoot.nativeElement.dispatchEvent(new MouseEvent(event.type, event));
+    }
+
+    forwardContainingDivWheelEvent(event : WheelEvent) {
+        this.canvasRoot.nativeElement.dispatchEvent(new WheelEvent(event.type, event));
     }
 
     scrollTo(scrollToCoords : Vector) {
         this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = scrollToCoords.x;
         this.canvasContainerDiv.nativeElement.parentElement.scrollTop = scrollToCoords.y;
+    }
+
+    scrollPan(scrollPanAmount : Vector) {
+        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft += scrollPanAmount.x;
+        this.canvasContainerDiv.nativeElement.parentElement.scrollTop += scrollPanAmount.y;
     }
 
     get scrollPosition() : Vector {
@@ -226,8 +273,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     private centerStage() {
-        this.canvasContainerDiv.nativeElement.parentElement.scrollLeft = (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2);
-        this.canvasContainerDiv.nativeElement.parentElement.scrollTop = (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2);
+        this.scrollTo({
+            x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2),
+            y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2)
+        });
     }
 
     private stageCoordsFromCanvasCoords(canvasCoords : Vector) : Vector {
@@ -266,11 +315,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
      * Used to reposition the virtual stage when the canvas has been scrolled
      */
     get _stagePosition() {
-        var canvasScrollDifferenceWidth = this.scrollerDimensions.x - this.elementDimensions.x;
-        var canvasScrollDifferenceHeight = this.scrollerDimensions.y - this.elementDimensions.y;
+        let canvasScrollDifferenceWidth = this.scrollerDimensions.x - this.elementDimensions.x;
+        let canvasScrollDifferenceHeight = this.scrollerDimensions.y - this.elementDimensions.y;
         return {
-            x: (this.elementDimensions.x / 2) + 0.5 + (canvasScrollDifferenceWidth / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollLeft,
-            y: (this.elementDimensions.y / 2) + 0.5 + (canvasScrollDifferenceHeight / 2) - this.canvasContainerDiv.nativeElement.parentElement.scrollTop
+            x: (this.elementDimensions.x / 2) + (canvasScrollDifferenceWidth / 2) - this.scrollPosition.x,
+            y: (this.elementDimensions.y / 2) + (canvasScrollDifferenceHeight / 2) - this.scrollPosition.y
         }
     }
 

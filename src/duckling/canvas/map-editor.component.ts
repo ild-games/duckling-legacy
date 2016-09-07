@@ -54,6 +54,7 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
                     class="canvas"
                     (elementCopy)="copyEntity()"
                     (elementPaste)="pasteEntity($event)"
+                    (scaleChanged)="onScaleChanged($event, false)"
                     [tool]="tool"
                     [stageDimensions]="stageDimensions"
                     [gridSize]="gridSize"
@@ -200,9 +201,11 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this.canvasDisplayObject = this.buildCanvasDisplayObject();
     }
 
-    onScaleChanged(scale : number) {
+    onScaleChanged(scale : number, redraw : boolean = true) {
         this.scale = scale;
-        this.redrawAllDisplayObjects();
+        if (redraw) {
+            this.redrawAllDisplayObjects();
+        }
     }
 
     onShowGridChanged(showGrid : boolean) {
