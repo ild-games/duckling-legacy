@@ -16,6 +16,7 @@ import {InputComponent} from './input.component';
     styleUrls: ['./duckling/controls/validated-input.component.css'],
     template:`
         <dk-input
+            [disabled]="disabled"
             [label]="label"
             [value]="value"
             [dividerColor]="valid ? 'primary' : 'warn'"
@@ -36,6 +37,10 @@ export class ValidatedInput {
      * Function used to validate the users input. Should return true if the users input is valid.
      */
     @Input() validator : (value:string) => boolean;
+    /**
+     * True if the input is disabled, otherwise false
+     */
+    @Input() disabled : boolean;
 
     /**
      * Event published when the user enters a valid input.
