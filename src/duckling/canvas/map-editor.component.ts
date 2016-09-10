@@ -54,7 +54,7 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
                     class="canvas"
                     (elementCopy)="copyEntity()"
                     (elementPaste)="pasteEntity($event)"
-                    (scaleChanged)="onScaleChanged($event, false)"
+                    (scaleChanged)="onScaleChanged($event)"
                     [tool]="tool"
                     [stageDimensions]="stageDimensions"
                     [gridSize]="gridSize"
@@ -113,7 +113,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _canvasBackgroundDisplayObject : DisplayObject;
     private _canvasBorderDisplayObject : DisplayObject;
     private _gridDisplayObject : DisplayObject;
-    private _frameRate = 33.33; // 30 fps
+    private _framesPerSecond = 30;
     private _totalMillis = 0;
     private _lastDrawnConstructs : DrawnConstruct[] = [];
     private _entitySystemSubscription : Subscriber<any>;
@@ -146,7 +146,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         }) as Subscriber<any>;
 
         this._redrawInterval = TimerObservable
-            .create(0, this._frameRate)
+            .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this.drawFrame()) as Subscriber<any>;
     }
 
@@ -162,7 +162,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     private drawFrame() {
-        this._totalMillis += this._frameRate;
+        this._totalMillis += (1000 / this._framesPerSecond);
         this.createEntitiesDisplayObject(this._lastDrawnConstructs);
     }
 
@@ -201,11 +201,9 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this.canvasDisplayObject = this.buildCanvasDisplayObject();
     }
 
-    onScaleChanged(scale : number, redraw : boolean = true) {
+    onScaleChanged(scale : number) {
         this.scale = scale;
-        if (redraw) {
-            this.redrawAllDisplayObjects();
-        }
+        this.redrawAllDisplayObjects();
     }
 
     onShowGridChanged(showGrid : boolean) {

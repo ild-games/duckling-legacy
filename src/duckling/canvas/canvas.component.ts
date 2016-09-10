@@ -291,8 +291,8 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             let stage = new Container();
 
             stage.addChild(this.canvasDisplayObject);
-            this.canvasDisplayObject.position.x = position.x;
-            this.canvasDisplayObject.position.y = position.y;
+            this.canvasDisplayObject.position.x = position.x + 0.5;
+            this.canvasDisplayObject.position.y = position.y + 0.5;
             this.canvasDisplayObject.scale = new Point(this.scale, this.scale);
             this.canvasDisplayObject.updateTransform();
 
