@@ -91,7 +91,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Output() scaleChanged = new EventEmitter<number>();
 
     private _mouseLocation : Vector = {x: 0, y: 0};
-    private _zoomInStageCoords : Vector = null;
+    private _zoomInCanvasCoords : Vector = null;
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
     private _viewInited = false;
@@ -131,36 +131,26 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onScaleChanged(oldScale : number, newScale : number) {
-        if (!this._zoomInStageCoords) {
-            let stagePosition = this._stagePosition;
-            let centerScreenStageCoords = {
-                x: ((this.elementDimensions.x / 2) - stagePosition.x) / oldScale,
-                y: ((this.elementDimensions.y / 2) - stagePosition.y) / oldScale
-            };
-            this.resizeCanvasElements();
-            this.scrollTo({
-                x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2) + (centerScreenStageCoords.x * newScale),
-                y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2) + (centerScreenStageCoords.y * newScale)
-            });
-        } else {
-            let scaleChange = newScale / oldScale;
-            let offsetAmount = {
-                x: -(this._zoomInStageCoords.x * scaleChange),
-                y: -(this._zoomInStageCoords.y * scaleChange)
+        let scaleChange = newScale - oldScale;
+        let stagePosition = this._stagePosition;
+        if (!this._zoomInCanvasCoords) {
+            this._zoomInCanvasCoords = {
+                x: this.elementDimensions.x / 2,
+                y: this.elementDimensions.y / 2
             }
-            let stagePosition = this._stagePosition;
-            let centerScreenStageCoords = {
-                x: ((this.elementDimensions.x / 2) - stagePosition.x) / oldScale,
-                y: ((this.elementDimensions.y / 2) - stagePosition.y) / oldScale
-            };
-            this._zoomInStageCoords = null;
-            this.resizeCanvasElements();
-            this.scrollTo({
-                x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2) + (centerScreenStageCoords.x * newScale),
-                y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2) + (centerScreenStageCoords.y * newScale)
-            });
-            this.scrollPan(offsetAmount);
         }
+        let zoomPoint = {
+            x: ((this._zoomInCanvasCoords.x - stagePosition.x) / oldScale) + this.stageDimensions.x / 2,
+            y: ((this._zoomInCanvasCoords.y - stagePosition.y) / oldScale) + this.stageDimensions.y / 2
+        };
+        let offsetPan = {
+            x: (zoomPoint.x * scaleChange),
+            y: (zoomPoint.y * scaleChange)
+        };
+
+        this._zoomInCanvasCoords = null;
+        this.resizeCanvasElements();
+        this.scrollPan(offsetPan);
     }
 
     ngOnDestroy() {
@@ -210,10 +200,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     onMouseWheel(event : WheelEvent) {
         if (event.ctrlKey || event.metaKey) {
-            this._zoomInStageCoords = this.stageCoordsFromCanvasCoords({
+            this._zoomInCanvasCoords = {
                 x: event.offsetX,
                 y: event.offsetY
-            })
+            };
             let scaleAmount = Math.sign(event.deltaY) / 10 * -1;
             if (this.scale + scaleAmount < 0.1) {
                 this.scale = 0.1;

@@ -35,7 +35,7 @@ import {Vector} from '../../math/vector';
         <dk-number-input
             class="inline-entry-field"
             label="Scale"
-            [value]="scale"
+            [value]="(scale * 100).toFixed(0)"
             (validInput)="onScaleInput($event)">
         </dk-number-input>
 
@@ -67,7 +67,7 @@ export class BottomToolbarComponent {
     }
 
     onScaleInput(scale : number) {
-        this.scaleChanged.emit(scale);
+        this.scaleChanged.emit(scale / 100);
     }
 
     onShowGridPressed(showGrid : boolean) {
