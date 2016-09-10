@@ -46,7 +46,6 @@ import {ScaleComponent} from './scale.component';
         </md-checkbox>
 
         <dk-scale
-            class="inline-entry-field scale"
             [scale]="scale"
             (scaleChanged)="onScaleInput($event)">
         </dk-scale>
@@ -72,7 +71,7 @@ export class BottomToolbarComponent {
     }
 
     onScaleInput(scale : number) {
-        this.scaleChanged.emit(scale / 100);
+        this.scaleChanged.emit(scale);
     }
 
     onShowGridPressed(showGrid : boolean) {

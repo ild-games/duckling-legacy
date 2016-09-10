@@ -21,10 +21,12 @@ import {
     Point
 } from 'pixi.js';
 
-import {drawRectangle} from './drawing/util';
-import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
+
+import {zoomLevels} from './_toolbars/scale.component';
+import {drawRectangle} from './drawing/util';
+import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
 
 /**
  * The Canvas Component is used to render pixijs display objects and wire up Tools.
@@ -90,6 +92,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
      */
     @Output() scaleChanged = new EventEmitter<number>();
 
+    /**
+     * The index of the valid zoomLevels
+     */
+    private _zoomLevel = 6;
     private _mouseLocation : Vector = {x: 0, y: 0};
     private _zoomInCanvasCoords : Vector = null;
     private _renderer : WebGLRenderer | CanvasRenderer;
@@ -212,12 +218,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
                 x: event.offsetX,
                 y: event.offsetY
             };
-            let scaleAmount = Math.sign(event.deltaY) / 10 * -1;
-            if (this.scale + scaleAmount < 0.1) {
-                this.scale = 0.1;
-            } else {
-                this.scale += scaleAmount;
+
+            this._zoomLevel -= Math.sign(event.deltaY);
+            if (this._zoomLevel < 0) {
+                this._zoomLevel = 0;
+            } else if (this._zoomLevel >= zoomLevels.length) {
+                this._zoomLevel = zoomLevels.length - 1;
             }
+            this.scale = zoomLevels[this._zoomLevel];
             this.scaleChanged.emit(this.scale);
         }
         event.stopPropagation();
