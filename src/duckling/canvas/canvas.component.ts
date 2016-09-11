@@ -24,7 +24,7 @@ import {
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 
-import {ZOOM_LEVELS} from './_toolbars/canvas-scale.component';
+import {ZOOM_LEVELS, DEFAULT_ZOOM_LEVEL} from './_toolbars/canvas-scale.component';
 import {drawRectangle} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
 
@@ -95,7 +95,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     /**
      * The index of the valid ZOOM_LEVELS
      */
-    private _zoomLevel = 6;
+    private _zoomLevel = DEFAULT_ZOOM_LEVEL;
     private _mouseLocation : Vector = {x: 0, y: 0};
     private _zoomInCanvasCoords : Vector = null;
     private _renderer : WebGLRenderer | CanvasRenderer;
@@ -156,7 +156,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             x: ((this._zoomInCanvasCoords.x - stagePosition.x) / oldScale) + this.stageDimensions.x / 2,
             y: ((this._zoomInCanvasCoords.y - stagePosition.y) / oldScale) + this.stageDimensions.y / 2
         };
-        
+
         let offsetPan = {
             x: (zoomPoint.x * scaleChange),
             y: (zoomPoint.y * scaleChange)
