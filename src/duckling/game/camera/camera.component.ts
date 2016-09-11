@@ -8,6 +8,7 @@ import {
 import {VectorInput, NumberInput} from '../../controls';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
+import {EntityKey} from '../../entitysystem/entity';
 
 import {CameraAttribute} from './camera-attribute';
 
@@ -36,11 +37,24 @@ import {CameraAttribute} from './camera-attribute';
             (validInput)="onSizeChanged($event)">
         </dk-vector-input>
 
+        <dk-vector-input
+            xLabel="Offset X"
+            yLabel="Offset Y"
+            [value]="attribute.offset"
+            (validInput)="onOffsetChanged($event)">
+        </dk-vector-input>
+
         <dk-number-input
             label="Scale"
             [value]="attribute.scale"
             (validInput)="onScaleChanged($event)">
         </dk-number-input>
+
+        <dk-input
+            label="Follows Entity"
+            [value]="attribute.follows"
+            (inputChanged)="onFollowsChanged($event)">
+        </dk-input>
     `
 })
 export class CameraComponent {
@@ -57,7 +71,15 @@ export class CameraComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {size: newSize}));
     }
 
+    onOffsetChanged(newOffset : Vector) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {offset: newOffset}));
+    }
+
     onScaleChanged(newScale : Vector) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {scale: newScale}));
+    }
+
+    onFollowsChanged(newFollows : EntityKey) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {follows: newFollows}));
     }
 }
