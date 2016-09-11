@@ -35,7 +35,7 @@ export class ValidatedInput {
     /**
      * Function used to validate the users input. Should return true if the users input is valid.
      */
-    @Input() validator : (value:string) => string;
+    @Input() validator : (value:string) => boolean;
 
     /**
      * Event published when the user enters a valid input.

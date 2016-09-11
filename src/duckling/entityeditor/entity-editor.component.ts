@@ -6,8 +6,10 @@ import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, Attribu
 import {SelectionService, Selection} from '../selection';
 import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
+import {DeleteButton, ToolbarButton, InputComponent} from '../controls';
 
 import {EntityComponent} from './entity.component';
+import {EntityNameComponent} from './entity-name.component';
 import {AttributeSelectorComponent} from './attribute-selector.component';
 
 /**
@@ -15,18 +17,18 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
  */
 @Component({
     selector: "dk-entity-editor",
-    directives: [EntityComponent, AttributeSelectorComponent],
+    directives: [
+        EntityComponent,
+        AttributeSelectorComponent,
+        EntityNameComponent
+    ],
     template: `
         <div *ngIf="selection?.selectedEntity">
-            <span>
-                Entity {{selection.selectedEntity}}
-                <button
-                    [disableRipple]=true
-                    md-button title="Delete Entity"
-                    (click)="deleteEntity()">
-                    Delete
-                </button>
-            </span>
+            <dk-entity-name
+                [currentSelectedEntity]="selection.selectedEntity"
+                (deleteEntity)="onDeleteEntity()"
+                (renameEntity)="onRenameEntity($event)">
+            </dk-entity-name>
             <dk-entity-component
                 [entity]="selection.entity"
                 (entityChanged)="onEntityChanged($event)">
@@ -51,27 +53,34 @@ export class EntityEditorComponent {
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
                 private _attributeDefault : AttributeDefaultService) {
-        _selection.selection
-            .subscribe((selection) => this.selection = selection);
+        _selection.selection.subscribe((selection) => {
+            this.selection = selection
+        });
     }
 
     onEntityChanged(entity : Entity) {
         this._entitySystem.updateEntity(this.selection.selectedEntity, entity);
     }
 
-    deleteEntity() {
-        var mergeKey = newMergeKey();
-        var entityKey = this.selection.selectedEntity;
+    onDeleteEntity() {
+        let mergeKey = newMergeKey();
+        let entityKey = this.selection.selectedEntity;
         this._selection.deselect(mergeKey);
         this._entitySystem.deleteEntity(entityKey, mergeKey);
     }
 
-    addAttribute(key : AttributeKey) {
-        var defaultAttribute = this._attributeDefault.createAttribute(key);
+    onRenameEntity(newName : string) {
+        let mergeKey = newMergeKey();
+        this._entitySystem.renameEntity(this.selection.selectedEntity, newName, mergeKey);
+        this._selection.select(newName, mergeKey);
+    }
 
-        var patch : any = {};
+    addAttribute(key : AttributeKey) {
+        let defaultAttribute = this._attributeDefault.createAttribute(key);
+
+        let patch : any = {};
         patch[key] = defaultAttribute;
-        var newEntity = immutableAssign(this.selection.entity, patch);
+        let newEntity = immutableAssign(this.selection.entity, patch);
         this.onEntityChanged(newEntity);
     }
 }

@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 
 import {StoreService, clearUndoHistoryAction} from '../state';
 import {EntitySystem, Entity, EntityKey, createEntitySystem} from './entity';
-import {updateEntityAction, replaceSystemAction, deleteEntityAction} from './entity-system.reducer';
+import {updateEntityAction, replaceSystemAction, deleteEntityAction, renameEntityAction} from './entity-system.reducer';
 
 /**
  * The EntitySystemService is used to provide convinient access to the EntitySystem.
@@ -69,6 +69,16 @@ export class EntitySystemService {
      */
     deleteEntity(entityKey : EntityKey, mergeKey? : any) {
         this._storeService.dispatch(deleteEntityAction(entityKey), mergeKey);
+    }
+
+    /**
+     * Renames an entity
+     * @param  oldEntityKey The old key of the entity to be renamed
+     * @param  newEntityKey The new key of the entity to be renamed
+     * @param  mergeKey     Used to merge updates.
+     */
+    renameEntity(oldEntityKey : EntityKey, newEntityKey : EntityKey, mergeKey? : any) {
+        this._storeService.dispatch(renameEntityAction(oldEntityKey, newEntityKey), mergeKey);
     }
 
     /**

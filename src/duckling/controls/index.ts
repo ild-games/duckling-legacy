@@ -15,3 +15,4 @@ export * from './color-input.component';
 export * from './icon.component';
 export * from './box2.component';
 export * from './checkbox.component';
+export * from './delete-button.component';
