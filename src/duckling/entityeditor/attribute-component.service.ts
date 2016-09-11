@@ -1,5 +1,6 @@
 import {Component, Injectable} from '@angular/core';
 import {AttributeKey, BaseAttributeService} from '../entitysystem';
+import {DefaultAttributeComponent} from './default-attribute.component';
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class
@@ -13,6 +14,12 @@ export class AttributeComponentService extends BaseAttributeService<any> {
      * @return The component class to use for the attribute.
      */
     getComponentType(key : AttributeKey) : any {
-        return this.getImplementation(key);
+        let implementation = this.getImplementation(key);
+
+        if (implementation) {
+            return implementation;
+        }
+
+        return DefaultAttributeComponent;
     }
 }
