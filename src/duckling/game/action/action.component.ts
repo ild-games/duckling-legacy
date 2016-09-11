@@ -8,7 +8,7 @@ import {
 import {ActionAttribute} from './action-attribute';
 
 @Component({
-    selector: "dk-collision-component",
+    selector: "dk-action-component",
     template: `
         This entity has an action attribute
     `
