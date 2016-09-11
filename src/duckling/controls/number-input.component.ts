@@ -15,8 +15,10 @@ var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
 @Component({
     selector: "dk-number-input",
     directives: [ValidatedInput],
+    styleUrls: ['./duckling/controls/number-input.component.css'],
     template:`
         <dk-validated-input
+            [disabled]="disabled"
             [label]="label"
             [value]="value"
             [validator]="isNumber"
@@ -33,6 +35,10 @@ export class NumberInput {
      * The value stored in the control.
      */
     @Input() value : number;
+    /**
+     * True if the input is disabled, otherwise false
+     */
+    @Input() disabled : boolean;
 
     /**
      * Event published when the user enters a valid input.

@@ -21,10 +21,12 @@ import {
     Point
 } from 'pixi.js';
 
-import {drawRectangle} from './drawing/util';
-import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
+
+import {ZOOM_LEVELS, DEFAULT_ZOOM_LEVEL} from './_toolbars/canvas-scale.component';
+import {drawRectangle} from './drawing/util';
+import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
 
 /**
  * The Canvas Component is used to render pixijs display objects and wire up Tools.
@@ -90,6 +92,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
      */
     @Output() scaleChanged = new EventEmitter<number>();
 
+    /**
+     * The index of the valid ZOOM_LEVELS
+     */
+    private _zoomLevel = DEFAULT_ZOOM_LEVEL;
     private _mouseLocation : Vector = {x: 0, y: 0};
     private _zoomInCanvasCoords : Vector = null;
     private _renderer : WebGLRenderer | CanvasRenderer;
@@ -150,7 +156,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             x: ((this._zoomInCanvasCoords.x - stagePosition.x) / oldScale) + this.stageDimensions.x / 2,
             y: ((this._zoomInCanvasCoords.y - stagePosition.y) / oldScale) + this.stageDimensions.y / 2
         };
-        
+
         let offsetPan = {
             x: (zoomPoint.x * scaleChange),
             y: (zoomPoint.y * scaleChange)
@@ -212,12 +218,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
                 x: event.offsetX,
                 y: event.offsetY
             };
-            let scaleAmount = Math.sign(event.deltaY) / 10 * -1;
-            if (this.scale + scaleAmount < 0.1) {
-                this.scale = 0.1;
-            } else {
-                this.scale += scaleAmount;
+
+            this._zoomLevel -= Math.sign(event.deltaY);
+            if (this._zoomLevel < 0) {
+                this._zoomLevel = 0;
+            } else if (this._zoomLevel >= ZOOM_LEVELS.length) {
+                this._zoomLevel = ZOOM_LEVELS.length - 1;
             }
+            this.scale = ZOOM_LEVELS[this._zoomLevel];
             this.scaleChanged.emit(this.scale);
         }
         event.stopPropagation();
