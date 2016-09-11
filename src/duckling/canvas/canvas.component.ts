@@ -139,10 +139,18 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
                 y: this.elementDimensions.y / 2
             }
         }
+
+        // to get the zoom in point we need to:
+        // 1. convert the canvas element coordinates where we're zooming into
+        //    stage coordinates based on old scale.
+        // 2. convert the stage coordinate origin from the middle to the top left
+        //    so we can match the scrollLeft and scrollTop coordinate system HTML
+        //    uses for scroll bars.
         let zoomPoint = {
             x: ((this._zoomInCanvasCoords.x - stagePosition.x) / oldScale) + this.stageDimensions.x / 2,
             y: ((this._zoomInCanvasCoords.y - stagePosition.y) / oldScale) + this.stageDimensions.y / 2
         };
+        
         let offsetPan = {
             x: (zoomPoint.x * scaleChange),
             y: (zoomPoint.y * scaleChange)
