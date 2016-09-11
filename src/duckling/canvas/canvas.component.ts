@@ -24,7 +24,7 @@ import {
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 
-import {zoomLevels} from './_toolbars/scale.component';
+import {ZOOM_LEVELS} from './_toolbars/canvas-scale.component';
 import {drawRectangle} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
 
@@ -93,7 +93,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Output() scaleChanged = new EventEmitter<number>();
 
     /**
-     * The index of the valid zoomLevels
+     * The index of the valid ZOOM_LEVELS
      */
     private _zoomLevel = 6;
     private _mouseLocation : Vector = {x: 0, y: 0};
@@ -222,10 +222,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             this._zoomLevel -= Math.sign(event.deltaY);
             if (this._zoomLevel < 0) {
                 this._zoomLevel = 0;
-            } else if (this._zoomLevel >= zoomLevels.length) {
-                this._zoomLevel = zoomLevels.length - 1;
+            } else if (this._zoomLevel >= ZOOM_LEVELS.length) {
+                this._zoomLevel = ZOOM_LEVELS.length - 1;
             }
-            this.scale = zoomLevels[this._zoomLevel];
+            this.scale = ZOOM_LEVELS[this._zoomLevel];
             this.scaleChanged.emit(this.scale);
         }
         event.stopPropagation();

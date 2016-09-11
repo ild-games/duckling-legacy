@@ -8,7 +8,7 @@ import {
 import {NumberInput, VectorInput} from '../../controls';
 import {Vector} from '../../math/vector';
 
-import {ScaleComponent} from './scale.component';
+import {CanvasScaleComponent} from './canvas-scale.component';
 
 /**
  * Component for managing the bottom bar controls for the map editor
@@ -18,7 +18,7 @@ import {ScaleComponent} from './scale.component';
     directives: [
         VectorInput,
         NumberInput,
-        ScaleComponent
+        CanvasScaleComponent
     ],
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
@@ -45,10 +45,10 @@ import {ScaleComponent} from './scale.component';
             Show Grid?
         </md-checkbox>
 
-        <dk-scale
+        <dk-canvas-scale
             [scale]="scale"
             (scaleChanged)="onScaleInput($event)">
-        </dk-scale>
+        </dk-canvas-scale>
     `
 })
 export class BottomToolbarComponent {

@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-export let zoomLevels = [0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5];
+export const ZOOM_LEVELS = [0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5];
 
 import {ToolbarButton} from '../../controls';
 
@@ -13,9 +13,9 @@ import {ToolbarButton} from '../../controls';
  * Component for managing the bottom bar controls for the map editor
  */
 @Component({
-    selector: "dk-scale",
+    selector: "dk-canvas-scale",
     directives: [ToolbarButton],
-    styleUrls: ['./duckling/canvas/_toolbars/scale.component.css'],
+    styleUrls: ['./duckling/canvas/_toolbars/canvas-scale.component.css'],
     template: `
         <dk-toolbar-button
             icon="minus"
@@ -32,28 +32,28 @@ import {ToolbarButton} from '../../controls';
         </dk-toolbar-button>
     `
 })
-export class ScaleComponent {
+export class CanvasScaleComponent {
     @Input() scale : number;
 
     @Output() scaleChanged = new EventEmitter<number>();
 
     onZoomOut() {
-        let curZoomLevel = zoomLevels.indexOf(this.scale);
+        let curZoomLevel = ZOOM_LEVELS.indexOf(this.scale);
         curZoomLevel--;
         if (curZoomLevel < 0) {
             curZoomLevel = 0;
         }
-        this.scale = zoomLevels[curZoomLevel];
+        this.scale = ZOOM_LEVELS[curZoomLevel];
         this.scaleChanged.emit(this.scale);
     }
 
     onZoomIn() {
-        let curZoomLevel = zoomLevels.indexOf(this.scale);
+        let curZoomLevel = ZOOM_LEVELS.indexOf(this.scale);
         curZoomLevel++;
-        if (curZoomLevel === zoomLevels.length) {
-            curZoomLevel = zoomLevels.length - 1;
+        if (curZoomLevel === ZOOM_LEVELS.length) {
+            curZoomLevel = ZOOM_LEVELS.length - 1;
         }
-        this.scale = zoomLevels[curZoomLevel];
+        this.scale = ZOOM_LEVELS[curZoomLevel];
         this.scaleChanged.emit(this.scale);
     }
 }
