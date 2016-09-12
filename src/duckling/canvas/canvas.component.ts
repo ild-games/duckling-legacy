@@ -41,7 +41,7 @@ import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
             (paste)="onPaste($event)"
             (wheel)="forwardContainingDivWheelEvent($event)"
             (mousedown)="forwardContainingDivMouseEvent($event)"
-            (mouseUp)="forwardContainingDivMouseEvent($event)"
+            (mouseup)="forwardContainingDivMouseEvent($event)"
             (mousemove)="forwardContainingDivMouseEvent($event)"
             (mouseout)="forwardContainingDivMouseEvent($event)">
             <div
@@ -93,6 +93,12 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Output() scaleChanged = new EventEmitter<number>();
 
     /**
+     * Event that is published when the tool changes via the canvas (example: holding space
+     * uses the map move tool)
+     */
+    @Output() toolChanged = new EventEmitter<BaseTool>();
+
+    /**
      * The index of the valid ZOOM_LEVELS
      */
     private _zoomLevel = DEFAULT_ZOOM_LEVEL;
@@ -101,6 +107,8 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
     private _viewInited = false;
+    private _useToolMoveWithoutMouse = false;
+    private _oldToolKey : string = "";
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _window : WindowService,
@@ -109,8 +117,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
     ngAfterViewInit() {
         this._viewInited = true;
-        this._window.onResize(() => this.onResize());
-        this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
+        this.setupContainingElementEvents();
 
         this._renderer = new CanvasRenderer(this.elementDimensions.x, this.elementDimensions.y, {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
@@ -118,6 +125,19 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.resizeCanvasElements();
         this.centerStage();
         this.render();
+    }
+
+    setupContainingElementEvents() {
+        this._window.onResize(() => this.onResize());
+
+        // only elements with tab index set to a positive number receive key events
+        this.canvasContainerDiv.nativeElement.parentElement.tabIndex = "1";
+        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this.onCanvasKeyDown(event);
+        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => this.onCanvasKeyUp(event);
+
+        this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
+        this.canvasContainerDiv.nativeElement.parentElement.onmousemove = (event : MouseEvent) => event.preventDefault();
+        this.canvasContainerDiv.nativeElement.parentElement.onblur = () => this.onBlur();
     }
 
 
@@ -170,6 +190,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     ngOnDestroy() {
         this._renderer.destroy();
         this._window.removeResizeEvent();
+        this._window.removeKeyDownEvent();
     }
 
     onCopy(event : ClipboardEvent) {
@@ -177,10 +198,11 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onPaste(event : ClipboardEvent) {
-        this.elementPaste.emit(this._mouseLocation);
+        this.elementPaste.emit(this.stageCoordsFromCanvasCoords(this._mouseLocation));
     }
 
     onMouseDown(event : MouseEvent) {
+        this._window.clearSelection();
         this.canvasContainerDiv.nativeElement.focus();
         if (this.tool) {
             this.tool.onStageDown(this.createCanvasMouseEvent(event));
@@ -198,11 +220,18 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     onMouseDrag(event : MouseEvent) {
         let canvasMouseEvent = this.createCanvasMouseEvent(event);
         let stageCoords = canvasMouseEvent.stageCoords;
-        this._mouseLocation = stageCoords;
-        if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
+        this._mouseLocation = canvasMouseEvent.canvasCoords;
+        if (this._isToolMovementActive(event)) {
             this.tool.onStageMove(canvasMouseEvent);
         }
         event.stopPropagation();
+    }
+
+    private _isToolMovementActive(event : MouseEvent) : boolean {
+        return (
+            this.tool &&
+            (isMouseButtonPressed(event, MouseButton.Left) || this._useToolMoveWithoutMouse)
+        );
     }
 
     onMouseOut() {
@@ -229,6 +258,55 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             this.scaleChanged.emit(this.scale);
         }
         event.stopPropagation();
+    }
+
+    onBlur() {
+        // space bar has tool switching, make sure we undo it if we lose focus
+        this._onSpaceKeyUp();
+    }
+
+    onCanvasKeyDown(event : KeyboardEvent) {
+        const SPACEBAR_KEY = 32;
+        if (event.keyCode === SPACEBAR_KEY) {
+            this._onSpaceKeyDown();
+            event.preventDefault();
+        }
+    }
+
+    onCanvasKeyUp(event : KeyboardEvent) {
+        const SPACEBAR_KEY = 32;
+        if (event.keyCode === SPACEBAR_KEY) {
+            this._onSpaceKeyUp();
+            event.preventDefault();
+        }
+    }
+
+    private _onSpaceKeyDown() {
+        if (this._oldToolKey === "") {
+            this._useToolMoveWithoutMouse = true;
+            this._oldToolKey = this.tool.key;
+            this.tool = this._toolService.getTool("MapMoveTool");
+            this.tool.onStageDown({
+                canvas: this,
+                canvasCoords: this._mouseLocation,
+                stageCoords: this.stageCoordsFromCanvasCoords(this._mouseLocation)
+            });
+            this.toolChanged.emit(this.tool);
+        }
+    }
+
+    private _onSpaceKeyUp() {
+        if (this._oldToolKey !== "") {
+            this._useToolMoveWithoutMouse = false;
+            this.tool.onStageUp({
+                canvas: this,
+                canvasCoords: this._mouseLocation,
+                stageCoords: this.stageCoordsFromCanvasCoords(this._mouseLocation)
+            });
+            this.tool = this._toolService.getTool(this._oldToolKey);
+            this._oldToolKey = "";
+            this.toolChanged.emit(this.tool);
+        }
     }
 
     onResize() {

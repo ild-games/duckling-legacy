@@ -45,20 +45,23 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
             <md-card-content>
                 <dk-top-toolbar
                     class="canvas-top-toolbar md-elevation-z4"
+                    [selectedToolKey]="tool.key"
                     (toolSelection)="onToolSelected($event)">
                 </dk-top-toolbar>
 
                 <dk-canvas #canvasElement
-                    class="canvas"
-                    (elementCopy)="copyEntity()"
-                    (elementPaste)="pasteEntity($event)"
-                    (scaleChanged)="onScaleChanged($event)"
+                    class="canvas unselectable"
+                    unselectable="on"
                     [tool]="tool"
                     [stageDimensions]="stageDimensions"
                     [gridSize]="gridSize"
                     [scale]="scale"
                     [showGrid]="showGrid"
-                    [canvasDisplayObject]="canvasDisplayObject">
+                    [canvasDisplayObject]="canvasDisplayObject"
+                    (elementCopy)="copyEntity()"
+                    (elementPaste)="pasteEntity($event)"
+                    (scaleChanged)="onScaleChanged($event)"
+                    (toolChanged)="onToolSelected($event)">
                 </dk-canvas>
 
                 <dk-bottom-toolbar

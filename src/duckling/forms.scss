@@ -29,3 +29,8 @@ $spacer-unit: 13px;
     text-decoration: none;
     display: block;
 }
+
+.unselectable {
+   -webkit-user-select: none;
+   user-select: none;
+}

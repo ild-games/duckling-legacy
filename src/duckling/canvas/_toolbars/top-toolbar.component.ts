@@ -43,7 +43,7 @@ import {ToolbarOption} from '../../controls';
 
         <dk-toolbar-button-group
             [options]="toolOptions"
-            [selectedValue]="toolService.defaultTool.key"
+            [selectedValue]="selectedToolKey"
             (selected)="onToolSelected($event)">
         </dk-toolbar-button-group>
     `,
@@ -51,6 +51,7 @@ import {ToolbarOption} from '../../controls';
 })
 export class TopToolbarComponent {
     toolOptions : ToolbarOption[];
+    @Input() selectedToolKey : string;
 
     @Output() toolSelection = new EventEmitter<BaseTool>();
 

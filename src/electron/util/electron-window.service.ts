@@ -27,6 +27,14 @@ export class ElectronWindowService extends WindowService {
         window.onresize = null;
     }
 
+    onKeyDown(handler: Function) {
+        window.onkeydown = (event : KeyboardEvent) => handler(event);
+    }
+
+    removeKeyDownEvent() {
+        window.onkeydown = null;
+    }
+
     setSize(width : number, height : number) : void {
         this._curWindow.setSize(width, height);
     }
@@ -45,5 +53,9 @@ export class ElectronWindowService extends WindowService {
 
     setResizable(isResizable : boolean) : void {
         this._curWindow.setResizable(isResizable);
+    }
+
+    clearSelection() : void {
+        window.getSelection().removeAllRanges();
     }
 }
