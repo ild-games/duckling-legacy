@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {ProjectSerializerService} from './project-serializer.service';
+import {ProjectSerializerService} from './_project-serializer.service';
 import {PathService} from '../util/path.service';
 import {DialogService} from '../util/dialog.service';
 import {WindowService} from '../util/window.service';

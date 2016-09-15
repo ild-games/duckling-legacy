@@ -7,7 +7,7 @@ import {
     Input,
     Output,
     SimpleChange,
-    ComponentResolver,
+    ComponentFactoryResolver,
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from '@angular/core';
@@ -46,7 +46,7 @@ export class AttributeComponent {
 
     constructor(private _attributeComponentService : AttributeComponentService,
                 private _dcl : DynamicComponentLoader,
-                private _componentResolver : ComponentResolver,
+                private _componentResolver : ComponentFactoryResolver,
                 private _elementRef : ViewContainerRef,
                 private _changeDetector : ChangeDetectorRef) {
     }
@@ -60,18 +60,16 @@ export class AttributeComponent {
     }
 
     switchToType(key : AttributeKey) {
-        var type = this._attributeComponentService.getComponentType(key);
-        this._componentResolver.resolveComponent(type).then((componentFactory) => {
-            var childComponent : ComponentRef<AttributeComponent>;
-            childComponent = this._elementRef.createComponent(componentFactory, 0, this._elementRef.injector);
+        let type = this._attributeComponentService.getComponentType(key);
+        let componentFactory = this._componentResolver.resolveComponentFactory<AttributeComponent>(type);
+        let childComponent = this._elementRef.createComponent(componentFactory, 0, this._elementRef.injector);
 
-            childComponent.instance.attribute = this.attribute;
-            childComponent.instance.key= this.key;
-            childComponent.instance.attributeChanged.subscribe((event : Attribute) => this.attributeChanged.emit(event));
+        childComponent.instance.attribute = this.attribute;
+        childComponent.instance.key= this.key;
+        childComponent.instance.attributeChanged.subscribe((event : Attribute) => this.attributeChanged.emit(event));
 
-            this._childComponent = childComponent;
-            this._detectChanges();
-        });
+        this._childComponent = childComponent;
+        this._detectChanges();
     }
 
     private _detectChanges() {

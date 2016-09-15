@@ -17,7 +17,6 @@ import {changeType, ChangeType} from '../state';
  */
 @Component({
     selector: "dk-attribute-selector",
-    directives: [ArrayChoiceComponent],
     template: `
         <div *ngIf="options.length">
             <dk-array-choice
