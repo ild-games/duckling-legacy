@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 
 import {immutableAssign} from '../util/model';
+import {ChangeType, changeType} from '../state';
 
 import {ValidatedInput} from './index';
 
@@ -38,19 +39,16 @@ export class JsonComponent implements OnChanges {
      */
     @Output() valueChanged = new EventEmitter<any>();
 
-    private _stringValue = "";
+    private _displayedValue : any;
 
     ngOnChanges(changes : {value? : SimpleChange}) {
-        if (changes.value.currentValue !== this.value) {
-            this._stringValue = JSON.stringify(changes.value.currentValue, null, 4);
+        if (changeType(this._displayedValue, changes.value.currentValue) !== ChangeType.Equal) {
+            this._displayedValue = changes.value.currentValue;
         }
     }
 
     get valueAsJSON() {
-        if (this._stringValue === "") {
-            this._stringValue = JSON.stringify(this.value, null, 4);
-        }
-        return this._stringValue;
+        return JSON.stringify(this._displayedValue);
     }
 
     isValidJSON(json : string) {
@@ -63,6 +61,7 @@ export class JsonComponent implements OnChanges {
     }
 
     onValueChanged(newValue : string) {
-        this.valueChanged.emit(JSON.parse(newValue));
+        this._displayedValue = JSON.parse(newValue);
+        this.valueChanged.emit(this._displayedValue);
     }
 }
