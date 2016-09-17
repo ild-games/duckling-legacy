@@ -5,8 +5,6 @@ import {
     EventEmitter,
     AfterViewInit
 } from '@angular/core';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
 import {Accordian, FormLabel, EnumChoiceComponent, NumberInput} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';

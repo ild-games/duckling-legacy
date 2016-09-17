@@ -2,7 +2,6 @@ import {
     Component,
     ViewContainerRef,
     EventEmitter,
-    DynamicComponentLoader,
     ComponentRef,
     Input,
     Output,
@@ -45,7 +44,6 @@ export class AttributeComponent {
     @Output() attributeChanged = new EventEmitter<Attribute>();
 
     constructor(private _attributeComponentService : AttributeComponentService,
-                private _dcl : DynamicComponentLoader,
                 private _componentResolver : ComponentFactoryResolver,
                 private _elementRef : ViewContainerRef,
                 private _changeDetector : ChangeDetectorRef) {

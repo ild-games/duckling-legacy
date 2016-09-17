@@ -1,4 +1,4 @@
-import {NgModule, Provider} from '@angular/core';
+import {NgModule} from '@angular/core';
 
 import {ControlsModule} from '../controls/controls.module';
 import {ActionComponent} from './action/action.component';
@@ -61,7 +61,7 @@ const ATTRIBUTE_COMPONENTS = [
         ATTRIBUTE_COMPONENTS
     ],
     providers: [
-        new Provider(RenderPriorityService, {useClass: AnconaSFMLRenderPriorityService})
+        {provide: RenderPriorityService, useClass: AnconaSFMLRenderPriorityService}
     ],
     entryComponents: [
         ATTRIBUTE_COMPONENTS
