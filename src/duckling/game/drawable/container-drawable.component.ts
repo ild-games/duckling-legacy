@@ -3,7 +3,6 @@ import {
     Input,
     Output,
     EventEmitter,
-    forwardRef
 } from '@angular/core';
 
 import {Accordian, FormLabel, EnumChoiceComponent} from '../../controls';
