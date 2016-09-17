@@ -8,12 +8,18 @@ import {
 @Component({
     selector: "dk-default-attribute-component",
     template: `
-    <dk-json [value]="attribute">
-    </dk-json>
+        <dk-json
+            [value]="attribute"
+            (valueChanged)="onValueChanged($event)">
+        </dk-json>
     `
 })
 export class DefaultAttributeComponent {
     @Input() attribute : any;
 
     @Output() attributeChanged = new EventEmitter<any>();
+
+    onValueChanged(newValue : any) {
+        this.attributeChanged.emit(newValue);
+    }
 }
