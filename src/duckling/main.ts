@@ -1,7 +1,6 @@
 import {
     NgModule,
     ApplicationRef,
-    Provider,
     Type
 } from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
@@ -36,14 +35,6 @@ let storeService = new StoreService(mainReducer, mergeEntityAction);
 // Setup window defaults
 let electronWindowService = new ElectronWindowService();
 
-
-function provideInstance(instance : any, base : Type) {
-    return new Provider(base, {useValue : instance});
-}
-function provideClass(implementationClass : Type, base : Type) {
-    return new Provider(base, {useClass : implementationClass});
-}
-
 @NgModule({
     imports: [
         BrowserModule,
@@ -60,9 +51,9 @@ function provideClass(implementationClass : Type, base : Type) {
         UtilModule
     ],
     providers: [
-        provideInstance(storeService, StoreService),
-        provideClass(ElectronWindowService, WindowService),
-        provideClass(ElectronDialogService, DialogService),
+        {provide: StoreService, useValue: storeService},
+        {provide: WindowService, useClass: ElectronWindowService},
+        {provide: DialogService, useClass: ElectronDialogService}
     ],
     entryComponents: [
         ShellComponent

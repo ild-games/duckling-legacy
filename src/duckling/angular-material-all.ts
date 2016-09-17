@@ -4,8 +4,7 @@ import {MdCardModule} from '@angular2-material/card';
 import {MdCheckboxModule} from '@angular2-material/checkbox';
 import {MdInputModule} from '@angular2-material/input';
 import {MdListModule} from '@angular2-material/list';
-import {MdRippleModule} from '@angular2-material/core/ripple/ripple';
-import {OverlayModule} from '@angular2-material/core/overlay/overlay-directives';
+import {MdRippleModule, OverlayModule} from '@angular2-material/core';
 
 const MATERIAL_MODULES = [
     MdButtonModule,
