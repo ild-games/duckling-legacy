@@ -1,6 +1,6 @@
-import {NgModule} from '@angular/core';
+import {NgModule, Provider} from '@angular/core';
 
-import {ControlsModule} from '../controls/controls.module.ts';
+import {ControlsModule} from '../controls/controls.module';
 import {ActionComponent} from './action/action.component';
 import {CameraComponent} from './camera/camera.component';
 import {CollisionComponent} from './collision/collision.component';
@@ -16,6 +16,7 @@ import {GenericDrawableComponent} from './drawable/generic-drawable.component';
 import {ImageDrawableComponent} from './drawable/image-drawable.component';
 import {RectangleComponent} from './drawable/rectangle.component';
 import {ShapeDrawableComponent} from './drawable/shape-drawable.component';
+import {GenericShapeComponent} from './drawable/generic-shape.component';
 
 import {
     AttributeDefaultService,
@@ -26,38 +27,44 @@ import {
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 import {RequiredAssetService} from '../project';
+import {AnconaSFMLRenderPriorityService} from './ancona-sfml-render-priority.service';
+import {RenderPriorityService} from '../canvas/drawing/render-priority.service';
 
 import {bootstrapGameComponents} from './index';
+
+const ATTRIBUTE_COMPONENTS = [
+        ActionComponent,
+        CameraComponent,
+        CollisionComponent,
+        DrawableAttributeComponent,
+        PositionComponent,
+        RotateComponent
+]
 
 @NgModule({
     imports: [
         ControlsModule
     ],
     declarations: [
-        ControlsModule,
-        ActionComponent,
-        CameraComponent,
-        CollisionComponent,
-        DrawableComponent,
-        PositionComponent,
-        RotateComponent,
+        ATTRIBUTE_COMPONENTS,
         AnimatedDrawableComponent,
         ContainerDrawableComponent,
         CircleComponent,
-        DrawableAttributeComponent,
+        DrawableComponent,
         GenericDrawableComponent,
         ImageDrawableComponent,
         RectangleComponent,
-        ShapeDrawableComponent
+        ShapeDrawableComponent,
+        GenericShapeComponent
     ],
     exports: [
-        ControlsModule,
-        ActionComponent,
-        CameraComponent,
-        CollisionComponent,
-        DrawableComponent,
-        PositionComponent,
-        RotateComponent
+        ATTRIBUTE_COMPONENTS
+    ],
+    providers: [
+        new Provider(RenderPriorityService, {useClass: AnconaSFMLRenderPriorityService})
+    ],
+    entryComponents: [
+        ATTRIBUTE_COMPONENTS
     ]
 })
 export class GameModule {

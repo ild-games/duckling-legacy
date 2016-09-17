@@ -6,6 +6,7 @@ export * from './number-input.component';
 export * from './input.component';
 export * from './validated-input.component';
 export * from './vector-input.component';
+export * from './template-wrapper';
 export * from './toolbar-button.component';
 export * from './toolbar-button-group.component';
 export * from './form-label.component';
@@ -13,6 +14,7 @@ export * from './accordian.component';
 export * from './accordian-element.component';
 export * from './color-input.component';
 export * from './icon.component';
+export * from './icon-button.component'
 export * from './box2.component';
 export * from './checkbox.component';
 export * from './delete-button.component';

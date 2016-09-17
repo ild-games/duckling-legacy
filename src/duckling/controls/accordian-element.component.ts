@@ -14,7 +14,6 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-accordian-element",
-    directives: [Icon],
     styleUrls: ['./duckling/controls/accordian-element.component.css'],
     template: `
         <div

@@ -26,9 +26,6 @@ const MAX_SPLASH_ENTRIES : number = 7;
  */
 @Component({
     selector: 'dk-splash-screen',
-    directives: [
-        Icon
-    ],
     styleUrls: [ './duckling/splash/splash.component.css' ],
     template: `
         <div class="splash-screen">

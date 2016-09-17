@@ -12,7 +12,6 @@ import {RotateAttribute} from './rotate-attribute';
 
 @Component({
     selector: "dk-rotate-component",
-    directives: [NumberInput],
     template: `
         <dk-number-input
             label="Speed"

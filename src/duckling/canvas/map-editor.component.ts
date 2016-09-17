@@ -39,8 +39,6 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
  */
 @Component({
     selector: "dk-map-editor",
-    directives: [Canvas, TopToolbarComponent, BottomToolbarComponent],
-    providers : [TOOL_PROVIDERS],
     styleUrls: ['./duckling/canvas/map-editor.component.css'],
     template: `
         <md-card>

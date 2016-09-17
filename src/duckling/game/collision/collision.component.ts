@@ -18,7 +18,6 @@ import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collisi
  */
 @Component({
     selector: "dk-collision-component",
-    directives: [ArraySelect, VectorInput, EnumSelect, FormLabel],
     styleUrls: ['./duckling/game/collision/collision.component.css'],
     template: `
         <dk-vector-input

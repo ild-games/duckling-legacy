@@ -9,7 +9,6 @@ import {ToolbarButton} from './toolbar-button.component';
 
 @Component({
     selector: "dk-toolbar-button-group",
-    directives: [ToolbarButton],
     template: `
         <span *ngFor="let option of options">
             <dk-toolbar-button

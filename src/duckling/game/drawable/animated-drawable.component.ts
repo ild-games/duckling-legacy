@@ -22,13 +22,6 @@ import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} fr
 @Component({
     selector: "dk-animated-drawable-component",
     styleUrls: ['./duckling/game/drawable/animated-drawable.component.css'],
-    directives: [
-        MD_CARD_DIRECTIVES,
-        Accordian,
-        FormLabel,
-        EnumChoiceComponent,
-        NumberInput,
-        forwardRef(() => DrawableComponent)],
     template: `
         <dk-number-input
             label="Duration (seconds)"

@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 
-import {ControlsModule} from '../controls/controls.module.ts';
+import {ControlsModule} from '../controls/controls.module';
 import {
     AttributeDefaultService,
     AvailableAttributeService,

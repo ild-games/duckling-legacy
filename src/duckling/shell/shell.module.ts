@@ -1,15 +1,20 @@
 import {NgModule} from '@angular/core';
 
-import {EntityEditorModule} from '../entityeditor/entity-editor.module.ts';
-import {CanvasModule} from '../canvas/canvas.module.ts';
-import {SplashModule} from '../splash/splash.module.ts';
+import {ControlsModule} from '../controls/controls.module';
+import {EntityEditorModule} from '../entityeditor/entity-editor.module';
+import {CanvasModule} from '../canvas/canvas.module';
+import {SplashModule} from '../splash/splash.module';
 import {ShellComponent} from './shell.component';
 
 @NgModule({
     imports: [
         EntityEditorModule,
         CanvasModule,
-        SplashModule
+        SplashModule,
+        ControlsModule
+    ],
+    declarations: [
+        ShellComponent
     ],
     exports: [
         ShellComponent

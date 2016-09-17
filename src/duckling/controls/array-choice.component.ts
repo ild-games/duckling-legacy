@@ -15,7 +15,6 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-array-choice",
-    directives: [ArraySelect, Icon],
     template: `
         <dk-array-select
             [value]="selected"

@@ -15,7 +15,7 @@ import {DeleteButton, InputComponent} from '../controls';
  */
 @Component({
     selector: "dk-entity-name",
-    styleUrls: ['./duckling/entityeditor/_entity-name.component.css'],
+    styleUrls: ['./duckling/entityeditor/entity-name.component.css'],
     template: `
         <span class="entity-name-row">
             <div *ngIf="!isEditingName" class="entity-name">

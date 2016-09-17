@@ -12,7 +12,6 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-icon-button",
-    directives: [Icon],
     styleUrls: ['./duckling/controls/icon-button.component.css'],
     template: `
         <button

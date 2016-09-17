@@ -17,7 +17,6 @@ import {VectorInput} from './vector-input.component';
  */
 @Component({
     selector: "dk-box2-component",
-    directives: [VectorInput],
     styleUrls: ['./duckling/controls/box2.component.css'],
     template: `
         <dk-vector-input

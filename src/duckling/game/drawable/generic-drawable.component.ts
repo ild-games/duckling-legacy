@@ -17,11 +17,6 @@ import {Drawable} from './drawable';
 @Component({
     selector: "dk-generic-drawable-component",
     styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
-    directives: [
-        VectorInput,
-        FormLabel,
-        NumberInput
-    ],
     template: `
         <div class="inactive-checkbox">
             <md-checkbox

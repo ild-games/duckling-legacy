@@ -1,18 +1,15 @@
 import {NgModule} from '@angular/core';
 
-import {AngularMaterialModule} from "../angular-material-all";
 import {ControlsModule} from "../controls";
-import {BottomToolbarComponent} from './_toolbars/bottom-toolbar.component';
-import {CanvasScaleComponent} from './_toolbars/canvas-scale.component';
-import {TopToolbarComponent} from './_toolbars/top-toolbar.component';
+import {BottomToolbarComponent, CanvasScaleComponent, TopToolbarComponent} from './_toolbars';
 import {Canvas} from './canvas.component';
 import {MapEditorComponent} from './map-editor.component';
 import {EntityDrawerService, RenderPriorityService} from './drawing';
+import {ToolService, EntityCreatorTool, EntityMoveTool, MapMoveTool} from './tools';
 
 @NgModule({
     imports: [
-        ControlsModule,
-        AngularMaterialModule
+        ControlsModule
     ],
     declarations: [
         BottomToolbarComponent,
@@ -27,7 +24,10 @@ import {EntityDrawerService, RenderPriorityService} from './drawing';
     ],
     providers : [
         EntityDrawerService,
-        RenderPriorityService
+        ToolService,
+        EntityCreatorTool,
+        EntityMoveTool,
+        MapMoveTool
     ]
 })
 export class CanvasModule {
