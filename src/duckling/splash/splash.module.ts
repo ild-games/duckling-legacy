@@ -7,7 +7,6 @@ import {ProjectSerializerService} from './_project-serializer.service';
 
 @NgModule({
     imports: [
-        AngularMaterialModule,
         ControlsModule
     ],
     declarations: [
