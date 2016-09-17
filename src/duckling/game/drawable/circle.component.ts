@@ -15,9 +15,6 @@ import {Circle} from './circle';
  */
 @Component({
     selector: "dk-circle-component",
-    directives: [
-        NumberInput,
-    ],
     template: `
         <dk-number-input
             label="Radius"

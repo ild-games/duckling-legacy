@@ -12,7 +12,6 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-toolbar-button",
-    directives: [Icon],
     styleUrls: ['./duckling/controls/toolbar-button.component.css'],
     template: `
         <button

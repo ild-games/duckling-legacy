@@ -9,7 +9,7 @@ import {immutableAssign} from '../util';
 import {DeleteButton, ToolbarButton, InputComponent} from '../controls';
 
 import {EntityComponent} from './entity.component';
-import {EntityNameComponent} from './entity-name.component';
+import {EntityNameComponent} from './_entity-name.component';
 import {AttributeSelectorComponent} from './attribute-selector.component';
 
 /**
@@ -17,11 +17,6 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
  */
 @Component({
     selector: "dk-entity-editor",
-    directives: [
-        EntityComponent,
-        AttributeSelectorComponent,
-        EntityNameComponent
-    ],
     template: `
         <div *ngIf="selection?.selectedEntity">
             <dk-entity-name

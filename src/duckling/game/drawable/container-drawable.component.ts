@@ -3,7 +3,6 @@ import {
     Input,
     Output,
     EventEmitter,
-    forwardRef
 } from '@angular/core';
 
 import {Accordian, FormLabel, EnumChoiceComponent} from '../../controls';
@@ -20,11 +19,6 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
 @Component({
     selector: "dk-container-drawable-component",
     styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
-    directives: [
-        Accordian,
-        FormLabel,
-        EnumChoiceComponent,
-        forwardRef(() => DrawableComponent)],
     template: `
         <dk-form-label title="Add Drawable"></dk-form-label>
         <dk-enum-choice

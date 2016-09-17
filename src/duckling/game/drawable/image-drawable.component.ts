@@ -18,13 +18,6 @@ import {ImageDrawable} from './image-drawable';
  */
 @Component({
     selector: "dk-image-drawable-component",
-    directives: [
-        FormLabel,
-        NumberInput,
-        InputComponent,
-        CheckboxComponent,
-        Box2Component
-    ],
     styleUrls: ['./duckling/game/drawable/image-drawable.component.css'],
     template: `
         <dk-input

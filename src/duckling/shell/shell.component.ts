@@ -9,11 +9,6 @@ import {WindowService} from '../util';
 
 @Component({
     selector: 'duckling-shell',
-    directives: [
-        EntityEditorComponent,
-        SplashComponent,
-        MapEditorComponent
-    ],
     styleUrls: ['./duckling/shell/shell.component.css'],
     template: `
         <div *ngIf="showSplash">

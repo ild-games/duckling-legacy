@@ -15,7 +15,6 @@ import {TemplateWrapper} from './template-wrapper';
 
 @Component({
     selector: "dk-accordian",
-    directives: [AccordianElement, TemplateWrapper],
     template: `
         <dk-accordian-element
             *ngFor="let index of indices()"

@@ -14,7 +14,6 @@ import {isInteger} from '../math/number-utils';
  */
 @Component({
     selector: "dk-enum-select",
-    directives: [ArraySelect],
     template:`
         <dk-array-select
             [value]="value"

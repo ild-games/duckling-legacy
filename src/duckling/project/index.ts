@@ -3,3 +3,4 @@ export * from './project.service';
 export * from './project';
 export * from './asset.service';
 export * from './required-asset.service';
+export * from './project.module';

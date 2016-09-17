@@ -5,21 +5,13 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {NumberInput, VectorInput} from '../../controls';
 import {Vector} from '../../math/vector';
-
-import {CanvasScaleComponent} from './canvas-scale.component';
 
 /**
  * Component for managing the bottom bar controls for the map editor
  */
 @Component({
     selector: "dk-bottom-toolbar",
-    directives: [
-        VectorInput,
-        NumberInput,
-        CanvasScaleComponent
-    ],
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
         <dk-vector-input

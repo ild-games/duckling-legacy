@@ -14,7 +14,6 @@ var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
  */
 @Component({
     selector: "dk-number-input",
-    directives: [ValidatedInput],
     styleUrls: ['./duckling/controls/number-input.component.css'],
     template:`
         <dk-validated-input

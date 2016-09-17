@@ -16,7 +16,6 @@ import {Shape} from './shape';
  */
 @Component({
     selector: "dk-generic-shape-component",
-    directives: [ColorInput],
     template: `
         <dk-color-component
             [color]="shape.fillColor"

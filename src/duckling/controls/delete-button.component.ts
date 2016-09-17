@@ -12,7 +12,6 @@ import {IconButton} from './icon-button.component';
  */
 @Component({
     selector: "dk-delete-button",
-    directives: [IconButton],
     styleUrls: ['./duckling/controls/delete-button.component.css'],
     template: `
         <div class="hover">

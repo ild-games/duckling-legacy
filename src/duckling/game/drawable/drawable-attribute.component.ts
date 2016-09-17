@@ -16,7 +16,6 @@ import {DrawableComponent} from './drawable.component';
  */
 @Component({
     selector: "dk-drawable-attribute-component",
-    directives: [DrawableComponent],
     template: `
         <dk-drawable-component
             [drawable]="attribute.topDrawable"

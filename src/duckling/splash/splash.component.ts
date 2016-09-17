@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {ProjectSerializerService} from './project-serializer.service';
+import {ProjectSerializerService} from './_project-serializer.service';
 import {PathService} from '../util/path.service';
 import {DialogService} from '../util/dialog.service';
 import {WindowService} from '../util/window.service';
@@ -26,9 +26,6 @@ const MAX_SPLASH_ENTRIES : number = 7;
  */
 @Component({
     selector: 'dk-splash-screen',
-    directives: [
-        Icon
-    ],
     styleUrls: [ './duckling/splash/splash.component.css' ],
     template: `
         <div class="splash-screen">

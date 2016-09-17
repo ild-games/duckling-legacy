@@ -15,10 +15,6 @@ import {DeleteButton, InputComponent} from '../controls';
  */
 @Component({
     selector: "dk-entity-name",
-    directives: [
-        DeleteButton,
-        InputComponent,
-    ],
     styleUrls: ['./duckling/entityeditor/entity-name.component.css'],
     template: `
         <span class="entity-name-row">

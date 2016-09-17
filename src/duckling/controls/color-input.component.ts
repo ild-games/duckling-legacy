@@ -16,7 +16,7 @@ import {Color} from '../canvas/drawing/color';
  */
 @Component({
     selector: "dk-color-component",
-    directives: [ValidatedInput],
+
     styleUrls: ['./duckling/controls/color-input.component.css'],
     template:`
         <dk-validated-input

@@ -16,7 +16,6 @@ import {Rectangle} from './rectangle';
  */
 @Component({
     selector: "dk-rectangle-component",
-    directives: [VectorInput],
     template: `
         <dk-vector-input
             xLabel="Width"

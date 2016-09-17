@@ -9,11 +9,10 @@ import {
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
 import {ProjectService} from '../../project';
-import {ToolbarButton, ToolbarButtonGroup, ToolbarOption} from '../../controls';
+import {ToolbarOption} from '../../controls';
 
 @Component({
     selector: "dk-top-toolbar",
-    directives: [ToolbarButton, ToolbarButtonGroup],
     styleUrls: ['./duckling/canvas/_toolbars/top-toolbar.component.css'],
     template: `
         <dk-toolbar-button

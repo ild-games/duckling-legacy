@@ -24,15 +24,6 @@ import {RectangleComponent} from './rectangle.component';
  */
 @Component({
     selector: "dk-shape-drawable-component",
-    directives: [
-        GenericShapeComponent,
-        CircleComponent,
-        RectangleComponent,
-        EnumChoiceComponent,
-        NgSwitch,
-        NgSwitchCase,
-        NgSwitchDefault
-    ],
     template: `
         <dk-generic-shape-component
             *ngIf="shapeDrawable.shape?.__cpp_type !== null"

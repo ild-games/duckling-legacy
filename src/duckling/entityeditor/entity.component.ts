@@ -17,10 +17,6 @@ import {AttributeComponent} from '../entityeditor';
  */
 @Component({
     selector: "dk-entity-component",
-    directives: [
-        AttributeComponent,
-        DeleteButton
-    ],
     styleUrls: ['./duckling/entityeditor/entity.component.css'],
     template: `
         <div *ngFor="let key of keys()">

@@ -46,17 +46,6 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
  */
 @Component({
     selector: "dk-drawable-component",
-    directives: [
-        NgSwitch,
-        NgSwitchCase,
-        NgSwitchDefault,
-        EnumChoiceComponent,
-        GenericDrawableComponent,
-        ShapeDrawableComponent,
-        ContainerDrawableComponent,
-        ImageDrawableComponent,
-        AnimatedDrawableComponent
-    ],
     template: `
         <dk-generic-drawable-component
             *ngIf="drawable?.__cpp_type !== null"

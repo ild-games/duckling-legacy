@@ -15,7 +15,6 @@ import {Icon} from './icon.component';
  */
 @Component({
     selector: "dk-enum-choice",
-    directives: [EnumSelect, Icon],
     template: `
         <dk-enum-select
             [value]="selected"
