@@ -11,14 +11,11 @@ import {
 import {immutableAssign} from '../util/model';
 import {ChangeType, changeType} from '../state';
 
-import {ValidatedInput} from './index';
-
 /**
  * A Component used to display the json representing an arbitrary value.
  */
 @Component({
     selector: "dk-json",
-    directives: [ValidatedInput],
     template: `
         <dk-validated-input
             label="JSON"
