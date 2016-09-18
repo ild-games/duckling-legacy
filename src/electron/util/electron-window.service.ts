@@ -35,6 +35,14 @@ export class ElectronWindowService extends WindowService {
         window.onkeydown = null;
     }
 
+    onKeyUp(handler: Function) {
+        window.onkeyup = (event : KeyboardEvent) => handler(event);
+    }
+
+    removeKeyUpEvent() {
+        window.onkeyup = null;
+    }
+
     setSize(width : number, height : number) : void {
         this._curWindow.setSize(width, height);
     }

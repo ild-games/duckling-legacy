@@ -28,7 +28,7 @@ md-card {
         height: $canvas-top-bar-height;
     }
 
-    .canvas {
+    dk-canvas {
         overflow: auto;
         position: absolute;
         top: $canvas-top-bar-height;
@@ -37,7 +37,11 @@ md-card {
         left: 0;
     }
 
-    .canvas:focus {
+    dk-canvas::selection {
+        background: #ff0000;
+    }
+
+    dk-canvas:focus {
         outline: none;
     }
 

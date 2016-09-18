@@ -26,7 +26,7 @@ import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
 
 import {ZOOM_LEVELS, DEFAULT_ZOOM_LEVEL} from './_toolbars/canvas-scale.component';
 import {drawRectangle} from './drawing/util';
-import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent} from './tools';
+import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent} from './tools';
 
 /**
  * The Canvas Component is used to render pixijs display objects and wire up Tools.
@@ -93,12 +93,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     @Output() scaleChanged = new EventEmitter<number>();
 
     /**
-     * Event that is published when the tool changes via the canvas (example: holding space
-     * uses the map move tool)
-     */
-    @Output() toolChanged = new EventEmitter<BaseTool>();
-
-    /**
      * The index of the valid ZOOM_LEVELS
      */
     private _zoomLevel = DEFAULT_ZOOM_LEVEL;
@@ -107,8 +101,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
     private _viewInited = false;
-    private _useToolMoveWithoutMouse = false;
-    private _oldToolKey : string = "";
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _window : WindowService,
@@ -130,14 +122,12 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     setupContainingElementEvents() {
         this._window.onResize(() => this.onResize());
 
-        // only elements with tab index set to a positive number receive key events
         this.canvasContainerDiv.nativeElement.parentElement.tabIndex = "1";
-        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this.onCanvasKeyDown(event);
-        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => this.onCanvasKeyUp(event);
 
         this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
         this.canvasContainerDiv.nativeElement.parentElement.onmousemove = (event : MouseEvent) => event.preventDefault();
-        this.canvasContainerDiv.nativeElement.parentElement.onblur = () => this.onBlur();
+        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => event.preventDefault();
+        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => event.preventDefault();
     }
 
 
@@ -190,7 +180,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     ngOnDestroy() {
         this._renderer.destroy();
         this._window.removeResizeEvent();
-        this._window.removeKeyDownEvent();
     }
 
     onCopy(event : ClipboardEvent) {
@@ -202,46 +191,40 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onMouseDown(event : MouseEvent) {
+        event.stopPropagation();
         this._window.clearSelection();
         this.canvasContainerDiv.nativeElement.focus();
         if (this.tool) {
-            this.tool.onStageDown(this.createCanvasMouseEvent(event));
+            this.tool.onStageDown(this._createCanvasMouseEvent(event));
         }
-        event.stopPropagation();
     }
 
     onMouseUp(event : MouseEvent) {
-        if (this.tool) {
-            this.tool.onStageUp(this.createCanvasMouseEvent(event));
-        }
         event.stopPropagation();
+        if (this.tool) {
+            this.tool.onStageUp(this._createCanvasMouseEvent(event));
+        }
     }
 
     onMouseDrag(event : MouseEvent) {
-        let canvasMouseEvent = this.createCanvasMouseEvent(event);
+        event.stopPropagation();
+        let canvasMouseEvent = this._createCanvasMouseEvent(event);
         let stageCoords = canvasMouseEvent.stageCoords;
         this._mouseLocation = canvasMouseEvent.canvasCoords;
-        if (this._isToolMovementActive(event)) {
+        if (this.tool && isMouseButtonPressed(event, MouseButton.Left)) {
             this.tool.onStageMove(canvasMouseEvent);
         }
-        event.stopPropagation();
-    }
-
-    private _isToolMovementActive(event : MouseEvent) : boolean {
-        return (
-            this.tool &&
-            (isMouseButtonPressed(event, MouseButton.Left) || this._useToolMoveWithoutMouse)
-        );
     }
 
     onMouseOut() {
+        event.stopPropagation();
         if (this.tool) {
             this.tool.onLeaveStage();
         }
-        event.stopPropagation();
     }
 
     onMouseWheel(event : WheelEvent) {
+        event.stopPropagation();
         if (event.ctrlKey || event.metaKey) {
             this._zoomInCanvasCoords = {
                 x: event.offsetX,
@@ -256,56 +239,6 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             }
             this.scale = ZOOM_LEVELS[this._zoomLevel];
             this.scaleChanged.emit(this.scale);
-        }
-        event.stopPropagation();
-    }
-
-    onBlur() {
-        // space bar has tool switching, make sure we undo it if we lose focus
-        this._onSpaceKeyUp();
-    }
-
-    onCanvasKeyDown(event : KeyboardEvent) {
-        const SPACEBAR_KEY = 32;
-        if (event.keyCode === SPACEBAR_KEY) {
-            this._onSpaceKeyDown();
-            event.preventDefault();
-        }
-    }
-
-    onCanvasKeyUp(event : KeyboardEvent) {
-        const SPACEBAR_KEY = 32;
-        if (event.keyCode === SPACEBAR_KEY) {
-            this._onSpaceKeyUp();
-            event.preventDefault();
-        }
-    }
-
-    private _onSpaceKeyDown() {
-        if (this._oldToolKey === "") {
-            this._useToolMoveWithoutMouse = true;
-            this._oldToolKey = this.tool.key;
-            this.tool = this._toolService.getTool("MapMoveTool");
-            this.tool.onStageDown({
-                canvas: this,
-                canvasCoords: this._mouseLocation,
-                stageCoords: this.stageCoordsFromCanvasCoords(this._mouseLocation)
-            });
-            this.toolChanged.emit(this.tool);
-        }
-    }
-
-    private _onSpaceKeyUp() {
-        if (this._oldToolKey !== "") {
-            this._useToolMoveWithoutMouse = false;
-            this.tool.onStageUp({
-                canvas: this,
-                canvasCoords: this._mouseLocation,
-                stageCoords: this.stageCoordsFromCanvasCoords(this._mouseLocation)
-            });
-            this.tool = this._toolService.getTool(this._oldToolKey);
-            this._oldToolKey = "";
-            this.toolChanged.emit(this.tool);
         }
     }
 
@@ -407,12 +340,22 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         }
     }
 
-    private createCanvasMouseEvent(event : MouseEvent) : CanvasMouseEvent {
+    private _createCanvasMouseEvent(event : MouseEvent) : CanvasMouseEvent {
         let canvasCoords = this.canvasCoordsFromEvent(event);
         return {
             canvasCoords: canvasCoords,
             stageCoords: this.stageCoordsFromCanvasCoords(canvasCoords),
             canvas: this
+        }
+    }
+
+    private _createCanvasKeyEvent(event : KeyboardEvent) : CanvasKeyEvent {
+        let canvasCoords = this._mouseLocation;
+        return {
+            canvasCoords: canvasCoords,
+            stageCoords: this.stageCoordsFromCanvasCoords(canvasCoords),
+            canvas: this,
+            keyCode: event.keyCode
         }
     }
 }

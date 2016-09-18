@@ -18,6 +18,7 @@ import {AssetService} from '../project';
 import {ArraySelect, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
 import {Vector} from '../math';
+import {KeyboardService} from '../util';
 import {CopyPasteService, SelectionService} from '../selection';
 
 import {
@@ -32,7 +33,7 @@ import {
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {Canvas} from './canvas.component';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
-import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
+import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
 
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
@@ -50,8 +51,7 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
                 </dk-top-toolbar>
 
                 <dk-canvas #canvasElement
-                    class="canvas unselectable"
-                    unselectable="on"
+                    class="canvas"
                     [tool]="tool"
                     [stageDimensions]="stageDimensions"
                     [gridSize]="gridSize"
@@ -60,8 +60,7 @@ import {BaseTool, TOOL_PROVIDERS, ToolService, MapMoveTool} from './tools';
                     [canvasDisplayObject]="canvasDisplayObject"
                     (elementCopy)="copyEntity()"
                     (elementPaste)="pasteEntity($event)"
-                    (scaleChanged)="onScaleChanged($event)"
-                    (toolChanged)="onToolSelected($event)">
+                    (scaleChanged)="onScaleChanged($event)">
                 </dk-canvas>
 
                 <dk-bottom-toolbar
@@ -128,27 +127,28 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
                 private _copyPaste : CopyPasteService,
                 private _toolService : ToolService,
                 private _assetService : AssetService,
-                private _entityDrawerService : EntityDrawerService) {
-        this.tool = this._toolService.defaultTool;
+                private _entityDrawerService : EntityDrawerService,
+                private _keyboardService : KeyboardService) {
+        this._setTool(this._toolService.defaultTool);
     }
 
     ngAfterViewInit() {
-        this.redrawAllDisplayObjects();
+        this._redrawAllDisplayObjects();
 
         this._entitySystemSubscription = this._entitySystemService.entitySystem
             .map(this._entityDrawerService.getSystemMapper())
             .subscribe((drawnConstructs) => {
-                this.entitiesDrawnConstructsChanged(drawnConstructs);
+                this._entitiesDrawnConstructsChanged(drawnConstructs);
             }) as Subscriber<any>;
 
         this._assetServiceSubscription = this._assetService.assetLoaded.subscribe(() => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this.entitiesDrawnConstructsChanged(drawnConstructs);
+            this._entitiesDrawnConstructsChanged(drawnConstructs);
         }) as Subscriber<any>;
 
         this._redrawInterval = TimerObservable
             .create(0, 1000 / this._framesPerSecond)
-            .subscribe(() => this.drawFrame()) as Subscriber<any>;
+            .subscribe(() => this._drawFrame()) as Subscriber<any>;
     }
 
     ngOnDestroy() {
@@ -157,17 +157,17 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._redrawInterval.unsubscribe();
     }
 
-    private entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {
+    private _entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {
         this._lastDrawnConstructs = newDrawnConstructs;
-        this.createEntitiesDisplayObject(newDrawnConstructs)
+        this._createEntitiesDisplayObject(newDrawnConstructs)
     }
 
-    private drawFrame() {
+    private _drawFrame() {
         this._totalMillis += (1000 / this._framesPerSecond);
-        this.createEntitiesDisplayObject(this._lastDrawnConstructs);
+        this._createEntitiesDisplayObject(this._lastDrawnConstructs);
     }
 
-    private createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
+    private _createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
         let entitiesDrawnContainer = new Container();
         for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, this._totalMillis)) {
             entitiesDrawnContainer.addChild(entityDisplayObject);
@@ -175,7 +175,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         entitiesDrawnContainer.interactiveChildren = false;
 
         this._entitiesDisplayObject = entitiesDrawnContainer;
-        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+        this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
 
     copyEntity() {
@@ -188,38 +188,38 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     onToolSelected(newTool : BaseTool) {
-        this.tool = newTool;
+        this._setTool(newTool);
     }
 
     onStageDimensonsChanged(stageDimensions : Vector) {
         this.stageDimensions = stageDimensions;
-        this.redrawAllDisplayObjects();
+        this._redrawAllDisplayObjects();
     }
 
     onGridSizeChanged(gridSize : number) {
         this.gridSize = gridSize;
-        this._gridDisplayObject = this.buildGrid();
-        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+        this._gridDisplayObject = this._buildGrid();
+        this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
 
     onScaleChanged(scale : number) {
         this.scale = scale;
-        this.redrawAllDisplayObjects();
+        this._redrawAllDisplayObjects();
     }
 
     onShowGridChanged(showGrid : boolean) {
         this.showGrid = showGrid;
-        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+        this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
 
-    private redrawAllDisplayObjects() {
-        this._canvasBackgroundDisplayObject = this.buildCanvasBackground();
-        this._canvasBorderDisplayObject = this.buildCanvasBorder();
-        this._gridDisplayObject = this.buildGrid();
-        this.canvasDisplayObject = this.buildCanvasDisplayObject();
+    private _redrawAllDisplayObjects() {
+        this._canvasBackgroundDisplayObject = this._buildCanvasBackground();
+        this._canvasBorderDisplayObject = this._buildCanvasBorder();
+        this._gridDisplayObject = this._buildGrid();
+        this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
 
-    private buildGrid() : DisplayObject {
+    private _buildGrid() : DisplayObject {
         var graphics = new Graphics();
         graphics.lineStyle(1 / this.scale, 0xEEEEEE, 1);
         drawGrid(
@@ -230,7 +230,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         return graphics;
     }
 
-    private buildCanvasBackground() : DisplayObject {
+    private _buildCanvasBackground() : DisplayObject {
         var bg = new Graphics();
         drawCanvasBackground(
             {x: 0, y: 0},
@@ -239,7 +239,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         return bg;
     }
 
-    private buildCanvasBorder() : DisplayObject {
+    private _buildCanvasBorder() : DisplayObject {
         var border = new Graphics();
         border.lineWidth = 1 / this.scale;
         drawCanvasBorder(
@@ -249,7 +249,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         return border;
     }
 
-    private buildCanvasDisplayObject() : Container {
+    private _buildCanvasDisplayObject() : Container {
         var canvasDrawnElements : Container = new Container();
 
         if (this._canvasBackgroundDisplayObject) {
@@ -266,5 +266,9 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         }
 
         return canvasDrawnElements;
+    }
+
+    private _setTool(tool : BaseTool) {
+        this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService);
     }
 }
