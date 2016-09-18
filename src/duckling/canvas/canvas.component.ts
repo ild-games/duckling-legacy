@@ -126,10 +126,19 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
         this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
         this.canvasContainerDiv.nativeElement.parentElement.onmousemove = (event : MouseEvent) => event.preventDefault();
-        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => event.preventDefault();
-        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => event.preventDefault();
+        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this._onKeyEvent(event);
+        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => this._onKeyEvent(event);
     }
 
+    private _onKeyEvent(event : KeyboardEvent) {
+        if (this._isSpacebar(event)) {
+            event.preventDefault();
+        }
+    }
+
+    private _isSpacebar(event : KeyboardEvent) {
+        return event.keyCode === 32;
+    }
 
     ngOnChanges(changes : {stageDimensions?:SimpleChange, scale?:SimpleChange}) {
         if (!this._viewInited) {
