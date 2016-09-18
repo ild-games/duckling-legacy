@@ -357,14 +357,4 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             canvas: this
         }
     }
-
-    private _createCanvasKeyEvent(event : KeyboardEvent) : CanvasKeyEvent {
-        let canvasCoords = this._mouseLocation;
-        return {
-            canvasCoords: canvasCoords,
-            stageCoords: this.stageCoordsFromCanvasCoords(canvasCoords),
-            canvas: this,
-            keyCode: event.keyCode
-        }
-    }
 }
