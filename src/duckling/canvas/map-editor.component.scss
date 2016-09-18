@@ -1,5 +1,6 @@
 @import '../misc-mixins';
 @import '../colors';
+@import '../forms';
 @import '../../../node_modules/@angular2-material/core/style/elevation';
 
 :host {
@@ -27,13 +28,21 @@ md-card {
         height: $canvas-top-bar-height;
     }
 
-    .canvas {
+    dk-canvas {
         overflow: auto;
         position: absolute;
         top: $canvas-top-bar-height;
         right: 0;
         bottom: $canvas-bottom-bar-height;
         left: 0;
+    }
+
+    dk-canvas::selection {
+        background: #ff0000;
+    }
+
+    dk-canvas:focus {
+        outline: none;
     }
 
     .canvas-bottom-toolbar {

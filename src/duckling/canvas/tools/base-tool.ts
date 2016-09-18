@@ -10,19 +10,15 @@ export class BaseTool {
     }
 
     onStageDown(event : CanvasMouseEvent) {
-
     }
 
     onStageUp(event : CanvasMouseEvent) {
-
     }
 
     onStageMove(event : CanvasMouseEvent) {
-
     }
 
     onLeaveStage() {
-
     }
 
     get key() : string {
@@ -56,4 +52,14 @@ export interface CanvasMouseEvent {
      * Canvas component the event came from
      */
     canvas : Canvas;
+}
+
+/**
+ * Event describing a keyboard action on the canvas
+ */
+export interface CanvasKeyEvent extends CanvasMouseEvent {
+    /**
+     * Key that was pressed during the event
+     */
+    keyCode : number;
 }
