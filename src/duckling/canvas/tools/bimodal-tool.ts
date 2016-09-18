@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {DisplayObject} from 'pixi.js';
 
 import {KeyboardService} from '../../util';
 
@@ -15,6 +16,10 @@ export class BimodalTool extends BaseTool {
                 private _secondaryTool : BaseTool,
                 private _keyboardService : KeyboardService) {
         super();
+    }
+
+    getDisplayObject(canvasZoom : number) : DisplayObject {
+        return this._selectedTool.getDisplayObject(canvasZoom);
     }
 
     onStageDown(event : CanvasMouseEvent) {

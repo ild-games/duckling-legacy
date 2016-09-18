@@ -114,7 +114,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _canvasBackgroundDisplayObject : DisplayObject;
     private _canvasBorderDisplayObject : DisplayObject;
     private _gridDisplayObject : DisplayObject;
-    private _selectionBoxDisplayObject : DisplayObject;
+    private _toolDisplayObject : DisplayObject;
     private _framesPerSecond = 30;
     private _totalMillis = 0;
     private _lastDrawnConstructs : DrawnConstruct[] = [];
@@ -227,7 +227,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._canvasBackgroundDisplayObject = this._buildCanvasBackground();
         this._canvasBorderDisplayObject = this._buildCanvasBorder();
         this._gridDisplayObject = this._buildGrid();
-        this._selectionBoxDisplayObject = this.buildSelectionBox();
+        this._toolDisplayObject = this.tool.getDisplayObject(this.scale);
         this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
 
@@ -239,26 +239,6 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
             {x: this.stageDimensions.x, y: this.stageDimensions.y},
             {x: this.gridSize, y: this.gridSize},
             graphics);
-        return graphics;
-    }
-
-    private buildSelectionBox() : DisplayObject {
-        let graphics : Graphics = null;
-        let entity = this._selection.selection.value.entity;
-        if (entity){
-            graphics = this.buildSelectionBoxAroundEntity(entity);
-        }
-        return graphics;
-    }
-
-    private buildSelectionBoxAroundEntity(entity : Entity) : Graphics {
-        let graphics : Graphics = null;
-        let box = this._entityBoxService.getEntityBox(entity);
-        if (box){
-            graphics = new Graphics();
-            graphics.lineStyle(1 / this.scale, 0x3355cc, 1);
-            drawRectangle(box.position, box.dimension, graphics);
-        }
         return graphics;
     }
 
@@ -290,8 +270,8 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         if (this._entitiesDisplayObject) {
             canvasDrawnElements.addChild(this._entitiesDisplayObject);
         }
-        if (this._selectionBoxDisplayObject) {
-            canvasDrawnElements.addChild(this._selectionBoxDisplayObject);
+        if (this._toolDisplayObject) {
+            canvasDrawnElements.addChild(this._toolDisplayObject);
         }
         if (this.showGrid && this._gridDisplayObject) {
             canvasDrawnElements.addChild(this._gridDisplayObject);
