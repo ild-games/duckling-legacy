@@ -20,67 +20,31 @@ import {ImageDrawable} from './image-drawable';
     selector: "dk-image-drawable-component",
     styleUrls: ['./duckling/game/drawable/image-drawable.component.css'],
     template: `
-        <dk-input
-            disabled="true"
-            class="texture-key"
-            placeholder="Image File"
-            [value]="imageDrawable.textureKey ? imageDrawable.textureKey  : 'No file selected'">
-        </dk-input>
-        <button
-            md-raised-button
-            title="Browse"
-            [disableRipple]=true
-            (click)="onBrowseClicked()">
-            Browse
-        </button>
+        <dk-browse-file-component
+            [dialogOptions]="dialogOptions"
+            [selectedFile]="imageDrawable.textureKey"
+            (filePicked)="onImageFilePicked($event)">
+        </dk-browse-file-component>
 
-        <md-card class="partial-image">
-            <div class="header md-elevation-z3">
-                <dk-checkbox
-                    [checked]="!imageDrawable.isWholeImage"
-                    text="Partial Image?"
-                    (input)="onPartialImageChanged($event)">
-                </dk-checkbox>
-            </div>
+        <dk-collapsible-section-component
+            headerText="Partial Image?"
+            [sectionOpen]="!imageDrawable.isWholeImage"
+            (sectionOpenChanged)="onPartialImageChanged($event)">
             <dk-box2-component
-                *ngIf="!imageDrawable.isWholeImage"
-                class="body"
                 [value]="imageDrawable.textureRect"
                 (boxChanged)="onTextureRectChanged($event)">
             </dk-box2-component>
-        </md-card>
+        </dk-collapsible-section-component>
     `
 })
 export class ImageDrawableComponent {
     @Input() imageDrawable : ImageDrawable;
     @Output() drawableChanged = new EventEmitter<ImageDrawable>();
 
-    private _dialogOptions : {};
-
-    constructor(private _changeDetector : ChangeDetectorRef,
-                private _dialog : DialogService,
+    constructor(private _dialog : DialogService,
                 private _path : PathService,
                 private _assets : AssetService,
                 private _project : ProjectService) {
-        this._dialogOptions = {
-            defaultPath: this._project.project.home,
-            properties: [
-                'openFile'
-            ],
-            filters: [
-                {name: 'Images', extensions: ['png']},
-            ]
-        }
-    }
-
-    onBrowseClicked() {
-        this._dialog.showOpenDialog(
-            this._dialogOptions,
-            (fileNames : string[]) => {
-                if (fileNames[0]) {
-                    this.onImageFilePicked(fileNames[0])
-                }
-            });
     }
 
     onImageFilePicked(file : string) {
@@ -102,5 +66,17 @@ export class ImageDrawableComponent {
 
     onTextureRectChanged(newTextureRect : Box2) {
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureRect: newTextureRect}));
+    }
+
+    get dialogOptions() {
+        return {
+            defaultPath: this._project.project.home,
+            properties: [
+                'openFile'
+            ],
+            filters: [
+                {name: 'Images', extensions: ['png']},
+            ]
+        }
     }
 }

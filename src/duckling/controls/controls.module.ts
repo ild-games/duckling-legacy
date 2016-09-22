@@ -24,7 +24,9 @@ import {
     ToolbarButton,
     ToolbarButtonGroup,
     ValidatedInput,
-    VectorInput
+    VectorInput,
+    BrowseFileComponent,
+    CollapsibleSectionComponent
 } from './index';
 
 const CONTROL_DECLARATIONS : Array<any> = [
@@ -48,7 +50,9 @@ const CONTROL_DECLARATIONS : Array<any> = [
     ToolbarButton,
     ToolbarButtonGroup,
     ValidatedInput,
-    VectorInput
+    VectorInput,
+    BrowseFileComponent,
+    CollapsibleSectionComponent
 ];
 
 @NgModule({
