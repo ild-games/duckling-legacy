@@ -5,6 +5,9 @@ import {
     EventEmitter
 } from '@angular/core';
 
+/**
+ * Component for the generic header for sections
+ */
 @Component({
     selector: "dk-section-header-component",
     styleUrls: ['./duckling/controls/section-header.component.css'],

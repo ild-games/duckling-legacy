@@ -20,7 +20,7 @@ export * from './checkbox.component';
 export * from './delete-button.component';
 export * from './json.component';
 export * from './browse-file.component';
-export * from './collapsible-section.component';
+export * from './section.component';
 export * from './section-header.component';
 
 export * from './controls.module';

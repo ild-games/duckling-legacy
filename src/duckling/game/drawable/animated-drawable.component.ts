@@ -44,9 +44,12 @@ import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} fr
             (click)="onCreateFromTilesheetClicked()">
             Create from tilesheet
         </button>
-        <md-card *ngIf="isCreateFromTilesheetActive">
+        <dk-section-component
+            *ngIf="isCreateFromTilesheetActive"
+            headerText="Create From Tilesheet"
+            [collapsible]="false">
             Hi
-        </md-card>
+        </dk-section-component>
 
 
         <md-card

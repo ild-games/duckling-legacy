@@ -6,25 +6,34 @@ import {
 } from '@angular/core';
 
 @Component({
-    selector: "dk-collapsible-section",
-    styleUrls: ['./duckling/controls/collapsible-section.component.css'],
+    selector: "dk-section-component",
+    styleUrls: ['./duckling/controls/section.component.css'],
     template: `
         <md-card>
             <dk-section-header-component
+                *ngIf="collapsible"
                 [checkboxMode]="checkboxMode"
                 [sectionOpen]="sectionOpen"
                 [headerText]="headerText"
                 (sectionOpenChanged)="onSectionOpenChanged($event)">
             </dk-section-header-component>
+            <dk-section-header-component
+                *ngIf="!collapsible"
+                [headerText]="headerText"
+                [checkboxMode]="false">
+            </dk-section-header-component>
             <div
                 class="body"
-                *ngIf="sectionOpen">
+                *ngIf="isSectionOpen">
                 <ng-content></ng-content>
             </div>
         </md-card>
     `
 })
-export class CollapsibleSectionComponent {
+export class SectionComponent {
+    @Input()
+    collapsible : boolean = false;
+
     @Input()
     checkboxMode : boolean = false;
 
@@ -39,5 +48,9 @@ export class CollapsibleSectionComponent {
 
     onSectionOpenChanged(sectionOpened : boolean) {
         this.sectionOpenChanged.emit(sectionOpened);
+    }
+
+    get isSectionOpen() {
+        return this.sectionOpen || !this.collapsible;
     }
 }

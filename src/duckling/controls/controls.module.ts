@@ -26,7 +26,7 @@ import {
     ValidatedInputComponent,
     VectorInputComponent,
     BrowseFileComponent,
-    CollapsibleSectionComponent,
+    SectionComponent,
     SectionHeaderComponent
 } from './index';
 
@@ -53,7 +53,7 @@ const CONTROL_DECLARATIONS : Array<any> = [
     ValidatedInputComponent,
     VectorInputComponent,
     BrowseFileComponent,
-    CollapsibleSectionComponent,
+    SectionComponent,
     SectionHeaderComponent
 ];
 
