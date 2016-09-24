@@ -1,4 +1,7 @@
 import 'reflect-metadata';
+import 'mocha';
+import {expect} from 'chai';
+
 import {createStore} from 'redux';
 
 import {Action, undoAction, redoAction, createUndoRedoReducer, clearUndoHistoryAction, getCurrentState} from '../../duckling/state';
@@ -16,25 +19,25 @@ describe("undo-redo", function () {
 
     describe("getCurrentState", function () {
         it("returns the default state on a new store", function() {
-            expect(getCurrentState<any>(this.store).isDefaultState).toBe(true);
+            expect(getCurrentState<any>(this.store).isDefaultState).to.eql(true);
         });
 
         it("returns the current state after it is updated", function() {
             this.store.dispatch(testAction({isNewState : true}));
-            expect(getCurrentState<any>(this.store).isNewState).toBe(true);
+            expect(getCurrentState<any>(this.store).isNewState).to.eql(true);
         });
     });
 
     describe("undo", function() {
         it("does not wipe out the initial state", function() {
             this.store.dispatch(undoAction());
-            expect(getState(this.store).isDefaultState).toBe(true);
+            expect(getState(this.store).isDefaultState).to.eql(true);
         });
 
         it("can return the state to the intial state", function() {
             this.store.dispatch(testAction({isNewState : true}));
             this.store.dispatch(undoAction());
-            expect(getState(this.store).isDefaultState).toBe(true);
+            expect(getState(this.store).isDefaultState).to.eql(true);
         });
 
         it("can be called multiple times to return you to the a previous state", function() {
@@ -46,7 +49,7 @@ describe("undo-redo", function () {
             this.store.dispatch(undoAction());
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(2);
+            expect(getState(this.store).update).to.eql(2);
         });
     });
 
@@ -58,7 +61,7 @@ describe("undo-redo", function () {
             this.store.dispatch(clearUndoHistoryAction());
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(2);
+            expect(getState(this.store).update).to.eql(2);
         });
 
         it("removes the redo stack", function() {
@@ -69,7 +72,7 @@ describe("undo-redo", function () {
             this.store.dispatch(clearUndoHistoryAction());
             this.store.dispatch(redoAction());
 
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
     });
 
@@ -77,20 +80,20 @@ describe("undo-redo", function () {
     describe("redo", function() {
         it("does nothing to the initial state", function() {
             this.store.dispatch(redoAction());
-            expect(getState(this.store).isDefaultState).toBe(true);
+            expect(getState(this.store).isDefaultState).to.eql(true);
         });
 
         it("does nothing if no actions were undone", function() {
             this.store.dispatch(testAction({update : 1}));
             this.store.dispatch(redoAction());
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
 
         it("redoes a single undo", function() {
             this.store.dispatch(testAction({update : 1}));
             this.store.dispatch(undoAction());
             this.store.dispatch(redoAction());
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
 
         it("can redo multiple undos", function() {
@@ -105,7 +108,7 @@ describe("undo-redo", function () {
             this.store.dispatch(redoAction());
             this.store.dispatch(redoAction());
 
-            expect(getState(this.store).update).toBe(2);
+            expect(getState(this.store).update).to.eql(2);
         });
     });
 
@@ -116,7 +119,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
 
         it("identical merge keys do merge", function() {
@@ -128,7 +131,7 @@ describe("undo-redo", function () {
             this.store.dispatch(undoAction());
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
 
         it("merges redo operations", function() {
@@ -142,7 +145,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(redoAction());
 
-            expect(getState(this.store).update).toBe(3);
+            expect(getState(this.store).update).to.eql(3);
         });
 
         it("is ignored after a redo", function() {
@@ -157,7 +160,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(3);
+            expect(getState(this.store).update).to.eql(3);
         });
     });
 
@@ -179,7 +182,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
 
         it("is ignored when previous merge key is non-falsy", function() {
@@ -189,7 +192,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(2);
+            expect(getState(this.store).update).to.eql(2);
         });
 
         it("is ignored when a merge key is provided for the action", function() {
@@ -199,7 +202,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(2);
+            expect(getState(this.store).update).to.eql(2);
         });
 
         it("is overriden by two equivalent merge keys", function() {
@@ -209,7 +212,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
 
         it("can merge a string of updates", function() {
@@ -221,7 +224,7 @@ describe("undo-redo", function () {
 
             this.store.dispatch(undoAction());
 
-            expect(getState(this.store).update).toBe(1);
+            expect(getState(this.store).update).to.eql(1);
         });
     });
 });
