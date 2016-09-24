@@ -26,7 +26,8 @@ import {
     ValidatedInputComponent,
     VectorInputComponent,
     BrowseFileComponent,
-    CollapsibleSectionComponent
+    CollapsibleSectionComponent,
+    SectionHeaderComponent
 } from './index';
 
 const CONTROL_DECLARATIONS : Array<any> = [
@@ -52,7 +53,8 @@ const CONTROL_DECLARATIONS : Array<any> = [
     ValidatedInputComponent,
     VectorInputComponent,
     BrowseFileComponent,
-    CollapsibleSectionComponent
+    CollapsibleSectionComponent,
+    SectionHeaderComponent
 ];
 
 @NgModule({

@@ -3,27 +3,19 @@ import {
     Input,
     Output,
     EventEmitter,
-    ContentChild,
-    TemplateRef,
-    SimpleChange
 } from '@angular/core';
-
-import {immutableAssign} from '../util';
-
-import {TemplateWrapperDirective} from './template-wrapper.directive';
 
 @Component({
     selector: "dk-collapsible-section",
     styleUrls: ['./duckling/controls/collapsible-section.component.css'],
     template: `
         <md-card>
-            <div class="header md-elevation-z3">
-                <dk-checkbox
-                    [checked]="sectionOpen"
-                    [text]="headerText"
-                    (input)="onSectionOpenChanged($event)">
-                </dk-checkbox>
-            </div>
+            <dk-section-header-component
+                [checkboxMode]="checkboxMode"
+                [sectionOpen]="sectionOpen"
+                [headerText]="headerText"
+                (sectionOpenChanged)="onSectionOpenChanged($event)">
+            </dk-section-header-component>
             <div
                 class="body"
                 *ngIf="sectionOpen">
@@ -33,6 +25,9 @@ import {TemplateWrapperDirective} from './template-wrapper.directive';
     `
 })
 export class CollapsibleSectionComponent {
+    @Input()
+    checkboxMode : boolean = false;
+
     @Input()
     sectionOpen : boolean = false;
 

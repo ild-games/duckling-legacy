@@ -28,6 +28,7 @@ import {ImageDrawable} from './image-drawable';
 
         <dk-collapsible-section
             headerText="Partial Image?"
+            checkboxMode="true"
             [sectionOpen]="!imageDrawable.isWholeImage"
             (sectionOpenChanged)="onPartialImageChanged($event)">
             <dk-box2

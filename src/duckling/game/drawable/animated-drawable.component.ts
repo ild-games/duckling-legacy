@@ -32,9 +32,25 @@ import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} fr
             [selected]="DrawableType.Shape"
             (addClicked)="onNewDrawableClicked($event)">
         </dk-enum-choice>
+        <span *ngIf="!hasAnyFrames">
+            OR
+        </span>
+        <button
+            *ngIf="!hasAnyFrames"
+            md-raised-button
+            class="create-from-tilesheet-button"
+            title="Create from tilesheet"
+            disableRipple="true"
+            (click)="onCreateFromTilesheetClicked()">
+            Create from tilesheet
+        </button>
+        <md-card *ngIf="isCreateFromTilesheetActive">
+            Hi
+        </md-card>
+
 
         <md-card
-            *ngIf="animatedDrawable?.frames?.length > 0"
+            *ngIf="hasAnyFrames"
             class="drawables-card">
             <dk-accordian
                 [elements]="animatedDrawable?.frames"
@@ -61,6 +77,8 @@ export class AnimatedDrawableComponent {
 
     @Input() animatedDrawable : AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
+
+    private _isCreateFromTilesheetActive = false;
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let newFrames = this.animatedDrawable.frames.slice(0);
@@ -92,6 +110,10 @@ export class AnimatedDrawableComponent {
         this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {duration: newDuration}));
     }
 
+    onCreateFromTilesheetClicked() {
+        this._isCreateFromTilesheetActive = true;
+    }
+
     findNextUniqueKey(pickedType : DrawableType, defaultKey : string) {
         let lastKey = 0;
         for (let drawable of this.animatedDrawable.frames) {
@@ -103,5 +125,13 @@ export class AnimatedDrawableComponent {
             }
         }
         return ++lastKey;
+    }
+
+    get hasAnyFrames() {
+        return this.animatedDrawable && this.animatedDrawable.frames && this.animatedDrawable.frames.length > 0;
+    }
+
+    get isCreateFromTilesheetActive() : boolean {
+        return this._isCreateFromTilesheetActive && !this.hasAnyFrames;
     }
 }

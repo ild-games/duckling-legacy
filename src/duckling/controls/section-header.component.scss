@@ -1,0 +1,26 @@
+@import '../../../node_modules/@angular2-material/core/style/elevation';
+@import '../colors';
+
+$height: 32px;
+
+:host {
+    display: block;
+}
+
+.header {
+    padding: 2px 8px;
+    cursor: pointer;
+    background-color: $header-color;
+    height: $height;
+    line-height: $height;
+    display: flex;
+    align-items: center;
+
+    .title {
+        font-size: 14px;
+    }
+
+    .right-content {
+        margin-left: auto;
+    }
+}
