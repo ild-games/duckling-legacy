@@ -5,9 +5,9 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {ValidatedInput} from './validated-input.component';
+import {ValidatedInput, Validator} from './validated-input.component';
 
-var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
+let numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
 
 /**
  * Validated input that only publishes events when the input contains a number.
@@ -20,7 +20,7 @@ var numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
             [disabled]="disabled"
             [label]="label"
             [value]="value"
-            [validator]="isNumber"
+            [validator]="combinedValidators"
             (validInput)="onInput($event)">
         </dk-validated-input>
     `
@@ -38,6 +38,10 @@ export class NumberInput {
      * True if the input is disabled, otherwise false
      */
     @Input() disabled : boolean;
+    /**
+     * Extra validator
+     */
+    @Input() validator : Validator;
 
     /**
      * Event published when the user enters a valid input.
@@ -50,5 +54,11 @@ export class NumberInput {
 
     isNumber(value : string) {
         return value.match(numberRegex) !== null;
+    }
+
+    get combinedValidators() : Validator {
+        return (value : string) => {
+            return this.isNumber(value) && (!this.validator || this.validator(value));
+        };
     }
 }

@@ -9,6 +9,7 @@ import {Box2, Vector} from '../math';
 import {immutableAssign} from '../util';
 
 import {VectorInput} from './vector-input.component';
+import {Validator} from './validated-input.component';
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -23,18 +24,26 @@ import {VectorInput} from './vector-input.component';
             xLabel="Starting X"
             yLabel="Starting Y"
             [value]="value.position"
+            [xValidator]="xValidator"
+            [yValidator]="yValidator"
             (validInput)="onPositionChanged($event)">
         </dk-vector-input>
         <dk-vector-input
             xLabel="Width"
             yLabel="Height"
             [value]="value.dimension"
+            [xValidator]="widthValidator"
+            [yValidator]="heightValidator"
             (validInput)="onDimensionChanged($event)">
         </dk-vector-input>
     `
 })
 export class Box2Component {
     @Input() value : Box2;
+    @Input() xValidator : Validator;
+    @Input() yValidator : Validator;
+    @Input() widthValidator : Validator;
+    @Input() heightValidator : Validator;
     @Output() boxChanged = new EventEmitter<Box2>();
 
     onPositionChanged(newPosition : Vector) {

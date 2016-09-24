@@ -6,8 +6,9 @@ import {
     AfterViewInit,
     ChangeDetectorRef
 } from '@angular/core';
+import {Rectangle} from 'pixi.js';
 
-import {FormLabel, InputComponent, NumberInput, Box2Component, CheckboxComponent} from '../../controls';
+import {FormLabel, InputComponent, NumberInput, Box2Component, CheckboxComponent, Validator} from '../../controls';
 import {immutableAssign, DialogService, PathService} from '../../util';
 import {Box2} from '../../math';
 import {ProjectService, AssetService} from '../../project';
@@ -18,7 +19,6 @@ import {ImageDrawable} from './image-drawable';
  */
 @Component({
     selector: "dk-image-drawable-component",
-    styleUrls: ['./duckling/game/drawable/image-drawable.component.css'],
     template: `
         <dk-browse-file-component
             [dialogOptions]="dialogOptions"
@@ -32,6 +32,10 @@ import {ImageDrawable} from './image-drawable';
             (sectionOpenChanged)="onPartialImageChanged($event)">
             <dk-box2-component
                 [value]="imageDrawable.textureRect"
+                [xValidator]="partialXValidator"
+                [yValidator]="partialYValidator"
+                [widthValidator]="partialWidthValidator"
+                [heightValidator]="partialHeightValidator"
                 (boxChanged)="onTextureRectChanged($event)">
             </dk-box2-component>
         </dk-collapsible-section-component>
@@ -68,6 +72,22 @@ export class ImageDrawableComponent {
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureRect: newTextureRect}));
     }
 
+    isPartialXValid(value : string) : boolean {
+        return parseInt(value) + this.imageDrawable.textureRect.dimension.x <= this._assetDimensions.width;
+    }
+
+    isPartialYValid(value : string) : boolean {
+        return parseInt(value) + this.imageDrawable.textureRect.dimension.y <= this._assetDimensions.height;
+    }
+
+    isPartialWidthValid(value : string) : boolean {
+        return parseInt(value) + this.imageDrawable.textureRect.position.x <= this._assetDimensions.width;
+    }
+
+    isPartialHeightValid(value : string) : boolean {
+        return parseInt(value) + this.imageDrawable.textureRect.position.y <= this._assetDimensions.height;
+    }
+
     get dialogOptions() {
         return {
             defaultPath: this._project.project.home,
@@ -78,5 +98,29 @@ export class ImageDrawableComponent {
                 {name: 'Images', extensions: ['png']},
             ]
         }
+    }
+
+    get partialXValidator() : Validator {
+        return (value : string) => this.isPartialXValid(value);
+    }
+
+    get partialYValidator() : Validator {
+        return (value : string) => this.isPartialYValid(value);
+    }
+
+    get partialWidthValidator() : Validator {
+        return (value : string) => this.isPartialWidthValid(value);
+    }
+
+    get partialHeightValidator() : Validator {
+        return (value : string) => this.isPartialHeightValid(value);
+    }
+
+    get _assetDimensions() : Rectangle {
+        let texture = this._assets.get(this.imageDrawable.textureKey);
+        if (!texture) {
+            return new Rectangle(0, 0, 0, 0);
+        }
+        return texture.frame;
     }
 }

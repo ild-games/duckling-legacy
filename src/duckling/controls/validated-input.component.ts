@@ -8,6 +8,11 @@ import {
 import {InputComponent} from './input.component';
 
 /**
+ * Validator is a function that is run to determine if a given string input is valid
+ */
+export type Validator = (value : string) => boolean;
+
+/**
  * Helper component used to implement input controls that only accept certain inputs.
  */
 @Component({
@@ -18,7 +23,7 @@ import {InputComponent} from './input.component';
             [disabled]="disabled"
             [label]="label"
             [value]="value"
-            [dividerColor]="valid ? 'primary' : 'warn'"
+            [dividerColor]="inputColor"
             (inputChanged)="onUserInput($event)">
         </dk-input>
     `
@@ -33,9 +38,9 @@ export class ValidatedInput {
      */
     @Input() value : string;
     /**
-     * Function used to validate the users input. Should return true if the users input is valid.
+     * Functions used to validate the users input. Should return true if the users input is valid.
      */
-    @Input() validator : (value:string) => boolean;
+    @Input() validator : Validator;
     /**
      * True if the input is disabled, otherwise false
      */
@@ -55,5 +60,12 @@ export class ValidatedInput {
         } else {
             this.valid = false;
         }
+    }
+
+    get inputColor() : string {
+        if (this.valid) {
+            return "primary";
+        }
+        return "warn";
     }
 }
