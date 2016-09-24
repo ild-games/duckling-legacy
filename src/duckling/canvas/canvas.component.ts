@@ -124,7 +124,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
 
         this.canvasContainerDiv.nativeElement.parentElement.tabIndex = "1";
 
-        this.canvasContainerDiv.nativeElement.parentElement.onscroll = () => this.onScroll();
+        this.canvasContainerDiv.nativeElement.parentElement.onwheel = (event : WheelEvent) => this.onScroll(event);
         this.canvasContainerDiv.nativeElement.parentElement.onmousemove = (event : MouseEvent) => event.preventDefault();
         this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this._onKeyEvent(event);
         this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => this._onKeyEvent(event);
@@ -235,6 +235,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     onMouseWheel(event : WheelEvent) {
         event.stopPropagation();
         if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
             this._zoomInCanvasCoords = {
                 x: event.offsetX,
                 y: event.offsetY
@@ -256,7 +257,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this.render();
     }
 
-    onScroll() {
+    onScroll(event : WheelEvent) {
+        if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+        }
         this.render();
     }
 
