@@ -1,4 +1,6 @@
 import "reflect-metadata";
+import 'mocha';
+import {expect} from 'chai';
 
 import {createStoreService, createEntityService} from '../helper/state';
 import {EntitySystemService, EntityPositionSetService, EntityKey} from '../../duckling/entitysystem';
@@ -40,13 +42,13 @@ describe("CopyPasteService", function() {
     });
 
     it("starts with an empty clipboard", function() {
-        expect(this.copyPaste.clipboard.value).toEqual({});
+        expect(this.copyPaste.clipboard.value).to.eql({});
     });
 
     it("copying an entity updates the store with that entity", function() {
         this.entitySystem.updateEntity(ENTITY_KEY, entity);
         this.copyPaste.copy(ENTITY_KEY);
-        expect(this.copyPaste.clipboard.value).toEqual({copiedEntity: entity});
+        expect(this.copyPaste.clipboard.value).to.eql({copiedEntity: entity});
     });
 
     describe("pasting an enitity", function() {
@@ -64,25 +66,25 @@ describe("CopyPasteService", function() {
             this.copyPaste.copy(ENTITY_KEY);
             var key = this.copyPaste.paste(this.newPosition);
             var entity = this.entitySystem.getEntity(key);
-            expect(entity).toEqual(this.movedEntity);
+            expect(entity).to.eql(this.movedEntity);
         });
 
         it("with an empty clipboard does not creat an entity", function() {
             var systemSize = size(this.entitySystem);
             this.copyPaste.paste(this.newPosition);
-            expect(size(this.entitySystem)).toEqual(systemSize++);
+            expect(size(this.entitySystem)).to.eql(systemSize++);
         });
 
         it("with an empty clipboard returns null", function() {
             var systemSize = size(this.entitySystem);
-            expect(this.copyPaste.paste(this.newPosition)).toBe(null);
+            expect(this.copyPaste.paste(this.newPosition)).to.eql(null);
         });
 
         it("can be undone with one call to undo", function() {
             this.copyPaste.copy(ENTITY_KEY);
             var key = this.copyPaste.paste(this.newPosition);
             this.store.undo();
-            expect(this.entitySystem.getEntity(key)).not.toBeTruthy();
+            expect(!!this.entitySystem.getEntity(key)).not.to.eql(true);
         });
     });
 });

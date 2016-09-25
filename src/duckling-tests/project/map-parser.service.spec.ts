@@ -1,3 +1,5 @@
+import 'mocha';
+import {expect} from 'chai';
 import "reflect-metadata";
 
 import {createEntitySystem, mergeEntityAction} from '../../duckling/entitysystem';
@@ -32,10 +34,6 @@ var basicMap : RawMapFile = {
     key : "aBasicMap",
     entities : ["ea", "eb", "ec"],
     assets : [
-        {
-            type: "TexturePNG",
-            key: "texture/test"
-        }
     ],
     systems : {
         sa : {
@@ -66,12 +64,12 @@ describe("MapLoaderService", function() {
 
     it("turns an empty map into an empty system", function() {
         var system = this.parser.mapToSystem(emptyMap);
-        expect(system.isEmpty()).toBe(true);
+        expect(system.isEmpty()).to.eql(true);
     });
 
     it("turns an empty system into an empty map", function() {
         var map = this.parser.systemToMap("", createEntitySystem());
-        expect(map).toEqual(emptyMap);
+        expect(map).to.eql(emptyMap);
     });
 
     describe("loading a map into an entity system", function() {
@@ -80,15 +78,15 @@ describe("MapLoaderService", function() {
         });
 
         it("allows for the creation of empty entities", function() {
-            expect(this.system.get("ec")).toEqual({});
+            expect(this.system.get("ec")).to.eql({});
         });
 
         it("allows for the creation of entities with a single component", function() {
-            expect(this.system.get("ea")).toEqual(entityA);
+            expect(this.system.get("ea")).to.eql(entityA);
         });
 
         it("allows for the creation of entities with multiple components", function() {
-            expect(this.system.get("eb")).toEqual(entityB);
+            expect(this.system.get("eb")).to.eql(entityB);
         });
     });
 
@@ -96,7 +94,7 @@ describe("MapLoaderService", function() {
         var system = this.parser.mapToSystem(basicMap);
         var map = this.parser.systemToMap("aBasicMap",system);
         map.entities.sort();
-        expect(map).toEqual(basicMap);
+        expect(map).to.eql(basicMap);
     });
 
     it("if an entity is in a system, but not the entities array, it will create the entity", function () {
@@ -109,6 +107,6 @@ describe("MapLoaderService", function() {
         };
         var map = immutableAssign(emptyMap, {systems : { sa}});
         var system = this.parser.mapToSystem(map);
-        expect(system.get("ea")).toEqual(entityA);
+        expect(system.get("ea")).to.eql(entityA);
     });
 });

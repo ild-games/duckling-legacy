@@ -1,4 +1,6 @@
 import "reflect-metadata";
+import 'mocha';
+import {expect} from 'chai';
 
 import {AvailableAttributeService, AttributeDefaultService} from '../../duckling/entitysystem';
 
@@ -22,13 +24,13 @@ describe("AvailableAttributeService", function() {
     });
 
     it("called with no entity returns the available attributes", function() {
-        expect(sort(this.available.availableAttributes())).toEqual(sort([POS, COL, DRAW]));
+        expect(sort(this.available.availableAttributes())).to.eql(sort([POS, COL, DRAW]));
     });
 
     it("called with a partial entity returns the availble attributes", function() {
         var entity : any = {};
         entity[POS] = {};
-        expect(sort(this.available.availableAttributes(entity))).toEqual(sort([COL, DRAW]));
+        expect(sort(this.available.availableAttributes(entity))).to.eql(sort([COL, DRAW]));
     });
 
     it("called with a complete entity returns the empty array", function() {
@@ -36,6 +38,6 @@ describe("AvailableAttributeService", function() {
         entity[POS] = {};
         entity[COL] = {};
         entity[DRAW] = {};
-        expect(this.available.availableAttributes(entity)).toEqual([]);
+        expect(this.available.availableAttributes(entity)).to.eql([]);
     });
 });

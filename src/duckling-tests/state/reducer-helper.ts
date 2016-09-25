@@ -1,7 +1,8 @@
-
 import {
     Action,
 } from '../../duckling/state';
+import 'mocha';
+import {expect} from 'chai';
 
 const TEST_ACTION = "Test.Action";
 
