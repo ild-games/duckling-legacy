@@ -36,6 +36,7 @@
     "gulp-sass": "^2.3.2",
     "gulp-watch": "^4.3.9",
     "immutable": "^3.8.1",
+    "lodash": "^4.16.2",
     "open-iconic": "^1.1.1",
     "pixi.js": "^4.0.1",
     "redux": "^3.6.0",

@@ -23,17 +23,14 @@ import {SelectionModule} from './selection';
 import {ShellComponent, ShellModule} from './shell'
 import {SplashModule} from './splash';
 import {mainReducer} from './main.reducer';
-import {DialogService, WindowService, UtilModule} from './util';
-import {ElectronDialogService} from '../electron/util/electron-dialog.service';
-import {ElectronWindowService} from '../electron/util/electron-window.service';
+import {UtilModule} from './util';
+import {DucklingElectronModule} from '../electron/duckling-electron.module';
 
 remote.getCurrentWindow().removeAllListeners();
 
 let storeService = new StoreService(mainReducer, mergeEntityAction);
 
 // Setup window defaults
-let electronWindowService = new ElectronWindowService();
-
 @NgModule({
     imports: [
         BrowserModule,
@@ -47,12 +44,11 @@ let electronWindowService = new ElectronWindowService();
         ShellModule,
         SplashModule,
         StateModule,
-        UtilModule
+        UtilModule,
+        DucklingElectronModule
     ],
     providers: [
         {provide: StoreService, useValue: storeService},
-        {provide: WindowService, useClass: ElectronWindowService},
-        {provide: DialogService, useClass: ElectronDialogService}
     ],
     entryComponents: [
         ShellComponent
