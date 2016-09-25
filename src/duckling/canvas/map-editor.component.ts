@@ -170,7 +170,9 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
         let entitiesDrawnContainer = new Container();
         for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, this._totalMillis)) {
-            entitiesDrawnContainer.addChild(entityDisplayObject);
+            if (entityDisplayObject) {
+                entitiesDrawnContainer.addChild(entityDisplayObject);
+            }
         }
         entitiesDrawnContainer.interactiveChildren = false;
 

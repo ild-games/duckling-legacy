@@ -111,7 +111,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         this._viewInited = true;
         this.setupContainingElementEvents();
 
-        this._renderer = new CanvasRenderer(this.elementDimensions.x, this.elementDimensions.y, {view: this.canvasRoot.nativeElement});
+        this._renderer = new CanvasRenderer(
+            this.elementDimensions.x,
+            this.elementDimensions.y,
+            {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
 
         this.resizeCanvasElements();

@@ -1,12 +1,8 @@
-@import '../../../../node_modules/@angular2-material/core/style/elevation';
-@import '../../colors';
-@import '../../forms';
+@import '../../../node_modules/@angular2-material/core/style/elevation';
+@import '../colors';
+@import '../forms';
 
-.texture-key {
-    display: block;
-}
-
-.partial-image {
+md-card {
     padding: 0;
     margin-top: $spacer-unit;
 

@@ -3,7 +3,7 @@ import {Container, DisplayObject} from 'pixi.js';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
 import {AssetService, RequiredAssetService} from '../../project';
-import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
+import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem';
 
 import {RenderPriorityService} from './render-priority.service';
 import {DrawnConstruct} from './drawn-construct';
