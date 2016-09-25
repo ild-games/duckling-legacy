@@ -3,9 +3,8 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit,
-    ViewChild,
-    ElementRef
+    OnChanges,
+    SimpleChange
 } from '@angular/core';
 
 import {InputComponent} from './input.component';
@@ -26,12 +25,12 @@ export type Validator = (value : string) => boolean;
             [disabled]="disabled"
             [label]="label"
             [value]="value"
-            [dividerColor]="inputColor"
+            [dividerColor]="color"
             (inputChanged)="onUserInput($event)">
         </dk-input>
     `
 })
-export class ValidatedInput implements AfterViewInit {
+export class ValidatedInput implements OnChanges {
     /**
      * Text label displayed to the user.
      */
@@ -48,37 +47,36 @@ export class ValidatedInput implements AfterViewInit {
      * True if the input is disabled, otherwise false
      */
     @Input() disabled : boolean;
+    /**
+     * Color on the input field
+     */
+    @Input() color : 'primary' | 'warn' = 'primary';
 
     /**
      * Event published when the user enters a valid input.
      */
     @Output() validInput = new EventEmitter<String>();
 
-    valid : boolean = true;
-
-    ngAfterViewInit() {
-        this._checkValidity(this.value);
+    ngOnChanges(changes : {value? : SimpleChange}) {
+        if (changes.value) {
+            this._checkValidity(changes.value.currentValue);
+        }
     }
 
     onUserInput(newValue : string) {
-        this._checkValidity(newValue);
-        if (this.valid) {
+        if (this._checkValidity(newValue)) {
             this.validInput.emit(newValue);
+        } else {
         }
     }
 
     private _checkValidity(valueToCheck : string) {
-        if (valueToCheck !== undefined || valueToCheck !== null) {
-            this.valid = this.validator(valueToCheck);
+        if (valueToCheck !== undefined && valueToCheck !== null && this.validator(valueToCheck)) {
+            this.color = 'primary';
+            return true;
         } else {
-            this.valid = false;
+            this.color = 'warn';
+            return false;
         }
-    }
-
-    get inputColor() : string {
-        if (this.valid) {
-            return "primary";
-        }
-        return "warn";
     }
 }
