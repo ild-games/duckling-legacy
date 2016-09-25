@@ -148,17 +148,22 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
 
     let baseTexture = assetService.get(imageDrawable.textureKey);
     if (!baseTexture) {
-        return new DisplayObject();
+        return null;
     }
     let texture : Texture;
     if (imageDrawable.isWholeImage) {
         texture = new Texture(baseTexture);
     } else {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(
-            imageDrawable.textureRect.position.x,
-            imageDrawable.textureRect.position.y,
-            imageDrawable.textureRect.dimension.x,
-            imageDrawable.textureRect.dimension.y));
+        if (isPartialImageValidForTexture(imageDrawable, baseTexture)) {
+            texture = new Texture(baseTexture, new PIXI.Rectangle(
+                imageDrawable.textureRect.position.x,
+                imageDrawable.textureRect.position.y,
+                imageDrawable.textureRect.dimension.x,
+                imageDrawable.textureRect.dimension.y));
+        } else {
+            return null;
+            //throw Error("The partial image values for this entity's image drawable exceed the area of the texture");
+        }
     }
     let sprite = new Sprite(texture);
     sprite.x = -sprite.width / 2;
@@ -167,6 +172,14 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
     container.addChild(sprite);
     return container;
 }
+
+function isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : Texture) {
+    return (
+        imageDrawable.textureRect.position.x + imageDrawable.textureRect.dimension.x < texture.frame.width &&
+        imageDrawable.textureRect.position.y + imageDrawable.textureRect.dimension.y < texture.frame.height
+    );
+}
+
 
 function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
     function applyDisplayObjectProperties(displayObject : DisplayObject) {

@@ -2,7 +2,10 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    AfterViewInit,
+    ViewChild,
+    ElementRef
 } from '@angular/core';
 
 import {InputComponent} from './input.component';
@@ -28,7 +31,7 @@ export type Validator = (value : string) => boolean;
         </dk-input>
     `
 })
-export class ValidatedInput {
+export class ValidatedInput implements AfterViewInit {
     /**
      * Text label displayed to the user.
      */
@@ -53,10 +56,20 @@ export class ValidatedInput {
 
     valid : boolean = true;
 
+    ngAfterViewInit() {
+        this._checkValidity(this.value);
+    }
+
     onUserInput(newValue : string) {
-        if (this.validator(newValue)) {
-            this.valid = true;
+        this._checkValidity(newValue);
+        if (this.valid) {
             this.validInput.emit(newValue);
+        }
+    }
+
+    private _checkValidity(valueToCheck : string) {
+        if (valueToCheck !== undefined || valueToCheck !== null) {
+            this.valid = this.validator(valueToCheck);
         } else {
             this.valid = false;
         }

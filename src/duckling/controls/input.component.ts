@@ -17,7 +17,8 @@ import {
             [placeholder]="label"
             dividerColor="{{dividerColor}}"
             value="{{value}}"
-            (input)="onUserInput($event.target.value)">
+            (input)="onUserInput($event.target.value)"
+            (focus)="onFocus()">
         </md-input>
     `
 })
@@ -42,8 +43,16 @@ export class InputComponent {
      * Event published when the user enters input.
      */
     @Output() inputChanged = new EventEmitter<String>();
+    /**
+     * Event published when the user focuses the input
+     */
+    @Output() focus = new EventEmitter<boolean>();
 
     onUserInput(newValue : string) {
         this.inputChanged.emit(newValue);
+    }
+
+    onFocus() {
+        this.focus.emit(true);
     }
 }

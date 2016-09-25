@@ -53,7 +53,7 @@ export class NumberInput {
     }
 
     isNumber(value : string) {
-        return value.match(numberRegex) !== null;
+        return (value+"").match(numberRegex) !== null;
     }
 
     get combinedValidators() : Validator {
