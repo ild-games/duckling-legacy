@@ -112,7 +112,10 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable, assetServi
 
     let childConstructs : DrawnConstruct[] = []
     for (let drawable of containerDrawable.drawables) {
-        childConstructs = childConstructs.concat(drawDrawable(drawable, assetService));
+        let childDrawable = drawDrawable(drawable, assetService);
+        if (childDrawable) {
+            childConstructs = childConstructs.concat(drawDrawable(drawable, assetService));
+        }
     }
     return {
         type: "CONTAINER",
@@ -131,7 +134,10 @@ function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService 
 
     let framesDisplayObjects : DrawnConstruct[] = [];
     for (let frame of animatedDrawable.frames) {
-        framesDisplayObjects.push(drawDrawable(frame, assetService));
+        let frameDrawable = drawDrawable(frame, assetService);
+        if (frameDrawable) {
+            framesDisplayObjects.push(drawDrawable(frame, assetService));
+        }
     }
 
     return {
@@ -143,7 +149,7 @@ function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService 
 
 function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
     if (!imageDrawable.textureKey) {
-        return new DisplayObject();
+        return null;
     }
 
     let baseTexture = assetService.get(imageDrawable.textureKey);
@@ -162,7 +168,6 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
                 imageDrawable.textureRect.dimension.y));
         } else {
             return null;
-            //throw Error("The partial image values for this entity's image drawable exceed the area of the texture");
         }
     }
     let sprite = new Sprite(texture);

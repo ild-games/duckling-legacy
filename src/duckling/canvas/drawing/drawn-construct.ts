@@ -110,5 +110,5 @@ function determineAnimationDisplayObject(animation : AnimationConstruct, totalMi
     if (curFrame) {
         return displayObjectForDrawnConstruct(curFrame);
     }
-    return new DisplayObject();
+    return null;
 }
