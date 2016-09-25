@@ -66,7 +66,6 @@ export class ValidatedInput implements OnChanges {
     onUserInput(newValue : string) {
         if (this._checkValidity(newValue)) {
             this.validInput.emit(newValue);
-        } else {
         }
     }
 
