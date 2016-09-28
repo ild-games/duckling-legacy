@@ -68,7 +68,7 @@ export class PathService {
      * @param path Path to the directory.  The directory's parents must exist.
      * @returns An empty promise that evaluates once the directory has been created.
      */
-    private makedir(path : string) : Promise<any> {
+    private _makedir(path : string) : Promise<any> {
         return new Promise(function(resolve, reject) {
             fs.mkdir(path,function(e) {
                 if (!e || e.code === "EEXIST") {
@@ -93,7 +93,7 @@ export class PathService {
                 } else {
                     return this.makedirs(this.dirname(path))
                         .then(() => {
-                            return this.makedir(path);
+                            return this._makedir(path);
                         });
                 }
             });

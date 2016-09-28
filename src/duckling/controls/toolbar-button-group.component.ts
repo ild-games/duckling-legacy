@@ -25,7 +25,7 @@ export class ToolbarButtonGroup {
     @Output() selected : EventEmitter<ToolbarOption> = new EventEmitter<ToolbarOption>();
     @Input() selectedValue : string = "";
 
-    private buttonClicked(event : MouseEvent, clickedValue : string) {
+    buttonClicked(event : MouseEvent, clickedValue : string) {
         let clickedOption : ToolbarOption = null;
         for (let i = 0; i < this.options.length; i++) {
             if (this.options[i].value === clickedValue) {

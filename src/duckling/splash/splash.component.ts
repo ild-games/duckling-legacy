@@ -88,7 +88,7 @@ export class SplashComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.resizeAndCenterWindow();
+        this._resizeAndCenterWindow();
         this.loadProjects();
     }
 
@@ -109,13 +109,13 @@ export class SplashComponent implements OnInit {
         this._projectSerializer.saveProjects(this.projectListFile, this._projects);
     }
 
-    private resizeAndCenterWindow() {
+    private _resizeAndCenterWindow() {
         this._window.setSize(945, 645);
         this._window.center();
         this._window.setResizable(false);
     }
 
-    private onNewProjectClick(event : any) {
+    onNewProjectClick(event : any) {
         this._dialog.showOpenDialog(
             this._dialogOptions,
             (dirNames : string[]) => {
@@ -128,20 +128,20 @@ export class SplashComponent implements OnInit {
             });
     }
 
-    private openProject(project : ProjectModel) {
-        this.reorderProject(project);
+    openProject(project : ProjectModel) {
+        this._reorderProject(project);
         this.saveProjects();
-        this.maximizeWindow().then(() => this.projectOpened.emit(project.path));
+        this._maximizeWindow().then(() => this.projectOpened.emit(project.path));
     }
 
-    private maximizeWindow() : Promise<any> {
+    private _maximizeWindow() : Promise<any> {
         this._window.setResizable(true);
         this._window.maximize();
 
         return new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    private reorderProject(openedProject : ProjectModel) {
+    private _reorderProject(openedProject : ProjectModel) {
         this._projects = this._projects.filter((project) => project.path !== openedProject.path);
         this._projects = ([openedProject].concat(this._projects)).slice(0, MAX_SPLASH_ENTRIES);
     }

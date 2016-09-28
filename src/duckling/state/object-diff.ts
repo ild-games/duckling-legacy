@@ -28,14 +28,14 @@ export function changeType(beforeObject : any, afterObject : any) : ChangeType {
         return ChangeType.Equal;
     }
 
-    if (isPrimitive(beforeObject) && isPrimitive(afterObject)) {
+    if (_isPrimitive(beforeObject) && _isPrimitive(afterObject)) {
         return ChangeType.PrimitiveChange;
-    } else if (isPrimitive(beforeObject) || isPrimitive(afterObject)) {
+    } else if (_isPrimitive(beforeObject) || _isPrimitive(afterObject)) {
         return ChangeType.ComplexChange;
     }
 
-    let changeA = checkLeftKeys(beforeObject, afterObject);
-    let changeB = checkLeftKeys(afterObject, beforeObject, true);
+    let changeA = _checkLeftKeys(beforeObject, afterObject);
+    let changeB = _checkLeftKeys(afterObject, beforeObject, true);
 
     if (changeA === ChangeType.ComplexChange || changeB === ChangeType.ComplexChange) {
         return ChangeType.ComplexChange;
@@ -50,10 +50,9 @@ export function changeType(beforeObject : any, afterObject : any) : ChangeType {
     }
 }
 
-function checkLeftKeys(leftObject : any, rightObject : any, ignoreSharedKeys : boolean = false) {
+function _checkLeftKeys(leftObject : any, rightObject : any, ignoreSharedKeys : boolean = false) {
     let hasPrimitiveChange = false;
     for (let key in leftObject) {
-
         if (ignoreSharedKeys && key in rightObject) {
             continue;
         }
@@ -77,10 +76,10 @@ function checkLeftKeys(leftObject : any, rightObject : any, ignoreSharedKeys : b
     }
 }
 
-function isObject(value : any) {
+function _isObject(value : any) {
     return value !== null && typeof value === typeof {};
 }
 
-function isPrimitive(value : any) {
-    return !isObject(value);
+function _isPrimitive(value : any) {
+    return !_isObject(value);
 }

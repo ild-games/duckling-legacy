@@ -41,17 +41,17 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
         return null;
     }
 
-    let drawable = drawDrawable(drawableAttribute.topDrawable, assetService);
+    let drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
     if (!drawable) {
         return null;
     }
-    setNonInteractive(drawable);
-    setPosition(drawable, positionAttribute.position);
+    _setNonInteractive(drawable);
+    _setPosition(drawable, positionAttribute.position);
 
     return drawable;
 }
 
-function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
+function _drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
     if (drawable.inactive) {
         return null;
     }
@@ -60,16 +60,16 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnC
     let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
     switch (drawableType) {
         case DrawableType.Shape:
-            drawnObject = drawShapeDrawable(drawable as ShapeDrawable);
+            drawnObject = _drawShapeDrawable(drawable as ShapeDrawable);
             break;
         case DrawableType.Container:
-            drawnObject = drawContainerDrawable(drawable as ContainerDrawable, assetService);
+            drawnObject = _drawContainerDrawable(drawable as ContainerDrawable, assetService);
             break;
         case DrawableType.Image:
-            drawnObject = drawImageDrawable(drawable as ImageDrawable, assetService);
+            drawnObject = _drawImageDrawable(drawable as ImageDrawable, assetService);
             break;
         case DrawableType.Animated:
-            drawnObject = drawAnimatedDrawable(drawable as AnimatedDrawable, assetService);
+            drawnObject = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService);
             break;
         default:
             drawnObject = null;
@@ -77,12 +77,12 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnC
     }
 
     if (drawnObject) {
-        applyDrawableProperties(drawable, drawnObject);
+        _applyDrawableProperties(drawable, drawnObject);
     }
     return drawnObject;
 }
 
-function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
+function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
     let graphics = new Graphics();
     let colorHex = colorToHex(shapeDrawable.shape.fillColor);
     graphics.beginFill(parseInt(colorHex, 16), 1);
@@ -102,7 +102,7 @@ function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
     return graphics;
 }
 
-function drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : ContainerConstruct {
+function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : ContainerConstruct {
     if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
         return {
             type: "CONTAINER",
@@ -112,9 +112,9 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable, assetServi
 
     let childConstructs : DrawnConstruct[] = []
     for (let drawable of containerDrawable.drawables) {
-        let childDrawable = drawDrawable(drawable, assetService);
+        let childDrawable = _drawDrawable(drawable, assetService);
         if (childDrawable) {
-            childConstructs = childConstructs.concat(drawDrawable(drawable, assetService));
+            childConstructs = childConstructs.concat(_drawDrawable(drawable, assetService));
         }
     }
     return {
@@ -123,7 +123,7 @@ function drawContainerDrawable(containerDrawable : ContainerDrawable, assetServi
     };
 }
 
-function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : AnimationConstruct {
+function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : AnimationConstruct {
     if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
         return {
             type: "ANIMATION",
@@ -134,9 +134,9 @@ function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService 
 
     let framesDisplayObjects : DrawnConstruct[] = [];
     for (let frame of animatedDrawable.frames) {
-        let frameDrawable = drawDrawable(frame, assetService);
+        let frameDrawable = _drawDrawable(frame, assetService);
         if (frameDrawable) {
-            framesDisplayObjects.push(drawDrawable(frame, assetService));
+            framesDisplayObjects.push(_drawDrawable(frame, assetService));
         }
     }
 
@@ -147,7 +147,7 @@ function drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService 
     }
 }
 
-function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
+function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
     if (!imageDrawable.textureKey) {
         return null;
     }
@@ -160,7 +160,7 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
     if (imageDrawable.isWholeImage) {
         texture = new Texture(baseTexture);
     } else {
-        if (isPartialImageValidForTexture(imageDrawable, baseTexture)) {
+        if (_isPartialImageValidForTexture(imageDrawable, baseTexture)) {
             texture = new Texture(baseTexture, new PIXI.Rectangle(
                 imageDrawable.textureRect.position.x,
                 imageDrawable.textureRect.position.y,
@@ -178,7 +178,7 @@ function drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetSe
     return container;
 }
 
-function isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : Texture) {
+function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : Texture) {
     return (
         imageDrawable.textureRect.position.x + imageDrawable.textureRect.dimension.x < texture.frame.width &&
         imageDrawable.textureRect.position.y + imageDrawable.textureRect.dimension.y < texture.frame.height
@@ -186,8 +186,8 @@ function isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : 
 }
 
 
-function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
-    function applyDisplayObjectProperties(displayObject : DisplayObject) {
+function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
+    function _applyDisplayObjectProperties(displayObject : DisplayObject) {
         displayObject.scale.x *= drawable.scale.x;
         displayObject.scale.y *= drawable.scale.y;
         displayObject.rotation += degreesToRadians(drawable.rotation);
@@ -200,16 +200,16 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : Dr
 
     if (isAnimationConstruct(drawableDisplayObject)) {
         for (let frame of drawableDisplayObject.frames) {
-            applyDrawableProperties(drawable, frame);
+            _applyDrawableProperties(drawable, frame);
         }
     } else if (isContainerContruct(drawableDisplayObject)) {
         for (let child of drawableDisplayObject.childConstructs) {
-            applyDrawableProperties(drawable, child);
+            _applyDrawableProperties(drawable, child);
         }
     } else if (isDisplayObject(drawableDisplayObject)) {
-        applyDisplayObjectProperties(drawableDisplayObject);
+        _applyDisplayObjectProperties(drawableDisplayObject);
     } else {
-        throw Error("Unknown DrawnConstruct type in drawable-drawer::applyDrawableProperties");
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::_applyDrawableProperties");
     }
 }
 
@@ -219,28 +219,28 @@ function applyDrawableProperties(drawable : Drawable, drawableDisplayObject : Dr
  * non-interactive so pixi doesn't throw benign js errors all the time.
  * @param  drawableDrawnConstruct to make non-interactive
  */
-function setNonInteractive(drawable : DrawnConstruct) {
+function _setNonInteractive(drawable : DrawnConstruct) {
     if (!drawable) {
         return;
     }
 
     if (isAnimationConstruct(drawable)) {
         for (let frame of drawable.frames) {
-            setNonInteractive(frame);
+            _setNonInteractive(frame);
         }
     } else if (isContainerContruct(drawable)) {
         for (let child of drawable.childConstructs) {
-            setNonInteractive(child);
+            _setNonInteractive(child);
         }
     } else if (isDisplayObject(drawable)) {
         drawable.interactiveChildren = false;
     } else {
-        throw Error("Unknown DrawnConstruct type in drawable-drawer::setNonInteractive");
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::_setNonInteractive");
     }
 }
 
-function setPosition(drawable : DrawnConstruct, position : Vector) {
-    function setDisplayObjectPosition(displayObject : DisplayObject) {
+function _setPosition(drawable : DrawnConstruct, position : Vector) {
+    function _setDisplayObjectPosition(displayObject : DisplayObject) {
         displayObject.position.x += position.x;
         displayObject.position.y += position.y;
     }
@@ -250,15 +250,15 @@ function setPosition(drawable : DrawnConstruct, position : Vector) {
 
     if (isAnimationConstruct(drawable)) {
         for (let frame of drawable.frames) {
-            setPosition(frame, position);
+            _setPosition(frame, position);
         }
     } else if (isContainerContruct(drawable)) {
         for (let child of drawable.childConstructs) {
-            setPosition(child, position);
+            _setPosition(child, position);
         }
     } else if (isDisplayObject(drawable)) {
-        setDisplayObjectPosition(drawable);
+        _setDisplayObjectPosition(drawable);
     } else {
-        throw Error("Unknown DrawnConstruct type in drawable-drawer::setPosition");
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::_setPosition");
     }
 }

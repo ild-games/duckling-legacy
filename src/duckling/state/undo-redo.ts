@@ -68,7 +68,7 @@ export interface AutoMerger {
     (action : Action, previousAction : Action) : boolean;
 }
 
-function initialState<T>(rootReducer : Reducer<T>) : UndoRedoState<T> {
+function _initialState<T>(rootReducer : Reducer<T>) : UndoRedoState<T> {
     return {
         stateHistory : List<T>(),
         state : rootReducer(undefined, {type : ""})
@@ -81,28 +81,28 @@ function initialState<T>(rootReducer : Reducer<T>) : UndoRedoState<T> {
  */
 export function createUndoRedoReducer<T>(rootReducer : Reducer<T>, autoMerger : AutoMerger) : Reducer<UndoRedoState<T>> {
    return function(state : UndoRedoState<T>, action : Action) : UndoRedoState<T> {
-       state = state || initialState(rootReducer);
+       state = state || _initialState(rootReducer);
 
        switch (action.type) {
            case UNDO_ACTION:
-               return undo(state);
+               return _undo(state);
            case REDO_ACTION:
-               return redo(state);
+               return _redo(state);
            case CLEAR_HISTORY_ACTION:
-               return clear(state);
+               return _clear(state);
            default:
-               return applyReducer<T>(rootReducer, autoMerger, state, action);
+               return _applyReducer<T>(rootReducer, autoMerger, state, action);
        }
    }
 }
 
-function applyReducer<T>(rootReducer : Reducer<T>,
+function _applyReducer<T>(rootReducer : Reducer<T>,
                       autoMerger : AutoMerger,
                       state : UndoRedoState<T>,
                       action : Action) : UndoRedoState<T> {
     let baseState = state;
-    if (shouldMerge(action, state.lastAction, autoMerger)) {
-        baseState = undo(state);
+    if (_shouldMerge(action, state.lastAction, autoMerger)) {
+        baseState = _undo(state);
     }
 
     return {
@@ -112,7 +112,7 @@ function applyReducer<T>(rootReducer : Reducer<T>,
     }
 }
 
-function shouldMerge(action : Action, prevAction : Action, autoMerger : AutoMerger) {
+function _shouldMerge(action : Action, prevAction : Action, autoMerger : AutoMerger) {
     if (!action || !prevAction) {
         return false;
     }
@@ -124,14 +124,14 @@ function shouldMerge(action : Action, prevAction : Action, autoMerger : AutoMerg
     return autoMerger(action, prevAction);
 }
 
-function clear<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
+function _clear<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
     return {
         stateHistory : List<T>(),
         state : state.state
     }
 }
 
-function undo<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
+function _undo<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
     if (!state.stateHistory.isEmpty()) {
         let undoHistory : List<any> = state.undoHistory ? state.undoHistory : List();
         let nextState = state.stateHistory.last();
@@ -145,7 +145,7 @@ function undo<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
     }
 }
 
-function redo<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
+function _redo<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
     if (state.undoHistory && !state.undoHistory.isEmpty()) {
         return {
             stateHistory : state.stateHistory.push(state.state),
