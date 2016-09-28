@@ -1,6 +1,6 @@
-let gulp = require('gulp');
-let sass = require('gulp-sass');
-let watch = require('gulp-watch');
+var gulp = require('gulp');
+var sass = require('gulp-sass');
+var watch = require('gulp-watch');
 
 
 gulp.task('css', function() {
