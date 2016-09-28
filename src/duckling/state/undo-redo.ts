@@ -7,7 +7,7 @@ export const UNDO_ACTION = "UndoRedo.Undo";
 export const REDO_ACTION = "UndoRedo.Redo";
 export const CLEAR_HISTORY_ACTION = "UndoRedo.Clear";
 
-var key = 1;
+let key = 1;
 /**
  * Create a new unique merge key.
  * @return A merge key that can be used to merge actions.
@@ -57,7 +57,7 @@ export interface UndoRedoState<T> {
  * Get the current state from the UndoRedoStore.
  */
 export function getCurrentState<T>(undoRedoStore : Store<UndoRedoState<T>>) : T {
-    var state = undoRedoStore.getState();
+    let state = undoRedoStore.getState();
     return state ? state.state : null;
 }
 
@@ -100,7 +100,7 @@ function applyReducer<T>(rootReducer : Reducer<T>,
                       autoMerger : AutoMerger,
                       state : UndoRedoState<T>,
                       action : Action) : UndoRedoState<T> {
-    var baseState = state;
+    let baseState = state;
     if (shouldMerge(action, state.lastAction, autoMerger)) {
         baseState = undo(state);
     }
@@ -133,8 +133,8 @@ function clear<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
 
 function undo<T>(state : UndoRedoState<T>) : UndoRedoState<T> {
     if (!state.stateHistory.isEmpty()) {
-        var undoHistory : List<any> = state.undoHistory ? state.undoHistory : List();
-        var nextState = state.stateHistory.last();
+        let undoHistory : List<any> = state.undoHistory ? state.undoHistory : List();
+        let nextState = state.stateHistory.last();
         return {
             stateHistory : state.stateHistory.pop(),
             undoHistory : undoHistory.push(state.state),

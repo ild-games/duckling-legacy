@@ -14,8 +14,8 @@ function squareBox(size : number) : Box2 {
     }
 }
 
-var yDIR = [0, -1, 0, 1];
-var xDIR = [1, 0, -1, 0];
+let yDIR = [0, -1, 0, 1];
+let xDIR = [1, 0, -1, 0];
 
 describe("Box2", function() {
     describe("boxContainsPoint", function() {
@@ -36,11 +36,11 @@ describe("Box2", function() {
         });
 
         it("a box centered on origin behaves correctly in all directions", function() {
-            var box = squareBox(10);
-            var inside = 4.9;
-            var outside = 5.1;
-            for (var xdir of xDIR) {
-                for (var ydir of yDIR) {
+            let box = squareBox(10);
+            let inside = 4.9;
+            let outside = 5.1;
+            for (let xdir of xDIR) {
+                for (let ydir of yDIR) {
                     expect(boxContainsPoint(box, {x : xdir*inside, y : ydir*inside})).to.eql(true);
 
                     if (xdir || ydir) {
@@ -53,37 +53,37 @@ describe("Box2", function() {
 
     describe("boxFromEdges", function() {
         it("box.position.x to be the min and max if they are the same", function() {
-            var box = boxFromEdges(10, 10, 5, 5);
+            let box = boxFromEdges(10, 10, 5, 5);
             expect(box.position.x).to.eql(10);
         });
 
         it("gives box.position.y to be the min and max if they are the same", function() {
-            var box = boxFromEdges(10, 10, 5, 5);
+            let box = boxFromEdges(10, 10, 5, 5);
             expect(box.position.y).to.eql(5);
         });
 
         it("gives box.dimension.x should be the distance between the min and max", function() {
-            var box = boxFromEdges(10, 23, 5, 5);
+            let box = boxFromEdges(10, 23, 5, 5);
             expect(box.dimension.x).to.eql(13);
         });
 
         it("gives box.dimension.y should be the distance between the min and max", function() {
-            var box = boxFromEdges(10, 23, 5, 17);
+            let box = boxFromEdges(10, 23, 5, 17);
             expect(box.dimension.y).to.eql(12);
         });
 
         it("box.position.x is half way between the min and max", function() {
-            var box = boxFromEdges(10, 22, 5, 5);
+            let box = boxFromEdges(10, 22, 5, 5);
             expect(box.position.x).to.eql(16);
         });
 
         it("box.position.y is half way between the min and max", function() {
-            var box = boxFromEdges(10, 22, 5, 16);
+            let box = boxFromEdges(10, 22, 5, 16);
             expect(box.position.y).to.eql(10.5);
         });
 
         it("box.rotation to be 0", function() {
-            var box = boxFromEdges(10, 22, 5, 16);
+            let box = boxFromEdges(10, 22, 5, 16);
             expect(box.rotation).to.eql(0);
         });
     });

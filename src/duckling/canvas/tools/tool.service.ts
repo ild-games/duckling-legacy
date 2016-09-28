@@ -32,8 +32,8 @@ export class ToolService {
      * Get the select options for the available tools.
      */
     get toolOptions() : ToolbarOption[] {
-        var options : ToolbarOption[] = [];
-        for (var toolKey in this._tools) {
+        let options : ToolbarOption[] = [];
+        for (let toolKey in this._tools) {
             options.push({
                 value : toolKey,
                 title : this._tools[toolKey].label,

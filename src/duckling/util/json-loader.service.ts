@@ -57,7 +57,7 @@ export class JsonLoaderService {
      * @returns Promise that resolves to a SaveResult describing the result of the save action.
      */
     saveJsonToPath(path : string, json : string) : Promise<SaveResult> {
-        var dirname = this._path.dirname(path);
+        let dirname = this._path.dirname(path);
         return this._path.makedirs(dirname).then(function() {
             return new Promise<SaveResult>(function (resolve, reject) {
                 fs.writeFile(path,json, function (err) {

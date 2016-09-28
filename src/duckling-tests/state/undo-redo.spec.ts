@@ -13,7 +13,7 @@ function getState(store : any) : any {
 
 describe("undo-redo", function () {
     beforeEach(function() {
-        var reducer = createUndoRedoReducer(testReducer, () => false);
+        let reducer = createUndoRedoReducer(testReducer, () => false);
         this.store = createStore(reducer);
     });
 

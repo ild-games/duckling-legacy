@@ -60,7 +60,7 @@ export class CollisionComponent {
     }
 
     onDimensionInput(dimension : Vector) {
-        var newBox = immutableAssign(this.attribute.dimension, {dimension});
+        let newBox = immutableAssign(this.attribute.dimension, {dimension});
         this.attributeChanged.emit(immutableAssign(this.attribute, {dimension: newBox}));
     }
 

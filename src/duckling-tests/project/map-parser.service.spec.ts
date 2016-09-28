@@ -8,20 +8,20 @@ import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
 import {immutableAssign} from '../../duckling/util';
 
-var emptyMap : RawMapFile = {
+let emptyMap : RawMapFile = {
     key : "",
     entities : [],
     assets : [],
     systems : {}
 };
 
-var entityA = {
+let entityA = {
     sa : {
         foo : "barea"
     }
 }
 
-var entityB = {
+let entityB = {
     sa : {
         foo : "bareb"
     },
@@ -30,7 +30,7 @@ var entityB = {
     }
 }
 
-var basicMap : RawMapFile = {
+let basicMap : RawMapFile = {
     key : "aBasicMap",
     entities : ["ea", "eb", "ec"],
     assets : [
@@ -58,17 +58,17 @@ var basicMap : RawMapFile = {
 
 describe("MapLoaderService", function() {
     beforeEach(function() {
-        var storeService = new StoreService(mainReducer, mergeEntityAction);
+        let storeService = new StoreService(mainReducer, mergeEntityAction);
         this.parser = new MapParserService(new AssetService(storeService), new RequiredAssetService());
     });
 
     it("turns an empty map into an empty system", function() {
-        var system = this.parser.mapToSystem(emptyMap);
+        let system = this.parser.mapToSystem(emptyMap);
         expect(system.isEmpty()).to.eql(true);
     });
 
     it("turns an empty system into an empty map", function() {
-        var map = this.parser.systemToMap("", createEntitySystem());
+        let map = this.parser.systemToMap("", createEntitySystem());
         expect(map).to.eql(emptyMap);
     });
 
@@ -91,22 +91,22 @@ describe("MapLoaderService", function() {
     });
 
     it("loading and saving a map preserves the original map", function() {
-        var system = this.parser.mapToSystem(basicMap);
-        var map = this.parser.systemToMap("aBasicMap",system);
+        let system = this.parser.mapToSystem(basicMap);
+        let map = this.parser.systemToMap("aBasicMap",system);
         map.entities.sort();
         expect(map).to.eql(basicMap);
     });
 
     it("if an entity is in a system, but not the entities array, it will create the entity", function () {
-        var sa = {
+        let sa = {
             components : {
                 ea : {
                     foo : "barea"
                 }
             }
         };
-        var map = immutableAssign(emptyMap, {systems : { sa}});
-        var system = this.parser.mapToSystem(map);
+        let map = immutableAssign(emptyMap, {systems : { sa}});
+        let system = this.parser.mapToSystem(map);
         expect(system.get("ea")).to.eql(entityA);
     });
 });

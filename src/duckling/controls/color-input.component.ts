@@ -66,7 +66,7 @@ export class ColorInput {
     }
 
     isRGBAValue(value : string) {
-        var number = Number.parseInt(value);
+        let number = Number.parseInt(value);
         return number >= 0 && number <= 255;
     }
 }

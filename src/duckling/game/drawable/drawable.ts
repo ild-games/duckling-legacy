@@ -45,7 +45,7 @@ export interface Drawable {
     priorityOffset : number;
 }
 
-export var defaultDrawable : Drawable = {
+export let defaultDrawable : Drawable = {
     __cpp_type: null,
     key: "TopDrawable",
     inactive: false,

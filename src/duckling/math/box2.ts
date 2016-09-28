@@ -38,10 +38,10 @@ export function boxContainsPoint(box : Box2, position : Vector) {
  * @return A new Box2 instance.
  */
 export function boxUnion(left : Box2, right : Box2) : Box2 {
-    var minX = Math.min(boxMinX(left), boxMinX(right));
-    var maxX = Math.max(boxMaxX(left), boxMaxX(right));
-    var minY = Math.min(boxMinY(left), boxMinY(right));
-    var maxY = Math.max(boxMaxY(left), boxMaxY(right));
+    let minX = Math.min(boxMinX(left), boxMinX(right));
+    let maxX = Math.max(boxMaxX(left), boxMaxX(right));
+    let minY = Math.min(boxMinY(left), boxMinY(right));
+    let maxY = Math.max(boxMaxY(left), boxMaxY(right));
     return boxFromEdges(minX, maxX, minY, maxY);
 }
 
@@ -78,7 +78,7 @@ export function boxMaxY(box : Box2) : number {
  * @return A new Box2 object.
  */
 export function boxFromEdges(minX : number, maxX : number, minY : number, maxY : number) : Box2 {
-    var dimension = {x : maxX - minX, y : maxY - minY};
-    var position = {x : (maxX + minX) / 2, y : (maxY + minY) / 2};
+    let dimension = {x : maxX - minX, y : maxY - minY};
+    let position = {x : (maxX + minX) / 2, y : (maxY + minY) / 2};
     return {dimension, position, rotation : 0};
 }

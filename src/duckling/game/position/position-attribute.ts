@@ -18,7 +18,7 @@ export interface PositionAttribute extends Attribute {
     velocity : Vector
 }
 
-export var defaultPosition : PositionAttribute = {
+export let defaultPosition : PositionAttribute = {
     position: {
         x: 0,
         y: 0

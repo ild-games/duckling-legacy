@@ -39,8 +39,8 @@ export function drawEllipse(centerPosition : Vector, xRadius : number, yRadius :
  * @param graphics       Graphics object used to draw.
  */
 export function drawX(centerPosition : Vector, dimension : Vector, graphics : Graphics) {
-    var halfX = dimension.x / 2;
-    var halfY = dimension.y / 2;
+    let halfX = dimension.x / 2;
+    let halfY = dimension.y / 2;
 
     graphics.moveTo(centerPosition.x - halfX, centerPosition.y - halfY);
     graphics.lineTo(centerPosition.x + halfX, centerPosition.y + halfY);
@@ -57,19 +57,19 @@ export function drawX(centerPosition : Vector, dimension : Vector, graphics : Gr
  * @param  graphics       Graphics object used to draw
  */
 export function drawGrid(centerPosition : Vector, gridDimension : Vector, cellDimension : Vector, graphics : Graphics) {
-    var halfX = gridDimension.x / 2;
-    var halfY = gridDimension.y / 2;
+    let halfX = gridDimension.x / 2;
+    let halfY = gridDimension.y / 2;
 
-    var startY = centerPosition.y - halfY + (halfY % cellDimension.y);
-    var endY = centerPosition.y + halfY - (halfY % cellDimension.y);
-    for (var curY = startY; curY <= endY; curY += cellDimension.y) {
+    let startY = centerPosition.y - halfY + (halfY % cellDimension.y);
+    let endY = centerPosition.y + halfY - (halfY % cellDimension.y);
+    for (let curY = startY; curY <= endY; curY += cellDimension.y) {
         graphics.moveTo(centerPosition.x - halfX, curY);
         graphics.lineTo(centerPosition.x + halfX, curY);
     }
 
-    var startX = centerPosition.x - halfX + (halfX % cellDimension.x);
-    var endX = centerPosition.x + halfX - (halfX % cellDimension.x);
-    for (var curX = startX; curX <= endX; curX += cellDimension.x) {
+    let startX = centerPosition.x - halfX + (halfX % cellDimension.x);
+    let endX = centerPosition.x + halfX - (halfX % cellDimension.x);
+    for (let curX = startX; curX <= endX; curX += cellDimension.x) {
         graphics.moveTo(curX, centerPosition.y - halfY);
         graphics.lineTo(curX, centerPosition.y + halfY);
     }

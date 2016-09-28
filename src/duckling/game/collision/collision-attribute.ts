@@ -7,9 +7,9 @@ export const COLLISION_KEY = "collision";
 
 
 export type BodyType = "none" | "solid" | "environment";
-export var BodyTypeSelect : SelectOption[] = toSelectOptions<BodyType>("none", "solid", "environment");
+export let BodyTypeSelect : SelectOption[] = toSelectOptions<BodyType>("none", "solid", "environment");
 export type CollisionType = "none" | "player" | "ground";
-export var CollisionTypeSelect : SelectOption[] = toSelectOptions<CollisionType>("none", "player", "ground");
+export let CollisionTypeSelect : SelectOption[] = toSelectOptions<CollisionType>("none", "player", "ground");
 
 
 /**
@@ -36,7 +36,7 @@ export interface CollisionAttribute extends Attribute {
     oneWayNormal : Vector;
 }
 
-export var defaultCollison : CollisionAttribute = {
+export let defaultCollison : CollisionAttribute = {
     dimension: {
         dimension: {
             x: 10,

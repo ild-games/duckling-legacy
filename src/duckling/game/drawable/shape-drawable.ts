@@ -8,7 +8,7 @@ export interface ShapeDrawable extends Drawable {
     shape: Shape;
 }
 
-export var defaultShapeDrawable : ShapeDrawable = immutableAssign(defaultDrawable as ShapeDrawable, {
+export let defaultShapeDrawable : ShapeDrawable = immutableAssign(defaultDrawable as ShapeDrawable, {
     __cpp_type: "ild::ShapeDrawable",
     key: "ShapeDrawable",
     shape: {

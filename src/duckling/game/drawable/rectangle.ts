@@ -7,7 +7,7 @@ export interface Rectangle extends Shape {
     dimension: Vector;
 }
 
-export var defaultRectangle : Rectangle = immutableAssign(defaultShape as Rectangle, {
+export let defaultRectangle : Rectangle = immutableAssign(defaultShape as Rectangle, {
     __cpp_type: "sf::RectangleShape",
     dimension: {
         x: 10,

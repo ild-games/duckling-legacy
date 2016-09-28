@@ -25,7 +25,7 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
      * @return The component class to use for the attribute.
      */
     getAttributeBox(key : AttributeKey, entity : Entity) : any {
-        var getBox = this.getImplementation(key);
+        let getBox = this.getImplementation(key);
         if (getBox) {
             return getBox(entity, this._asset);
         }

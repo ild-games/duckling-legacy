@@ -15,7 +15,7 @@ export interface DrawableAttribute extends Attribute {
     topDrawable : Drawable;
 }
 
-export var defaultDrawableAttribute : DrawableAttribute = immutableAssign({}, {topDrawable: defaultDrawable}) as DrawableAttribute;
+export let defaultDrawableAttribute : DrawableAttribute = immutableAssign({}, {topDrawable: defaultDrawable}) as DrawableAttribute;
 
 /**
  * Retrieve the drawable attribute from the entity.

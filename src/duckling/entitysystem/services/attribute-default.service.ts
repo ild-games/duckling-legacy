@@ -31,7 +31,7 @@ export class AttributeDefaultService extends BaseAttributeService<AttributeDefau
     }
 
     createEntity() : Entity {
-        var entity : Entity = {};
+        let entity : Entity = {};
 
         this.forEach((key, defaults) => {
             if (defaults.createByDefault) {

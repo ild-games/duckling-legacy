@@ -122,7 +122,7 @@ export function mergeEntityAction(action : EntityUpdateAction, previousAction : 
         return false;
     }
 
-    var change = changeType(action.entity, previousAction.entity);
+    let change = changeType(action.entity, previousAction.entity);
     return change === ChangeType.Equal || change === ChangeType.PrimitiveChange;
 }
 

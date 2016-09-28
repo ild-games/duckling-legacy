@@ -34,8 +34,8 @@ export function changeType(beforeObject : any, afterObject : any) : ChangeType {
         return ChangeType.ComplexChange;
     }
 
-    var changeA = checkLeftKeys(beforeObject, afterObject);
-    var changeB = checkLeftKeys(afterObject, beforeObject, true);
+    let changeA = checkLeftKeys(beforeObject, afterObject);
+    let changeB = checkLeftKeys(afterObject, beforeObject, true);
 
     if (changeA === ChangeType.ComplexChange || changeB === ChangeType.ComplexChange) {
         return ChangeType.ComplexChange;
@@ -51,14 +51,14 @@ export function changeType(beforeObject : any, afterObject : any) : ChangeType {
 }
 
 function checkLeftKeys(leftObject : any, rightObject : any, ignoreSharedKeys : boolean = false) {
-    var hasPrimitiveChange = false;
-    for (var key in leftObject) {
+    let hasPrimitiveChange = false;
+    for (let key in leftObject) {
 
         if (ignoreSharedKeys && key in rightObject) {
             continue;
         }
 
-        var change = changeType(leftObject[key], rightObject[key]);
+        let change = changeType(leftObject[key], rightObject[key]);
         if (change === ChangeType.PrimitiveChange) {
             if (hasPrimitiveChange) {
                 return ChangeType.ComplexChange;

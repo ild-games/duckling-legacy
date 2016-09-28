@@ -30,7 +30,7 @@ export class ProjectService {
 
         this._jsonLoader.getJsonFromPath(this.getMapPath(MAP_NAME))
         .then((json : any) => {
-            var system : EntitySystem;
+            let system : EntitySystem;
             if (json) {
                 system = this._mapParser.mapToSystem(JSON.parse(json));
             } else {
@@ -48,8 +48,8 @@ export class ProjectService {
      * Save the projects current state.
      */
     save() {
-        var map = this._mapParser.systemToMap(MAP_NAME, this._entitySystem.entitySystem.value);
-        var json = JSON.stringify(map, null, 4);
+        let map = this._mapParser.systemToMap(MAP_NAME, this._entitySystem.entitySystem.value);
+        let json = JSON.stringify(map, null, 4);
         this._jsonLoader.saveJsonToPath(this.getMapPath(MAP_NAME), json);
     }
 
