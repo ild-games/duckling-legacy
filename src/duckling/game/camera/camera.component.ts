@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {VectorInput, NumberInput} from '../../controls';
+import {VectorInputComponent, NumberInputComponent} from '../../controls';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
 import {EntityKey} from '../../entitysystem/entity';
@@ -18,7 +18,7 @@ import {CameraAttribute} from './camera-attribute';
  * @see AttributeComponent
  */
 @Component({
-    selector: "dk-camera-component",
+    selector: "dk-camera",
     styleUrls: ['./duckling/game/camera/camera.component.css'],
     template: `
         <div class="default-checkbox">

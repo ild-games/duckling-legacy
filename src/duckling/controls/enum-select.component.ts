@@ -6,7 +6,7 @@ import {
     EventEmitter,
 } from '@angular/core';
 
-import {SelectOption, ArraySelect} from './array-select.component';
+import {SelectOption, ArraySelectComponent} from './array-select.component';
 import {isInteger} from '../math/number-utils';
 
 /**
@@ -23,7 +23,7 @@ import {isInteger} from '../math/number-utils';
     `,
     changeDetection : ChangeDetectionStrategy.OnPush,
 })
-export class EnumSelect {
+export class EnumSelectComponent {
     /**
      * The selected enum value.
      */

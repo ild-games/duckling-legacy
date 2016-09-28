@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {VectorInput, NumberInput, FormLabel} from '../../controls';
+import {VectorInputComponent, NumberInputComponent, FormLabelComponent} from '../../controls';
 import {Vector} from '../../math';
 import {immutableAssign} from '../../util';
 
@@ -15,7 +15,7 @@ import {Drawable} from './drawable';
  * Component to edit the shared properties of all shapes
  */
 @Component({
-    selector: "dk-generic-drawable-component",
+    selector: "dk-generic-drawable",
     styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
     template: `
         <div class="inactive-checkbox">

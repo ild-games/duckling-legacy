@@ -8,7 +8,7 @@ import {
 import {Box2, Vector} from '../math';
 import {immutableAssign} from '../util';
 
-import {VectorInput} from './vector-input.component';
+import {VectorInputComponent} from './vector-input.component';
 import {Validator} from './validated-input.component';
 
 /**
@@ -17,7 +17,7 @@ import {Validator} from './validated-input.component';
  * @see AttributeComponent
  */
 @Component({
-    selector: "dk-box2-component",
+    selector: "dk-box2",
     styleUrls: ['./duckling/controls/box2.component.css'],
     template: `
         <dk-vector-input

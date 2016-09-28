@@ -1,7 +1,7 @@
 import {DisplayObject} from 'pixi.js';
 
 import {Vector} from '../../math';
-import {Canvas} from '../canvas.component';
+import {CanvasComponent} from '../canvas.component';
 
 export class BaseTool {
 
@@ -51,7 +51,7 @@ export interface CanvasMouseEvent {
     /**
      * Canvas component the event came from
      */
-    canvas : Canvas;
+    canvas : CanvasComponent;
 }
 
 /**

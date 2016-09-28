@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
-import {EnumChoiceComponent, SelectOption, FormLabel} from '../../controls';
+import {EnumChoiceComponent, SelectOption, FormLabelComponent} from '../../controls';
 import {immutableAssign} from '../../util/model';
-import {NumberInput} from '../../controls/number-input.component';
+import {NumberInputComponent} from '../../controls/number-input.component';
 
 import {ShapeDrawable} from './shape-drawable';
 import {GenericShapeComponent} from './generic-shape.component';
@@ -23,13 +23,13 @@ import {RectangleComponent} from './rectangle.component';
  * Component used to edit a ShapeDrawable
  */
 @Component({
-    selector: "dk-shape-drawable-component",
+    selector: "dk-shape-drawable",
     template: `
-        <dk-generic-shape-component
+        <dk-generic-shape
             *ngIf="shapeDrawable.shape?.__cpp_type !== null"
             [shape]="shapeDrawable.shape"
             (shapeChanged)="specificShapeChanged($event)">
-        </dk-generic-shape-component>
+        </dk-generic-shape>
 
         <div [ngSwitch]="cppTypeToShapeType(shapeDrawable.shape?.__cpp_type)">
             <dk-enum-choice
@@ -39,17 +39,17 @@ import {RectangleComponent} from './rectangle.component';
                 (addClicked)="onShapeTypePicked($event)">
             </dk-enum-choice>
 
-            <dk-circle-component
+            <dk-circle-drawable
                 *ngSwitchCase="ShapeType.Circle"
                 [circle]="shapeDrawable.shape"
                 (circleChanged)="onShapeChanged($event)">
-            </dk-circle-component>
+            </dk-circle-drawable>
 
-            <dk-rectangle-component
+            <dk-rectangle-drawable
                 *ngSwitchCase="ShapeType.Rectangle"
                 [rectangle]="shapeDrawable.shape"
                 (rectangleChanged)="onShapeChanged($event)">
-            </dk-rectangle-component>
+            </dk-rectangle-drawable>
         </div>
     `
 })

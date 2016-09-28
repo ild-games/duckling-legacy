@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {ValidatedInput, Validator} from './validated-input.component';
+import {ValidatedInputComponent, Validator} from './validated-input.component';
 
 let numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
 
@@ -25,7 +25,7 @@ let numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
         </dk-validated-input>
     `
 })
-export class NumberInput {
+export class NumberInputComponent {
     /**
      * Text label displayed to the user.
      */

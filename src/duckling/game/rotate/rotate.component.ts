@@ -5,13 +5,13 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {NumberInput} from '../../controls';
+import {NumberInputComponent} from '../../controls';
 import {immutableAssign} from '../../util';
 
 import {RotateAttribute} from './rotate-attribute';
 
 @Component({
-    selector: "dk-rotate-component",
+    selector: "dk-rotate",
     template: `
         <dk-number-input
             label="Speed"

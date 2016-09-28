@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {ToolbarButton} from './toolbar-button.component';
+import {ToolbarButtonComponent} from './toolbar-button.component';
 
 @Component({
     selector: "dk-toolbar-button-group",
@@ -20,7 +20,7 @@ import {ToolbarButton} from './toolbar-button.component';
         </span>
     `
 })
-export class ToolbarButtonGroup {
+export class ToolbarButtonGroupComponent {
     @Input() options : ToolbarOption[];
     @Output() selected : EventEmitter<ToolbarOption> = new EventEmitter<ToolbarOption>();
     @Input() selectedValue : string = "";

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 @Component({
-    selector: "dk-default-attribute-component",
+    selector: "dk-default-attribute",
     template: `
         <dk-json
             [value]="attribute"

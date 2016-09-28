@@ -15,7 +15,7 @@ import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
 import {AssetService} from '../project';
-import {ArraySelect, SelectOption} from '../controls';
+import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService} from '../entitysystem/';
 import {Vector} from '../math';
 import {KeyboardService} from '../util';
@@ -31,7 +31,7 @@ import {
     displayObjectsForDrawnConstructs
 } from './drawing';
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
-import {Canvas} from './canvas.component';
+import {CanvasComponent} from './canvas.component';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
 

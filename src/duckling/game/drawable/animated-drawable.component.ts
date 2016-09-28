@@ -6,7 +6,7 @@ import {
     AfterViewInit
 } from '@angular/core';
 
-import {Accordian, FormLabel, EnumChoiceComponent, NumberInput} from '../../controls';
+import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 
 import {AnimatedDrawable} from './animated-drawable';
@@ -17,7 +17,7 @@ import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} fr
  * Component used to edit an Aniamted Drawable including all its children drawables
  */
 @Component({
-    selector: "dk-animated-drawable-component",
+    selector: "dk-animated-drawable",
     styleUrls: ['./duckling/game/drawable/animated-drawable.component.css'],
     template: `
         <dk-number-input
@@ -46,10 +46,10 @@ import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} fr
                 (elementMovedUp)="onChildDrawablesChanged($event)"
                 (elementCloned)="onFrameCloned($event)">
                 <template let-element="$element" let-index="$index">
-                    <dk-drawable-component
+                    <dk-drawable
                         [drawable]="element"
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
-                    </dk-drawable-component>
+                    </dk-drawable>
                 </template>
             </dk-accordian>
         </md-card>

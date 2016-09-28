@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {NumberInput} from '../../controls';
+import {NumberInputComponent} from '../../controls';
 import {immutableAssign} from '../../util';
 
 import {Circle} from './circle';
@@ -14,7 +14,7 @@ import {Circle} from './circle';
  * Component used to edit a Circle shape
  */
 @Component({
-    selector: "dk-circle-component",
+    selector: "dk-circle-drawable",
     template: `
         <dk-number-input
             label="Radius"

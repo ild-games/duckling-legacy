@@ -5,8 +5,8 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {VectorInput, FormLabel, ArraySelect} from '../../controls';
-import {EnumSelect} from '../../controls/enum-select.component';
+import {VectorInputComponent, FormLabelComponent, ArraySelectComponent} from '../../controls';
+import {EnumSelectComponent} from '../../controls/enum-select.component';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
 import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collision-attribute';
@@ -17,7 +17,7 @@ import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collisi
  * @see AttributeComponent
  */
 @Component({
-    selector: "dk-collision-component",
+    selector: "dk-collision",
     styleUrls: ['./duckling/game/collision/collision.component.css'],
     template: `
         <dk-vector-input

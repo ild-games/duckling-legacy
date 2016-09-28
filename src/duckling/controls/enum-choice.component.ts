@@ -5,9 +5,9 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {EnumSelect} from './enum-select.component';
+import {EnumSelectComponent} from './enum-select.component';
 import {SelectOption} from './array-select.component';
-import {Icon} from './icon.component';
+import {IconComponent} from './icon.component';
 
 /**
  * Component used to display a select element of the options in an enum along with a

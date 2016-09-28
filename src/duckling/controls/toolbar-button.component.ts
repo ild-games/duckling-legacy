@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {Icon} from './icon.component';
+import {IconComponent} from './icon.component';
 
 /**
  * Component for buttons displayed in a toolbar
@@ -33,7 +33,7 @@ import {Icon} from './icon.component';
         </button>
     `
 })
-export class ToolbarButton {
+export class ToolbarButtonComponent {
     @Input() text : string = "";
     @Input() icon : string = "";
     @Input() color : string = "";

@@ -12,7 +12,7 @@ export * from './toolbar-button-group.component';
 export * from './form-label.component';
 export * from './accordian.component';
 export * from './accordian-element.component';
-export * from './color-input.component';
+export * from './color.component';
 export * from './icon.component';
 export * from './icon-button.component'
 export * from './box2.component';

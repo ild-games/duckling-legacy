@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 import {PositionAttribute} from './position-attribute';
-import {VectorInput, FormLabel} from '../../controls';
+import {VectorInputComponent, FormLabelComponent} from '../../controls';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
 
@@ -16,7 +16,7 @@ import {immutableAssign} from '../../util/model';
  * @see AttributeComponent
  */
 @Component({
-    selector: "position-component",
+    selector: "dk-position",
     styleUrls: ['./duckling/game/position/position.component.css'],
     template: `
         <dk-vector-input
