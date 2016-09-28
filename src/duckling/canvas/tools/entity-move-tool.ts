@@ -83,9 +83,10 @@ export class EntityMoveTool extends BaseTool {
 
     private _buildSelectionBox(canvasZoom : number) : DisplayObject {
         let graphics : Graphics = null;
-        let entity = this._entitySystemService.getEntity(this._selection);
-        if (entity){
-            graphics = this._buildSelectionBoxAroundEntity(entity, canvasZoom);
+        let selectedEntityKey = this._selectionService.selection.value.selectedEntity;
+        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
+        if (selectedEntity) {
+            graphics = this._buildSelectionBoxAroundEntity(selectedEntity, canvasZoom);
         }
         return graphics;
     }
@@ -93,9 +94,9 @@ export class EntityMoveTool extends BaseTool {
     private _buildSelectionBoxAroundEntity(entity : Entity, canvasZoom : number) : Graphics {
         let graphics : Graphics = null;
         let box = this._entityBoxService.getEntityBox(entity);
-        if (box){
+        if (box) {
             graphics = new Graphics();
-            graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
+            graphics.lineStyle(2 / canvasZoom, 0x3355cc, 1);
             drawRectangle(box.position, box.dimension, graphics);
         }
         return graphics;
