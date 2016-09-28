@@ -13,7 +13,7 @@ import {
 import {Attribute, AttributeKey} from '../entitysystem';
 import {AttributeComponentService} from './attribute-component.service';
 
-var logcount = 0;
+let logcount = 0;
 
 /**
  * Each attribute has its own component implementation.  This Component is a

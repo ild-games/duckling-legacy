@@ -28,7 +28,7 @@ export interface Shape {
     fillColor: Color,
 }
 
-export var defaultShape : Shape = {
+export let defaultShape : Shape = {
     __cpp_type: "",
     fillColor: {
         r: 0,

@@ -6,7 +6,7 @@ export interface RotateAttribute extends Attribute {
     speed: number;
 }
 
-export var defaultRotate : RotateAttribute = {
+export let defaultRotate : RotateAttribute = {
     speed: 0
 }
 

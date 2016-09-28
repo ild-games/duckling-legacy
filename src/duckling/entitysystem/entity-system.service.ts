@@ -57,7 +57,7 @@ export class EntitySystemService {
      * @return The key of the newly created entity.
      */
     addNewEntity(entity : Entity, mergeKey? : any) : EntityKey {
-        var key = this.nextKey();
+        let key = this.nextKey();
         this.updateEntity(key, entity, mergeKey);
         return key;
     }
@@ -90,7 +90,7 @@ export class EntitySystemService {
     }
 
     private get _system() : EntitySystem {
-        var state = this._storeService.getState();
+        let state = this._storeService.getState();
         if (state && state.entitySystem) {
             return state.entitySystem;
         } else {
@@ -99,7 +99,7 @@ export class EntitySystemService {
     }
 
     private nextKey() : string {
-        var next = this._nextKey++;
+        let next = this._nextKey++;
         while (this._system.get(String(next), null)) {
             next = this._nextKey++;
         }
@@ -108,7 +108,7 @@ export class EntitySystemService {
 
     private fromJson(object : any) : EntitySystem {
         return createEntitySystem().withMutations(system => {
-            for (var key in object) {
+            for (let key in object) {
                 system.set(key,object[key]);
             }
         });

@@ -104,7 +104,7 @@ export class Accordian<T> {
         }
 
         let indices = new Array(this.elements.length);
-        for (var i = 0; i < indices.length; i++) {
+        for (let i = 0; i < indices.length; i++) {
             indices[i] = i;
         }
         return indices;

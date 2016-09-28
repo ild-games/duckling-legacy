@@ -14,13 +14,13 @@ class MockSetPositionService extends EntityPositionSetService {
     }
 
     setPosition(entityKey : EntityKey, newPosition : Vector, mergeKey? : any) {
-        var entity = this.entitySystemService.getEntity(entityKey);
-        var newEntity = immutableAssign(entity, {position : newPosition});
+        let entity = this.entitySystemService.getEntity(entityKey);
+        let newEntity = immutableAssign(entity, {position : newPosition});
         this.entitySystemService.updateEntity(entityKey, newEntity, mergeKey);
     }
 }
 
-var entity = {
+let entity = {
     position : {
         x: 0,
         y: 0
@@ -64,25 +64,25 @@ describe("CopyPasteService", function() {
 
         it("creates a new entity at the specified location", function() {
             this.copyPaste.copy(ENTITY_KEY);
-            var key = this.copyPaste.paste(this.newPosition);
-            var entity = this.entitySystem.getEntity(key);
+            let key = this.copyPaste.paste(this.newPosition);
+            let entity = this.entitySystem.getEntity(key);
             expect(entity).to.eql(this.movedEntity);
         });
 
         it("with an empty clipboard does not creat an entity", function() {
-            var systemSize = size(this.entitySystem);
+            let systemSize = size(this.entitySystem);
             this.copyPaste.paste(this.newPosition);
             expect(size(this.entitySystem)).to.eql(systemSize++);
         });
 
         it("with an empty clipboard returns null", function() {
-            var systemSize = size(this.entitySystem);
+            let systemSize = size(this.entitySystem);
             expect(this.copyPaste.paste(this.newPosition)).to.eql(null);
         });
 
         it("can be undone with one call to undo", function() {
             this.copyPaste.copy(ENTITY_KEY);
-            var key = this.copyPaste.paste(this.newPosition);
+            let key = this.copyPaste.paste(this.newPosition);
             this.store.undo();
             expect(!!this.entitySystem.getEntity(key)).not.to.eql(true);
         });

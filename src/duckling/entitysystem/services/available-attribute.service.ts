@@ -18,7 +18,7 @@ export class AvailableAttributeService {
      * @return An array of available AttributeKeys.
      */
     availableAttributes(entity : Entity = {}) {
-        var available : AttributeKey [] = [];
+        let available : AttributeKey [] = [];
         this._attributeDefault.forEach((key) => {
             if (!(key in entity)) {
                 available.push(key);

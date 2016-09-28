@@ -65,8 +65,8 @@ export class ContainerDrawableComponent {
     }
 
     onNewDrawableClicked(pickedType : DrawableType) {
-        var defaultDrawable = getDefaultDrawable(pickedType);
-        var newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType, defaultDrawable.key)});
+        let defaultDrawable = getDefaultDrawable(pickedType);
+        let newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType, defaultDrawable.key)});
         this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
             drawables: this.containerDrawable.drawables.concat(newDrawable)
         }));

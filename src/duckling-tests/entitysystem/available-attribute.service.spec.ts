@@ -15,7 +15,7 @@ function sort(array : any[]) {
 
 describe("AvailableAttributeService", function() {
     beforeEach(function() {
-        var attributeDefault = new AttributeDefaultService();
+        let attributeDefault = new AttributeDefaultService();
         attributeDefault.register(POS, {});
         attributeDefault.register(COL, {});
         attributeDefault.register(DRAW, {});
@@ -28,13 +28,13 @@ describe("AvailableAttributeService", function() {
     });
 
     it("called with a partial entity returns the availble attributes", function() {
-        var entity : any = {};
+        let entity : any = {};
         entity[POS] = {};
         expect(sort(this.available.availableAttributes(entity))).to.eql(sort([COL, DRAW]));
     });
 
     it("called with a complete entity returns the empty array", function() {
-        var entity : any = {};
+        let entity : any = {};
         entity[POS] = {};
         entity[COL] = {};
         entity[DRAW] = {};

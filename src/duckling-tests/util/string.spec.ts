@@ -7,7 +7,7 @@ import {toTitleCase} from '../../duckling/util';
 describe("string utils", function() {
     describe("toTitleCase", function() {
         it("doesn't change an already title case string", function() {
-            var testString = "Test";
+            let testString = "Test";
             expect(toTitleCase(testString)).to.eql(testString);
         });
 

@@ -57,7 +57,7 @@ export class EntityComponent {
     }
 
     onAttributeChanged(key : AttributeKey, attribute : Attribute) {
-        var entityPatch : any = {};
+        let entityPatch : any = {};
         entityPatch[key] = attribute;
         this.entityChanged.emit(immutableAssign(this.entity, entityPatch));
     }

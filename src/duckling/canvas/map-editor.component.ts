@@ -181,7 +181,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     copyEntity() {
-        var selection = this._selection.selection.value;
+        let selection = this._selection.selection.value;
         this._copyPaste.copy(selection.selectedEntity);
     }
 
@@ -222,7 +222,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     private _buildGrid() : DisplayObject {
-        var graphics = new Graphics();
+        let graphics = new Graphics();
         graphics.lineStyle(1 / this.scale, 0xEEEEEE, 1);
         drawGrid(
             {x: 0, y: 0},
@@ -233,7 +233,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     private _buildCanvasBackground() : DisplayObject {
-        var bg = new Graphics();
+        let bg = new Graphics();
         drawCanvasBackground(
             {x: 0, y: 0},
             this.stageDimensions,
@@ -242,7 +242,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     private _buildCanvasBorder() : DisplayObject {
-        var border = new Graphics();
+        let border = new Graphics();
         border.lineWidth = 1 / this.scale;
         drawCanvasBorder(
             {x: 0, y: 0},
@@ -252,7 +252,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     private _buildCanvasDisplayObject() : Container {
-        var canvasDrawnElements : Container = new Container();
+        let canvasDrawnElements : Container = new Container();
 
         if (this._canvasBackgroundDisplayObject) {
             canvasDrawnElements.addChild(this._canvasBackgroundDisplayObject);

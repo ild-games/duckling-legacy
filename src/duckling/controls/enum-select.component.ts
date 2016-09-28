@@ -40,8 +40,8 @@ export class EnumSelect {
     @Output() selection = new EventEmitter<number>();
 
     enumOptions() {
-        var options : SelectOption[] = [];
-        for(var value in this.enum) {
+        let options : SelectOption[] = [];
+        for(let value in this.enum) {
             if (isInteger(Number(value))) {
                 options.push({
                     value,

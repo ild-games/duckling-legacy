@@ -6,7 +6,7 @@ export interface Circle extends Shape {
     radius: number;
 }
 
-export var defaultCircle : Circle = immutableAssign(defaultShape as Circle, {
+export let defaultCircle : Circle = immutableAssign(defaultShape as Circle, {
     __cpp_type: "sf::CircleShape",
     radius: 10
 });

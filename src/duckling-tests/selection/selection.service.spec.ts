@@ -6,7 +6,7 @@ import {createStoreService, createEntityService} from '../helper/state';
 import {SelectionService} from '../../duckling/selection';
 import {immutableAssign} from '../../duckling/util';
 
-var entity = {
+let entity = {
     foo : {
         bar : "atone"
     }
@@ -42,9 +42,9 @@ describe("SelectionService", function() {
         });
 
         it("updating an already selected entity will update the selection", function() {
-            var newEntity = immutableAssign(entity, {compa : {tr : "umpet"}});
+            let newEntity = immutableAssign(entity, {compa : {tr : "umpet"}});
             this.entitySystem.updateEntity(ENTITY_KEY, newEntity);
-            var selection = {
+            let selection = {
                 selectedEntity : ENTITY_KEY,
                 entity : newEntity
             }

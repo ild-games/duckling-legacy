@@ -7,7 +7,7 @@ export interface AnimatedDrawable extends Drawable {
     frames : Drawable[];
 }
 
-export var defaultAnimatedDrawable : AnimatedDrawable = immutableAssign(defaultDrawable as AnimatedDrawable, {
+export let defaultAnimatedDrawable : AnimatedDrawable = immutableAssign(defaultDrawable as AnimatedDrawable, {
     __cpp_type: "ild::AnimatedDrawable",
     key: "AnimatedDrawable",
     duration: 0,

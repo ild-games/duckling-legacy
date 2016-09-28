@@ -15,7 +15,7 @@ export interface CameraAttribute extends Attribute {
     follows : EntityKey
 }
 
-export var defaultCamera : CameraAttribute = {
+export let defaultCamera : CameraAttribute = {
     renderPriority: 0,
     scale: 1,
     size: {

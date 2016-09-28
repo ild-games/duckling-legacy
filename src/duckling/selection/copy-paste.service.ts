@@ -23,15 +23,15 @@ export class CopyPasteService {
     }
 
     copy(entityKey : EntityKey) {
-        var entity = this._entitySystem.getEntity(entityKey);
+        let entity = this._entitySystem.getEntity(entityKey);
         this._store.dispatch(copyAction(entity));
     }
 
     paste(position : Vector) : EntityKey {
-        var clipboardEntity = this.clipboard.value.copiedEntity;
+        let clipboardEntity = this.clipboard.value.copiedEntity;
         if (clipboardEntity) {
-            var mergeKey = newMergeKey();
-            var entityKey = this._entitySystem.addNewEntity(clipboardEntity, mergeKey);
+            let mergeKey = newMergeKey();
+            let entityKey = this._entitySystem.addNewEntity(clipboardEntity, mergeKey);
             this._setPosition.setPosition(entityKey, position, mergeKey);
             return entityKey;
         } else {

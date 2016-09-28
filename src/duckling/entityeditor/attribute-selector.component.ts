@@ -66,7 +66,7 @@ export class AttributeSelectorComponent implements OnChanges, AfterViewInit {
     }
 
     ngOnChanges() {
-        var newOptions = this.newOptions();
+        let newOptions = this.newOptions();
         newOptions.sort((left, right) => left.title.localeCompare(right.title));
         if (changeType(newOptions, this.options) !== ChangeType.Equal) {
             this.options = newOptions;

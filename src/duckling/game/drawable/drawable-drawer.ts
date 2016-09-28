@@ -83,18 +83,18 @@ function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnC
 }
 
 function drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
-    var graphics = new Graphics();
-    var colorHex = colorToHex(shapeDrawable.shape.fillColor);
+    let graphics = new Graphics();
+    let colorHex = colorToHex(shapeDrawable.shape.fillColor);
     graphics.beginFill(parseInt(colorHex, 16), 1);
     graphics.fillAlpha = shapeDrawable.shape.fillColor.a / 255;
     let shapeType = cppTypeToShapeType(shapeDrawable.shape.__cpp_type)
     switch (shapeType) {
         case ShapeType.Circle:
-            var radius = (shapeDrawable.shape as Circle).radius;
+            let radius = (shapeDrawable.shape as Circle).radius;
             drawEllipse({x: 0, y: 0}, radius, radius, graphics);
             break;
         case ShapeType.Rectangle:
-            var dimension = (shapeDrawable.shape as Rectangle).dimension;
+            let dimension = (shapeDrawable.shape as Rectangle).dimension;
             drawRectangle({x: 0, y: 0}, dimension, graphics);
             break;
     }

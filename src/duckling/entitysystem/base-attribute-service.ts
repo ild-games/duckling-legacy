@@ -33,7 +33,7 @@ export class BaseAttributeService<ImplementationType> {
 
 
     forEach(callback : (key : AttributeKey, implementation : ImplementationType) => any) {
-        for (var key in this._attributeComponentType) {
+        for (let key in this._attributeComponentType) {
             callback(key, this._attributeComponentType[key]);
         }
     }

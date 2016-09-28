@@ -12,7 +12,7 @@ export interface Actions {
     affectedByGravity: boolean
 }
 
-export var defaultAction : ActionAttribute = {
+export let defaultAction : ActionAttribute = {
     actions: {
         platformVelocityActions: [],
         platformPositionActions: [],

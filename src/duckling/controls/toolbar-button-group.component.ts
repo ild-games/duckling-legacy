@@ -26,8 +26,8 @@ export class ToolbarButtonGroup {
     @Input() selectedValue : string = "";
 
     private buttonClicked(event : MouseEvent, clickedValue : string) {
-        var clickedOption : ToolbarOption = null;
-        for (var i = 0; i < this.options.length; i++) {
+        let clickedOption : ToolbarOption = null;
+        for (let i = 0; i < this.options.length; i++) {
             if (this.options[i].value === clickedValue) {
                 clickedOption = this.options[i];
             }

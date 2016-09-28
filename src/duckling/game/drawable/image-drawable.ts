@@ -9,7 +9,7 @@ export interface ImageDrawable extends Drawable {
     textureRect: Box2;
 }
 
-export var defaultImageDrawable : ImageDrawable = immutableAssign(defaultDrawable as ImageDrawable, {
+export let defaultImageDrawable : ImageDrawable = immutableAssign(defaultDrawable as ImageDrawable, {
     __cpp_type: "ild::ImageDrawable",
     type: DrawableType.Image,
     key: "ImageDrawable",

@@ -313,7 +313,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     private stageCoordsFromCanvasCoords(canvasCoords : Vector) : Vector {
-        var position = this._stagePosition;
+        let position = this._stagePosition;
         return {
             x: (canvasCoords.x - position.x) / this.scale,
             y: (canvasCoords.y - position.y) / this.scale
