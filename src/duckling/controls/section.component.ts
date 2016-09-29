@@ -13,6 +13,7 @@ import {
             <dk-section-header
                 *ngIf="collapsible"
                 [checkboxMode]="checkboxMode"
+                [collapsible]="collapsible"
                 [sectionOpen]="sectionOpen"
                 [headerText]="headerText"
                 (sectionOpenChanged)="onSectionOpenChanged($event)">

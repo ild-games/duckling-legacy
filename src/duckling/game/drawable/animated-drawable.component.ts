@@ -10,6 +10,7 @@ import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
+import {Vector} from '../../math';
 
 import {AnimatedDrawable} from './animated-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';

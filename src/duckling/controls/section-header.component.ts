@@ -13,7 +13,7 @@ import {
     styleUrls: ['./duckling/controls/section-header.component.css'],
     template: `
         <div
-            class="header md-elevation-z3"
+            [class]="headerCssClasses"
             (click)="onWholeHeaderClicked(!sectionOpen)">
             <span
                 *ngIf="!checkboxMode"
@@ -42,6 +42,9 @@ export class SectionHeaderComponent {
     @Input()
     headerText : string = "";
 
+    @Input()
+    collapsible : boolean = true;
+
     @Output()
     sectionOpenChanged = new EventEmitter<boolean>();
 
@@ -53,5 +56,13 @@ export class SectionHeaderComponent {
         if (!this.checkboxMode) {
             this.sectionOpenChanged.emit(sectionOpened);
         }
+    }
+
+    get headerCssClasses() : string {
+        let classes = ["header", "md-elevation-z3"];
+        if (this.collapsible) {
+            classes.push("pointer");
+        }
+        return classes.join(" ");
     }
 }
