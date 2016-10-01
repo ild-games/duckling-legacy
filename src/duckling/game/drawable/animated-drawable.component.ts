@@ -3,8 +3,10 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit
+    AfterViewInit,
+    ViewContainerRef
 } from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
@@ -12,6 +14,7 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 import {AnimatedDrawable} from './animated-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';
 import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} from './drawable';
+import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto-create-animation-dialog.component';
 
 /**
  * Component used to edit an Aniamted Drawable including all its children drawables
@@ -44,13 +47,6 @@ import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} fr
             (click)="onCreateFromTilesheetClicked()">
             Create from tilesheet
         </button>
-        <dk-section-component
-            *ngIf="isCreateFromTilesheetActive"
-            headerText="Create From Tilesheet"
-            [collapsible]="false">
-            Hi
-        </dk-section-component>
-
 
         <md-card
             *ngIf="hasAnyFrames"
@@ -81,7 +77,11 @@ export class AnimatedDrawableComponent {
     @Input() animatedDrawable : AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
-    private _isCreateFromTilesheetActive = false;
+    private _autoCreateDialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>;
+
+    constructor(private _materialDialog : MdDialog,
+                private _viewContainerRef : ViewContainerRef) {
+    }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let newFrames = this.animatedDrawable.frames.slice(0);
@@ -114,7 +114,18 @@ export class AnimatedDrawableComponent {
     }
 
     onCreateFromTilesheetClicked() {
-        this._isCreateFromTilesheetActive = true;
+        let dialogConfig = new MdDialogConfig();
+        dialogConfig.viewContainerRef = this._viewContainerRef;
+        this._autoCreateDialogRef = this._materialDialog.open(AutoCreateAnimationDialogComponent, dialogConfig);
+        this._autoCreateDialogRef.afterClosed().subscribe(result => this._autoCreateAnimationFromTilesheet(result));
+    }
+
+    private _autoCreateAnimationFromTilesheet(dialogResult : AutoCreateDialogResult) {
+        if (!dialogResult) {
+            return;
+        }
+
+
     }
 
     findNextUniqueKey(pickedType : DrawableType, defaultKey : string) {
@@ -132,9 +143,5 @@ export class AnimatedDrawableComponent {
 
     get hasAnyFrames() {
         return this.animatedDrawable && this.animatedDrawable.frames && this.animatedDrawable.frames.length > 0;
-    }
-
-    get isCreateFromTilesheetActive() : boolean {
-        return this._isCreateFromTilesheetActive && !this.hasAnyFrames;
     }
 }

@@ -12,7 +12,6 @@ import {SCALE_MODES} from 'pixi.js';
 import {EntityDrawerService} from './canvas/drawing/entity-drawer.service';
 import {RenderPriorityService} from './canvas/drawing/render-priority.service';
 
-import {AngularMaterialModule} from './angular-material-all';
 import {CanvasModule} from './canvas/canvas.module';
 import {ControlsModule} from './controls';
 import {EntityEditorModule} from './entityeditor';
