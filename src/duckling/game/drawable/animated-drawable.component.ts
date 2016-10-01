@@ -13,6 +13,7 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 import {Vector} from '../../math';
 
 import {AnimatedDrawable} from './animated-drawable';
+import {ImageDrawable, defaultImageDrawable} from './image-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';
 import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} from './drawable';
 import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto-create-animation-dialog.component';
@@ -122,11 +123,29 @@ export class AnimatedDrawableComponent {
     }
 
     private _autoCreateAnimationFromTilesheet(dialogResult : AutoCreateDialogResult) {
-        if (!dialogResult) {
+        if (!dialogResult || !dialogResult.imageKey) {
             return;
         }
 
-
+        let frames : ImageDrawable[] = [];
+        for (let i = 0; i < dialogResult.numFrames; i++) {
+            frames.push(immutableAssign(defaultImageDrawable, {
+                key: defaultImageDrawable.key + (i + 1),
+                isWholeImage: false,
+                textureRect: {
+                    position: {
+                        x: i * dialogResult.frameDimensions.x,
+                        y: 0
+                    },
+                    dimension: {
+                        x: dialogResult.frameDimensions.x,
+                        y: dialogResult.frameDimensions.y
+                    }
+                },
+                textureKey: dialogResult.imageKey
+            }));
+        }
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: frames}));
     }
 
     findNextUniqueKey(pickedType : DrawableType, defaultKey : string) {

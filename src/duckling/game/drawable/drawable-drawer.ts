@@ -180,8 +180,8 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
 
 function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : Texture) {
     return (
-        imageDrawable.textureRect.position.x + imageDrawable.textureRect.dimension.x < texture.frame.width &&
-        imageDrawable.textureRect.position.y + imageDrawable.textureRect.dimension.y < texture.frame.height
+        imageDrawable.textureRect.position.x + imageDrawable.textureRect.dimension.x <= texture.frame.width &&
+        imageDrawable.textureRect.position.y + imageDrawable.textureRect.dimension.y <= texture.frame.height
     );
 }
 
