@@ -17,6 +17,8 @@ import {drawCollision} from './collision/collision-drawer';
 import {collisionBoundingBox} from './collision/collision-box';
 
 import {defaultCamera, CAMERA_KEY} from './camera/camera-attribute';
+import {drawCameraAttribute} from './camera/camera-drawer';
+import {cameraBoundingBox} from './camera/camera-box';
 import {CameraComponent} from './camera/camera.component';
 
 import {defaultAction, ACTION_KEY} from './action/action-attribute';
@@ -72,6 +74,8 @@ function _bootstrapCollisionAttribute(services : Services) {
 function _bootstrapCameraAttribute(services : Services) {
     services.attributeComponentService.register(CAMERA_KEY, CameraComponent);
     services.attributeDefaultService.register(CAMERA_KEY, {createByDefault: false, default: defaultCamera});
+    services.entityDrawerService.register(CAMERA_KEY, drawCameraAttribute);
+    services.entityBoxService.register(CAMERA_KEY, cameraBoundingBox);
 }
 
 function _bootstrapDrawableAttribute(services : Services) {

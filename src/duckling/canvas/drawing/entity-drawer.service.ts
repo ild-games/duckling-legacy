@@ -42,9 +42,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
                     this._assets.add(requiredAssets[assetKey]);
                 }
             };
-            if (!needsLoading) {
-                return drawer(entity, this._assets);
-            }
+            return drawer(entity, this._assets, needsLoading)
         }
         return null;
     }

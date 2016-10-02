@@ -14,8 +14,8 @@ import {drawDrawableAttribute} from './drawable-drawer';
  * @param entity The entity the bounding box will be built for.
  * @return A Box2 bounding box for the entity's drawable attribute.
  */
-export function drawableBoundingBox(entity : Entity, assetService : AssetService) : Box2 {
-    let entityDrawnConstruct = drawDrawableAttribute(entity, assetService);
+export function drawableBoundingBox(entity : Entity, assetService : AssetService, needsLoading : boolean) : Box2 {
+    let entityDrawnConstruct = drawDrawableAttribute(entity, assetService, needsLoading);
     let position = getPosition(entity);
     if (!position || !entityDrawnConstruct) {
         return null;

@@ -1,0 +1,26 @@
+import {Entity} from '../../entitysystem/entity';
+import {getPosition} from '../position/position-attribute';
+import {Box2} from '../../math';
+import {AssetService} from '../../project';
+
+/**
+ * Get the bounding box for an entity with a camera attribute.
+ * @param entity The entity the bounding box will be built for.
+ * @return A Box2 bounding box for the entity's camera attribute.
+ */
+export function cameraBoundingBox(entity : Entity, assetService : AssetService) : Box2 {
+    let positionAttribute = getPosition(entity);
+    if (!positionAttribute) {
+        return null;
+    }
+
+    let cameraTexture = assetService.get("fa-video-camera", true);
+    return {
+        position: positionAttribute.position,
+        dimension: {
+            x: cameraTexture.frame.width,
+            y: cameraTexture.frame.height
+        },
+        rotation: 0
+    }
+}

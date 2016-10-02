@@ -34,14 +34,19 @@ import {Rectangle} from './rectangle';
  * @param  entity The entity with the drawable attribute
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct {
+export function drawDrawableAttribute(entity : Entity, assetService : AssetService, assetNeedsLoading : boolean) : DrawnConstruct {
     let positionAttribute = getPosition(entity);
     let drawableAttribute = getDrawableAttribute(entity);
     if (!positionAttribute || !drawableAttribute.topDrawable) {
         return null;
     }
 
-    let drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
+    let drawable : DrawnConstruct;
+    if (assetNeedsLoading) {
+        drawable = _missingAsset(assetService);
+    } else {
+        drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
+    }
     if (!drawable) {
         return null;
     }
@@ -49,6 +54,14 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
     _setPosition(drawable, positionAttribute.position);
 
     return drawable;
+}
+
+function _missingAsset(assetService : AssetService) : Sprite {
+    let missingTexture = assetService.get("fa-missing-image", true);
+    let sprite = new Sprite(missingTexture);
+    sprite.x = -sprite.width / 2;
+    sprite.y = -sprite.height / 2;
+    return sprite;
 }
 
 function _drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {

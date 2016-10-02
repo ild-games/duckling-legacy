@@ -53,6 +53,34 @@ export class PathService {
     }
 
     /**
+     * Walk a directory and return a promise that evaluates with all the files within
+     * that directory and any subdirectories.
+     * @param  path to walk
+     * @return A promise that evaluates to a list of files within the directory
+     */
+    walk(path : string) : Promise<any> {
+        return new Promise((resolve, reject) => {
+            fs.readdir(path, (err : any, files : string[]) => {
+                Promise.all(files.map(file => {
+                    let filePath = npath.join(path, file);
+                    let stat = fs.statSync(filePath);
+                    if (stat.isFile()) {
+                        return filePath;
+                    } else {
+                        return this.walk(filePath);
+                    }
+                })).then((files : string[]) => {
+                    resolve(files);
+                })
+            });
+        }).then((results : any[]) => {
+            return results.reduce((a, b) => {
+                return a.concat(b);
+            }, []);
+        });
+    }
+
+    /**
      * Checks if a file or directory is a subfile / subdirectory of a given directory.
      *
      * @param subFileOrDir File or directory string to check if it is a subfile / subdirectory of the given parent directory.

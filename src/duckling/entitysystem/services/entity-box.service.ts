@@ -2,7 +2,7 @@ import {Component, Injectable} from '@angular/core';
 
 import {BaseAttributeService} from '../base-attribute-service';
 import {AttributeKey, Entity} from '../entity';
-import {AssetService} from '../../project';
+import {AssetService, RequiredAssetService} from '../../project';
 import {Box2, boxUnion} from '../../math';
 
 /**
@@ -15,7 +15,8 @@ export type AttributeBoundingBox = (entity : Entity, assetService? : AssetServic
  */
 @Injectable()
 export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox> {
-    constructor(private _asset : AssetService) {
+    constructor(private _asset : AssetService,
+                private _requiredAssets : RequiredAssetService) {
         super();
     }
 
@@ -27,7 +28,14 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
     getAttributeBox(key : AttributeKey, entity : Entity) : any {
         let getBox = this.getImplementation(key);
         if (getBox) {
-            return getBox(entity, this._asset);
+            let requiredAssets = this._requiredAssets.assetsForAttribute(key, entity);
+            let needsLoading = false;
+            for (let assetKey in requiredAssets) {
+                if (!this._asset.isLoaded(assetKey)) {
+                    needsLoading = true;
+                }
+            };
+            return getBox(entity, this._asset, needsLoading);
         }
         return null;
     }
