@@ -32,3 +32,29 @@ export class KeyboardService implements OnDestroy {
         this._heldKeys[event.keyCode] = false;
     }
 }
+
+
+/**
+ * Lookup functions for keyboard key codes
+ */
+export class KeyboardCodeLibrary {
+    static isSpacebar(keyCode : number) : boolean {
+        return keyCode === 32;
+    }
+
+    static isUp(keyCode : number) : boolean {
+        return keyCode === 38;
+    }
+
+    static isRight(keyCode : number) : boolean {
+        return keyCode === 39;
+    }
+
+    static isDown(keyCode : number) : boolean {
+        return keyCode === 40;
+    }
+
+    static isLeft(keyCode : number) : boolean {
+        return keyCode === 37;
+    }
+}
