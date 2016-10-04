@@ -117,9 +117,9 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
             {view: this.canvasRoot.nativeElement});
         this._renderer.backgroundColor = 0xDFDFDF;
 
-        this.resizeCanvasElements();
-        this.centerStage();
-        this.render();
+        this._resizeCanvasElements();
+        this._centerStage();
+        this._render();
     }
 
     setupContainingElementEvents() {
@@ -149,13 +149,13 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         }
 
         if (changes.stageDimensions) {
-            this.resizeCanvasElements();
-            this.centerStage();
+            this._resizeCanvasElements();
+            this._centerStage();
         } else if (changes.scale) {
             this.onScaleChanged(changes.scale.previousValue, changes.scale.currentValue);
         }
 
-        this.render();
+        this._render();
     }
 
     onScaleChanged(oldScale : number, newScale : number) {
@@ -185,7 +185,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         };
 
         this._zoomInCanvasCoords = null;
-        this.resizeCanvasElements();
+        this._resizeCanvasElements();
         this.scrollPan(offsetPan);
     }
 
@@ -199,7 +199,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onPaste(event : ClipboardEvent) {
-        this.elementPaste.emit(this.stageCoordsFromCanvasCoords(this._mouseLocation));
+        this.elementPaste.emit(this._stageCoordsFromCanvasCoords(this._mouseLocation));
     }
 
     onMouseDown(event : MouseEvent) {
@@ -256,15 +256,15 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onResize() {
-        this.resizeCanvasElements();
-        this.render();
+        this._resizeCanvasElements();
+        this._render();
     }
 
     onScroll(event : WheelEvent) {
         if (event.ctrlKey || event.metaKey) {
             event.preventDefault();
         }
-        this.render();
+        this._render();
     }
 
     forwardContainingDivMouseEvent(event : MouseEvent) {
@@ -292,7 +292,7 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         };
     }
 
-    private resizeCanvasElements() {
+    private _resizeCanvasElements() {
         this.elementDimensions.x = this.canvasContainerDiv.nativeElement.clientWidth;
         this.elementDimensions.y = this.canvasContainerDiv.nativeElement.clientHeight;
         this.scrollerDimensions.x = this.elementDimensions.x * 2 + (this.stageDimensions.x * this.scale) - (this._scrollStageOffset * 2);
@@ -305,14 +305,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         }
     }
 
-    private centerStage() {
+    private _centerStage() {
         this.scrollTo({
             x: (this.scrollerDimensions.x / 2) - (this.elementDimensions.x / 2),
             y: (this.scrollerDimensions.y / 2) - (this.elementDimensions.y / 2)
         });
     }
 
-    private stageCoordsFromCanvasCoords(canvasCoords : Vector) : Vector {
+    private _stageCoordsFromCanvasCoords(canvasCoords : Vector) : Vector {
         let position = this._stagePosition;
         return {
             x: (canvasCoords.x - position.x) / this.scale,
@@ -320,14 +320,14 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
         }
     }
 
-    private canvasCoordsFromEvent(event : MouseEvent) : Vector {
+    private _canvasCoordsFromEvent(event : MouseEvent) : Vector {
         return {
             x: event.offsetX,
             y: event.offsetY
         }
     }
 
-    private render() {
+    private _render() {
         if (this._renderer) {
 
             let position = this._stagePosition
@@ -357,10 +357,10 @@ export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     private _createCanvasMouseEvent(event : MouseEvent) : CanvasMouseEvent {
-        let canvasCoords = this.canvasCoordsFromEvent(event);
+        let canvasCoords = this._canvasCoordsFromEvent(event);
         return {
             canvasCoords: canvasCoords,
-            stageCoords: this.stageCoordsFromCanvasCoords(canvasCoords),
+            stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
             canvas: this
         }
     }

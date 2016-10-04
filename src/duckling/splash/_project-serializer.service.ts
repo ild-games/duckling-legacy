@@ -16,7 +16,7 @@ export class ProjectSerializerService {
      * @return {Promise<any>}                 Promise resulting in the array of project models.
      */
     loadProjects(projectListFile : string) : Promise<any> {
-        return this._jsonLoader.getJsonFromPath(projectListFile).then(this.successfulLoad, this.failedLoad);
+        return this._jsonLoader.getJsonFromPath(projectListFile).then(this._successfulLoad, this._failedLoad);
     }
 
     /**
@@ -28,7 +28,7 @@ export class ProjectSerializerService {
         return this._jsonLoader.saveJsonToPath(projectListFile, JSON.stringify(projects));
     }
 
-    private successfulLoad(json : string) : Array<any> {
+    private _successfulLoad(json : string) : Array<any> {
         if (json) {
             return JSON.parse(json);
         } else {
@@ -36,7 +36,7 @@ export class ProjectSerializerService {
         }
     }
 
-    private failedLoad(error : string) : Array<any> {
+    private _failedLoad(error : string) : Array<any> {
         return [];
     }
 }

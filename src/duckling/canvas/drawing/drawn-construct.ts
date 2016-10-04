@@ -81,7 +81,7 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     let displayObject : DisplayObject = null;
 
     if (isAnimationConstruct(drawnConstruct)) {
-        displayObject = determineAnimationDisplayObject(drawnConstruct, totalMillis);
+        displayObject = _determineAnimationDisplayObject(drawnConstruct, totalMillis);
     } else if (isContainerContruct(drawnConstruct)) {
         let container = new Container();
         for (let childConstruct of drawnConstruct.childConstructs) {
@@ -100,7 +100,7 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     return displayObject;
 }
 
-function determineAnimationDisplayObject(animation : AnimationConstruct, totalMillis : number) : DisplayObject {
+function _determineAnimationDisplayObject(animation : AnimationConstruct, totalMillis : number) : DisplayObject {
     let curFrameIndex = 0;
     if (animation.duration !== 0) {
         curFrameIndex = Math.trunc(totalMillis / (animation.duration * 1000)) % animation.frames.length;

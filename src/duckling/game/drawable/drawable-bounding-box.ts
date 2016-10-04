@@ -21,32 +21,32 @@ export function drawableBoundingBox(entity : Entity, assetService : AssetService
         return null;
     }
 
-    let bounds : Box2 = getDrawnConstructBounds(entityDrawnConstruct);
+    let bounds : Box2 = _getDrawnConstructBounds(entityDrawnConstruct);
     if (!bounds) {
         return null;
     }
     return immutableAssign(bounds, {position: position.position});
 }
 
-function getDrawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
+function _getDrawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
     if (!drawnConstruct) {
         return null;
     }
 
     let bounds : Box2;
     if (isAnimationConstruct(drawnConstruct)) {
-        bounds = getAnimationBounds(drawnConstruct);
+        bounds = _getAnimationBounds(drawnConstruct);
     } else if (isContainerContruct(drawnConstruct)) {
-        bounds = getContainerBounds(drawnConstruct);
+        bounds = _getContainerBounds(drawnConstruct);
     } else if (isDisplayObject(drawnConstruct)) {
-        bounds = getDisplayObjectBounds(drawnConstruct);
+        bounds = _getDisplayObjectBounds(drawnConstruct);
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-bounding-box::getDrawnConstructBounds");
     }
     return bounds;
 }
 
-function getDisplayObjectBounds(displayObject : DisplayObject) : Box2 {
+function _getDisplayObjectBounds(displayObject : DisplayObject) : Box2 {
     let container = new Container();
     container.addChild(displayObject);
     displayObject.updateTransform();
@@ -61,18 +61,18 @@ function getDisplayObjectBounds(displayObject : DisplayObject) : Box2 {
     };
 }
 
-function getContainerBounds(container : ContainerConstruct) : Box2 {
-    return getUnionedBounds(container.childConstructs);
+function _getContainerBounds(container : ContainerConstruct) : Box2 {
+    return _getUnionedBounds(container.childConstructs);
 }
 
-function getAnimationBounds(animation : AnimationConstruct) : Box2 {
-    return getUnionedBounds(animation.frames);
+function _getAnimationBounds(animation : AnimationConstruct) : Box2 {
+    return _getUnionedBounds(animation.frames);
 }
 
-function getUnionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
+function _getUnionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
     let entireBoundingBox = EMPTY_BOX;
     for (let construct of drawnConstructs) {
-        let childBox = getDrawnConstructBounds(construct);
+        let childBox = _getDrawnConstructBounds(construct);
         if (childBox) {
             entireBoundingBox = boxUnion(entireBoundingBox, childBox);
         }

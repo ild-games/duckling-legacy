@@ -18,27 +18,27 @@ export function entityRequiredDrawableAssets(entity : Entity) : AssetMap {
         return {};
     }
 
-    return drawableRequiredAssets(drawableAttribute.topDrawable);
+    return _drawableRequiredAssets(drawableAttribute.topDrawable);
 }
 
-function drawableRequiredAssets(drawable : Drawable) : AssetMap {
+function _drawableRequiredAssets(drawable : Drawable) : AssetMap {
     switch (cppTypeToDrawableType(drawable.__cpp_type)) {
         case DrawableType.Image:
-            return imageDrawableRequiredAssets(drawable as ImageDrawable);
+            return _imageDrawableRequiredAssets(drawable as ImageDrawable);
         case DrawableType.Container:
-            return containerDrawableRequiredAssets(drawable as ContainerDrawable);
+            return _containerDrawableRequiredAssets(drawable as ContainerDrawable);
         case DrawableType.Animated:
-            return animatedDrawableRequiredAssets(drawable as AnimatedDrawable);
+            return _animatedDrawableRequiredAssets(drawable as AnimatedDrawable);
     }
     return {};
 }
 
-function imageDrawableRequiredAssets(imageDrawable : ImageDrawable) : AssetMap {
+function _imageDrawableRequiredAssets(imageDrawable : ImageDrawable) : AssetMap {
     let assets : AssetMap = {};
     if (!imageDrawable.textureKey) {
         return assets;
     }
-    
+
     assets[imageDrawable.textureKey] = {
         type: "TexturePNG",
         key: imageDrawable.textureKey
@@ -46,18 +46,18 @@ function imageDrawableRequiredAssets(imageDrawable : ImageDrawable) : AssetMap {
     return assets;
 }
 
-function containerDrawableRequiredAssets(containerDrawable : ContainerDrawable) : AssetMap {
+function _containerDrawableRequiredAssets(containerDrawable : ContainerDrawable) : AssetMap {
     let assets : AssetMap = {};
     for (let drawable of containerDrawable.drawables) {
-        assets = Object.assign(assets, drawableRequiredAssets(drawable));
+        assets = Object.assign(assets, _drawableRequiredAssets(drawable));
     }
     return assets;
 }
 
-function animatedDrawableRequiredAssets(animatedDrawable : AnimatedDrawable) : AssetMap {
+function _animatedDrawableRequiredAssets(animatedDrawable : AnimatedDrawable) : AssetMap {
     let assets : AssetMap = {};
     for (let drawable of animatedDrawable.frames) {
-        assets = Object.assign(assets, drawableRequiredAssets(drawable));
+        assets = Object.assign(assets, _drawableRequiredAssets(drawable));
     }
     return assets;
 }

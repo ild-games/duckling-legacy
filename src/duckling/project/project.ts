@@ -25,7 +25,7 @@ const ACTION_SWITCH_PROJECT = "Project.Switch";
 interface SwitchProjectAction extends Action {
     home : string,
 }
-function switchProject(action : SwitchProjectAction) : Project {
+function _switchProject(action : SwitchProjectAction) : Project {
     return {
         home : action.home,
         loaded: false
@@ -49,7 +49,7 @@ export function projectReducer(state : Project = {}, action : Action) {
 
     switch (action.type) {
         case ACTION_SWITCH_PROJECT:
-            return switchProject(action as SwitchProjectAction);
+            return _switchProject(action as SwitchProjectAction);
         case ACTION_DONE_LOADING:
             return immutableAssign(state, {loaded: true});
     }

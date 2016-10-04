@@ -40,41 +40,41 @@ type Services = {
     requiredAssetService  : RequiredAssetService
 };
 
-let bootstrapFunctions : Function[] = [
-    bootstrapPositionAttribute,
-    bootstrapCollisionAttribute,
-    bootstrapCameraAttribute,
-    bootstrapDrawableAttribute,
-    bootstrapActionAttribute,
-    bootstrapRotateAttribute
+let _bootstrapFunctions : Function[] = [
+    _bootstrapPositionAttribute,
+    _bootstrapCollisionAttribute,
+    _bootstrapCameraAttribute,
+    _bootstrapDrawableAttribute,
+    _bootstrapActionAttribute,
+    _bootstrapRotateAttribute
 ];
 
 /**
  * Initialize the Services used by duckling to interact with the attribute implementations.
  */
 export function bootstrapGameComponents(services: Services) {
-    bootstrapFunctions.map((func) => func(services));
+    _bootstrapFunctions.map((func) => func(services));
 }
 
-function bootstrapPositionAttribute(services : Services) {
+function _bootstrapPositionAttribute(services : Services) {
     services.attributeComponentService.register(POSITION_KEY, PositionComponent);
     services.attributeDefaultService.register(POSITION_KEY, {createByDefault: true, default: defaultPosition});
     services.entityPositionSetService.register(POSITION_KEY, setPosition);
 }
 
-function bootstrapCollisionAttribute(services : Services) {
+function _bootstrapCollisionAttribute(services : Services) {
     services.attributeComponentService.register(COLLISION_KEY, CollisionComponent);
     services.entityDrawerService.register(COLLISION_KEY, drawCollision);
     services.entityBoxService.register(COLLISION_KEY, collisionBoundingBox);
     services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollison});
 }
 
-function bootstrapCameraAttribute(services : Services) {
+function _bootstrapCameraAttribute(services : Services) {
     services.attributeComponentService.register(CAMERA_KEY, CameraComponent);
     services.attributeDefaultService.register(CAMERA_KEY, {createByDefault: false, default: defaultCamera});
 }
 
-function bootstrapDrawableAttribute(services : Services) {
+function _bootstrapDrawableAttribute(services : Services) {
     services.attributeComponentService.register(DRAWABLE_KEY, DrawableAttributeComponent);
     services.attributeDefaultService.register(DRAWABLE_KEY, {createByDefault: true, default: defaultDrawableAttribute});
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
@@ -82,12 +82,12 @@ function bootstrapDrawableAttribute(services : Services) {
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
 }
 
-function bootstrapActionAttribute(services : Services) {
+function _bootstrapActionAttribute(services : Services) {
     services.attributeComponentService.register(ACTION_KEY, ActionComponent);
     services.attributeDefaultService.register(ACTION_KEY, {createByDefault: false, default: defaultAction});
 }
 
-function bootstrapRotateAttribute(services : Services) {
+function _bootstrapRotateAttribute(services : Services) {
     services.attributeComponentService.register(ROTATE_KEY, RotateComponent);
     services.attributeDefaultService.register(ROTATE_KEY, {createByDefault: false, default: defaultRotate});
 }

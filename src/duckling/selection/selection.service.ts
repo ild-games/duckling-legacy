@@ -35,7 +35,7 @@ export class SelectionService {
      * @param  mergeKey  Optional mergeKey, describes which commands the action should be merged with.
      */
     select(entityKey : EntityKey, mergeKey? : any) {
-        this._store.dispatch(selectionAction(entityKey), mergeKey);
+        this._store.dispatch(_selectionAction(entityKey), mergeKey);
     }
 
     /**
@@ -81,7 +81,7 @@ const ACTION_SELECT_ENTITY = "Selection.SelectEntity";
 interface SelectionAction extends Action {
     selectedEntity? : EntityKey;
 }
-function selectionAction(selectedEntity : EntityKey) : SelectionAction {
+function _selectionAction(selectedEntity : EntityKey) : SelectionAction {
     return {
         selectedEntity,
         type : ACTION_SELECT_ENTITY

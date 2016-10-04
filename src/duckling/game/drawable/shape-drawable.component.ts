@@ -66,7 +66,7 @@ export class ShapeDrawableComponent {
     }
 
     onShapeTypePicked(pickedType : ShapeType) {
-        let patch : Shape = this.getDefaultShape(pickedType);
+        let patch : Shape = this._getDefaultShape(pickedType);
         this.drawableChanged.emit(immutableAssign(this.shapeDrawable, {shape: patch}));
     }
 
@@ -74,7 +74,7 @@ export class ShapeDrawableComponent {
         this.drawableChanged.emit(immutableAssign(this.shapeDrawable, {shape: shape}));
     }
 
-    private getDefaultShape(type : ShapeType) : Shape {
+    private _getDefaultShape(type : ShapeType) : Shape {
         switch (type) {
             case ShapeType.Circle:
                 return defaultCircle;

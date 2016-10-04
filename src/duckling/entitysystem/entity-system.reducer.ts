@@ -26,7 +26,7 @@ export function updateEntityAction(entity : Entity, entityKey : EntityKey) : Ent
     }
 }
 
-function isUpdateEntityAction(action : Action): action is EntityUpdateAction  {
+function _isUpdateEntityAction(action : Action): action is EntityUpdateAction  {
     return action.type === ACTION_UPDATE_ENTITY;
 }
 
@@ -52,7 +52,7 @@ const ACTION_REPLACE_SYSTEM = "EntitySystem.ReplaceSystem";
      }
  }
 
-function isReplaceSystemAction(action : Action): action is ReplaceSystemAction  {
+function _isReplaceSystemAction(action : Action): action is ReplaceSystemAction  {
     return action.type === ACTION_REPLACE_SYSTEM;
 }
 
@@ -76,7 +76,7 @@ export function deleteEntityAction(key : EntityKey) {
 }
 
 const ACTION_DELETE_ENTITY = "EntitySystem.DeleteEntity";
-function isDeleteEntityAction(action : Action) : action is DeleteEntityAction {
+function _isDeleteEntityAction(action : Action) : action is DeleteEntityAction {
     return action.type === ACTION_DELETE_ENTITY;
 }
 
@@ -103,7 +103,7 @@ export function renameEntityAction(oldKey : EntityKey, newKey : EntityKey) {
 }
 
 const ACTION_RENAME_ENTITY = "EntitySystem.RenameEntity";
-function isRenameEntityAction(action : Action) : action is RenameEntityAction {
+function _isRenameEntityAction(action : Action) : action is RenameEntityAction {
     return action.type === ACTION_RENAME_ENTITY;
 }
 
@@ -130,13 +130,13 @@ export function mergeEntityAction(action : EntityUpdateAction, previousAction : 
  * Reducer for the EntitySystem portion of a map.
  */
 export function entitySystemReducer(entitySystem : EntitySystem = createEntitySystem(), action : Action) : EntitySystem {
-    if (isUpdateEntityAction(action)) {
+    if (_isUpdateEntityAction(action)) {
         return entitySystem.set(action.entityKey, action.entity);
-    } else if (isReplaceSystemAction(action)) {
+    } else if (_isReplaceSystemAction(action)) {
         return action.entitySystem;
-    } else if (isDeleteEntityAction(action)) {
+    } else if (_isDeleteEntityAction(action)) {
         return entitySystem.remove(action.key);
-    } else if (isRenameEntityAction(action)) {
+    } else if (_isRenameEntityAction(action)) {
         let oldEntity = entitySystem.get(action.oldKey);
         entitySystem = entitySystem.remove(action.oldKey);
         return entitySystem.set(action.newKey, oldEntity);

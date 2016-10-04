@@ -24,7 +24,7 @@ export class CopyPasteService {
 
     copy(entityKey : EntityKey) {
         let entity = this._entitySystem.getEntity(entityKey);
-        this._store.dispatch(copyAction(entity));
+        this._store.dispatch(_copyAction(entity));
     }
 
     paste(position : Vector) : EntityKey {
@@ -63,7 +63,7 @@ const ACTION_COPY_ENTITY = "CopyPaste.Copy";
 interface CopyAction extends Action {
     copiedEntity : Entity
 }
-function copyAction(copiedEntity : Entity) {
+function _copyAction(copiedEntity : Entity) {
     return {
         copiedEntity,
         type : ACTION_COPY_ENTITY
