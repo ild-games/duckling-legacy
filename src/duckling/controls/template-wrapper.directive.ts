@@ -16,7 +16,7 @@ import {
 @Directive({
     selector: '[templateWrapper]'
 })
-export class TemplateWrapper implements OnChanges {
+export class TemplateWrapperDirective implements OnChanges {
     private _embeddedViewRef : EmbeddedViewRef<any>
 
     @Input() context : any;

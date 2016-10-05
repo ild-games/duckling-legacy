@@ -9,14 +9,14 @@ import {
 
 import {Entity, AttributeKey, Attribute, TaggedAttribute}  from '../entitysystem';
 import {immutableAssign, immutableDelete, toTitleCase} from '../util';
-import {DeleteButton} from '../controls';
+import {DeleteButtonComponent} from '../controls';
 import {AttributeComponent} from '../entityeditor';
 
 /**
  * Display a form that allows for editting the attributes attached to a component.
  */
 @Component({
-    selector: "dk-entity-component",
+    selector: "dk-entity",
     styleUrls: ['./duckling/entityeditor/entity.component.css'],
     template: `
         <div *ngFor="let key of keys()">
@@ -26,11 +26,11 @@ import {AttributeComponent} from '../entityeditor';
                     <dk-delete-button (click)="deleteAttribute(key)"></dk-delete-button>
                 </md-card-title>
                 <md-card-content>
-                    <attribute-component
+                    <dk-attribute
                         [key]="key"
                         [attribute]="entity[key]"
                         (attributeChanged)="onAttributeChanged(key, $event)">
-                    </attribute-component>
+                    </dk-attribute>
                 </md-card-content>
             </md-card>
         </div>

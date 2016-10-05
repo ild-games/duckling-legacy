@@ -10,8 +10,8 @@ import {
 
 import {immutableAssign, immutableArrayAssign, immutableArrayDelete, immutableSwapElements} from '../util';
 
-import {AccordianElement} from './accordian-element.component';
-import {TemplateWrapper} from './template-wrapper';
+import {AccordianElementComponent} from './accordian-element.component';
+import {TemplateWrapperDirective} from './template-wrapper.directive';
 
 @Component({
     selector: "dk-accordian",
@@ -34,7 +34,7 @@ import {TemplateWrapper} from './template-wrapper';
         </dk-accordian-element>
     `
 })
-export class Accordian<T> {
+export class AccordianComponent<T> {
     @ContentChild(TemplateRef) elementTemplate : TemplateRef<any>;
     /**
      * The list of elements to be displayed in the accordian

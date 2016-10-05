@@ -20,7 +20,7 @@ let logcount = 0;
  * wrapper that will dynamically instantiate the correct attribute type.
  */
 @Component({
-    selector: "attribute-component",
+    selector: "dk-attribute",
     template: "",
     changeDetection : ChangeDetectionStrategy.OnPush,
 })

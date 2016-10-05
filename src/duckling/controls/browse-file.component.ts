@@ -12,7 +12,7 @@ import {immutableAssign, DialogService} from '../util';
  * Component for displaying and editing a Color object
  */
 @Component({
-    selector: "dk-browse-file-component",
+    selector: "dk-browse-file",
     styleUrls: ['./duckling/controls/browse-file.component.css'],
     template:`
         <div class="wrapper">

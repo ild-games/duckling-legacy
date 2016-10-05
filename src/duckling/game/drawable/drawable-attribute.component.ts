@@ -15,12 +15,12 @@ import {DrawableComponent} from './drawable.component';
  * Top level component for the drawable attribute
  */
 @Component({
-    selector: "dk-drawable-attribute-component",
+    selector: "dk-drawable-attribute",
     template: `
-        <dk-drawable-component
+        <dk-drawable
             [drawable]="attribute.topDrawable"
             (drawableChanged)="onDrawableChanged($event)">
-        </dk-drawable-component>
+        </dk-drawable>
     `
 })
 export class DrawableAttributeComponent {

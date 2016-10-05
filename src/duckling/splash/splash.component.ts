@@ -9,7 +9,7 @@ import {ProjectSerializerService} from './_project-serializer.service';
 import {PathService} from '../util/path.service';
 import {DialogService} from '../util/dialog.service';
 import {WindowService} from '../util/window.service';
-import {Icon} from '../controls';
+import {IconComponent} from '../controls';
 
 interface ProjectModel {
     title : string,

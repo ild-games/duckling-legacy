@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {VectorInput, FormLabel} from '../../controls';
+import {VectorInputComponent, FormLabelComponent} from '../../controls';
 import {immutableAssign} from '../../util';
 import {Vector} from '../../math';
 
@@ -15,7 +15,7 @@ import {Rectangle} from './rectangle';
  * Component used to edit a Rectangle shape
  */
 @Component({
-    selector: "dk-rectangle-component",
+    selector: "dk-rectangle-drawable",
     template: `
         <dk-vector-input
             xLabel="Width"

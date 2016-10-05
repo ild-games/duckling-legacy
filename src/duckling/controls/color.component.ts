@@ -7,7 +7,7 @@ import {
 
 import {immutableAssign} from '../util';
 
-import {ValidatedInput} from './validated-input.component';
+import {ValidatedInputComponent} from './validated-input.component';
 
 import {Color} from '../canvas/drawing/color';
 
@@ -15,9 +15,8 @@ import {Color} from '../canvas/drawing/color';
  * Component for displaying and editing a Color object
  */
 @Component({
-    selector: "dk-color-component",
-
-    styleUrls: ['./duckling/controls/color-input.component.css'],
+    selector: "dk-color",
+    styleUrls: ['./duckling/controls/color.component.css'],
     template:`
         <dk-validated-input
             label="Color R"
@@ -45,7 +44,7 @@ import {Color} from '../canvas/drawing/color';
         </dk-validated-input>
     `
 })
-export class ColorInput {
+export class ColorComponent {
     @Input() color : Color;
     @Output() colorChanged = new EventEmitter<Color>();
 

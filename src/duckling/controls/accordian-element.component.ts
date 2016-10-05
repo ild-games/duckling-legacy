@@ -7,7 +7,7 @@ import {
 
 import {immutableAssign} from '../util';
 
-import {Icon} from './icon.component';
+import {IconComponent} from './icon.component';
 
 /**
  * Component used as an element within an accordian
@@ -71,7 +71,7 @@ import {Icon} from './icon.component';
         </div>
     `
 })
-export class AccordianElement {
+export class AccordianElementComponent {
     @Input() title : string;
     @Input() first : boolean;
     @Input() last : boolean;

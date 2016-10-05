@@ -5,7 +5,7 @@ import {
     EventEmitter,
 } from '@angular/core';
 
-import {Accordian, FormLabel, EnumChoiceComponent} from '../../controls';
+import {AccordianComponent, FormLabelComponent, EnumChoiceComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 
 
@@ -17,7 +17,7 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
  * Component used to edit a Container Drawable including all its children drawables
  */
 @Component({
-    selector: "dk-container-drawable-component",
+    selector: "dk-container-drawable",
     styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
     template: `
         <dk-form-label title="Add Drawable"></dk-form-label>
@@ -38,10 +38,10 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
                 (elementMovedDown)="onChildDrawablesChanged($event)"
                 (elementMovedUp)="onChildDrawablesChanged($event)">
                 <template let-element="$element" let-index="$index">
-                    <dk-drawable-component
+                    <dk-drawable
                         [drawable]="element"
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
-                    </dk-drawable-component>
+                    </dk-drawable>
                 </template>
             </dk-accordian>
         </md-card>

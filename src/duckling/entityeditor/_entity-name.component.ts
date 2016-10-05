@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 
 import {EntitySystemService, EntityKey} from '../entitysystem';
-import {DeleteButton, InputComponent} from '../controls';
+import {DeleteButtonComponent, InputComponent} from '../controls';
 
 /**
  * Component that allows the user to modify an entity.

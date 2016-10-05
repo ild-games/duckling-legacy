@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 import {immutableAssign} from '../../util';
-import {ColorInput} from '../../controls';
+import {ColorComponent} from '../../controls';
 import {Color} from '../../canvas/drawing/color';
 
 import {Shape} from './shape';
@@ -15,12 +15,12 @@ import {Shape} from './shape';
  * Component to edit the shared properties of all shapes
  */
 @Component({
-    selector: "dk-generic-shape-component",
+    selector: "dk-generic-shape",
     template: `
-        <dk-color-component
+        <dk-color
             [color]="shape.fillColor"
             (colorChanged)="onColorChanged($event)">
-        </dk-color-component>
+        </dk-color>
     `
 })
 export class GenericShapeComponent {

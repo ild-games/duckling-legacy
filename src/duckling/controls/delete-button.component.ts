@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {IconButton} from './icon-button.component';
+import {IconButtonComponent} from './icon-button.component';
 
 /**
  * Component for a general purpose delete button
@@ -32,7 +32,7 @@ import {IconButton} from './icon-button.component';
         </div>
     `
 })
-export class DeleteButton {
+export class DeleteButtonComponent {
     @Output() click = new EventEmitter<any>();
 
     onClick() {

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
-import {EnumChoiceComponent, VectorInput, FormLabel} from '../../controls';
+import {EnumChoiceComponent, VectorInputComponent, FormLabelComponent} from '../../controls';
 import {immutableAssign} from '../../util';
 
 import {DrawableAttribute} from './drawable-attribute';
@@ -45,13 +45,13 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
  * Component used to edit non-type specified drawable
  */
 @Component({
-    selector: "dk-drawable-component",
+    selector: "dk-drawable",
     template: `
-        <dk-generic-drawable-component
+        <dk-generic-drawable
             *ngIf="drawable?.__cpp_type !== null"
             [drawable]="drawable"
             (drawableChanged)="specificDrawableChanged($event)">
-        </dk-generic-drawable-component>
+        </dk-generic-drawable>
 
         <div [ngSwitch]="cppTypeToDrawableType(drawable?.__cpp_type)">
             <dk-enum-choice
@@ -61,29 +61,29 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
                 (addClicked)="onDrawableTypePicked($event)">
             </dk-enum-choice>
 
-            <dk-shape-drawable-component
+            <dk-shape-drawable
                 *ngSwitchCase="DrawableType.Shape"
                 [shapeDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
-            </dk-shape-drawable-component>
+            </dk-shape-drawable>
 
-            <dk-container-drawable-component
+            <dk-container-drawable
                 *ngSwitchCase="DrawableType.Container"
                 [containerDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
-            </dk-container-drawable-component>
+            </dk-container-drawable>
 
-            <dk-image-drawable-component
+            <dk-image-drawable
                 *ngSwitchCase="DrawableType.Image"
                 [imageDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
-            </dk-image-drawable-component>
+            </dk-image-drawable>
 
-            <dk-animated-drawable-component
+            <dk-animated-drawable
                 *ngSwitchCase="DrawableType.Animated"
                 [animatedDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
-            </dk-animated-drawable-component>
+            </dk-animated-drawable>
         </div>
     `
 })

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import {Rectangle} from 'pixi.js';
 
-import {FormLabel, InputComponent, NumberInput, Box2Component, CheckboxComponent, Validator} from '../../controls';
+import {FormLabelComponent, InputComponent, NumberInputComponent, Box2Component, CheckboxComponent, Validator} from '../../controls';
 import {immutableAssign, DialogService, PathService} from '../../util';
 import {Box2} from '../../math';
 import {ProjectService, AssetService} from '../../project';
@@ -18,27 +18,27 @@ import {ImageDrawable} from './image-drawable';
  * Component used to edit an ImageDrawable
  */
 @Component({
-    selector: "dk-image-drawable-component",
+    selector: "dk-image-drawable",
     template: `
-        <dk-browse-file-component
+        <dk-browse-file
             [dialogOptions]="dialogOptions"
             [selectedFile]="imageDrawable.textureKey"
             (filePicked)="onImageFilePicked($event)">
-        </dk-browse-file-component>
+        </dk-browse-file>
 
-        <dk-collapsible-section-component
+        <dk-collapsible-section
             headerText="Partial Image?"
             [sectionOpen]="!imageDrawable.isWholeImage"
             (sectionOpenChanged)="onPartialImageChanged($event)">
-            <dk-box2-component
+            <dk-box2
                 [value]="imageDrawable.textureRect"
                 [xValidator]="partialXValidator"
                 [yValidator]="partialYValidator"
                 [widthValidator]="partialWidthValidator"
                 [heightValidator]="partialHeightValidator"
                 (boxChanged)="onTextureRectChanged($event)">
-            </dk-box2-component>
-        </dk-collapsible-section-component>
+            </dk-box2>
+        </dk-collapsible-section>
     `
 })
 export class ImageDrawableComponent {

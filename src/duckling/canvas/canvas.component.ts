@@ -63,7 +63,7 @@ import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent} fr
         </div>
     `
 })
-export class Canvas implements OnChanges, OnDestroy, AfterViewInit {
+export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     elementDimensions : Vector = {x: 0, y: 0};
     scrollerDimensions : Vector = {x: 0, y: 0};
 

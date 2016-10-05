@@ -13,6 +13,6 @@ import {
         </i>
     `
 })
-export class Icon {
+export class IconComponent {
     @Input() iconClass : string;
 }

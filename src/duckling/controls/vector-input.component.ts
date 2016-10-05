@@ -8,7 +8,7 @@ import {
 import {Vector} from '../math/vector';
 import {immutableAssign} from '../util/model';
 
-import {NumberInput} from './number-input.component';
+import {NumberInputComponent} from './number-input.component';
 import {Validator} from './validated-input.component';
 
 /**
@@ -32,7 +32,7 @@ import {Validator} from './validated-input.component';
         </dk-number-input>
     `
 })
-export class VectorInput {
+export class VectorInputComponent {
     @Input() xLabel : string = "X";
     @Input() yLabel : string = "Y";
     @Input() value : Vector;

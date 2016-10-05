@@ -13,6 +13,6 @@ import {
         <div class="form-label">{{title}}</div>
     `
 })
-export class FormLabel {
+export class FormLabelComponent {
     @Input() title : string;
 }

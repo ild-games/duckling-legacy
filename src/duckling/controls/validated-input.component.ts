@@ -30,7 +30,7 @@ export type Validator = (value : string) => boolean;
         </dk-input>
     `
 })
-export class ValidatedInput implements OnChanges {
+export class ValidatedInputComponent implements OnChanges {
     /**
      * Text label displayed to the user.
      */

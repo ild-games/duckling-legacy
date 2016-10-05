@@ -10,10 +10,10 @@ import {
 
 import {immutableAssign} from '../util';
 
-import {TemplateWrapper} from './template-wrapper';
+import {TemplateWrapperDirective} from './template-wrapper.directive';
 
 @Component({
-    selector: "dk-collapsible-section-component",
+    selector: "dk-collapsible-section",
     styleUrls: ['./duckling/controls/collapsible-section.component.css'],
     template: `
         <md-card>

@@ -6,7 +6,7 @@ import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, Attribu
 import {SelectionService, Selection} from '../selection';
 import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
-import {DeleteButton, ToolbarButton, InputComponent} from '../controls';
+import {DeleteButtonComponent, ToolbarButtonComponent, InputComponent} from '../controls';
 
 import {EntityComponent} from './entity.component';
 import {EntityNameComponent} from './_entity-name.component';
@@ -24,10 +24,10 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
                 (deleteEntity)="onDeleteEntity()"
                 (renameEntity)="onRenameEntity($event)">
             </dk-entity-name>
-            <dk-entity-component
+            <dk-entity
                 [entity]="selection.entity"
                 (entityChanged)="onEntityChanged($event)">
-            </dk-entity-component>
+            </dk-entity>
             <dk-attribute-selector
                 (addAttribute)="addAttribute($event)"
                 [entity]="selection.entity">

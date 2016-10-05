@@ -8,7 +8,7 @@ import {ProjectService} from '../project';
 import {WindowService} from '../util';
 
 @Component({
-    selector: 'duckling-shell',
+    selector: 'dk-shell',
     styleUrls: ['./duckling/shell/shell.component.css'],
     template: `
         <div *ngIf="showSplash">

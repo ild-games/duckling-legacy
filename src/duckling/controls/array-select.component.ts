@@ -18,7 +18,7 @@ import {
         </select>
     `
 })
-export class ArraySelect {
+export class ArraySelectComponent {
     /**
      * The selected value.
      */

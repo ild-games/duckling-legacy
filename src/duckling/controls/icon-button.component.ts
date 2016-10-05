@@ -5,7 +5,7 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {Icon} from './icon.component';
+import {IconComponent} from './icon.component';
 
 /**
  * Component for a general purpose icon button
@@ -38,7 +38,7 @@ import {Icon} from './icon.component';
         </button>
     `
 })
-export class IconButton {
+export class IconButtonComponent {
     @Input() icon : string = "";
     @Input() color : string = "";
     @Input() tooltip : string = "";
