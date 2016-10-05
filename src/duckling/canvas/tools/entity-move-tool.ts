@@ -42,7 +42,9 @@ export class EntityMoveTool extends BaseTool {
         this._selectOffsetCoords = {x: 0, y: 0};
         if (this._selection) {
             let positionAttribute = getPosition(this._entitySystemService.getEntity(this._selection));
-            this._selectOffsetCoords = vectorSubtract(positionAttribute.position, event.stageCoords);
+            if (positionAttribute) {
+                this._selectOffsetCoords = vectorSubtract(positionAttribute.position, event.stageCoords);
+            }
         }
         this._mergeKey = newMergeKey();
         this._selectionService.select(this._selection, this._mergeKey);
