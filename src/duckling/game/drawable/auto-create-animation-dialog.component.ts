@@ -19,11 +19,9 @@ export type AutoCreateDialogResult = {
     frameDimensions : Vector,
     imageKey : string,
 }
-<<<<<<< HEAD
 
 @Component({
-    selector: 'dk-auto-create-a<<<<<<< HEAD
-nimation-dialog',
+    selector: 'dk-auto-create-animation-dialog',
     styleUrls: ['./duckling/game/drawable/auto-create-animation-dialog.component.css'],
     template: `
         <div class="body">
@@ -73,10 +71,6 @@ export class AutoCreateAnimationDialogComponent {
     }
 
     constructor(private _dialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>,
-<<<<<<< HEAD
-=======
-                private _path : PathService,
->>>>>>> fa8b191... get basic functionality down for auto creation of animation from tilesheet
                 private _dialog : DialogService,
                 private _assets : AssetService,
                 private _project : ProjectService) {
@@ -104,21 +98,8 @@ export class AutoCreateAnimationDialogComponent {
     }
 
     onImageFilePicked(newImageKey : string) {
-<<<<<<< HEAD
         this._assets.add({type: "TexturePNG", key: newImageKey});
         this.imageKey = newImageKey;
-=======
-        let homeResourceString = this._path.join(this._project.project.home, 'resources');
-        if (newImageKey.indexOf(homeResourceString) === -1) {
-            this._dialog.showErrorDialog(
-                "Unable to load image asset",
-                "You must select assets from the resources/ folder in the root of your project");
-            return;
-        }
-        let splitImageKey = newImageKey.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
-        this._assets.add({type: "TexturePNG", key: splitImageKey});
-        this.imageKey = splitImageKey;
->>>>>>> fa8b191... get basic functionality down for auto creation of animation from tilesheet
     }
 
     get dialogOptions() {
