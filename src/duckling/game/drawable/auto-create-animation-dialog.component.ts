@@ -36,11 +36,11 @@ export type AutoCreateDialogResult = {
                 (validInput)="onDimensionInput($event)">
             </dk-vector-input>
 
-            <dk-browse-file-component
+            <dk-browse-file
                 [dialogOptions]="dialogOptions"
                 [selectedFile]="imageKey"
                 (filePicked)="onImageFilePicked($event)">
-            </dk-browse-file-component>
+            </dk-browse-file>
         </div>
 
         <div class="footer">
