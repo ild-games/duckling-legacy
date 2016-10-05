@@ -9,9 +9,9 @@ import {
 import {Rectangle} from 'pixi.js';
 
 import {FormLabelComponent, InputComponent, NumberInputComponent, Box2Component, CheckboxComponent, Validator} from '../../controls';
-import {immutableAssign, DialogService, PathService} from '../../util';
+import {immutableAssign, DialogService} from '../../util';
 import {Box2} from '../../math';
-import {ProjectService, AssetService} from '../../project';
+import {AssetService, ProjectService} from '../../project';
 
 import {ImageDrawable} from './image-drawable';
 /**
@@ -20,11 +20,11 @@ import {ImageDrawable} from './image-drawable';
 @Component({
     selector: "dk-image-drawable",
     template: `
-        <dk-browse-file
+        <dk-browse-asset
             [dialogOptions]="dialogOptions"
             [selectedFile]="imageDrawable.textureKey"
             (filePicked)="onImageFilePicked($event)">
-        </dk-browse-file>
+        </dk-browse-asset>
 
         <dk-section
             headerText="Partial Image?"
@@ -48,22 +48,13 @@ export class ImageDrawableComponent {
     @Output() drawableChanged = new EventEmitter<ImageDrawable>();
 
     constructor(private _dialog : DialogService,
-                private _path : PathService,
                 private _assets : AssetService,
                 private _project : ProjectService) {
     }
 
-    onImageFilePicked(file : string) {
-        let homeResourceString = this._path.join(this._project.project.home, 'resources');
-        if (file.indexOf(homeResourceString) === -1) {
-            this._dialog.showErrorDialog(
-                "Unable to load image asset",
-                "You must select assets from the resources/ folder in the root of your project");
-            return;
-        }
-        let newTextureKey = file.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
-        this._assets.add({type: "TexturePNG", key: newTextureKey});
-        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: newTextureKey}));
+    onImageFilePicked(imageKey : string) {
+        this._assets.add({type: "TexturePNG", key: imageKey});
+        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: imageKey}));
     }
 
     onPartialImageChanged(partialImage : boolean) {

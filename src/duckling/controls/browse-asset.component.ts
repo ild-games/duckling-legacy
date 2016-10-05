@@ -6,14 +6,15 @@ import {
     ChangeDetectorRef
 } from '@angular/core';
 
-import {immutableAssign, DialogService} from '../util';
+import {immutableAssign, DialogService, PathService} from '../util';
+import {ProjectService} from '../project';
 
 /**
- * Component for displaying and editing a Color object
+ * Component for loading asset files.
  */
 @Component({
-    selector: "dk-browse-file",
-    styleUrls: ['./duckling/controls/browse-file.component.css'],
+    selector: "dk-browse-asset",
+    styleUrls: ['./duckling/controls/browse-asset.component.css'],
     template:`
         <div class="wrapper">
             <button
@@ -31,7 +32,7 @@ import {immutableAssign, DialogService} from '../util';
         </div>
     `
 })
-export class BrowseFileComponent {
+export class BrowseAssetComponent {
     @Input()
     buttonText : string = "Browse";
 
@@ -44,7 +45,9 @@ export class BrowseFileComponent {
     @Output()
     filePicked = new EventEmitter<string>();
 
-    constructor(private _dialog : DialogService) {
+    constructor(private _path : PathService,
+                private _project : ProjectService,
+                private _dialog : DialogService) {
     }
 
     onBrowseClicked() {
@@ -57,8 +60,21 @@ export class BrowseFileComponent {
             });
     }
 
+
     onFilePicked(file : string) {
-        this.filePicked.emit(file);
+        if (!file) {
+            return;
+        }
+
+        let homeResourceString = this._path.join(this._project.project.home, 'resources');
+        if (file.indexOf(homeResourceString) === -1) {
+            this._dialog.showErrorDialog(
+                "Unable to load asset",
+                "You must select assets from the resources/ folder in the root of your project");
+            return;
+        }
+        let splitAssetKey = file.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
+        this.filePicked.emit(splitAssetKey);
     }
 
     get fileName() : string {
