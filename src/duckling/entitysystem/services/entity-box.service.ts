@@ -2,7 +2,8 @@ import {Component, Injectable} from '@angular/core';
 
 import {BaseAttributeService} from '../base-attribute-service';
 import {AttributeKey, Entity} from '../entity';
-import {AssetService, RequiredAssetService} from '../../project';
+import {AssetService} from '../../project';
+import {RequiredAssetService} from '../../project/required-asset.service';
 import {Box2, boxUnion} from '../../math';
 
 /**
