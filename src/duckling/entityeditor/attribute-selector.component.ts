@@ -25,9 +25,6 @@ import {changeType, ChangeType} from '../state';
                 (addClicked)="onAddClicked($event)">
             </dk-array-choice>
         </div>
-        <div *ngIf="!options.length">
-            No Other Attributes Available
-        </div>
     `
 })
 export class AttributeSelectorComponent implements OnChanges, AfterViewInit {
