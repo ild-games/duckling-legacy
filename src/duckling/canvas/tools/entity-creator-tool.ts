@@ -63,7 +63,7 @@ export class EntityCreatorTool extends BaseTool {
         let box = this._entityBoxService.getEntityBox(entity);
         if (box) {
             graphics = new Graphics();
-            graphics.lineStyle(2 / canvasZoom, 0xffcc00, 1);
+            graphics.lineStyle(1 / canvasZoom, 0xffcc00, 1);
             drawRectangle(box.position, box.dimension, graphics);
         }
         return graphics;

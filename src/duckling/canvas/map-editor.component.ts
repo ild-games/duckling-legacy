@@ -200,6 +200,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
 
     onToolSelected(newTool : BaseTool) {
         this._setTool(newTool);
+        this._redrawAllDisplayObjects();
     }
 
     onStageDimensonsChanged(stageDimensions : Vector) {
@@ -233,7 +234,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
 
     private _buildGrid() : DisplayObject {
         let graphics = new Graphics();
-        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 1);
+        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
         drawGrid(
             {x: 0, y: 0},
             {x: this.stageDimensions.x, y: this.stageDimensions.y},

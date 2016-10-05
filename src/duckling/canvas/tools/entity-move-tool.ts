@@ -96,7 +96,7 @@ export class EntityMoveTool extends BaseTool {
         let box = this._entityBoxService.getEntityBox(entity);
         if (box) {
             graphics = new Graphics();
-            graphics.lineStyle(2 / canvasZoom, 0x3355cc, 1);
+            graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
             drawRectangle(box.position, box.dimension, graphics);
         }
         return graphics;
