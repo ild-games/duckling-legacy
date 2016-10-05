@@ -42,9 +42,6 @@ export class BrowseAssetComponent {
     @Input()
     selectedFile = "";
 
-    @Input()
-    postFileChoiceHook : (file : string) => boolean;
-
     @Output()
     filePicked = new EventEmitter<string>();
 
