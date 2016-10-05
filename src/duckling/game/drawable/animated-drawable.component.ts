@@ -3,8 +3,10 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit
+    AfterViewInit,
+    ViewContainerRef
 } from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
@@ -12,6 +14,7 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 import {AnimatedDrawable} from './animated-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';
 import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} from './drawable';
+import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto-create-animation-dialog.component';
 
 /**
  * Component used to edit an Aniamted Drawable including all its children drawables
@@ -32,9 +35,21 @@ import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} fr
             [selected]="DrawableType.Shape"
             (addClicked)="onNewDrawableClicked($event)">
         </dk-enum-choice>
+        <span *ngIf="!hasAnyFrames">
+            OR
+        </span>
+        <button
+            *ngIf="!hasAnyFrames"
+            md-raised-button
+            class="create-from-tilesheet-button"
+            title="Create from tilesheet"
+            disableRipple="true"
+            (click)="onCreateFromTilesheetClicked()">
+            Create from tilesheet
+        </button>
 
         <md-card
-            *ngIf="animatedDrawable?.frames?.length > 0"
+            *ngIf="hasAnyFrames"
             class="drawables-card">
             <dk-accordian
                 [elements]="animatedDrawable?.frames"
@@ -61,6 +76,12 @@ export class AnimatedDrawableComponent {
 
     @Input() animatedDrawable : AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
+
+    private _autoCreateDialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>;
+
+    constructor(private _materialDialog : MdDialog,
+                private _viewContainerRef : ViewContainerRef) {
+    }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let newFrames = this.animatedDrawable.frames.slice(0);
@@ -92,6 +113,21 @@ export class AnimatedDrawableComponent {
         this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {duration: newDuration}));
     }
 
+    onCreateFromTilesheetClicked() {
+        let dialogConfig = new MdDialogConfig();
+        dialogConfig.viewContainerRef = this._viewContainerRef;
+        this._autoCreateDialogRef = this._materialDialog.open(AutoCreateAnimationDialogComponent, dialogConfig);
+        this._autoCreateDialogRef.afterClosed().subscribe(result => this._autoCreateAnimationFromTilesheet(result));
+    }
+
+    private _autoCreateAnimationFromTilesheet(dialogResult : AutoCreateDialogResult) {
+        if (!dialogResult) {
+            return;
+        }
+
+
+    }
+
     findNextUniqueKey(pickedType : DrawableType, defaultKey : string) {
         let lastKey = 0;
         for (let drawable of this.animatedDrawable.frames) {
@@ -103,5 +139,9 @@ export class AnimatedDrawableComponent {
             }
         }
         return ++lastKey;
+    }
+
+    get hasAnyFrames() {
+        return this.animatedDrawable && this.animatedDrawable.frames && this.animatedDrawable.frames.length > 0;
     }
 }

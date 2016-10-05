@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {AngularMaterialModule} from '../angular-material-all';
+import {MaterialModule} from '@angular/material';
 
 import {
     AccordianComponent,
@@ -26,7 +26,8 @@ import {
     ValidatedInputComponent,
     VectorInputComponent,
     BrowseFileComponent,
-    CollapsibleSectionComponent
+    SectionComponent,
+    SectionHeaderComponent
 } from './index';
 
 const CONTROL_DECLARATIONS : Array<any> = [
@@ -52,19 +53,20 @@ const CONTROL_DECLARATIONS : Array<any> = [
     ValidatedInputComponent,
     VectorInputComponent,
     BrowseFileComponent,
-    CollapsibleSectionComponent
+    SectionComponent,
+    SectionHeaderComponent
 ];
 
 @NgModule({
     imports: [
-        AngularMaterialModule,
+        MaterialModule.forRoot(),
         CommonModule,
         FormsModule
     ],
     declarations : CONTROL_DECLARATIONS,
     exports : [
         CONTROL_DECLARATIONS,
-        AngularMaterialModule,
+        MaterialModule,
         CommonModule,
         FormsModule
     ]

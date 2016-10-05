@@ -9,6 +9,7 @@ import {PositionComponent} from './position/position.component';
 import {RotateComponent} from './rotate/rotate.component';
 
 import {AnimatedDrawableComponent} from './drawable/animated-drawable.component';
+import {AutoCreateAnimationDialogComponent} from './drawable/auto-create-animation-dialog.component';
 import {ContainerDrawableComponent} from './drawable/container-drawable.component';
 import {CircleComponent} from './drawable/circle.component';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
@@ -55,7 +56,8 @@ const ATTRIBUTE_COMPONENTS = [
         ImageDrawableComponent,
         RectangleComponent,
         ShapeDrawableComponent,
-        GenericShapeComponent
+        GenericShapeComponent,
+        AutoCreateAnimationDialogComponent
     ],
     exports: [
         ATTRIBUTE_COMPONENTS
@@ -64,7 +66,8 @@ const ATTRIBUTE_COMPONENTS = [
         {provide: RenderPriorityService, useClass: AnconaSFMLRenderPriorityService}
     ],
     entryComponents: [
-        ATTRIBUTE_COMPONENTS
+        ATTRIBUTE_COMPONENTS,
+        AutoCreateAnimationDialogComponent
     ]
 })
 export class GameModule {

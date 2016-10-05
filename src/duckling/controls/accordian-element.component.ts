@@ -16,56 +16,54 @@ import {IconComponent} from './icon.component';
     selector: "dk-accordian-element",
     styleUrls: ['./duckling/controls/accordian-element.component.css'],
     template: `
-        <div
-            class="header md-elevation-z3"
-            (click)="onToggle(!opened)">
-            <span class="title">{{title}}</span>
-            <div class="right-buttons">
-                <button
-                    md-button
-                    *ngIf="clone"
-                    class="display-on-hover"
-                    title="Copy"
-                    [disableRipple]=true
-                    (click)="onCloned(false, $event)">
-                    <dk-icon iconClass="clone"></dk-icon>
-                </button>
-                <button
-                    md-button
-                    *ngIf="!first"
-                    class="display-on-hover"
-                    title="Move up"
-                    [disableRipple]=true
-                    (click)="onMoved(false, $event)">
-                    <dk-icon iconClass="arrow-up"></dk-icon>
-                </button>
-                <button
-                    md-button
-                    *ngIf="!last"
-                    class="display-on-hover"
-                    title="Move down"
-                    [disableRipple]=true
-                    (click)="onMoved(true, $event)">
-                    <dk-icon iconClass="arrow-down"></dk-icon>
-                </button>
-                <button
-                    md-button
-                    class="display-on-hover"
-                    title="Delete"
-                    [disableRipple]=true
-                    (click)="onDelete($event)">
-                    <dk-icon iconClass="trash"></dk-icon>
-                </button>
-                <dk-icon
-                    *ngIf="!opened"
-                    iconClass="chevron-down">
-                </dk-icon>
-                <dk-icon
-                    *ngIf="opened"
-                    iconClass="chevron-up">
-                </dk-icon>
-            </div>
-        </div>
+        <dk-section-header
+            [sectionOpen]="opened"
+            [headerText]="title"
+            (sectionOpenChanged)="onToggle(!opened)">
+            <button
+                md-button
+                *ngIf="clone"
+                class="display-on-hover"
+                title="Copy"
+                [disableRipple]=true
+                (click)="onCloned(false, $event)">
+                <dk-icon iconClass="clone"></dk-icon>
+            </button>
+            <button
+                md-button
+                *ngIf="!first"
+                class="display-on-hover"
+                title="Move up"
+                [disableRipple]=true
+                (click)="onMoved(false, $event)">
+                <dk-icon iconClass="arrow-up"></dk-icon>
+            </button>
+            <button
+                md-button
+                *ngIf="!last"
+                class="display-on-hover"
+                title="Move down"
+                [disableRipple]=true
+                (click)="onMoved(true, $event)">
+                <dk-icon iconClass="arrow-down"></dk-icon>
+            </button>
+            <button
+                md-button
+                class="display-on-hover"
+                title="Delete"
+                [disableRipple]=true
+                (click)="onDelete($event)">
+                <dk-icon iconClass="trash"></dk-icon>
+            </button>
+            <dk-icon
+                *ngIf="!opened"
+                iconClass="chevron-down">
+            </dk-icon>
+            <dk-icon
+                *ngIf="opened"
+                iconClass="chevron-up">
+            </dk-icon>
+        </dk-section-header>
         <div *ngIf="opened" class="body">
             <ng-content></ng-content>
         </div>

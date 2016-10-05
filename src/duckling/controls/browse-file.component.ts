@@ -18,8 +18,8 @@ import {immutableAssign, DialogService} from '../util';
         <div class="wrapper">
             <button
                 md-raised-button
+                disableRipple="true"
                 [title]="buttonText"
-                [disableRipple]=true
                 (click)="onBrowseClicked()">
                 {{buttonText}}
             </button>

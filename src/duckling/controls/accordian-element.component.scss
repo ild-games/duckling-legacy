@@ -1,35 +1,10 @@
-@import '../../../node_modules/@angular2-material/core/style/elevation';
-@import '../colors';
-
-$height: 32px;
-
-:host {
-    display: block;
-}
-
-.header {
-    padding: 2px 8px;
-    cursor: pointer;
-    background-color: $header-color;
-    height: $height;
-    line-height: $height;
-    display: flex;
-    align-items: center;
-
-    .title {
-        font-size: 14px;
-    }
-
+dk-section-header-component {
     .display-on-hover {
         display: none;
     }
 
     &:hover .display-on-hover {
         display: inline-block;
-    }
-
-    .right-buttons {
-        margin-left: auto;
     }
 
     button  {
