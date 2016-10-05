@@ -26,7 +26,7 @@ import {ImageDrawable} from './image-drawable';
             (filePicked)="onImageFilePicked($event)">
         </dk-browse-file>
 
-        <dk-section-component
+        <dk-section
             headerText="Partial Image?"
             checkboxMode="true"
             collapsible="true"
@@ -39,8 +39,8 @@ import {ImageDrawable} from './image-drawable';
                 [widthValidator]="partialWidthValidator"
                 [heightValidator]="partialHeightValidator"
                 (boxChanged)="onTextureRectChanged($event)">
-            </dk-box2-component>
-        </dk-section-component>
+            </dk-box2>
+        </dk-section>
     `
 })
 export class ImageDrawableComponent {

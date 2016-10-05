@@ -6,22 +6,22 @@ import {
 } from '@angular/core';
 
 @Component({
-    selector: "dk-section-component",
+    selector: "dk-section",
     styleUrls: ['./duckling/controls/section.component.css'],
     template: `
         <md-card>
-            <dk-section-header-component
+            <dk-section-header
                 *ngIf="collapsible"
                 [checkboxMode]="checkboxMode"
                 [sectionOpen]="sectionOpen"
                 [headerText]="headerText"
                 (sectionOpenChanged)="onSectionOpenChanged($event)">
-            </dk-section-header-component>
-            <dk-section-header-component
+            </dk-section-header>
+            <dk-section-header
                 *ngIf="!collapsible"
                 [headerText]="headerText"
                 [checkboxMode]="false">
-            </dk-section-header-component>
+            </dk-section-header>
             <div
                 class="body"
                 *ngIf="isSectionOpen">

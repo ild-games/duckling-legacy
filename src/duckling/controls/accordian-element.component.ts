@@ -16,7 +16,7 @@ import {IconComponent} from './icon.component';
     selector: "dk-accordian-element",
     styleUrls: ['./duckling/controls/accordian-element.component.css'],
     template: `
-        <dk-section-header-component
+        <dk-section-header
             [sectionOpen]="opened"
             [headerText]="title"
             (sectionOpenChanged)="onToggle(!opened)">
@@ -63,7 +63,7 @@ import {IconComponent} from './icon.component';
                 *ngIf="opened"
                 iconClass="chevron-up">
             </dk-icon>
-        </dk-section-header-component>
+        </dk-section-header>
         <div *ngIf="opened" class="body">
             <ng-content></ng-content>
         </div>

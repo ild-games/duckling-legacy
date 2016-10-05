@@ -9,7 +9,7 @@ import {
  * Component for the generic header for sections
  */
 @Component({
-    selector: "dk-section-header-component",
+    selector: "dk-section-header",
     styleUrls: ['./duckling/controls/section-header.component.css'],
     template: `
         <div
