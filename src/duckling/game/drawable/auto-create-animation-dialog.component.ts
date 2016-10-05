@@ -10,7 +10,7 @@ import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {Vector} from '../../math';
 import {ProjectService, AssetService} from '../../project';
-import {DialogService, PathService} from '../../util';
+import {DialogService} from '../../util';
 
 export type AutoCreateDialogResult = {
     numFrames : number,
@@ -36,11 +36,11 @@ export type AutoCreateDialogResult = {
                 (validInput)="onDimensionInput($event)">
             </dk-vector-input>
 
-            <dk-browse-file
+            <dk-browse-asset
                 [dialogOptions]="dialogOptions"
                 [selectedFile]="imageKey"
                 (filePicked)="onImageFilePicked($event)">
-            </dk-browse-file>
+            </dk-browse-asset>
         </div>
 
         <div class="footer">
@@ -65,7 +65,6 @@ export class AutoCreateAnimationDialogComponent {
     imageKey : string;
 
     constructor(private _dialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>,
-                private _path : PathService,
                 private _dialog : DialogService,
                 private _assets : AssetService,
                 private _project : ProjectService) {
@@ -93,16 +92,8 @@ export class AutoCreateAnimationDialogComponent {
     }
 
     onImageFilePicked(newImageKey : string) {
-        let homeResourceString = this._path.join(this._project.project.home, 'resources');
-        if (newImageKey.indexOf(homeResourceString) === -1) {
-            this._dialog.showErrorDialog(
-                "Unable to load image asset",
-                "You must select assets from the resources/ folder in the root of your project");
-            return;
-        }
-        let splitImageKey = newImageKey.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
-        this._assets.add({type: "TexturePNG", key: splitImageKey});
-        this.imageKey = splitImageKey;
+        this._assets.add({type: "TexturePNG", key: newImageKey});
+        this.imageKey = newImageKey;
     }
 
     get dialogOptions() {

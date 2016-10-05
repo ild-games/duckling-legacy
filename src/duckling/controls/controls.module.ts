@@ -25,7 +25,7 @@ import {
     ToolbarButtonGroupComponent,
     ValidatedInputComponent,
     VectorInputComponent,
-    BrowseFileComponent,
+    BrowseAssetComponent,
     SectionComponent,
     SectionHeaderComponent
 } from './index';
@@ -52,7 +52,7 @@ const CONTROL_DECLARATIONS : Array<any> = [
     ToolbarButtonGroupComponent,
     ValidatedInputComponent,
     VectorInputComponent,
-    BrowseFileComponent,
+    BrowseAssetComponent,
     SectionComponent,
     SectionHeaderComponent
 ];

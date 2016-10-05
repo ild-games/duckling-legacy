@@ -59,10 +59,9 @@ export class SectionHeaderComponent {
     }
 
     get headerCssClasses() : string {
-        let classes = ["header", "md-elevation-z3"];
         if (this.collapsible) {
-            classes.push("pointer");
+            return "header md-elevation-z3";
         }
-        return classes.join(" ");
+        return "header md-elevation-z3 pointer";
     }
 }
