@@ -6,7 +6,7 @@ export * from './number-input.component';
 export * from './input.component';
 export * from './validated-input.component';
 export * from './vector-input.component';
-export * from './template-wrapper';
+export * from './template-wrapper.directive';
 export * from './toolbar-button.component';
 export * from './toolbar-button-group.component';
 export * from './form-label.component';

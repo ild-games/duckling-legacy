@@ -11,7 +11,7 @@ import {
 import {immutableAssign, immutableArrayAssign, immutableArrayDelete, immutableSwapElements} from '../util';
 
 import {AccordianElementComponent} from './accordian-element.component';
-import {TemplateWrapper} from './template-wrapper';
+import {TemplateWrapperDirective} from './template-wrapper.directive';
 
 @Component({
     selector: "dk-accordian",
