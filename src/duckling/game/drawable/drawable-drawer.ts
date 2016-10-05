@@ -180,7 +180,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
                 imageDrawable.textureRect.dimension.x,
                 imageDrawable.textureRect.dimension.y));
         } else {
-            return null;
+            return _missingAsset(assetService);
         }
     }
     let sprite = new Sprite(texture);

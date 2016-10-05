@@ -29,19 +29,13 @@ export class AssetService {
         if (editorSpecific) {
             asset.key = EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key;
         }
-        this._path.pathExists(filePath).then((exists : boolean) => {
-            if (!exists) {
-                return;
-            }
-
-            if (!this._assets[asset.key]) {
-                this._assets[asset.key] = asset;
-                loader
-                    .add(asset.key, filePath)
-                    .after(() => this.onAssetLoaded(asset))
-                    .load();
-            }
-        });
+        if (!this._assets[asset.key]) {
+            this._assets[asset.key] = asset;
+            loader
+                .add(asset.key, filePath)
+                .after(() => this.onAssetLoaded(asset))
+                .load();
+        }
     }
 
     get(key : string, editorSpecific? : boolean) : any {
