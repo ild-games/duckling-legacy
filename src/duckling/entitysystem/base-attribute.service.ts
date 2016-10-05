@@ -1,9 +1,9 @@
 import {Attribute, AttributeKey} from './entity';
 
 /**
- * None of the core behavior of duckling should depend on a specific component implementation.
+ * None of the core behavior of duckling should depend on a specific attribute implementation.
  * If we follow this requirment the game editor can be used for different games with different
- * component implementations. Any service that does need to interact directly with a component
+ * attribute implementations. Any service that does need to interact directly with a attribute
  * should inherit from this base class. Attribute specific implementations should be registered
  * during the duckling bootstrap process. Normally this is kicked off in the main file.
  * @see AttributeComponentService

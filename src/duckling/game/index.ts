@@ -3,6 +3,7 @@ import {
     EntityBoxService,
     EntitySystemService,
     EntityPositionService
+    EntityLayerService
 } from '../entitysystem';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
@@ -85,6 +86,7 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
     services.entityDrawerService.register(DRAWABLE_KEY, drawDrawableAttribute);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
+    services.entityLayerService
 }
 
 function _bootstrapActionAttribute(services : Services) {
