@@ -1,15 +1,20 @@
 import {Injectable} from '@angular/core';
+import {Graphics, DisplayObject} from 'pixi.js';
 
 import {
     EntitySelectionService,
     EntitySystemService,
     EntityPositionSetService,
-    EntityKey
+    EntityKey,
+    Entity,
+    EntityBoxService
 } from '../../entitysystem';
 import {Vector} from '../../math';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
 import {getPosition} from '../../game/position/position-attribute';
+import {drawRectangle} from '../drawing';
+
 
 import {BaseTool, CanvasMouseEvent} from './base-tool';
 
@@ -22,8 +27,13 @@ export class EntityMoveTool extends BaseTool {
     constructor(private _entitySelectionService: EntitySelectionService,
                 private _entitySystemService : EntitySystemService,
                 private _entityPositionSetService : EntityPositionSetService,
-                private _selectionService : SelectionService) {
+                private _selectionService : SelectionService,
+                private _entityBoxService : EntityBoxService) {
         super();
+    }
+
+    getDisplayObject(canvasZoom : number) : DisplayObject {
+        return this._buildSelectionBox(canvasZoom);
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -69,5 +79,26 @@ export class EntityMoveTool extends BaseTool {
 
     private _cancel() {
         this._selection = null;
+    }
+
+    private _buildSelectionBox(canvasZoom : number) : DisplayObject {
+        let graphics : Graphics = null;
+        let selectedEntityKey = this._selectionService.selection.value.selectedEntity;
+        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
+        if (selectedEntity) {
+            graphics = this._buildSelectionBoxAroundEntity(selectedEntity, canvasZoom);
+        }
+        return graphics;
+    }
+
+    private _buildSelectionBoxAroundEntity(entity : Entity, canvasZoom : number) : Graphics {
+        let graphics : Graphics = null;
+        let box = this._entityBoxService.getEntityBox(entity);
+        if (box) {
+            graphics = new Graphics();
+            graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
+            drawRectangle(box.position, box.dimension, graphics);
+        }
+        return graphics;
     }
 }

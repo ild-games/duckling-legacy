@@ -5,7 +5,7 @@ import {CanvasComponent} from '../canvas.component';
 
 export class BaseTool {
 
-    getDisplayObject() : DisplayObject {
+    getDisplayObject(canvasZoom : number) : DisplayObject {
         return null;
     }
 

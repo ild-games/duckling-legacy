@@ -16,7 +16,8 @@ import {TimerObservable} from 'rxjs/observable/TimerObservable';
 import {StoreService} from '../state';
 import {AssetService} from '../project';
 import {ArraySelectComponent, SelectOption} from '../controls';
-import {EntitySystemService} from '../entitysystem/';
+import {EntitySystemService, Entity} from '../entitysystem/';
+import {EntityBoxService} from '../entitysystem/services';
 import {Vector} from '../math';
 import {KeyboardService} from '../util';
 import {CopyPasteService, SelectionService} from '../selection';
@@ -113,11 +114,13 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _canvasBackgroundDisplayObject : DisplayObject;
     private _canvasBorderDisplayObject : DisplayObject;
     private _gridDisplayObject : DisplayObject;
+    private _toolDisplayObject : DisplayObject;
     private _framesPerSecond = 30;
     private _totalMillis = 0;
     private _lastDrawnConstructs : DrawnConstruct[] = [];
     private _entitySystemSubscription : Subscriber<any>;
     private _assetServiceSubscription : Subscriber<any>;
+    private _selectionServiceSubscription : Subscriber<any>;
     private _redrawInterval : Subscriber<any>;
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
@@ -128,7 +131,8 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
                 private _toolService : ToolService,
                 private _assetService : AssetService,
                 private _entityDrawerService : EntityDrawerService,
-                private _keyboardService : KeyboardService) {
+                private _keyboardService : KeyboardService,
+                private _entityBoxService : EntityBoxService) {
         this._setTool(this._toolService.defaultTool);
     }
 
@@ -140,6 +144,10 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
             .subscribe((drawnConstructs) => {
                 this._entitiesDrawnConstructsChanged(drawnConstructs);
             }) as Subscriber<any>;
+
+        this._selectionServiceSubscription = this._selection.selection.subscribe(()=> {
+            this._redrawAllDisplayObjects();
+        }) as Subscriber<any>;
 
         this._assetServiceSubscription = this._assetService.assetLoaded.subscribe(() => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
@@ -154,6 +162,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     ngOnDestroy() {
         this._entitySystemSubscription.unsubscribe();
         this._assetServiceSubscription.unsubscribe();
+        this._selectionServiceSubscription.unsubscribe();
         this._redrawInterval.unsubscribe();
     }
 
@@ -191,6 +200,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
 
     onToolSelected(newTool : BaseTool) {
         this._setTool(newTool);
+        this._redrawAllDisplayObjects();
     }
 
     onStageDimensonsChanged(stageDimensions : Vector) {
@@ -218,12 +228,13 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._canvasBackgroundDisplayObject = this._buildCanvasBackground();
         this._canvasBorderDisplayObject = this._buildCanvasBorder();
         this._gridDisplayObject = this._buildGrid();
+        this._toolDisplayObject = this.tool.getDisplayObject(this.scale);
         this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
 
     private _buildGrid() : DisplayObject {
         let graphics = new Graphics();
-        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 1);
+        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
         drawGrid(
             {x: 0, y: 0},
             {x: this.stageDimensions.x, y: this.stageDimensions.y},
@@ -260,13 +271,15 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         if (this._entitiesDisplayObject) {
             canvasDrawnElements.addChild(this._entitiesDisplayObject);
         }
+        if (this._toolDisplayObject) {
+            canvasDrawnElements.addChild(this._toolDisplayObject);
+        }
         if (this.showGrid && this._gridDisplayObject) {
             canvasDrawnElements.addChild(this._gridDisplayObject);
         }
         if (this._canvasBorderDisplayObject) {
             canvasDrawnElements.addChild(this._canvasBorderDisplayObject);
         }
-
         return canvasDrawnElements;
     }
 
