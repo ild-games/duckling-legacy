@@ -10,7 +10,7 @@ import {EntitySystemService} from '../entity-system.service';
 export type LayerGetter = (attribute : Attribute) => Number;
 
 /**
- * The EntityPositionSetService is used to set the position on an entity.
+ * The EntityLayerService is used to retrieve the layer of an entity.
  */
 @Injectable()
 export class EntityLayerService extends BaseAttributeService<LayerGetter> {

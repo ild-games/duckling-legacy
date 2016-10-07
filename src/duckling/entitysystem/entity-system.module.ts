@@ -8,7 +8,8 @@ import {
     EntityPositionService,
     EntitySelectionService,
     BaseAttributeService,
-    EntitySystemService
+    EntitySystemService,
+    EntityLayerService
 } from './index';
 
 @NgModule({
@@ -18,6 +19,7 @@ import {
         EntityBoxService,
         EntityPositionService,
         EntitySelectionService,
+        EntityLayerService,
         BaseAttributeService,
         EntitySystemService
     ]
