@@ -12,6 +12,7 @@ import {StoreService} from '../../state';
 import {ProjectService} from '../../project';
 import {ToolbarOption} from '../../controls';
 import {MapSelectComponent} from '../../project/map-select.component';
+import {EntityLayerService} from '../../entitysystem';
 
 @Component({
     selector: "dk-top-toolbar",
@@ -39,6 +40,11 @@ import {MapSelectComponent} from '../../project/map-select.component';
             icon="repeat"
             tooltip="Redo"
             (click)="store.redo()">
+        </dk-toolbar-button>
+        <dk-toolbar-button
+            icon="eye"
+            tooltip="Show/hide layers"
+            (click)="EntityLayerService.onShowHideLayersClicked()">
         </dk-toolbar-button>
 
         <span class="separator"></span>
@@ -72,7 +78,8 @@ export class TopToolbarComponent {
     constructor(public store : StoreService,
                 public project : ProjectService,
                 public toolService : ToolService,
-                private _viewContainer : ViewContainerRef) {
+                private _viewContainer : ViewContainerRef,
+                public EntityLayerService : EntityLayerService) {
         this.toolOptions = this.toolService.toolOptions;
     }
 

@@ -1,7 +1,18 @@
-import {Component, Injectable} from '@angular/core';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    AfterViewInit,
+    Injectable,
+    ViewContainerRef
+} from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+
 import {Attribute, Entity, EntityKey} from '../entity';
 import {BaseAttributeService} from '../base-attribute-service';
 import {EntitySystemService} from '../entity-system.service';
+import {LayerDialogComponent} from '../../controls';
 
 /**
  * Function type that is used to set a position.
@@ -14,7 +25,12 @@ export type LayerGetter = (attribute : Attribute) => Number;
  */
 @Injectable()
 export class EntityLayerService extends BaseAttributeService<LayerGetter> {
-    constructor(private _entitySystemService : EntitySystemService) {
+
+    private _layerDialogRef : MdDialogRef<LayerDialogComponent>;
+
+    constructor(private _entitySystemService : EntitySystemService,
+                private _materialDialog : MdDialog,
+                private _viewContainerRef : ViewContainerRef) {
         super();
     }
 
@@ -32,4 +48,11 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
             }
         }
     }
+
+    onShowHideLayersClicked() {
+        let dialogConfig = new MdDialogConfig();
+        dialogConfig.viewContainerRef = this._viewContainerRef;
+        this._layerDialogRef = this._materialDialog.open(LayerDialogComponent, dialogConfig);
+    }
+
 }
