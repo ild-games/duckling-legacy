@@ -1,4 +1,4 @@
-import {DrawableAttribute} from './drawable-attribute.ts';
+import {DrawableAttribute} from './drawable-attribute';
 import {Vector} from '../../math';
 import {immutableAssign} from '../../util';
 
