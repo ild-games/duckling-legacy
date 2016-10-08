@@ -63,7 +63,7 @@ export class PathService {
         return new Promise((resolve, reject) => {
             glob(path + "/**/*.*", null, (error, files) => {
                 if (error) {
-                    reject();
+                    reject(error);
                 }
                 resolve(files);
             });
