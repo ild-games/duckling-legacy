@@ -6,6 +6,8 @@ import {MapEditorComponent} from '../canvas/map-editor.component';
 import {SplashComponent} from '../splash/splash.component';
 import {ProjectService} from '../project';
 import {WindowService} from '../util';
+import {StoreService} from '../state';
+import {FileToolbarService} from './file-toolbar.service';
 
 @Component({
     selector: 'dk-shell',
@@ -37,13 +39,34 @@ import {WindowService} from '../util';
 })
 export class ShellComponent {
     constructor(public projectService : ProjectService,
-                private _windowService : WindowService) {
+                private _store : StoreService,
+                private _windowService : WindowService,
+                private _fileToolbar : FileToolbarService) {
         this._windowService.setMinimumSize(0, 0);
+        this._initToolbar();
     }
 
     onProjectOpened(path : string) {
         this.projectService.open(path);
         this._windowService.setMinimumSize(1300, 500);
+    }
+
+    private _initToolbar() {
+        this._fileToolbar.addAction({
+            menuPath : ["File"],
+            label: "Undo",
+            shortcut: "CmdOrCtrl+Z",
+            callback : () => this._store.undo()
+        });
+
+        this._fileToolbar.addAction({
+            menuPath : ["File"],
+            label: "Redo",
+            shortcut: "CmdOrCtrl+Shift+Z",
+            callback : () => this._store.redo()
+        });
+
+        this._fileToolbar.bootstrapMenu();
     }
 
     get showSplash() {
