@@ -107,14 +107,12 @@ export class AssetService {
     }
 
     private _onAssetLoaded(asset : Asset, editorSpecific : boolean) {
-        setTimeout(() => {
-            this._loadedAssets[asset.key] = true;
-            this._preloadedImagesLoaded[asset.key] = true;
-            this.assetLoaded.next(asset);
-            if (this._allPreloadedImagesLoaded()) {
-                this.preloadImagesLoaded.next(true);
-            }
-        }, editorSpecific? 0 : 2500);
+        this._loadedAssets[asset.key] = true;
+        this._preloadedImagesLoaded[asset.key] = true;
+        this.assetLoaded.next(asset);
+        if (this._allPreloadedImagesLoaded()) {
+            this.preloadImagesLoaded.next(true);
+        }
     }
 
     private _allPreloadedImagesLoaded() {
