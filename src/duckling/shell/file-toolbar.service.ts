@@ -11,7 +11,6 @@ export interface FileToolbarAction {
     menuPath : string [],
     /**
      * The value the user sees for the action. Example "Save".
-     * @type {string}
      */
     label : string,
     /**
