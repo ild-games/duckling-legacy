@@ -133,10 +133,6 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
  * @param  position Position to apply to the drawn construct
  */
 export function setConstructPosition(drawable : DrawnConstruct, position : Vector) {
-    function _setDisplayObjectPosition(displayObject : DisplayObject) {
-        displayObject.position.x += position.x;
-        displayObject.position.y += position.y;
-    }
     if (!drawable) {
         return;
     }
@@ -150,10 +146,15 @@ export function setConstructPosition(drawable : DrawnConstruct, position : Vecto
             setConstructPosition(child, position);
         }
     } else if (isDisplayObject(drawable)) {
-        _setDisplayObjectPosition(drawable);
+        _setDisplayObjectPosition(drawable, position);
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-drawer::_setPosition");
     }
+}
+
+function _setDisplayObjectPosition(displayObject : DisplayObject, position : Vector) {
+    displayObject.position.x += position.x;
+    displayObject.position.y += position.y;
 }
 
 function _containerBounds(container : ContainerConstruct) : Box2 {
@@ -165,7 +166,7 @@ function _animationBounds(animation : AnimationConstruct) : Box2 {
 }
 
 function _unionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
-    let entireBoundingBox = immutableAssign(EMPTY_BOX, {});
+    let entireBoundingBox = EMPTY_BOX;
     for (let construct of drawnConstructs) {
         let childBox = drawnConstructBounds(construct);
         if (childBox) {

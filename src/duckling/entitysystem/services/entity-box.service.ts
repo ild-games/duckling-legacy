@@ -6,6 +6,7 @@ import {EntitySystemService} from '../entity-system.service';
 import {EntityPositionService} from '../services/entity-position.service';
 import {AssetService} from '../../project/asset.service';
 import {Box2, boxUnion} from '../../math';
+import {immutableAssign} from '../../util';
 import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 import {drawMissingAsset} from '../../canvas/drawing/util';
 
@@ -41,7 +42,7 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
             }
 
             if (box) {
-                box.position = this._entityPosition.getPosition(this._entitySystem.getKey(entity));
+                box = immutableAssign(box, {position: this._entityPosition.getPosition(this._entitySystem.getKey(entity))});
             }
             return box;
         }
