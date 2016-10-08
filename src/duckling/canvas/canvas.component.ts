@@ -22,7 +22,7 @@ import {
 } from 'pixi.js';
 
 import {Vector} from '../math';
-import {isMouseButtonPressed, MouseButton, WindowService, KeyboardCodeLibrary} from '../util';
+import {isMouseButtonPressed, MouseButton, WindowService, KeyboardCode} from '../util';
 
 import {ZOOM_LEVELS, DEFAULT_ZOOM_LEVEL} from './_toolbars/canvas-scale.component';
 import {drawRectangle} from './drawing/util';
@@ -382,11 +382,11 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     private _isPreventedKey(keyCode : number) {
         return (
-            KeyboardCodeLibrary.isSpacebar(keyCode) ||
-            KeyboardCodeLibrary.isUp(keyCode) ||
-            KeyboardCodeLibrary.isRight(keyCode) ||
-            KeyboardCodeLibrary.isDown(keyCode) ||
-            KeyboardCodeLibrary.isLeft(keyCode)
+            keyCode === KeyboardCode.SPACEBAR ||
+            keyCode === KeyboardCode.UP ||
+            keyCode === KeyboardCode.RIGHT ||
+            keyCode === KeyboardCode.DOWN ||
+            keyCode === KeyboardCode.LEFT
         );
     }
 }

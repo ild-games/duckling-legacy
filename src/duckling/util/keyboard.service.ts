@@ -35,26 +35,12 @@ export class KeyboardService implements OnDestroy {
 
 
 /**
- * Lookup functions for keyboard key codes
+ * Lookup for keyboard codes
  */
-export class KeyboardCodeLibrary {
-    static isSpacebar(keyCode : number) : boolean {
-        return keyCode === 32;
-    }
-
-    static isUp(keyCode : number) : boolean {
-        return keyCode === 38;
-    }
-
-    static isRight(keyCode : number) : boolean {
-        return keyCode === 39;
-    }
-
-    static isDown(keyCode : number) : boolean {
-        return keyCode === 40;
-    }
-
-    static isLeft(keyCode : number) : boolean {
-        return keyCode === 37;
-    }
+export const KeyboardCode = {
+    SPACEBAR: 32,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    LEFT: 37
 }

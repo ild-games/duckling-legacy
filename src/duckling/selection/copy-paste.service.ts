@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {Action, StoreService, newMergeKey} from '../state';
-import {Vector} from '../math';
+import {Vector, vectorRound} from '../math';
 import {Entity, EntitySystemService, EntityPositionSetService, EntityKey} from '../entitysystem';
 import {SelectionService} from './selection.service';
 
@@ -32,9 +32,7 @@ export class CopyPasteService {
         if (clipboardEntity) {
             let mergeKey = newMergeKey();
             let entityKey = this._entitySystem.addNewEntity(clipboardEntity, mergeKey);
-            position.x = Math.round(position.x);
-            position.y = Math.round(position.y);
-            this._setPosition.setPosition(entityKey, position, mergeKey);
+            this._setPosition.setPosition(entityKey, vectorRound(position), mergeKey);
             return entityKey;
         } else {
             return null;
