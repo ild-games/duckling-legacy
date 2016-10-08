@@ -43,7 +43,15 @@ export class ShellComponent {
                 private _windowService : WindowService,
                 private _fileToolbar : FileToolbarService) {
         this._windowService.setMinimumSize(0, 0);
+        this._initToolbar();
+    }
 
+    onProjectOpened(path : string) {
+        this.projectService.open(path);
+        this._windowService.setMinimumSize(1300, 500);
+    }
+
+    private _initToolbar() {
         this._fileToolbar.addAction({
             menuPath : ["File"],
             label: "Undo",
@@ -59,11 +67,6 @@ export class ShellComponent {
         });
 
         this._fileToolbar.bootstrapMenu();
-    }
-
-    onProjectOpened(path : string) {
-        this.projectService.open(path);
-        this._windowService.setMinimumSize(1300, 500);
     }
 
     get showSplash() {

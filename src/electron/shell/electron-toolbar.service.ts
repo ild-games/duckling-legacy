@@ -22,30 +22,38 @@ export class ElectronToolbarService extends FileToolbarService {
     }
 
     bootstrapMenu() {
-        remote.Menu.setApplicationMenu(this.toMenu(this.actions));
+        remote.Menu.setApplicationMenu(this._toMenu(this.actions));
     }
 
-    toMenu(actions : FileToolbarAction []) {
+    private _toMenu(actions : FileToolbarAction []) {
+        function isSubMenu(action : FileToolbarAction) {
+            return action.menuPath.length > 0;
+        }
+
+        function subMenuName(action : FileToolbarAction) {
+            return action.menuPath[0];
+        }
+
         let menu = new remote.Menu();
 
-        let [subMenuActions, items] = _.partition(actions, action => action.menuPath.length);
-        let subMenus = _.groupBy(subMenuActions, action => action.menuPath[0]);
+        let [subMenuActions, items] = _.partition(actions, isSubMenu);
+        let subMenus = _.groupBy(subMenuActions, subMenuName);
 
         for (let menuName in subMenus) {
             menu.append(new remote.MenuItem({
                 label : menuName,
-                submenu : this.toMenu(this.popMenuLevel(subMenus[menuName]))
+                submenu : this._toMenu(this._popMenuLevel(subMenus[menuName]))
             }));
         }
 
         for (let item of items) {
-            menu.append(this.toMenuItem(item));
+            menu.append(this._toMenuItem(item));
         }
 
         return menu;
     }
 
-    toMenuItem(action : FileToolbarAction) {
+    private _toMenuItem(action : FileToolbarAction) {
         return new remote.MenuItem({
             click : action.callback,
             type : "normal",
@@ -54,7 +62,7 @@ export class ElectronToolbarService extends FileToolbarService {
         });
     }
 
-    popMenuLevel(actions : FileToolbarAction []) {
+    private _popMenuLevel(actions : FileToolbarAction []) {
         return _.map(actions, (action) => {
             return {
                 menuPath : action.menuPath.slice(1),
