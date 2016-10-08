@@ -14,6 +14,7 @@ import {FileToolbarService} from './file-toolbar.service';
 import {Asset, AssetService} from '../project/asset.service';
 import {ProjectService} from '../project/project.service';
 import {WindowService, PathService} from '../util';
+import {StoreService} from '../state';
 
 @Component({
     selector: 'dk-shell',
@@ -51,7 +52,8 @@ export class ShellComponent implements OnDestroy {
                 private _assetService : AssetService,
                 private _pathService : PathService,
                 private _windowService : WindowService,
-                private _fileToolbar : FileToolbarService) {
+                private _fileToolbar : FileToolbarService,
+                private _store : StoreService) {
         this._windowService.setMinimumSize(0, 0);
         this._initToolbar();
         this._assetService.loadPreloadedEditorImages();
@@ -86,35 +88,6 @@ export class ShellComponent implements OnDestroy {
         });
 
         this._fileToolbar.bootstrapMenu();
-    }
-
-    private _preloadEditorImages(imageFiles : string[]) {
-        for (let imageFile of imageFiles) {
-            this._assetService.add(this._textureFromImageFile(imageFile), imageFile, true);
-            this._numImagesToLoad++;
-        }
-        this._imagesLoaded = this._areAllImagesLoaded();
-    }
-
-    private _textureFromImageFile(imageFile : string) : Asset {
-        return {
-            type: "TexturePNG",
-            key: this._stripPreloadedImageKey(imageFile)
-        };
-    }
-
-    private _stripPreloadedImageKey(imageFile : string) {
-        let folderPieces = imageFile.split(this._pathService.folderSeparator);
-        let key = folderPieces[folderPieces.length - 1];
-        return key.replace('.png', '');
-    }
-
-    private _imageLoaded() {
-        this._numImagesLoaded++;
-    }
-
-    private _areAllImagesLoaded() : boolean {
-        return this._numImagesToLoad <= this._numImagesLoaded;
     }
 
     get showSplash() {
