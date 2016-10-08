@@ -65,7 +65,7 @@ export class SFMLTextComponent {
 
     get dialogOptions() {
         return {
-            defaultPath: this._project.project.home,
+            defaultPath: this._project.home,
             properties: [
                 'openFile'
             ],

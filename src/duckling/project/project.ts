@@ -6,7 +6,8 @@ import {immutableAssign} from '../util';
  */
 export interface Project {
     home? : string,
-    loaded? : boolean
+    loaded? : boolean,
+    currentMap? : string
 }
 
 /**
@@ -33,6 +34,25 @@ function _switchProject(action : SwitchProjectAction) : Project {
 }
 
 /**
+ * Create an action that opens the map. Done Loading Project action should be
+ * used once the load is finished.
+ * @param  mapName The name of the current map.
+ */
+export function openMapAction(mapName : string) {
+    return {
+        type: ACTION_OPEN_MAP,
+        mapName
+    }
+}
+export const ACTION_OPEN_MAP = "Project.OpenMap";
+interface OpenMapAction extends Action {
+    mapName : string
+}
+function _openMap(project : Project, action : OpenMapAction) {
+    return immutableAssign(project, {currentMap : action.mapName, loaded : false});
+}
+
+/**
  * Create an action that marks the project as done loading.
  */
 export function doneLoadingProjectAction() {
@@ -52,6 +72,8 @@ export function projectReducer(state : Project = {}, action : Action) {
             return _switchProject(action as SwitchProjectAction);
         case ACTION_DONE_LOADING:
             return immutableAssign(state, {loaded: true});
+        case ACTION_OPEN_MAP:
+            return _openMap(state, action as OpenMapAction);
     }
 
     return state;

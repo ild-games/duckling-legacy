@@ -100,11 +100,11 @@ export class ShellComponent implements OnInit, OnDestroy {
     }
 
     get showSplash() {
-        return !this.projectService.project.home;
+        return !this.projectService.home;
     }
 
     get showLoading() {
-        let loadFinished = this.projectService.project.loaded && this._optionsService.isLoaded && this._editorImagesLoaded;
+        let loadFinished = this.projectService.project.getValue().loaded && this._optionsService.isLoaded && this._editorImagesLoaded;
         return !this.showSplash && !loadFinished;
     }
 

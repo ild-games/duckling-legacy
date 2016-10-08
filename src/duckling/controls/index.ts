@@ -19,8 +19,8 @@ export * from './box2.component';
 export * from './checkbox.component';
 export * from './delete-button.component';
 export * from './json.component';
-export * from './browse-asset.component';
 export * from './section.component';
 export * from './section-header.component';
+export * from './inline-edit-label.component';
 
 export * from './controls.module';

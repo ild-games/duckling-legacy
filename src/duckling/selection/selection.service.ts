@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {Action, StoreService} from '../state';
+import {ACTION_OPEN_MAP} from '../project/project';
 import {EntityKey, EntitySystemService, Entity} from '../entitysystem';
 
 /**
@@ -73,6 +74,10 @@ export function selectionReducer(state : SelectionState = {}, action : Selection
         return {
             selectedEntity : action.selectedEntity
         }
+    } else if (action.type === ACTION_OPEN_MAP) {
+
+        //Clear selection if the current map is changing.
+        return {};
     }
     return state;
 }

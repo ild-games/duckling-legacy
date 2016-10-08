@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 
 import {ControlsModule} from '../controls/controls.module';
+import {ProjectModule} from '../project/project.module';
 import {ActionComponent} from './action/action.component';
 import {CameraComponent} from './camera/camera.component';
 import {CollisionComponent} from './collision/collision.component';
@@ -46,7 +47,8 @@ const ATTRIBUTE_COMPONENTS = [
 
 @NgModule({
     imports: [
-        ControlsModule
+        ControlsModule,
+        ProjectModule
     ],
     declarations: [
         ATTRIBUTE_COMPONENTS,

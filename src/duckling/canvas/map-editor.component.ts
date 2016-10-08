@@ -14,7 +14,7 @@ import {Subscriber} from 'rxjs';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
-import {AssetService, Asset} from '../project';
+import {AssetService, Asset, ProjectService} from '../project';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityBoxService} from '../entitysystem/services';
@@ -48,7 +48,9 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
                 <dk-top-toolbar
                     class="canvas-top-toolbar md-elevation-z4"
                     [selectedToolKey]="tool.key"
-                    (toolSelection)="onToolSelected($event)">
+                    [mapName]="projectService.project.getValue().currentMap"
+                    (toolSelection)="onToolSelected($event)"
+                    (mapSelected)="openMap($event)">
                 </dk-top-toolbar>
 
                 <dk-canvas #canvasElement
@@ -130,6 +132,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
                 private _copyPaste : CopyPasteService,
                 private _toolService : ToolService,
                 private _assetService : AssetService,
+                public projectService : ProjectService,
                 private _entityDrawerService : EntityDrawerService,
                 private _keyboardService : KeyboardService,
                 private _entityBoxService : EntityBoxService) {
@@ -223,6 +226,10 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     onShowGridChanged(showGrid : boolean) {
         this.showGrid = showGrid;
         this.canvasDisplayObject = this._buildCanvasDisplayObject();
+    }
+
+    openMap(mapKey : string) {
+        this.projectService.openMap(mapKey);
     }
 
     private _redrawAllDisplayObjects() {

@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import * as glob from 'glob';
 import * as fs from 'fs';
 import * as npath from 'path';
+
+import {glob} from './glob';
 
 @Injectable()
 export class PathService {
@@ -60,14 +61,7 @@ export class PathService {
      * @return A promise that evaluates to a list of files within the directory
      */
     walk(path : string) : Promise<any> {
-        return new Promise((resolve, reject) => {
-            glob(path + "/**/*.*", null, (error, files) => {
-                if (error) {
-                    reject(error);
-                }
-                resolve(files);
-            });
-        });
+        return glob(`${path}/**/*.*`);
     }
 
     /**

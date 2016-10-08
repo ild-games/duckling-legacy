@@ -12,10 +12,10 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+    }
 
-        .entity-name-text {
-            font-size: $font-size-heading;
-            margin-right: $spacer-unit / 2;
-        }
+    .entity-name-text {
+        font-size: $font-size-heading;
+        margin-right: $spacer-unit / 2;
     }
 }
