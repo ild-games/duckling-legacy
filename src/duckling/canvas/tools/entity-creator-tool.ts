@@ -5,7 +5,7 @@ import {
     Entity,
     AttributeDefaultService,
     EntitySystemService,
-    EntityPositionSetService,
+    EntityPositionService,
     EntityBoxService
 } from '../../entitysystem';
 import {Vector} from '../../math';
@@ -18,7 +18,7 @@ import {drawRectangle} from '../drawing';
 export class EntityCreatorTool extends BaseTool {
     constructor(private _attributeDefaultService : AttributeDefaultService,
                 private _entitySystemService : EntitySystemService,
-                private _entityPositionSetService : EntityPositionSetService,
+                private _entityPositionService : EntityPositionService,
                 private _entityBoxService : EntityBoxService,
                 private _selection : SelectionService) {
         super();
@@ -32,7 +32,7 @@ export class EntityCreatorTool extends BaseTool {
         let mergeKey = newMergeKey();
         let entity = this._attributeDefaultService.createEntity();
         let key = this._entitySystemService.addNewEntity(entity, mergeKey);
-        this._entityPositionSetService.setPosition(key, event.stageCoords, mergeKey);
+        this._entityPositionService.setPosition(key, event.stageCoords, mergeKey);
         this._selection.select(key, mergeKey);
     }
 

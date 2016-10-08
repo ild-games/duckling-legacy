@@ -114,7 +114,7 @@ export class AssetService {
             if (this._allPreloadedImagesLoaded()) {
                 this.preloadImagesLoaded.next(true);
             }
-        }, editorSpecific? 0 : 5000);
+        }, editorSpecific? 0 : 2500);
     }
 
     private _allPreloadedImagesLoaded() {

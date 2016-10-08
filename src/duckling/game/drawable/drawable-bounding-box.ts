@@ -1,7 +1,6 @@
 import {DisplayObject, Container} from 'pixi.js';
 
 import {Entity} from '../../entitysystem/entity';
-import {getPosition} from '../position/position-attribute';
 import {Box2} from '../../math';
 import {AssetService} from '../../project';
 import {immutableAssign} from '../../util';
@@ -16,8 +15,7 @@ import {drawDrawableAttribute} from './drawable-drawer';
  */
 export function drawableBoundingBox(entity : Entity, assetService : AssetService) : Box2 {
     let entityDrawnConstruct = drawDrawableAttribute(entity, assetService);
-    let position = getPosition(entity);
-    if (!position || !entityDrawnConstruct) {
+    if (!entityDrawnConstruct) {
         return null;
     }
 
@@ -25,5 +23,5 @@ export function drawableBoundingBox(entity : Entity, assetService : AssetService
     if (!bounds) {
         return null;
     }
-    return immutableAssign(bounds, {position: position.position});
+    return bounds;
 }

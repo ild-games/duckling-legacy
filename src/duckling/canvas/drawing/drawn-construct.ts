@@ -1,6 +1,8 @@
 import {Container, DisplayObject} from 'pixi.js';
 
 import {Box2, EMPTY_BOX, boxUnion} from '../../math/box2';
+import {Vector} from '../../math/vector';
+import {immutableAssign} from '../../util';
 
 /**
  * Animation contains multiple canvas drawn elements that make up the frames of
@@ -125,6 +127,35 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
     return bounds;
 }
 
+/**
+ * Set the position of a drawn construct
+ * @param  drawable Drawn construct to set the position of
+ * @param  position Position to apply to the drawn construct
+ */
+export function setConstructPosition(drawable : DrawnConstruct, position : Vector) {
+    function _setDisplayObjectPosition(displayObject : DisplayObject) {
+        displayObject.position.x += position.x;
+        displayObject.position.y += position.y;
+    }
+    if (!drawable) {
+        return;
+    }
+
+    if (isAnimationConstruct(drawable)) {
+        for (let frame of drawable.frames) {
+            setConstructPosition(frame, position);
+        }
+    } else if (isContainerContruct(drawable)) {
+        for (let child of drawable.childConstructs) {
+            setConstructPosition(child, position);
+        }
+    } else if (isDisplayObject(drawable)) {
+        _setDisplayObjectPosition(drawable);
+    } else {
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::_setPosition");
+    }
+}
+
 function _containerBounds(container : ContainerConstruct) : Box2 {
     return _unionedBounds(container.childConstructs);
 }
@@ -134,7 +165,7 @@ function _animationBounds(animation : AnimationConstruct) : Box2 {
 }
 
 function _unionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
-    let entireBoundingBox = EMPTY_BOX;
+    let entireBoundingBox = immutableAssign(EMPTY_BOX, {});
     for (let construct of drawnConstructs) {
         let childBox = drawnConstructBounds(construct);
         if (childBox) {

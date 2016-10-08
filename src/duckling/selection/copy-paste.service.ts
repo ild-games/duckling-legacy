@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 
 import {Action, StoreService, newMergeKey} from '../state';
 import {Vector, vectorRound} from '../math';
-import {Entity, EntitySystemService, EntityPositionSetService, EntityKey} from '../entitysystem';
+import {Entity, EntitySystemService, EntityPositionService, EntityKey} from '../entitysystem';
 import {SelectionService} from './selection.service';
 
 /**
@@ -17,7 +17,7 @@ export class CopyPasteService {
     constructor(private _store : StoreService,
                 private _entitySystem : EntitySystemService,
                 private _selection : SelectionService,
-                private _setPosition : EntityPositionSetService) {
+                private _position : EntityPositionService) {
         this.clipboard = new BehaviorSubject({});
         this._store.state.subscribe(state => this.clipboard.next(state.clipboard));
     }
@@ -32,7 +32,7 @@ export class CopyPasteService {
         if (clipboardEntity) {
             let mergeKey = newMergeKey();
             let entityKey = this._entitySystem.addNewEntity(clipboardEntity, mergeKey);
-            this._setPosition.setPosition(entityKey, vectorRound(position), mergeKey);
+            this._position.setPosition(entityKey, vectorRound(position), mergeKey);
             return entityKey;
         } else {
             return null;

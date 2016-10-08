@@ -3,11 +3,11 @@ import {Container, DisplayObject} from 'pixi.js';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
 import {AssetService} from '../../project';
-import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem';
+import {Entity, EntitySystem, Attribute, AttributeKey, EntityPositionService, EntitySystemService} from '../../entitysystem';
 import {drawMissingAsset} from '../../canvas/drawing/util';
 
 import {RenderPriorityService} from './render-priority.service';
-import {DrawnConstruct} from './drawn-construct';
+import {DrawnConstruct, setConstructPosition} from './drawn-construct';
 
 /**
  * Function type used to draw attributes.
@@ -21,7 +21,9 @@ export type AttributeDrawer = (entity : Entity, assetService? : any) => DrawnCon
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     constructor(private _assets : AssetService,
-                private _renderPriority : RenderPriorityService) {
+                private _renderPriority : RenderPriorityService,
+                private _entityPosition : EntityPositionService,
+                private _entitySystem : EntitySystemService) {
         super();
     }
 
@@ -34,11 +36,19 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     drawAttribute(key : AttributeKey, entity : Entity) : DrawnConstruct {
         let drawer = this.getImplementation(key);
         if (drawer) {
+            let drawnConstruct : DrawnConstruct;
             if (this._assets.areAssetsLoaded(entity, key)) {
-                return drawer(entity, this._assets);
+                drawnConstruct = drawer(entity, this._assets);
             } else {
-                return drawMissingAsset(this._assets);
+                drawnConstruct = drawMissingAsset(this._assets);
             }
+
+            if (drawnConstruct) {
+                setConstructPosition(
+                    drawnConstruct,
+                    this._entityPosition.getPosition(this._entitySystem.getKey(entity)));
+            }
+            return drawnConstruct;
         }
         return null;
     }

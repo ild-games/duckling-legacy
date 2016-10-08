@@ -2,7 +2,7 @@ import {
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
-    EntityPositionSetService
+    EntityPositionService
 } from '../entitysystem';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
@@ -10,6 +10,7 @@ import {RequiredAssetService} from '../project';
 
 import {defaultPosition, POSITION_KEY} from './position/position-attribute';
 import {setPosition} from './position/set-position';
+import {getPosition} from './position/get-position';
 import {defaultCollison, COLLISION_KEY} from './collision/collision-attribute';
 import {PositionComponent} from './position/position.component';
 import {CollisionComponent} from './collision/collision.component';
@@ -35,7 +36,7 @@ import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets'
 
 type Services = {
     attributeDefaultService : AttributeDefaultService;
-    entityPositionSetService : EntityPositionSetService,
+    entityPositionService : EntityPositionService,
     entityBoxService: EntityBoxService,
     attributeComponentService: AttributeComponentService,
     entityDrawerService: EntityDrawerService,
@@ -61,7 +62,7 @@ export function bootstrapGameComponents(services: Services) {
 function _bootstrapPositionAttribute(services : Services) {
     services.attributeComponentService.register(POSITION_KEY, PositionComponent);
     services.attributeDefaultService.register(POSITION_KEY, {createByDefault: true, default: defaultPosition});
-    services.entityPositionSetService.register(POSITION_KEY, setPosition);
+    services.entityPositionService.register(POSITION_KEY, {set: setPosition, get: getPosition});
 }
 
 function _bootstrapCollisionAttribute(services : Services) {

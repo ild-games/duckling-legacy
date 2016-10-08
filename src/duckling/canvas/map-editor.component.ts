@@ -152,6 +152,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._assetServiceSubscription = this._assetService.assetLoaded.subscribe((asset : Asset) => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
             this._entitiesDrawnConstructsChanged(drawnConstructs);
+            this._redrawAllDisplayObjects();
         }) as Subscriber<any>;
 
         this._redrawInterval = TimerObservable

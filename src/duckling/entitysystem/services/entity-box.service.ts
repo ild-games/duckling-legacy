@@ -2,6 +2,8 @@ import {Component, Injectable} from '@angular/core';
 
 import {BaseAttributeService} from '../base-attribute.service';
 import {AttributeKey, Entity} from '../entity';
+import {EntitySystemService} from '../entity-system.service';
+import {EntityPositionService} from '../services/entity-position.service';
 import {AssetService} from '../../project/asset.service';
 import {Box2, boxUnion} from '../../math';
 import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
@@ -17,7 +19,9 @@ export type AttributeBoundingBox = (entity : Entity, assetService? : AssetServic
  */
 @Injectable()
 export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox> {
-    constructor(private _asset : AssetService) {
+    constructor(private _asset : AssetService,
+                private _entityPosition : EntityPositionService,
+                private _entitySystem : EntitySystemService) {
         super();
     }
 
@@ -29,11 +33,17 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
     getAttributeBox(key : AttributeKey, entity : Entity) : any {
         let getBox = this.getImplementation(key);
         if (getBox) {
+            let box : Box2;
             if (this._asset.areAssetsLoaded(entity, key)) {
-                return getBox(entity, this._asset);
+                box = getBox(entity, this._asset);
             } else {
-                return drawnConstructBounds(drawMissingAsset(this._asset));
+                box = drawnConstructBounds(drawMissingAsset(this._asset));
             }
+
+            if (box) {
+                box.position = this._entityPosition.getPosition(this._entitySystem.getKey(entity));
+            }
+            return box;
         }
         return null;
     }
