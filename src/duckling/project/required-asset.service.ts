@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 
-import {BaseAttributeService, Entity, AttributeKey, EntitySystem} from '../entitysystem';
-import {Asset, AssetMap} from '../project';
+import {BaseAttributeService} from '../entitysystem/base-attribute.service';
+import {Entity, AttributeKey, EntitySystem} from '../entitysystem/entity';
+import {Asset, AssetMap} from '../project/asset.service';
 
 export type AttributeRequiredAssets = (entity : Entity) => AssetMap;
 

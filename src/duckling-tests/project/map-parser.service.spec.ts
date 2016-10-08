@@ -6,7 +6,7 @@ import {createEntitySystem, mergeEntityAction} from '../../duckling/entitysystem
 import {RawMapFile, MapParserService, AssetService, RequiredAssetService} from '../../duckling/project';
 import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
-import {immutableAssign} from '../../duckling/util';
+import {immutableAssign, PathService} from '../../duckling/util';
 
 let emptyMap : RawMapFile = {
     key : "",
@@ -59,7 +59,10 @@ let basicMap : RawMapFile = {
 describe("MapLoaderService", function() {
     beforeEach(function() {
         let storeService = new StoreService(mainReducer, mergeEntityAction);
-        this.parser = new MapParserService(new AssetService(storeService), new RequiredAssetService());
+        let requiredAssetService = new RequiredAssetService();
+        this.parser = new MapParserService(
+            new AssetService(storeService, new PathService(), requiredAssetService),
+            requiredAssetService);
     });
 
     it("turns an empty map into an empty system", function() {

@@ -4,9 +4,9 @@ import {Texture, Sprite, Graphics, DisplayObject, Container} from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
 import {AssetService} from '../../project';
-import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
+import {drawMissingAsset} from '../../canvas/drawing/util';
 import {
     colorToHex,
     drawEllipse,
@@ -35,18 +35,17 @@ import {Rectangle} from './rectangle';
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
 export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct {
-    let positionAttribute = getPosition(entity);
     let drawableAttribute = getDrawableAttribute(entity);
-    if (!positionAttribute || !drawableAttribute.topDrawable) {
+    if (!drawableAttribute.topDrawable) {
         return null;
     }
 
-    let drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
+    let drawable : DrawnConstruct;
+    drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
     if (!drawable) {
         return null;
     }
     _setNonInteractive(drawable);
-    _setPosition(drawable, positionAttribute.position);
 
     return drawable;
 }
@@ -167,7 +166,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
                 imageDrawable.textureRect.dimension.x,
                 imageDrawable.textureRect.dimension.y));
         } else {
-            return null;
+            return drawMissingAsset(assetService);
         }
     }
     let sprite = new Sprite(texture);
@@ -236,29 +235,5 @@ function _setNonInteractive(drawable : DrawnConstruct) {
         drawable.interactiveChildren = false;
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-drawer::_setNonInteractive");
-    }
-}
-
-function _setPosition(drawable : DrawnConstruct, position : Vector) {
-    function _setDisplayObjectPosition(displayObject : DisplayObject) {
-        displayObject.position.x += position.x;
-        displayObject.position.y += position.y;
-    }
-    if (!drawable) {
-        return;
-    }
-
-    if (isAnimationConstruct(drawable)) {
-        for (let frame of drawable.frames) {
-            _setPosition(frame, position);
-        }
-    } else if (isContainerContruct(drawable)) {
-        for (let child of drawable.childConstructs) {
-            _setPosition(child, position);
-        }
-    } else if (isDisplayObject(drawable)) {
-        _setDisplayObjectPosition(drawable);
-    } else {
-        throw Error("Unknown DrawnConstruct type in drawable-drawer::_setPosition");
     }
 }

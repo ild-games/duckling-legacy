@@ -1,9 +1,14 @@
 import {Component, Injectable} from '@angular/core';
 
-import {BaseAttributeService} from '../base-attribute-service';
+import {BaseAttributeService} from '../base-attribute.service';
 import {AttributeKey, Entity} from '../entity';
-import {AssetService} from '../../project';
+import {EntitySystemService} from '../entity-system.service';
+import {EntityPositionService} from '../services/entity-position.service';
+import {AssetService} from '../../project/asset.service';
 import {Box2, boxUnion} from '../../math';
+import {immutableAssign} from '../../util';
+import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
+import {drawMissingAsset} from '../../canvas/drawing/util';
 
 /**
  * Function type that provides a bounding box for an attribute.
@@ -15,7 +20,9 @@ export type AttributeBoundingBox = (entity : Entity, assetService? : AssetServic
  */
 @Injectable()
 export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox> {
-    constructor(private _asset : AssetService) {
+    constructor(private _asset : AssetService,
+                private _entityPosition : EntityPositionService,
+                private _entitySystem : EntitySystemService) {
         super();
     }
 
@@ -27,7 +34,17 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
     getAttributeBox(key : AttributeKey, entity : Entity) : any {
         let getBox = this.getImplementation(key);
         if (getBox) {
-            return getBox(entity, this._asset);
+            let box : Box2;
+            if (this._asset.areAssetsLoaded(entity, key)) {
+                box = getBox(entity, this._asset);
+            } else {
+                box = drawnConstructBounds(drawMissingAsset(this._asset));
+            }
+
+            if (box) {
+                box = immutableAssign(box, {position: this._entityPosition.getPosition(this._entitySystem.getKey(entity))});
+            }
+            return box;
         }
         return null;
     }

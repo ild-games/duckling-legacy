@@ -23,7 +23,7 @@ import {
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
-    EntityPositionSetService
+    EntityPositionService
 } from '../entitysystem';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
@@ -72,7 +72,7 @@ const ATTRIBUTE_COMPONENTS = [
 })
 export class GameModule {
     constructor(public attributeDefaultService : AttributeDefaultService,
-                public entityPositionSetService : EntityPositionSetService,
+                public entityPositionService : EntityPositionService,
                 public entityBoxService : EntityBoxService,
                 public attributeComponentService : AttributeComponentService,
                 public entityDrawerService : EntityDrawerService,

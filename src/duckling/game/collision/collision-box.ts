@@ -1,5 +1,4 @@
 import {Entity} from '../../entitysystem/entity';
-import {getPosition} from '../position/position-attribute';
 import {Box2} from '../../math';
 
 import {getCollision} from './collision-attribute';
@@ -10,13 +9,12 @@ import {getCollision} from './collision-attribute';
  * @return A Box2 bounding box for the entity's collision attribute.
  */
 export function collisionBoundingBox(entity : Entity) : Box2 {
-    let positionAttribute = getPosition(entity);
     let collisionAttribute = getCollision(entity);
-    if (!positionAttribute || !collisionAttribute) {
+    if (!collisionAttribute) {
         return null;
     }
     return {
-        position: positionAttribute.position,
+        position: {x: 0, y: 0},
         dimension: collisionAttribute.dimension.dimension,
         rotation: collisionAttribute.dimension.rotation
     }

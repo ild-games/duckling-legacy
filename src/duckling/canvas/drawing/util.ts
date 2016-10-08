@@ -1,5 +1,8 @@
-import {Graphics} from 'pixi.js';
+import {Graphics, Sprite} from 'pixi.js';
+
 import {Vector} from '../../math/vector';
+import {AssetService} from '../../project/asset.service';
+
 
 /**
  * Draw a rectangle centered at the given position.
@@ -102,4 +105,17 @@ export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vect
         centerPosition,
         stageDimensions,
         graphics);
+}
+
+/**
+ * Draws an image representing a missing asset
+ * @param  assetService Instance of the asset service to get the missing image from
+ * @return Sprite with the missing images
+ */
+export function drawMissingAsset(assetService : AssetService) : Sprite {
+    let missingTexture = assetService.get("fa-missing-image", true);
+    let sprite = new Sprite(missingTexture);
+    sprite.x = -sprite.width / 2;
+    sprite.y = -sprite.height / 2;
+    return sprite;
 }

@@ -111,7 +111,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this._viewInited = true;
         this.setupContainingElementEvents();
 
-        this._renderer = new CanvasRenderer(
+        this._renderer = new WebGLRenderer(
             this.elementDimensions.x,
             this.elementDimensions.y,
             {view: this.canvasRoot.nativeElement});

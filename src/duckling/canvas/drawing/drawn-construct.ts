@@ -1,5 +1,9 @@
 import {Container, DisplayObject} from 'pixi.js';
 
+import {Box2, EMPTY_BOX, boxUnion} from '../../math/box2';
+import {Vector} from '../../math/vector';
+import {immutableAssign} from '../../util';
+
 /**
  * Animation contains multiple canvas drawn elements that make up the frames of
  * the animation along with a duration for the animation.
@@ -98,6 +102,93 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     }
 
     return displayObject;
+}
+
+/**
+ * Given a drawn construct, return the bounds
+ * @param  drawnConstruct Drawn construct to get the bounds for
+ * @return The bounds of the drawn construct
+ */
+export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
+    if (!drawnConstruct) {
+        return null;
+    }
+
+    let bounds : Box2;
+    if (isAnimationConstruct(drawnConstruct)) {
+        bounds = _animationBounds(drawnConstruct);
+    } else if (isContainerContruct(drawnConstruct)) {
+        bounds = _containerBounds(drawnConstruct);
+    } else if (isDisplayObject(drawnConstruct)) {
+        bounds = _displayObjectBounds(drawnConstruct);
+    } else {
+        throw Error("Unknown DrawnConstruct type in drawable-bounding-box::getDrawnConstructBounds");
+    }
+    return bounds;
+}
+
+/**
+ * Set the position of a drawn construct
+ * @param  drawable Drawn construct to set the position of
+ * @param  position Position to apply to the drawn construct
+ */
+export function setConstructPosition(drawable : DrawnConstruct, position : Vector) {
+    if (!drawable) {
+        return;
+    }
+
+    if (isAnimationConstruct(drawable)) {
+        for (let frame of drawable.frames) {
+            setConstructPosition(frame, position);
+        }
+    } else if (isContainerContruct(drawable)) {
+        for (let child of drawable.childConstructs) {
+            setConstructPosition(child, position);
+        }
+    } else if (isDisplayObject(drawable)) {
+        _setDisplayObjectPosition(drawable, position);
+    } else {
+        throw Error("Unknown DrawnConstruct type in drawable-drawer::_setPosition");
+    }
+}
+
+function _setDisplayObjectPosition(displayObject : DisplayObject, position : Vector) {
+    displayObject.position.x += position.x;
+    displayObject.position.y += position.y;
+}
+
+function _containerBounds(container : ContainerConstruct) : Box2 {
+    return _unionedBounds(container.childConstructs);
+}
+
+function _animationBounds(animation : AnimationConstruct) : Box2 {
+    return _unionedBounds(animation.frames);
+}
+
+function _unionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
+    let entireBoundingBox = EMPTY_BOX;
+    for (let construct of drawnConstructs) {
+        let childBox = drawnConstructBounds(construct);
+        if (childBox) {
+            entireBoundingBox = boxUnion(entireBoundingBox, childBox);
+        }
+    }
+    return entireBoundingBox;
+}
+
+function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
+    let container = new Container();
+    container.addChild(displayObject);
+    displayObject.updateTransform();
+    let displayObjectBounds = container.getBounds();
+    return {
+        position: {x: 0, y: 0},
+        dimension: {
+            x: displayObjectBounds.width,
+            y: displayObjectBounds.height
+        },
+        rotation: 0
+    };
 }
 
 function _determineAnimationDisplayObject(animation : AnimationConstruct, totalMillis : number) : DisplayObject {

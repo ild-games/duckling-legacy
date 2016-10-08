@@ -5,7 +5,7 @@ import {
     AttributeDefaultService,
     AvailableAttributeService,
     EntityBoxService,
-    EntityPositionSetService,
+    EntityPositionService,
     EntitySelectionService,
     BaseAttributeService,
     EntitySystemService
@@ -16,7 +16,7 @@ import {
         AttributeDefaultService,
         AvailableAttributeService,
         EntityBoxService,
-        EntityPositionSetService,
+        EntityPositionService,
         EntitySelectionService,
         BaseAttributeService,
         EntitySystemService

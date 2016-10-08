@@ -1,13 +1,20 @@
-import {Component, Input, ChangeDetectorRef} from '@angular/core';
+import {
+    Component,
+    Input,
+    ChangeDetectorRef,
+    OnDestroy
+} from '@angular/core';
+import {Subscriber} from 'rxjs';
 
 import {Entity} from '../entitysystem';
 import {EntityEditorComponent} from '../entityeditor';
 import {MapEditorComponent} from '../canvas/map-editor.component';
 import {SplashComponent} from '../splash/splash.component';
-import {ProjectService} from '../project';
-import {WindowService} from '../util';
-import {StoreService} from '../state';
 import {FileToolbarService} from './file-toolbar.service';
+import {Asset, AssetService} from '../project/asset.service';
+import {ProjectService} from '../project/project.service';
+import {WindowService, PathService} from '../util';
+import {StoreService} from '../state';
 
 @Component({
     selector: 'dk-shell',
@@ -37,13 +44,27 @@ import {FileToolbarService} from './file-toolbar.service';
         </div>
     `
 })
-export class ShellComponent {
+export class ShellComponent implements OnDestroy {
+    private _editorImagesLoaded : boolean = false;
+    private _assetServiceSubscription : Subscriber<any>;
+
     constructor(public projectService : ProjectService,
-                private _store : StoreService,
+                private _assetService : AssetService,
+                private _pathService : PathService,
                 private _windowService : WindowService,
-                private _fileToolbar : FileToolbarService) {
+                private _fileToolbar : FileToolbarService,
+                private _store : StoreService) {
         this._windowService.setMinimumSize(0, 0);
         this._initToolbar();
+        this._assetService.loadPreloadedEditorImages();
+
+        this._assetServiceSubscription = this._assetService.preloadImagesLoaded.subscribe((allLoaded : boolean) => {
+            this._editorImagesLoaded = allLoaded;
+        }) as Subscriber<any>;
+    }
+
+    ngOnDestroy() {
+        this._assetServiceSubscription.unsubscribe();
     }
 
     onProjectOpened(path : string) {
@@ -74,7 +95,11 @@ export class ShellComponent {
     }
 
     get showLoading() {
-        return !this.showSplash && !this.projectService.project.loaded;
+        return (
+            !this.showSplash &&
+            !this.projectService.project.loaded &&
+            !this._editorImagesLoaded
+        );
     }
 
     get showProject() {
