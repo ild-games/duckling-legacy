@@ -7,6 +7,7 @@ import {AssetService} from '../../project';
 import {getPosition} from '../position/position-attribute';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
+import {drawMissingAsset} from '../../canvas/drawing/util';
 import {
     colorToHex,
     drawEllipse,
@@ -34,7 +35,7 @@ import {Rectangle} from './rectangle';
  * @param  entity The entity with the drawable attribute
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawableAttribute(entity : Entity, assetService : AssetService, assetNeedsLoading : boolean) : DrawnConstruct {
+export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct {
     let positionAttribute = getPosition(entity);
     let drawableAttribute = getDrawableAttribute(entity);
     if (!positionAttribute || !drawableAttribute.topDrawable) {
@@ -42,11 +43,7 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
     }
 
     let drawable : DrawnConstruct;
-    if (assetNeedsLoading) {
-        drawable = _missingAsset(assetService);
-    } else {
-        drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
-    }
+    drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
     if (!drawable) {
         return null;
     }
@@ -54,14 +51,6 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
     _setPosition(drawable, positionAttribute.position);
 
     return drawable;
-}
-
-function _missingAsset(assetService : AssetService) : Sprite {
-    let missingTexture = assetService.get("fa-missing-image", true);
-    let sprite = new Sprite(missingTexture);
-    sprite.x = -sprite.width / 2;
-    sprite.y = -sprite.height / 2;
-    return sprite;
 }
 
 function _drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
@@ -180,7 +169,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
                 imageDrawable.textureRect.dimension.x,
                 imageDrawable.textureRect.dimension.y));
         } else {
-            return _missingAsset(assetService);
+            return drawMissingAsset(assetService);
         }
     }
     let sprite = new Sprite(texture);

@@ -14,7 +14,7 @@ import {Subscriber} from 'rxjs';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
-import {AssetService} from '../project';
+import {AssetService, Asset} from '../project';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityBoxService} from '../entitysystem/services';
@@ -149,7 +149,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
             this._redrawAllDisplayObjects();
         }) as Subscriber<any>;
 
-        this._assetServiceSubscription = this._assetService.assetLoaded.subscribe(() => {
+        this._assetServiceSubscription = this._assetService.assetLoaded.subscribe((asset : Asset) => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
             this._entitiesDrawnConstructsChanged(drawnConstructs);
         }) as Subscriber<any>;

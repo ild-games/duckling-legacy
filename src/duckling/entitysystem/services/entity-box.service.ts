@@ -1,10 +1,11 @@
 import {Component, Injectable} from '@angular/core';
 
-import {BaseAttributeService} from '../base-attribute-service';
+import {BaseAttributeService} from '../base-attribute.service';
 import {AttributeKey, Entity} from '../entity';
-import {AssetService} from '../../project';
-import {RequiredAssetService} from '../../project/required-asset.service';
+import {AssetService} from '../../project/asset.service';
 import {Box2, boxUnion} from '../../math';
+import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
+import {drawMissingAsset} from '../../canvas/drawing/util';
 
 /**
  * Function type that provides a bounding box for an attribute.
@@ -16,8 +17,7 @@ export type AttributeBoundingBox = (entity : Entity, assetService? : AssetServic
  */
 @Injectable()
 export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox> {
-    constructor(private _asset : AssetService,
-                private _requiredAssets : RequiredAssetService) {
+    constructor(private _asset : AssetService) {
         super();
     }
 
@@ -29,14 +29,11 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
     getAttributeBox(key : AttributeKey, entity : Entity) : any {
         let getBox = this.getImplementation(key);
         if (getBox) {
-            let requiredAssets = this._requiredAssets.assetsForAttribute(key, entity);
-            let needsLoading = false;
-            for (let assetKey in requiredAssets) {
-                if (!this._asset.isLoaded(assetKey)) {
-                    needsLoading = true;
-                }
-            };
-            return getBox(entity, this._asset, needsLoading);
+            if (this._asset.areAssetsLoaded(entity, key)) {
+                return getBox(entity, this._asset);
+            } else {
+                return drawnConstructBounds(drawMissingAsset(this._asset));
+            }
         }
         return null;
     }

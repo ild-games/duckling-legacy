@@ -1,6 +1,6 @@
 import {Component, Injectable} from '@angular/core';
 import {Attribute, Entity, EntityKey} from '../entity';
-import {BaseAttributeService} from '../base-attribute-service';
+import {BaseAttributeService} from '../base-attribute.service';
 import {EntitySystemService} from '../entity-system.service';
 import {Vector, boxContainsPoint} from '../../math';
 import {immutableAssign} from '../../util';

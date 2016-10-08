@@ -1,9 +1,10 @@
 import {Component, Injectable} from '@angular/core';
 import {Container, DisplayObject} from 'pixi.js';
 
-import {BaseAttributeService} from '../../entitysystem/base-attribute-service';
-import {AssetService, RequiredAssetService} from '../../project';
+import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
+import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem';
+import {drawMissingAsset} from '../../canvas/drawing/util';
 
 import {RenderPriorityService} from './render-priority.service';
 import {DrawnConstruct} from './drawn-construct';
@@ -20,7 +21,6 @@ export type AttributeDrawer = (entity : Entity, assetService? : any) => DrawnCon
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     constructor(private _assets : AssetService,
-                private _requiredAssets : RequiredAssetService,
                 private _renderPriority : RenderPriorityService) {
         super();
     }
@@ -34,15 +34,11 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     drawAttribute(key : AttributeKey, entity : Entity) : DrawnConstruct {
         let drawer = this.getImplementation(key);
         if (drawer) {
-            let requiredAssets = this._requiredAssets.assetsForAttribute(key, entity);
-            let needsLoading = false;
-            for (let assetKey in requiredAssets) {
-                if (!this._assets.isLoaded(assetKey)) {
-                    needsLoading = true;
-                    this._assets.add(requiredAssets[assetKey]);
-                }
-            };
-            return drawer(entity, this._assets, needsLoading)
+            if (this._assets.areAssetsLoaded(entity, key)) {
+                return drawer(entity, this._assets);
+            } else {
+                return drawMissingAsset(this._assets);
+            }
         }
         return null;
     }

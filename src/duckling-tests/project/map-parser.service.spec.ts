@@ -59,7 +59,10 @@ let basicMap : RawMapFile = {
 describe("MapLoaderService", function() {
     beforeEach(function() {
         let storeService = new StoreService(mainReducer, mergeEntityAction);
-        this.parser = new MapParserService(new AssetService(storeService, new PathService()), new RequiredAssetService());
+        let requiredAssetService = new RequiredAssetService();
+        this.parser = new MapParserService(
+            new AssetService(storeService, new PathService(), requiredAssetService),
+            requiredAssetService);
     });
 
     it("turns an empty map into an empty system", function() {
