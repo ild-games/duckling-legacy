@@ -139,7 +139,7 @@ export class AssetService {
     }
 
     private _stripPreloadedImageKey(imageFile : string) {
-        let folderPieces = imageFile.split(this._path.folderSeparator);
+        let folderPieces = imageFile.split('/');
         let key = folderPieces[folderPieces.length - 1];
         return key.replace('.png', '');
     }
