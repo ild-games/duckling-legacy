@@ -18,6 +18,12 @@ export class BaseTool {
     onStageMove(event : CanvasMouseEvent) {
     }
 
+    onKeyDown(event : CanvasKeyEvent) {
+    }
+
+    onKeyUp(event : CanvasKeyEvent) {
+    }
+
     onLeaveStage() {
     }
 

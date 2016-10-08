@@ -9,14 +9,15 @@ import {
     Entity,
     EntityBoxService
 } from '../../entitysystem';
-import {Vector} from '../../math';
+import {Vector, vectorAdd, vectorSubtract, vectorRound} from '../../math';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
+import {KeyboardCode} from '../../util';
 import {getPosition} from '../../game/position/position-attribute';
 import {drawRectangle} from '../drawing';
 
 
-import {BaseTool, CanvasMouseEvent} from './base-tool';
+import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 
 @Injectable()
 export class EntityMoveTool extends BaseTool {
@@ -41,8 +42,7 @@ export class EntityMoveTool extends BaseTool {
         this._selectOffsetCoords = {x: 0, y: 0};
         if (this._selection) {
             let positionAttribute = getPosition(this._entitySystemService.getEntity(this._selection));
-            this._selectOffsetCoords.x = positionAttribute.position.x - event.stageCoords.x;
-            this._selectOffsetCoords.y = positionAttribute.position.y - event.stageCoords.y;
+            this._selectOffsetCoords = vectorSubtract(positionAttribute.position, event.stageCoords);
         }
         this._mergeKey = newMergeKey();
         this._selectionService.select(this._selection, this._mergeKey);
@@ -50,15 +50,26 @@ export class EntityMoveTool extends BaseTool {
 
     onStageMove(event : CanvasMouseEvent) {
         if (this._selection) {
-            let nextCoords : Vector = event.stageCoords;
-            nextCoords.x += this._selectOffsetCoords.x;
-            nextCoords.y += this._selectOffsetCoords.y;
-            this._entityPositionSetService.setPosition(this._selection, nextCoords, this._mergeKey);
+            this._entityPositionSetService.setPosition(
+                this._selection,
+                vectorRound(vectorAdd(event.stageCoords, this._selectOffsetCoords)),
+                this._mergeKey);
         }
     }
 
     onStageUp(event : CanvasMouseEvent) {
         this._cancel();
+    }
+
+    onKeyDown(event : CanvasKeyEvent) {
+        if (this._selectionService.selection.value.entity) {
+            let oldPosition = getPosition(this._selectionService.selection.value.entity).position;
+            let adjustment = this._keyEventToPositionAdjustment(event.keyCode);
+            this._entityPositionSetService.setPosition(
+                this._selectionService.selection.value.selectedEntity,
+                vectorAdd(oldPosition, adjustment),
+                this._mergeKey);
+        }
     }
 
     onLeaveStage() {
@@ -100,5 +111,28 @@ export class EntityMoveTool extends BaseTool {
             drawRectangle(box.position, box.dimension, graphics);
         }
         return graphics;
+    }
+
+    private _keyEventToPositionAdjustment(keyCode : number) : Vector {
+        let adjustment : Vector;
+        if (keyCode === KeyboardCode.UP) {
+            adjustment = { x: 0, y: -1 };
+        } else if (keyCode === KeyboardCode.RIGHT) {
+            adjustment = { x: 1, y: 0 };
+        } else if (keyCode === KeyboardCode.DOWN) {
+            adjustment = { x: 0, y: 1 };
+        } else if (keyCode === KeyboardCode.LEFT) {
+            adjustment = { x: -1, y: 0 };
+        }
+        return adjustment;
+    }
+
+    private _isMovementKey(keyCode : number) : boolean {
+        return (
+            keyCode === KeyboardCode.UP ||
+            keyCode === KeyboardCode.RIGHT ||
+            keyCode === KeyboardCode.DOWN ||
+            keyCode === KeyboardCode.LEFT
+        );
     }
 }

@@ -34,6 +34,14 @@ export class BimodalTool extends BaseTool {
         this._selectedTool.onStageUp(event);
     }
 
+    onKeyDown(event : CanvasKeyEvent) {
+        this._selectedTool.onKeyDown(event);
+    }
+
+    onKeyUp(event : CanvasKeyEvent) {
+        this._selectedTool.onKeyUp(event);
+    }
+
     onLeaveStage() {
         this._selectedTool.onLeaveStage();
     }

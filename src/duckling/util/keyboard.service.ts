@@ -32,3 +32,15 @@ export class KeyboardService implements OnDestroy {
         this._heldKeys[event.keyCode] = false;
     }
 }
+
+
+/**
+ * Lookup for keyboard codes
+ */
+export const KeyboardCode = {
+    SPACEBAR: 32,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    LEFT: 37
+}

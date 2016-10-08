@@ -22,7 +22,7 @@ import {
 } from 'pixi.js';
 
 import {Vector} from '../math';
-import {isMouseButtonPressed, MouseButton, WindowService} from '../util';
+import {isMouseButtonPressed, MouseButton, WindowService, KeyboardCode} from '../util';
 
 import {ZOOM_LEVELS, DEFAULT_ZOOM_LEVEL} from './_toolbars/canvas-scale.component';
 import {drawRectangle} from './drawing/util';
@@ -129,18 +129,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
         this.canvasContainerDiv.nativeElement.parentElement.onwheel = (event : WheelEvent) => this.onScroll(event);
         this.canvasContainerDiv.nativeElement.parentElement.onmousemove = (event : MouseEvent) => event.preventDefault();
-        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this._onKeyEvent(event);
-        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => this._onKeyEvent(event);
-    }
-
-    private _onKeyEvent(event : KeyboardEvent) {
-        if (this._isSpacebar(event)) {
-            event.preventDefault();
-        }
-    }
-
-    private _isSpacebar(event : KeyboardEvent) {
-        return event.keyCode === 32;
+        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event : KeyboardEvent) => this.onKeyUp(event);
+        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this.onKeyDown(event);
     }
 
     ngOnChanges(changes : {stageDimensions?:SimpleChange, scale?:SimpleChange}) {
@@ -200,6 +190,21 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     onPaste(event : ClipboardEvent) {
         this.elementPaste.emit(this._stageCoordsFromCanvasCoords(this._mouseLocation));
+    }
+
+    onKeyDown(event : KeyboardEvent) {
+        if (this._isPreventedKey(event.keyCode)) {
+            event.preventDefault();
+        }
+        if (this.tool) {
+            this.tool.onKeyDown(this._createCanvasKeyEvent(event));
+        }
+    }
+
+    onKeyUp(event : KeyboardEvent) {
+        if (this.tool) {
+            this.tool.onKeyUp(this._createCanvasKeyEvent(event));
+        }
     }
 
     onMouseDown(event : MouseEvent) {
@@ -363,5 +368,25 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
             canvas: this
         }
+    }
+
+    private _createCanvasKeyEvent(event : KeyboardEvent) : CanvasKeyEvent {
+        let canvasCoords = this._mouseLocation;
+        return {
+            keyCode: event.keyCode,
+            canvasCoords: canvasCoords,
+            stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
+            canvas: this
+        }
+    }
+
+    private _isPreventedKey(keyCode : number) {
+        return (
+            keyCode === KeyboardCode.SPACEBAR ||
+            keyCode === KeyboardCode.UP ||
+            keyCode === KeyboardCode.RIGHT ||
+            keyCode === KeyboardCode.DOWN ||
+            keyCode === KeyboardCode.LEFT
+        );
     }
 }
