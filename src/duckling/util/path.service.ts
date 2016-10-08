@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import * as glob from 'glob';
 import * as fs from 'fs';
 import * as npath from 'path';
 
@@ -60,23 +61,12 @@ export class PathService {
      */
     walk(path : string) : Promise<any> {
         return new Promise((resolve, reject) => {
-            fs.readdir(path, (err : any, files : string[]) => {
-                Promise.all(files.map(file => {
-                    let filePath = npath.join(path, file);
-                    let stat = fs.statSync(filePath);
-                    if (stat.isFile()) {
-                        return filePath;
-                    } else {
-                        return this.walk(filePath);
-                    }
-                })).then((files : string[]) => {
-                    resolve(files);
-                })
+            glob(path + "/**/*.*", null, (error, files) => {
+                if (error) {
+                    reject();
+                }
+                resolve(files);
             });
-        }).then((results : any[]) => {
-            return results.reduce((a, b) => {
-                return a.concat(b);
-            }, []);
         });
     }
 

@@ -10,15 +10,10 @@ import {Entity} from '../entitysystem';
 import {EntityEditorComponent} from '../entityeditor';
 import {MapEditorComponent} from '../canvas/map-editor.component';
 import {SplashComponent} from '../splash/splash.component';
-<<<<<<< HEAD
-import {ProjectService} from '../project';
-import {WindowService} from '../util';
-import {StoreService} from '../state';
 import {FileToolbarService} from './file-toolbar.service';
-=======
-import {Asset, AssetService, ProjectService} from '../project';
+import {Asset, AssetService} from '../project/asset.service';
+import {ProjectService} from '../project/project.service';
 import {WindowService, PathService} from '../util';
->>>>>>> 77aaef0... preload editor specific images and show them for missing/loading images and camera attribute
 
 @Component({
     selector: 'dk-shell',
@@ -49,9 +44,7 @@ import {WindowService, PathService} from '../util';
     `
 })
 export class ShellComponent implements OnDestroy {
-    private _imagesLoaded : boolean = false;
-    private _numImagesToLoad = 0;
-    private _numImagesLoaded = 0;
+    private _editorImagesLoaded : boolean = false;
     private _assetServiceSubscription : Subscriber<any>;
 
     constructor(public projectService : ProjectService,
@@ -61,11 +54,10 @@ export class ShellComponent implements OnDestroy {
                 private _fileToolbar : FileToolbarService) {
         this._windowService.setMinimumSize(0, 0);
         this._initToolbar();
-        this._pathService.walk("resources/images/preloaded-editor/").then((files : string[]) => this._preloadEditorImages(files));
+        this._assetService.loadPreloadedEditorImages();
 
-        this._assetServiceSubscription = this._assetService.assetLoaded.subscribe(() => {
-            this._imageLoaded();
-            this._imagesLoaded = this._areAllImagesLoaded();
+        this._assetServiceSubscription = this._assetService.preloadImagesLoaded.subscribe((allLoaded : boolean) => {
+            this._editorImagesLoaded = allLoaded;
         }) as Subscriber<any>;
     }
 
@@ -133,7 +125,7 @@ export class ShellComponent implements OnDestroy {
         return (
             !this.showSplash &&
             !this.projectService.project.loaded &&
-            !this._imagesLoaded
+            !this._editorImagesLoaded
         );
     }
 
