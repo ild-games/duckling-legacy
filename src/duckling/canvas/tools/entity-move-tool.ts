@@ -9,7 +9,7 @@ import {
     Entity,
     EntityBoxService
 } from '../../entitysystem';
-import {Vector, vectorAdd, vectorSubtract, vectorRound} from '../../math';
+import {Box2, Vector, vectorAdd, vectorSubtract, vectorRound} from '../../math';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
 import {KeyboardCode} from '../../util';
@@ -108,8 +108,28 @@ export class EntityMoveTool extends BaseTool {
             graphics = new Graphics();
             graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
             drawRectangle(box.position, box.dimension, graphics);
+            this._drawTransformCorners(graphics, box, canvasZoom);
         }
         return graphics;
+    }
+
+    private _drawTransformCorners(graphics : Graphics, box : Box2, canvasZoom : number) {
+        graphics.lineStyle(1 / canvasZoom, 0x000000, 1);
+        graphics.beginFill(0x000000, 1);
+        this._drawTransformCorner(graphics, box, canvasZoom, {x: 1, y: 1});
+        this._drawTransformCorner(graphics, box, canvasZoom, {x: -1, y: 1});
+        this._drawTransformCorner(graphics, box, canvasZoom, {x: 1, y: -1});
+        this._drawTransformCorner(graphics, box, canvasZoom, {x: -1, y: -1});
+        graphics.endFill();
+    }
+
+    private _drawTransformCorner(graphics : Graphics, box : Box2, canvasZoom : number, whichCorner : Vector) {
+        let position = {
+            x: box.position.x + (box.dimension.x / 2 * whichCorner.x),
+            y: box.position.y + (box.dimension.y / 2 * whichCorner.y)
+        };
+        let cornerDimension = 6 / canvasZoom;
+        drawRectangle(position, {x: cornerDimension, y: cornerDimension}, graphics);
     }
 
     private _keyEventToPositionAdjustment(keyCode : number) : Vector {
