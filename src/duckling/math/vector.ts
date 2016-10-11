@@ -13,7 +13,7 @@ export function vectorAdd(vectorA : Vector, vectorB : Vector) : Vector {
     return {
         x: vectorA.x + vectorB.x,
         y: vectorA.y + vectorB.y,
-    }
+    };
 }
 
 /**
@@ -35,5 +35,43 @@ export function vectorRound(vector : Vector) : Vector {
     return {
         x: Math.round(vector.x),
         y: Math.round(vector.y)
-    }
+    };
+}
+
+/**
+ * Multiply two vectors
+ * @param  vectorA First vector to multiply
+ * @param  vectorB Second vector to multiply
+ * @return Resulting vector from the multiplication
+ */
+export function vectorMultiply(vectorA : Vector, vectorB: Vector) : Vector {
+    return {
+        x: vectorA.x * vectorB.x,
+        y: vectorA.y * vectorB.y
+    };
+}
+
+/**
+ * Divide two vectors
+ * @param  vectorA First vector to divide
+ * @param  vectorB Second vector to divide
+ * @return Resulting vector from the division
+ */
+export function vectorDivide(vectorA : Vector, vectorB: Vector) : Vector {
+    return {
+        x: vectorA.x / vectorB.x,
+        y: vectorA.y / vectorB.y
+    };
+}
+
+/**
+ * Get the absolute value of a vector
+ * @param  vector Vector to get the absolute value of
+ * @return Resulting vector from the absolute value operation
+ */
+export function vectorAbsolute(vector : Vector) : Vector {
+    return {
+        x: Math.abs(vector.x),
+        y: Math.abs(vector.y),
+    };
 }

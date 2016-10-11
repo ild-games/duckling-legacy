@@ -7,9 +7,7 @@ import {
     SimpleChange,
     ViewChild,
     ChangeDetectorRef,
-    EventEmitter,
-    Output
-} from '@angular/core';
+    EventEmitter, Output } from '@angular/core';
 import {Observable} from 'rxjs';
 import {
     autoDetectRenderer,
