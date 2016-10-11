@@ -3,8 +3,7 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit,
-    ViewContainerRef
+    AfterViewInit
 } from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
@@ -22,8 +21,8 @@ export type LayerDialogResult = {
     selector: 'dk-layer-dialog',
     styleUrls: ['./duckling/controls/layer-dialog.component.css'],
     template: `
-        <div class="body">
-            Yo waddup bitches?!
+        <div>
+            What up?! We're three cool guys looking for other cool guys who wanna hang out in our party mansion.
         </div>
     `
 })

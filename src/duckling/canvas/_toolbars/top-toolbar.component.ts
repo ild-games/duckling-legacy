@@ -6,11 +6,12 @@ import {
     EventEmitter,
     ViewContainerRef
 } from '@angular/core';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
 import {ProjectService} from '../../project';
-import {ToolbarOption} from '../../controls';
+import {ToolbarOption, LayerDialogComponent} from '../../controls';
 import {MapSelectComponent} from '../../project/map-select.component';
 import {EntityLayerService} from '../../entitysystem';
 
@@ -44,7 +45,7 @@ import {EntityLayerService} from '../../entitysystem';
         <dk-toolbar-button
             icon="eye"
             tooltip="Show/hide layers"
-            (click)="EntityLayerService.onShowHideLayersClicked()">
+            (click)="onShowHideLayersClicked()">
         </dk-toolbar-button>
 
         <span class="separator"></span>
@@ -75,11 +76,14 @@ export class TopToolbarComponent {
 
     @Output() mapSelected = new EventEmitter<String>();
 
+    private _layerDialogRef : MdDialogRef<LayerDialogComponent>;
+
     constructor(public store : StoreService,
                 public project : ProjectService,
                 public toolService : ToolService,
                 private _viewContainer : ViewContainerRef,
-                public EntityLayerService : EntityLayerService) {
+                private _materialDialog : MdDialog,
+                private _viewContainerRef : ViewContainerRef) {
         this.toolOptions = this.toolService.toolOptions;
     }
 
@@ -93,5 +97,11 @@ export class TopToolbarComponent {
                 this.mapSelected.emit(mapName);
             }
         });
+    }
+
+    onShowHideLayersClicked() {
+        let dialogConfig = new MdDialogConfig();
+        dialogConfig.viewContainerRef = this._viewContainerRef;
+        this._layerDialogRef = this._materialDialog.open(LayerDialogComponent, dialogConfig);
     }
 }

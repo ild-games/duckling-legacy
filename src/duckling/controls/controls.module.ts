@@ -71,6 +71,9 @@ const CONTROL_DECLARATIONS : Array<any> = [
         MaterialModule,
         CommonModule,
         FormsModule
+    ],
+    entryComponents: [
+        LayerDialogComponent
     ]
 })
 export class ControlsModule {
