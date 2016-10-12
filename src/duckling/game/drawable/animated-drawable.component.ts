@@ -107,8 +107,11 @@ export class AnimatedDrawableComponent {
         let newFrame = newDrawables[newDrawables.length - 1];
         let newFrameType = cppTypeToDrawableType(newFrame.__cpp_type);
         let defaultKey = getDefaultDrawable(newFrameType).key;
-        newDrawables[newDrawables.length - 1] = immutableAssign(newDrawables[newDrawables.length - 1], {key: defaultKey + this.findNextUniqueKey(newFrameType, defaultKey)});
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newDrawables}));
+        newFrame = immutableAssign(
+            newDrawables[newDrawables.length - 1],
+            {key: defaultKey + this.findNextUniqueKey(newFrameType, defaultKey)});
+
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newDrawables.slice(0, newDrawables.length - 1).concat([newFrame])}));
     }
 
     onDurationChanged(newDuration : number) {

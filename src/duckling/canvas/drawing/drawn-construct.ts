@@ -1,8 +1,7 @@
-import {Container, DisplayObject} from 'pixi.js';
+import {Container, DisplayObject, Point} from 'pixi.js';
 
 import {Box2, EMPTY_BOX, boxUnion} from '../../math/box2';
 import {Vector} from '../../math/vector';
-import {immutableAssign} from '../../util';
 
 /**
  * Animation contains multiple canvas drawn elements that make up the frames of
@@ -11,7 +10,10 @@ import {immutableAssign} from '../../util';
 export type AnimationConstruct = {
     type: "ANIMATION",
     duration: number,
-    frames: DrawnConstruct[]
+    frames: DrawnConstruct[],
+    position: Vector,
+    rotation: number,
+    scale: Vector
 };
 
 /**
@@ -19,7 +21,10 @@ export type AnimationConstruct = {
  */
 export type ContainerConstruct = {
     type: "CONTAINER",
-    childConstructs: DrawnConstruct[]
+    childConstructs: DrawnConstruct[],
+    position: Vector,
+    rotation: number,
+    scale: Vector
 };
 
 /**
@@ -83,9 +88,11 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     }
 
     let displayObject : DisplayObject = null;
-
     if (isAnimationConstruct(drawnConstruct)) {
-        displayObject = _determineAnimationDisplayObject(drawnConstruct, totalMillis);
+        let container = new Container();
+        container.addChild(_determineAnimationDisplayObject(drawnConstruct, totalMillis));
+        _applyDrawnConstructProperties(container, drawnConstruct);
+        displayObject = container;
     } else if (isContainerContruct(drawnConstruct)) {
         let container = new Container();
         for (let childConstruct of drawnConstruct.childConstructs) {
@@ -94,6 +101,7 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
                 container.addChild(child);
             }
         }
+        _applyDrawnConstructProperties(container, drawnConstruct);
         displayObject = container;
     } else if (isDisplayObject(drawnConstruct)) {
         displayObject = drawnConstruct;
@@ -133,28 +141,25 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
  * @param  position Position to apply to the drawn construct
  */
 export function setConstructPosition(drawable : DrawnConstruct, position : Vector) {
+    function _setDisplayObjectPosition(displayObject : DrawnConstruct) {
+        displayObject.position.x += position.x;
+        displayObject.position.y += position.y;
+    }
     if (!drawable) {
         return;
     }
 
-    if (isAnimationConstruct(drawable)) {
-        for (let frame of drawable.frames) {
-            setConstructPosition(frame, position);
-        }
-    } else if (isContainerContruct(drawable)) {
-        for (let child of drawable.childConstructs) {
-            setConstructPosition(child, position);
-        }
-    } else if (isDisplayObject(drawable)) {
-        _setDisplayObjectPosition(drawable, position);
+    if (isAnimationConstruct(drawable) || isContainerContruct(drawable) || isDisplayObject(drawable)) {
+        _setDisplayObjectPosition(drawable);
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-drawer::_setPosition");
     }
 }
 
-function _setDisplayObjectPosition(displayObject : DisplayObject, position : Vector) {
-    displayObject.position.x += position.x;
-    displayObject.position.y += position.y;
+function _applyDrawnConstructProperties(container : Container, drawnConstruct : DrawnConstruct) {
+    container.position = drawnConstruct.position as Point;
+    container.rotation = drawnConstruct.rotation;
+    container.scale = drawnConstruct.scale as Point;
 }
 
 function _containerBounds(container : ContainerConstruct) : Box2 {
