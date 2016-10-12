@@ -22,11 +22,31 @@ export type LayerDialogResult = {
     styleUrls: ['./duckling/controls/layer-dialog.component.css'],
     template: `
         <div>
-            What up?! We're three cool guys looking for other cool guys who wanna hang out in our party mansion.
+            <md-list>
+                <md-list-item
+                *ngFor="let layer of layers">
+                    <dk-icon-button *ngIf="layer.isVisible"
+                        class="shown-layer-button"
+                        tooltip="Hide layer"
+                        icon="eye"
+                        (click)="toggleLayerVisibility(layer)">
+                    </dk-icon-button>
+                    <dk-icon-button *ngIf="!layer.isVisible"
+                        class="hidden-layer-button"
+                        tooltip="Show layer"
+                        icon="eye-slash"
+                        (click)="toggleLayerVisibility(layer)">
+                    </dk-icon-button>
+
+                    <h2>{{layer.layerName}}</h2>
+                </md-list-item>
+            </md-list>
         </div>
     `
 })
 export class LayerDialogComponent {
+
+    @Input() layers : Layer[] = [{layerName: "layer1", isVisible: true}, {layerName: "layer2", isVisible: false}];
 
     constructor(private _dialogRef : MdDialogRef<LayerDialogComponent>,
                 private _path : PathService,
@@ -34,41 +54,7 @@ export class LayerDialogComponent {
                 private _assets : AssetService,
                 private _project : ProjectService) {
     }
-/*
-    onAcceptClicked() {
-        let result : AutoCreateDialogResult = {
-            numFrames: this.numFrames,
-            frameDimensions: this.frameDimensions,
-            imageKey: this.imageKey
-        };
-        this._dialogRef.close(result);
-    }
 
-    onCancelClicked() {
-        this._dialogRef.close(null);
-    }
-
-    onDimensionInput(newFrameDimensions : Vector) {
-        this.frameDimensions = newFrameDimensions;
-    }
-
-    onNumFramesInput(newNumFrames : number) {
-        this.numFrames = newNumFrames;
-    }
-
-    onImageFilePicked(newImageKey : string) {
-        let homeResourceString = this._path.join(this._project.project.home, 'resources');
-        if (newImageKey.indexOf(homeResourceString) === -1) {
-            this._dialog.showErrorDialog(
-                "Unable to load image asset",
-                "You must select assets from the resources/ folder in the root of your project");
-            return;
-        }
-        let splitImageKey = newImageKey.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
-        this._assets.add({type: "TexturePNG", key: splitImageKey});
-        this.imageKey = splitImageKey;
-    }
-*/
     get dialogOptions() {
         return {
             defaultPath: this._project.project.home,
@@ -80,5 +66,15 @@ export class LayerDialogComponent {
             ]
         }
     }
+
+    toggleLayerVisibility(layer : Layer) {
+        layer.isVisible = !layer.isVisible;
+    }
+}
+
+class Layer {
+
+    layerName : String;
+    isVisible : Boolean;
 
 }
