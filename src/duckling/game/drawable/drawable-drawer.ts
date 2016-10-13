@@ -13,8 +13,9 @@ import {
     drawRectangle,
     AnimationConstruct,
     DrawnConstruct,
+    isDrawnConstruct,
     isAnimationConstruct,
-    isContainerContruct,
+    isContainerConstruct,
     isDisplayObject,
     ContainerConstruct
 } from '../../canvas/drawing';
@@ -226,7 +227,7 @@ function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : D
         return;
     }
 
-    if (isAnimationConstruct(drawableDisplayObject) || isContainerContruct(drawableDisplayObject) || isDisplayObject(drawableDisplayObject)) {
+    if (isDrawnConstruct(drawableDisplayObject)) {
         _applyDisplayObjectProperties(drawableDisplayObject);
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-drawer::_applyDrawableProperties");
@@ -248,7 +249,7 @@ function _setNonInteractive(drawable : DrawnConstruct) {
         for (let frame of drawable.frames) {
             _setNonInteractive(frame);
         }
-    } else if (isContainerContruct(drawable)) {
+    } else if (isContainerConstruct(drawable)) {
         for (let child of drawable.childConstructs) {
             _setNonInteractive(child);
         }
