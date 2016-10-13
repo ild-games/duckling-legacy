@@ -5,9 +5,7 @@ import {
     EntityPositionService
 } from '../entitysystem';
 import {EntityEligibleResizeService} from '../entitysystem/services/entity-eligible-resize.service';
-import {EntityResizeService} from '../entitysystem/services/entity-resize.service';
-import {AttributeComponentService} from '../entityeditor';
-import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
+import {EntitySizeService} from '../entitysystem/services/entity-size.service'; import {AttributeComponentService} from '../entityeditor'; import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 import {RequiredAssetService} from '../project';
 
 import {defaultPosition, POSITION_KEY} from './position/position-attribute';
@@ -19,7 +17,7 @@ import {CollisionComponent} from './collision/collision.component';
 import {drawCollision} from './collision/collision-drawer';
 import {collisionBoundingBox} from './collision/collision-box';
 import {collisionIsEligibleForResize} from './collision/collision-eligible-for-resize';
-import {resizeCollision} from './collision/collision-resize';
+import {setCollisionSize, getCollisionSize} from './collision/collision-size';
 
 import {defaultCamera, CAMERA_KEY} from './camera/camera-attribute';
 import {drawCameraAttribute} from './camera/camera-drawer';
@@ -38,7 +36,7 @@ import {drawDrawableAttribute} from './drawable/drawable-drawer';
 import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
 import {drawableIsEligibleForResize} from './drawable/drawable-eligible-for-resize';
-import {resizeDrawable} from './drawable/drawable-resize';
+import {getDrawableSize, setDrawableSize} from './drawable/drawable-size';
 
 type Services = {
     attributeDefaultService : AttributeDefaultService;
@@ -48,7 +46,7 @@ type Services = {
     entityDrawerService: EntityDrawerService,
     requiredAssetService  : RequiredAssetService,
     entityEligibleResizeService : EntityEligibleResizeService,
-    entityResizeService : EntityResizeService
+    entitySizeService : EntitySizeService
 };
 
 let _bootstrapFunctions : Function[] = [
@@ -79,7 +77,7 @@ function _bootstrapCollisionAttribute(services : Services) {
     services.entityBoxService.register(COLLISION_KEY, collisionBoundingBox);
     services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollison});
     services.entityEligibleResizeService.register(COLLISION_KEY, collisionIsEligibleForResize);
-    services.entityResizeService.register(COLLISION_KEY, resizeCollision);
+    services.entitySizeService.register(COLLISION_KEY, {set: setCollisionSize, get: getCollisionSize});
 }
 
 function _bootstrapCameraAttribute(services : Services) {
@@ -96,7 +94,7 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.entityDrawerService.register(DRAWABLE_KEY, drawDrawableAttribute);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.entityEligibleResizeService.register(DRAWABLE_KEY, drawableIsEligibleForResize);
-    services.entityResizeService.register(DRAWABLE_KEY, resizeDrawable);
+    services.entitySizeService.register(DRAWABLE_KEY, {set: setDrawableSize, get: getDrawableSize});
 }
 
 function _bootstrapActionAttribute(services : Services) {

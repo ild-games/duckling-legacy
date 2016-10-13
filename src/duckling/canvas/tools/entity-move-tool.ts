@@ -10,7 +10,7 @@ import {
     EntityBoxService
 } from '../../entitysystem';
 import {EntityEligibleResizeService} from '../../entitysystem/services/entity-eligible-resize.service';
-import {EntityResizeService} from '../../entitysystem/services/entity-resize.service';
+import {EntitySizeService, SizeAttributeMap} from '../../entitysystem/services/entity-size.service';
 import {Box2, Vector, vectorMultiply, vectorAdd, vectorSubtract, vectorRound, boxContainsPoint} from '../../math';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
@@ -24,7 +24,8 @@ import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 export class EntityMoveTool extends BaseTool {
     private _selection : EntityKey;
     private _selectedCorner : Vector = null;
-    private _selectedCornerLastCoords : Vector = null;
+    private _entitySizeAttributeMap : SizeAttributeMap = null;
+    private _selectedCornerFirstCoords : Vector = null;
     private _mergeKey : any;
     private _selectOffsetCoords : Vector = {x: 0, y: 0};
 
@@ -33,7 +34,7 @@ export class EntityMoveTool extends BaseTool {
                 private _entityPositionService : EntityPositionService,
                 private _selectionService : SelectionService,
                 private _entityEligibleForResizeService : EntityEligibleResizeService,
-                private _entityResizeService : EntityResizeService,
+                private _entitySizeService : EntitySizeService,
                 private _entityBoxService : EntityBoxService) {
         super();
     }
@@ -101,12 +102,21 @@ export class EntityMoveTool extends BaseTool {
         }
 
         let anchorCorner = this._getAnchorCorner(this._selectedCorner);
-        this._entityResizeService.resizeEntity(
+        this._entitySizeService.setSize(
             selectedEntityKey,
-            this._selectedCornerLastCoords,
-            currentCoords,
+            this._getNewSizeAttributeMap(currentCoords),
             this._mergeKey);
-        this._selectedCornerLastCoords = currentCoords;
+    }
+
+    private _getNewSizeAttributeMap(currentCoords : Vector) : SizeAttributeMap {
+        let newSizeAttributeMap : SizeAttributeMap = {};
+        for (let key in this._entitySizeAttributeMap) {
+            let coordsOffset = vectorSubtract(currentCoords, this._selectedCornerFirstCoords);
+            newSizeAttributeMap[key] = vectorAdd(
+                this._entitySizeAttributeMap[key],
+                vectorMultiply(coordsOffset, {x: 2, y: 2}));
+        }
+        return newSizeAttributeMap;
     }
 
     private _getAnchorCorner(corner : Vector) : Vector {
@@ -136,8 +146,11 @@ export class EntityMoveTool extends BaseTool {
 
     private _cornerClicked(whichCorner : Vector, clickedCoords : Vector) {
         this._selectedCorner = whichCorner;
-        this._selectedCornerLastCoords = clickedCoords;
+        this._selectedCornerFirstCoords = clickedCoords;
         this._mergeKey = newMergeKey();
+        this._entitySizeAttributeMap = this._entitySizeService.getSize(
+            this._selectionService.selection.value.selectedEntity,
+            this._mergeKey);
     }
 
     private _tryEntitySelect(clickedCoords : Vector) {
@@ -154,7 +167,8 @@ export class EntityMoveTool extends BaseTool {
     private _cancel() {
         this._selection = null;
         this._selectedCorner = null;
-        this._selectedCornerLastCoords = null;
+        this._selectedCornerFirstCoords = null;
+        this._entitySizeAttributeMap = null;
     }
 
     private _buildSelectionBox(scale : number) : DisplayObject {
