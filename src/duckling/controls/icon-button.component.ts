@@ -20,7 +20,8 @@ import {IconComponent} from './icon.component';
             [title]="tooltip"
             [disableRipple]=true
             [disabled]="disabled"
-            [color]="color">
+            [color]="color"
+            (click)="onButtonClicked()">
             &nbsp;
             <dk-icon [iconClass]="icon"></dk-icon>
             &nbsp;
@@ -31,7 +32,8 @@ import {IconComponent} from './icon.component';
             [title]="tooltip"
             [disableRipple]=true
             [disabled]="disabled"
-            [color]="color">
+            [color]="color"
+            (click)="onButtonClicked()">
             &nbsp;
             <dk-icon [iconClass]="icon"></dk-icon>
             &nbsp;
@@ -44,4 +46,9 @@ export class IconButtonComponent {
     @Input() tooltip : string = "";
     @Input() isRaised : boolean = false;
     @Input() disabled : boolean = false;
+    @Output() click = new EventEmitter<boolean>();
+
+    onButtonClicked() {
+        this.click.emit(true);
+    }
 }

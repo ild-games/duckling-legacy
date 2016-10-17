@@ -23,17 +23,18 @@ export type LayerGetter = (attribute : Attribute) => Number;
 @Injectable()
 export class EntityLayerService extends BaseAttributeService<LayerGetter> {
 
+    private _hiddenLayers : {[layerKey : string] : boolean} = {};
+
     constructor(private _entitySystemService : EntitySystemService) {
         super();
     }
+
 
     /**
      * Get the layer of the entity
      * @param entityKey The key of the entity to get the layer from
      */
-    getLayer(entityKey: EntityKey) {
-        let entity = this._entitySystemService.getEntity(entityKey);
-
+     getLayer(entity: Entity) {
         for (let key in entity) {
             let getLayer = this.getImplementation(key);
             if (getLayer) {
@@ -41,5 +42,35 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
             }
         }
     }
+
+    getLayers() : Layer[] {
+        let layers : Layer[] = [];
+        let layersAccountedFor = new Set<string>();
+        let entitySystem = this._entitySystemService.entitySystem.value;
+
+        entitySystem.forEach((entity : Entity) => {
+            let layerKey = "" + this.getLayer(entity);
+            if (layersAccountedFor.has(layerKey)) return;
+            if (layerKey !== undefined && layerKey !== null) {
+                layers.push({
+                    layerName: layerKey,
+                    isVisible: !this._hiddenLayers[layerKey]
+                });
+                layersAccountedFor.add(layerKey);
+            }
+        });
+
+        return layers;
+    }
+
+    toggleLayerVisibility(layerKey : string) {
+        this._hiddenLayers[layerKey] = !this._hiddenLayers[layerKey];
+    }
+}
+
+export type Layer = {
+
+    layerName : string;
+    isVisible : Boolean;
 
 }

@@ -8,15 +8,9 @@ import {
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {ProjectService, AssetService} from '../project';
+import {EntityLayerService,Layer} from '../entitysystem';
 import {DialogService, PathService} from '../util';
 
-/*
-export type LayerDialogResult = {
-    numFrames : number,
-    frameDimensions : Vector,
-    imageKey : string,
-}
-*/
 @Component({
     selector: 'dk-layer-dialog',
     styleUrls: ['./duckling/controls/layer-dialog.component.css'],
@@ -26,13 +20,11 @@ export type LayerDialogResult = {
                 <md-list-item
                 *ngFor="let layer of layers">
                     <dk-icon-button *ngIf="layer.isVisible"
-                        class="shown-layer-button"
                         tooltip="Hide layer"
                         icon="eye"
-                        (click)="toggleLayerVisibility(layer)">
+                        (click)="console.log('hello')">
                     </dk-icon-button>
                     <dk-icon-button *ngIf="!layer.isVisible"
-                        class="hidden-layer-button"
                         tooltip="Show layer"
                         icon="eye-slash"
                         (click)="toggleLayerVisibility(layer)">
@@ -46,35 +38,20 @@ export type LayerDialogResult = {
 })
 export class LayerDialogComponent {
 
-    @Input() layers : Layer[] = [{layerName: "layer1", isVisible: true}, {layerName: "layer2", isVisible: false}];
-
     constructor(private _dialogRef : MdDialogRef<LayerDialogComponent>,
                 private _path : PathService,
                 private _dialog : DialogService,
                 private _assets : AssetService,
-                private _project : ProjectService) {
+                private _project : ProjectService,
+                private _entityLayerService : EntityLayerService) {
     }
 
-    get dialogOptions() {
-        return {
-            defaultPath: this._project.project.home,
-            properties: [
-                'openFile'
-            ],
-            filters: [
-                {name: 'Images', extensions: ['png']},
-            ]
-        }
+    get layers() : Layer[] {
+        return Array.from(this._entityLayerService.getLayers());
     }
 
     toggleLayerVisibility(layer : Layer) {
-        layer.isVisible = !layer.isVisible;
+        console.log("Waddup");
+        this._entityLayerService.toggleLayerVisibility(layer.layerName);
     }
-}
-
-class Layer {
-
-    layerName : String;
-    isVisible : Boolean;
-
 }
