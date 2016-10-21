@@ -20,6 +20,7 @@ import {
             </dk-section-header>
             <dk-section-header
                 *ngIf="!collapsible"
+                [collapsible]="false"
                 [headerText]="headerText"
                 [checkboxMode]="false">
             </dk-section-header>

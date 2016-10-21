@@ -2,6 +2,10 @@
 @import '../colors';
 @import '../forms';
 
+:host {
+    display: block;
+}
+
 md-card {
     padding: 0;
     margin-top: $spacer-unit;
