@@ -6,11 +6,7 @@ var watch = require('gulp-watch');
 gulp.task('css', function() {
     return gulp.src(
         [
-            'src/duckling/index.scss',
-            'src/duckling/colors.scss',
-            'src/duckling/fonts.scss',
-            'src/duckling/forms.scss',
-            'src/duckling/misc-mixins.scss',
+            'src/duckling/*.scss',
             'src/duckling/**/*component.scss'
         ])
         .pipe(sass())
