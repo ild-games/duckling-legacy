@@ -6,11 +6,17 @@ import {StoreService} from './store.service';
 
 type Options = any;
 
+/**
+ * State for the Options service.
+ */
 export interface OptionsState {
     isLoaded : boolean;
     options? : Options;
 }
 
+/**
+ * Reducer used to update the options state.
+ */
 export function optionsReducer(state : OptionsState = {isLoaded : false}, action : Action) {
     switch (action.type) {
         case SET_OPTIONS:
@@ -30,7 +36,13 @@ export class OptionsService {
 
     }
 
-    loadSettings(configFile : string) : Promise<Options> {
+    /**
+     * Load the given settings file. Should be called during the duckling bootstrap
+     * process before the project is displayed.
+     * @param  configFile The configuration file that will be loaded.
+     * @return A promise that resolves once the settings are loaded.
+     */
+    loadSettings(configFile : string) : Promise<any> {
         return this._jsonLoader.getJsonFromPath(configFile).then((options) => {
             return JSON.parse(options) || {};
         }).then((options : any) => {
@@ -41,6 +53,11 @@ export class OptionsService {
         });
     }
 
+    /**
+     * Retrieve a specific setting.
+     * @param settingKey The setting that is being retrieved.
+     * @param defaultValue The value that should be used for a setting if none is provided.
+     */
     getSetting<S>(settingKey : string, defaultValue? : S) {
         let settings = this._optionState.options;
         if (settingKey in settings) {
