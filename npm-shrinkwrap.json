@@ -82,11 +82,6 @@
       "from": "@types/node@>=6.0.38 <7.0.0",
       "resolved": "https://registry.npmjs.org/@types/node/-/node-6.0.45.tgz"
     },
-    "@types/opentype": {
-      "version": "0.0.4",
-      "from": "@types/opentype@latest",
-      "resolved": "https://registry.npmjs.org/@types/opentype/-/opentype-0.0.4.tgz"
-    },
     "@types/pixi.js": {
       "version": "3.0.30",
       "from": "@types/pixi.js@>=3.0.29 <4.0.0",
@@ -2468,11 +2463,6 @@
       "version": "1.1.1",
       "from": "open-iconic@>=1.1.1 <2.0.0",
       "resolved": "https://registry.npmjs.org/open-iconic/-/open-iconic-1.1.1.tgz"
-    },
-    "opentype.js": {
-      "version": "0.6.5",
-      "from": "opentype.js@latest",
-      "resolved": "https://registry.npmjs.org/opentype.js/-/opentype.js-0.6.5.tgz"
     },
     "orchestrator": {
       "version": "0.3.7",

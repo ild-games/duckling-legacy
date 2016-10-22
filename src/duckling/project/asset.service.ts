@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {loader, Texture} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
-import * as WebFont from 'webfontloader';
-let opentype = require('opentype.js');
+import {load as webFontLoader} from 'webfontloader';
 
 import {AttributeKey, Entity} from '../entitysystem';
 import {StoreService} from '../state/store.service';
@@ -47,11 +46,27 @@ export class AssetService {
         }
         if (!this._assets[asset.key]) {
             this._assets[asset.key] = asset;
-            loader.once('complete', () => this._onAssetLoaded(asset, editorSpecific));
-            loader
-                .add(asset.key, filePath)
-                .load();
+            if (asset.type === "FontTTF") {
+                this._loadFont(asset, filePath, editorSpecific)
+            } else {
+                loader.once('complete', () => this._onAssetLoaded(asset, editorSpecific));
+                loader.add(asset.key, filePath).load();
+            }
         }
+    }
+
+    /**
+     * Fonts are loaded using the webkit WebFontLoader and not the pixi loader
+     */
+    private _loadFont(asset : Asset, filePath : string, editorSpecific? : boolean) {
+        let fontFamily = this.fontFamilyFromAssetKey(asset.key);
+        this._createFontFace(fontFamily, filePath);
+        webFontLoader({
+            custom: {
+                families: [fontFamily]
+            },
+            fontactive: () => this._onAssetLoaded(asset, editorSpecific)
+        });
     }
 
     /**
@@ -68,7 +83,7 @@ export class AssetService {
             case "TexturePNG":
                 return this._getTexture(key);
             case "FontTTF":
-                return this._getFont(key);
+                throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
             default:
                 throw new Error("Unknown asset type: " + type);
         }
@@ -77,13 +92,6 @@ export class AssetService {
     private _getTexture(key : string) : any {
         if (loader.resources[key]) {
             return loader.resources[key].texture;
-        }
-        return null;
-    }
-
-    private _getFont(key : string) : any {
-        if (this._fontObjects[key]) {
-            return this._fontObjects[key];
         }
         return null;
     }
@@ -134,45 +142,28 @@ export class AssetService {
         });
     }
 
+    /**
+     * Gets the registered font family for the given asset key.
+     * Font families aren't allowed to have / in the name, so they are
+     * replaced with a -
+     * @param  assetKey Font asset key to get the font family for
+     * @return font family
+     */
+    fontFamilyFromAssetKey(assetKey : string) : string {
+        return assetKey.replace(/\//g, '-');
+    }
+
     get assets() : {[key : string] : Asset} {
         return this._assets;
     }
 
     private _onAssetLoaded(asset : Asset, editorSpecific : boolean) {
-        this._postAssetLoadAction(asset).then(() => {
-            this._loadedAssets[asset.key] = true;
-            this._preloadedImagesLoaded[asset.key] = true;
-            this.assetLoaded.next(asset);
-            if (this._allPreloadedImagesLoaded()) {
-                this.preloadImagesLoaded.next(true);
-            }
-        });
-    }
-
-    private _postAssetLoadAction(asset : Asset) : Promise<any> {
-        if (asset.type === "FontTTF") {
-            return this._loadFont(asset);
+        this._loadedAssets[asset.key] = true;
+        this._preloadedImagesLoaded[asset.key] = true;
+        this.assetLoaded.next(asset);
+        if (this._allPreloadedImagesLoaded()) {
+            this.preloadImagesLoaded.next(true);
         }
-        return new Promise<any>(resolve => resolve());
-    }
-
-    private _loadFont(asset : Asset) : Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            let file = this._store.getState().project.home + "/resources/" + asset.key + "." + this._fileExtensionFromType(asset.type);
-            opentype.load(file, (err : any, font : any) => {
-                if (err) {
-                    reject(err);
-                }
-                this._fontObjects[asset.key] = font;
-                this._createFontFace(font.names.fontFamily.en, file);
-                WebFont.load({
-                    custom: {
-                        families: [font.names.fontFamily.en]
-                    },
-                    fontactive: () => resolve()
-                })
-            });
-        });
     }
 
     private _allPreloadedImagesLoaded() {

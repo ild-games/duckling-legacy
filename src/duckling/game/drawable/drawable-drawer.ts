@@ -174,27 +174,23 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
         }
     }
     let sprite = new Sprite(texture);
-    sprite.x = -sprite.width / 2;
-    sprite.y = -sprite.height / 2;
+    sprite.anchor.set(0.5, 0.5);
     let container = new Container();
     container.addChild(sprite);
     return container;
 }
 
 function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService) : DisplayObject {
-    let font = assetService.get(textDrawable.text.fontKey, "FontTTF");
-    if (!font) {
-        return drawMissingAsset(assetService);
-    }
-
+    let fontKey = textDrawable.text.fontKey || "Arial";
+    let colorHex = "#" + colorToHex(textDrawable.text.color);
     let text = new PIXI.Text(
         textDrawable.text.text,
         {
-            fontFamily: font.names.fontFamily.en,
-            fontSize: textDrawable.text.characterSize
+            fontFamily: assetService.fontFamilyFromAssetKey(fontKey),
+            fontSize: textDrawable.text.characterSize,
+            fill: colorHex
         } as PIXI.TextStyle);
-    text.x = -text.width / 2;
-    text.y = -text.height / 2;
+    text.anchor.set(0.5, 0.5);
     return text;
 }
 

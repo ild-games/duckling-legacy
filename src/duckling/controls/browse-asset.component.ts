@@ -54,12 +54,11 @@ export class BrowseAssetComponent {
         this._dialog.showOpenDialog(
             this.dialogOptions,
             (fileNames : string[]) => {
-                if (fileNames[0]) {
+                if (fileNames && fileNames[0]) {
                     this.onFilePicked(fileNames[0])
                 }
             });
     }
-
 
     onFilePicked(file : string) {
         if (!file) {
