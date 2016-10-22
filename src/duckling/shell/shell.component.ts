@@ -2,7 +2,8 @@ import {
     Component,
     Input,
     ChangeDetectorRef,
-    OnDestroy
+    OnDestroy,
+    OnInit
 } from '@angular/core';
 import {Subscriber} from 'rxjs';
 
@@ -15,6 +16,7 @@ import {Asset, AssetService} from '../project/asset.service';
 import {ProjectService} from '../project/project.service';
 import {WindowService, PathService} from '../util';
 import {StoreService} from '../state';
+import {OptionsService} from '../state/options.service';
 
 @Component({
     selector: 'dk-shell',
@@ -44,16 +46,27 @@ import {StoreService} from '../state';
         </div>
     `
 })
-export class ShellComponent implements OnDestroy {
+export class ShellComponent implements OnInit, OnDestroy {
     private _editorImagesLoaded : boolean = false;
     private _assetServiceSubscription : Subscriber<any>;
 
     constructor(public projectService : ProjectService,
                 private _assetService : AssetService,
                 private _pathService : PathService,
+                private _optionsService : OptionsService,
                 private _windowService : WindowService,
                 private _fileToolbar : FileToolbarService,
                 private _store : StoreService) {
+    }
+
+    ngOnDestroy() {
+        this._assetServiceSubscription.unsubscribe();
+    }
+
+    ngOnInit() {
+        let home = this._pathService.home();
+        this._optionsService.loadSettings(this._pathService.join(home, ".duckling", "options.json"));
+
         this._windowService.setMinimumSize(0, 0);
         this._initToolbar();
         this._assetService.loadPreloadedEditorImages();
@@ -61,10 +74,6 @@ export class ShellComponent implements OnDestroy {
         this._assetServiceSubscription = this._assetService.preloadImagesLoaded.subscribe((allLoaded : boolean) => {
             this._editorImagesLoaded = allLoaded;
         }) as Subscriber<any>;
-    }
-
-    ngOnDestroy() {
-        this._assetServiceSubscription.unsubscribe();
     }
 
     onProjectOpened(path : string) {
@@ -95,7 +104,8 @@ export class ShellComponent implements OnDestroy {
     }
 
     get showLoading() {
-        return !this.showSplash && !(this.projectService.project.loaded && this._editorImagesLoaded);
+        let loadFinished = this.projectService.project.loaded && this._optionsService.isLoaded && this._editorImagesLoaded;
+        return !this.showSplash && !loadFinished;
     }
 
     get showProject() {

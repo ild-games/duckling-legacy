@@ -23,6 +23,7 @@ import {
 
 import {Vector} from '../math';
 import {isMouseButtonPressed, MouseButton, WindowService, KeyboardCode} from '../util';
+import {OptionsService} from '../state/options.service';
 
 import {ZOOM_LEVELS, DEFAULT_ZOOM_LEVEL} from './_toolbars/canvas-scale.component';
 import {drawRectangle} from './drawing/util';
@@ -103,6 +104,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _viewInited = false;
 
     constructor(private _changeDetector : ChangeDetectorRef,
+                private _optionsService : OptionsService,
                 private _window : WindowService,
                 private _toolService : ToolService) {
     }
@@ -111,10 +113,17 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this._viewInited = true;
         this.setupContainingElementEvents();
 
-        this._renderer = new WebGLRenderer(
-            this.elementDimensions.x,
-            this.elementDimensions.y,
-            {view: this.canvasRoot.nativeElement});
+        if (this._optionsService.getSetting("useWebGL", true)) {
+            this._renderer = new WebGLRenderer(
+                this.elementDimensions.x,
+                this.elementDimensions.y,
+                {view: this.canvasRoot.nativeElement});
+        } else {
+            this._renderer = new CanvasRenderer(
+                this.elementDimensions.x,
+                this.elementDimensions.y,
+                {view: this.canvasRoot.nativeElement});
+        }
         this._renderer.backgroundColor = 0xDFDFDF;
 
         this._resizeCanvasElements();
