@@ -34,9 +34,8 @@ Ducking defaults to WebGL for rendering the game map. Some graphics drivers have
 with the WebGL renderer. You can use the canvas renderer by setting the "useWebGL" key to false.
 
 #### Example
-`
-// In $HOME/.duckling/options.json
+```
 {
     "useWebGL" : false
 }
-`
+```
