@@ -6,6 +6,7 @@ import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
 import {ImageDrawable} from './image-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {AnimatedDrawable} from './animated-drawable';
+import {TextDrawable} from './text-drawable';
 
 /**
  * Gets the required assets for a given entity's DrawableAttribute
@@ -29,6 +30,8 @@ function _drawableRequiredAssets(drawable : Drawable) : AssetMap {
             return _containerDrawableRequiredAssets(drawable as ContainerDrawable);
         case DrawableType.Animated:
             return _animatedDrawableRequiredAssets(drawable as AnimatedDrawable);
+        case DrawableType.Text:
+            return _textDrawableRequiredAssets(drawable as TextDrawable);
     }
     return {};
 }
@@ -59,5 +62,18 @@ function _animatedDrawableRequiredAssets(animatedDrawable : AnimatedDrawable) : 
     for (let drawable of animatedDrawable.frames) {
         assets = Object.assign(assets, _drawableRequiredAssets(drawable));
     }
+    return assets;
+}
+
+function _textDrawableRequiredAssets(textDrawable : TextDrawable) : AssetMap {
+    let assets : AssetMap = {};
+    if (!textDrawable.text.fontKey) {
+        return assets;
+    }
+
+    assets[textDrawable.text.fontKey] = {
+        type: "FontTTF",
+        key: textDrawable.text.fontKey
+    };
     return assets;
 }

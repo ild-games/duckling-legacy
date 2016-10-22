@@ -25,6 +25,7 @@ import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
 import {AnimatedDrawable} from './animated-drawable';
+import {TextDrawable} from './text-drawable';
 import {ShapeType, Shape, cppTypeToShapeType} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
@@ -69,6 +70,9 @@ function _drawDrawable(drawable : Drawable, assetService : AssetService) : Drawn
             break;
         case DrawableType.Animated:
             drawnObject = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService);
+            break;
+        case DrawableType.Text:
+            drawnObject = _drawTextDrawable(drawable as TextDrawable, assetService);
             break;
         default:
             drawnObject = null;
@@ -151,7 +155,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
         return null;
     }
 
-    let baseTexture = assetService.get(imageDrawable.textureKey);
+    let baseTexture = assetService.get(imageDrawable.textureKey, "TexturePNG");
     if (!baseTexture) {
         return null;
     }
@@ -175,6 +179,23 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
     let container = new Container();
     container.addChild(sprite);
     return container;
+}
+
+function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService) : DisplayObject {
+    let font = assetService.get(textDrawable.text.fontKey, "FontTTF");
+    if (!font) {
+        return drawMissingAsset(assetService);
+    }
+
+    let text = new PIXI.Text(
+        textDrawable.text.text,
+        {
+            fontFamily: font.names.fontFamily.en,
+            fontSize: textDrawable.text.characterSize
+        } as PIXI.TextStyle);
+    text.x = -text.width / 2;
+    text.y = -text.height / 2;
+    return text;
 }
 
 function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : Texture) {

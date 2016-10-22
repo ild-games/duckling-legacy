@@ -15,6 +15,7 @@ import {defaultShapeDrawable} from './shape-drawable';
 import {defaultContainerDrawable} from './container-drawable';
 import {defaultAnimatedDrawable} from './animated-drawable';
 import {defaultImageDrawable} from './image-drawable';
+import {defaultTextDrawable} from './text-drawable';
 import {ShapeDrawableComponent} from './shape-drawable.component';
 import {ContainerDrawableComponent} from './container-drawable.component';
 import {AnimatedDrawableComponent} from './animated-drawable.component';
@@ -38,6 +39,8 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
             return defaultImageDrawable;
         case DrawableType.Animated:
             return defaultAnimatedDrawable;
+        case DrawableType.Text:
+            return defaultTextDrawable;
     }
 }
 
@@ -84,6 +87,12 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
                 [animatedDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-animated-drawable>
+
+            <dk-text-drawable
+                *ngSwitchCase="DrawableType.Text"
+                [textDrawable]="drawable"
+                (drawableChanged)="specificDrawableChanged($event)">
+            </dk-text-drawable>
         </div>
     `
 })
