@@ -18,7 +18,7 @@ import {StoreService} from '../state';
 
 @Component({
     selector: 'dk-shell',
-    styleUrls: ['./duckling/shell/shell.component.css'],
+    styleUrls: ['./duckling/shell/shell.component.css', './duckling/layout.css'],
     template: `
         <div *ngIf="showSplash">
             <dk-splash-screen
@@ -26,8 +26,8 @@ import {StoreService} from '../state';
             </dk-splash-screen>
         </div>
 
-        <div *ngIf="showLoading">
-            Loading...
+        <div *ngIf="showLoading" class="dk-centered-container">
+            <md-spinner></md-spinner>
         </div>
 
         <div class="shell" *ngIf="showProject">
@@ -95,11 +95,7 @@ export class ShellComponent implements OnDestroy {
     }
 
     get showLoading() {
-        return (
-            !this.showSplash &&
-            !this.projectService.project.loaded &&
-            !this._editorImagesLoaded
-        );
+        return !this.showSplash && !(this.projectService.project.loaded && this._editorImagesLoaded);
     }
 
     get showProject() {
