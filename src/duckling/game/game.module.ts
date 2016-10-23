@@ -15,6 +15,8 @@ import {CircleComponent} from './drawable/circle.component';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
 import {GenericDrawableComponent} from './drawable/generic-drawable.component';
 import {ImageDrawableComponent} from './drawable/image-drawable.component';
+import {TextDrawableComponent} from './drawable/text-drawable.component';
+import {SFMLTextComponent} from './drawable/sfml-text.component';
 import {RectangleComponent} from './drawable/rectangle.component';
 import {ShapeDrawableComponent} from './drawable/shape-drawable.component';
 import {GenericShapeComponent} from './drawable/generic-shape.component';
@@ -54,6 +56,8 @@ const ATTRIBUTE_COMPONENTS = [
         DrawableComponent,
         GenericDrawableComponent,
         ImageDrawableComponent,
+        TextDrawableComponent,
+        SFMLTextComponent,
         RectangleComponent,
         ShapeDrawableComponent,
         GenericShapeComponent,

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {loader, Texture} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
+import {load as webFontLoader} from 'webfontloader';
 
 import {AttributeKey, Entity} from '../entitysystem';
 import {StoreService} from '../state/store.service';
@@ -8,7 +9,7 @@ import {PathService} from '../util/path.service';
 
 import {RequiredAssetService} from './required-asset.service';
 
-export type AssetType = "TexturePNG";
+export type AssetType = "TexturePNG" | "FontTTF";
 
 export interface Asset {
     type : AssetType,
@@ -28,27 +29,44 @@ export class AssetService {
     private _assets : {[key : string] : Asset} = {};
     private _loadedAssets : {[key : string] : boolean} = {};
     private _preloadedImagesLoaded : {[key : string] : boolean} = {};
+    private _fontObjects : {[key : string] : any} = {};
     assetLoaded : BehaviorSubject<Asset> = new BehaviorSubject(null);
     preloadImagesLoaded : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-    /**
+    /*
      * Add a new asset into the asset service
      * @param  asset Asset to add
      * @param  filePath Optional filepath the asset is located. The default is /resources/<asset_key>.png
      * @param  editorSpecific Optional boolean that says if the resource is an editor specific resource, default is false.
      */
     add(asset : Asset, filePath? : string, editorSpecific? : boolean) {
-        filePath = filePath || this._store.getState().project.home + "/resources/" + asset.key + ".png";
+        filePath = filePath || this._store.getState().project.home + "/resources/" + asset.key + "." + this._fileExtensionFromType(asset.type);
         if (editorSpecific) {
             asset.key = EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key;
         }
         if (!this._assets[asset.key]) {
             this._assets[asset.key] = asset;
-            loader.once('complete', () => this._onAssetLoaded(asset, editorSpecific));
-            loader
-                .add(asset.key, filePath)
-                .load();
+            if (asset.type === "FontTTF") {
+                this._loadFont(asset, filePath, editorSpecific)
+            } else {
+                loader.once('complete', () => this._onAssetLoaded(asset, editorSpecific));
+                loader.add(asset.key, filePath).load();
+            }
         }
+    }
+
+    /**
+     * Fonts are loaded using the webkit WebFontLoader and not the pixi loader
+     */
+    private _loadFont(asset : Asset, filePath : string, editorSpecific? : boolean) {
+        let fontFamily = this.fontFamilyFromAssetKey(asset.key);
+        this._createFontFace(fontFamily, filePath);
+        webFontLoader({
+            custom: {
+                families: [fontFamily]
+            },
+            fontactive: () => this._onAssetLoaded(asset, editorSpecific)
+        });
     }
 
     /**
@@ -57,14 +75,36 @@ export class AssetService {
      * @param  editorSpecific Optional boolean that determines if the asset is an editor specific resource, default is false.
      * @return Raw asset
      */
-    get(key : string, editorSpecific? : boolean) : any {
+    get(key : string, type : AssetType, editorSpecific? : boolean) : any {
         if (editorSpecific) {
             key = EDITOR_SPECIFIC_IMAGE_PREFIX + key;
         }
+        switch (type) {
+            case "TexturePNG":
+                return this._getTexture(key);
+            case "FontTTF":
+                throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
+            default:
+                throw new Error("Unknown asset type: " + type);
+        }
+    }
+
+    private _getTexture(key : string) : any {
         if (loader.resources[key]) {
             return loader.resources[key].texture;
         }
         return null;
+    }
+
+    private _createFontFace(fontFamilyName : string, file : string) {
+        let newStyle = document.createElement('style');
+        newStyle.appendChild(document.createTextNode("\
+            @font-face {\
+                font-family: '" + fontFamilyName + "';\
+                src: url('" + file + "');\
+            }\
+        "))
+        document.head.appendChild(newStyle);;
     }
 
     /**
@@ -100,6 +140,17 @@ export class AssetService {
         this._path.walk("resources/images/preloaded-editor").then((files : string[]) => {
             this._preloadEditorImages(files)
         });
+    }
+
+    /**
+     * Gets the registered font family for the given asset key.
+     * Font families aren't allowed to have / in the name, so they are
+     * replaced with a -
+     * @param  assetKey Font asset key to get the font family for
+     * @return font family
+     */
+    fontFamilyFromAssetKey(assetKey : string) : string {
+        return assetKey.replace(/\//g, '-');
     }
 
     get assets() : {[key : string] : Asset} {
@@ -142,5 +193,17 @@ export class AssetService {
         let folderPieces = imageFile.split('/');
         let key = folderPieces[folderPieces.length - 1];
         return key.replace('.png', '');
+    }
+
+    private _fileExtensionFromType(type : AssetType) : string {
+        switch (type) {
+            case "TexturePNG":
+                return "png";
+            case "FontTTF":
+                return "ttf";
+            default:
+                throw new Error("Unknown asset type: " + type);
+        }
+
     }
 }

@@ -31,6 +31,7 @@
     "@types/lodash": "^4.14.34",
     "@types/node": "^6.0.38",
     "@types/pixi.js": "^3.0.29",
+    "@types/webfontloader": "^1.6.27",
     "es6-shim": "^0.35.1",
     "font-awesome": "^4.6.3",
     "gulp": "^3.9.1",
@@ -44,6 +45,7 @@
     "reflect-metadata": "^0.1.8",
     "rxjs": "^5.0.0-beta.12",
     "systemjs": "^0.19.38",
+    "webfontloader": "^1.6.26",
     "zone.js": "^0.6.23"
   },
   "devDependencies": {

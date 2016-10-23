@@ -110,7 +110,7 @@ export class ImageDrawableComponent {
     }
 
     get _assetDimensions() : Rectangle {
-        let texture = this._assets.get(this.imageDrawable.textureKey);
+        let texture = this._assets.get(this.imageDrawable.textureKey, "TexturePNG");
         if (!texture) {
             return new Rectangle(0, 0, 0, 0);
         }

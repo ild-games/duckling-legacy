@@ -25,6 +25,7 @@ import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
 import {AnimatedDrawable} from './animated-drawable';
+import {TextDrawable} from './text-drawable';
 import {ShapeType, Shape, cppTypeToShapeType} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
@@ -69,6 +70,9 @@ function _drawDrawable(drawable : Drawable, assetService : AssetService) : Drawn
             break;
         case DrawableType.Animated:
             drawnObject = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService);
+            break;
+        case DrawableType.Text:
+            drawnObject = _drawTextDrawable(drawable as TextDrawable, assetService);
             break;
         default:
             drawnObject = null;
@@ -151,7 +155,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
         return null;
     }
 
-    let baseTexture = assetService.get(imageDrawable.textureKey);
+    let baseTexture = assetService.get(imageDrawable.textureKey, "TexturePNG");
     if (!baseTexture) {
         return null;
     }
@@ -170,11 +174,24 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
         }
     }
     let sprite = new Sprite(texture);
-    sprite.x = -sprite.width / 2;
-    sprite.y = -sprite.height / 2;
+    sprite.anchor.set(0.5, 0.5);
     let container = new Container();
     container.addChild(sprite);
     return container;
+}
+
+function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService) : DisplayObject {
+    let fontKey = textDrawable.text.fontKey || "Arial";
+    let colorHex = "#" + colorToHex(textDrawable.text.color);
+    let text = new PIXI.Text(
+        textDrawable.text.text,
+        {
+            fontFamily: assetService.fontFamilyFromAssetKey(fontKey),
+            fontSize: textDrawable.text.characterSize,
+            fill: colorHex
+        } as PIXI.TextStyle);
+    text.anchor.set(0.5, 0.5);
+    return text;
 }
 
 function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : Texture) {
