@@ -1,7 +1,8 @@
 import {Container, DisplayObject, Point} from 'pixi.js';
 
-import {Box2, EMPTY_BOX, boxUnion} from '../../math/box2';
+import {Box2, EMPTY_BOX, boxUnion, boxFromWidthHeight} from '../../math/box2';
 import {Vector} from '../../math/vector';
+import {immutableAssign} from '../../util/model';
 
 /**
  * Animation contains multiple canvas drawn elements that make up the frames of
@@ -145,19 +146,39 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
         throw Error("Unknown DrawnConstruct type in drawable-bounding-box::getDrawnConstructBounds");
     }
 
+    if (isAnimationConstruct(drawnConstruct)) {
+        return _animationBounds(drawnConstruct);
+    } else {
+        return _displayObjectBounds(displayObjectForDrawnConstruct(drawnConstruct));
+    }
+}
+
+function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
+    if (!displayObject) {
+        return null;
+    }
+    
     let container = new Container();
-    let displayObject = displayObjectForDrawnConstruct(drawnConstruct);
     container.addChild(displayObject);
     displayObject.updateTransform();
     let displayObjectBounds = container.getBounds();
-    return {
-        position: {x: 0, y: 0},
-        dimension: {
-            x: displayObjectBounds.width,
-            y: displayObjectBounds.height
-        },
-        rotation: 0
-    };
+    return boxFromWidthHeight(displayObjectBounds.width, displayObjectBounds.height);
+}
+
+/**
+ * Animation bounds are the union of all the frames
+ */
+function _animationBounds(animationConstruct : AnimationConstruct) : Box2 {
+    let box : Box2 = immutableAssign(EMPTY_BOX, {});
+    for (let frame of animationConstruct.frames) {
+        if (frame) {
+            let frameBox = drawnConstructBounds(frame);
+            if (frameBox) {
+                box = boxUnion(box, frameBox);
+            }
+        }
+    }
+    return box;
 }
 
 /**
