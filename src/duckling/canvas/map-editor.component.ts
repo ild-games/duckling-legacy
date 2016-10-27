@@ -28,7 +28,7 @@ import {
     AnimationConstruct,
     isAnimationConstruct,
     ContainerConstruct,
-    isContainerContruct,
+    isContainerConstruct,
     displayObjectsForDrawnConstructs
 } from './drawing';
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';

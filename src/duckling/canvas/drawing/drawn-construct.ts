@@ -1,8 +1,8 @@
-import {Container, DisplayObject} from 'pixi.js';
+import {Container, DisplayObject, Point} from 'pixi.js';
 
-import {Box2, EMPTY_BOX, boxUnion} from '../../math/box2';
+import {Box2, EMPTY_BOX, boxUnion, boxFromWidthHeight} from '../../math/box2';
 import {Vector} from '../../math/vector';
-import {immutableAssign} from '../../util';
+import {immutableAssign} from '../../util/model';
 
 /**
  * Animation contains multiple canvas drawn elements that make up the frames of
@@ -11,7 +11,10 @@ import {immutableAssign} from '../../util';
 export type AnimationConstruct = {
     type: "ANIMATION",
     duration: number,
-    frames: DrawnConstruct[]
+    frames: DrawnConstruct[],
+    position: Vector,
+    rotation: number,
+    scale: Vector
 };
 
 /**
@@ -19,7 +22,10 @@ export type AnimationConstruct = {
  */
 export type ContainerConstruct = {
     type: "CONTAINER",
-    childConstructs: DrawnConstruct[]
+    childConstructs: DrawnConstruct[],
+    position: Vector,
+    rotation: number,
+    scale: Vector
 };
 
 /**
@@ -27,6 +33,15 @@ export type ContainerConstruct = {
  * the types that can be drawn by the map
  */
 export type DrawnConstruct = AnimationConstruct | ContainerConstruct | DisplayObject;
+
+/**
+ * Determines if a given object is a DrawnConstruct
+ * @param  object object used to determine if it is an DrawnConstruct
+ * @return True if the object is a DrawnConstruct, otherwise false.
+ */
+export function isDrawnConstruct(object : any) : object is DrawnConstruct {
+    return isAnimationConstruct(object) || isContainerConstruct(object) || isDisplayObject(object);
+}
 
 /**
  * Determines if a given DrawnConstruct is an animation
@@ -42,7 +57,7 @@ export function isAnimationConstruct(object : DrawnConstruct) : object is Animat
  * @param  object DrawnConstruct used to determine if it is a container
  * @return True if the DrawnConstruct is a container, otherwise false.
  */
-export function isContainerContruct(object : DrawnConstruct) : object is ContainerConstruct {
+export function isContainerConstruct(object : DrawnConstruct) : object is ContainerConstruct {
     return object && (object as ContainerConstruct).type === "CONTAINER";
 }
 
@@ -52,7 +67,7 @@ export function isContainerContruct(object : DrawnConstruct) : object is Contain
  * @return True if the DrawnConstruct is a DisplayObject, otherwise false.
  */
 export function isDisplayObject(object : DrawnConstruct) : object is DisplayObject {
-    return object && !isAnimationConstruct(object) && !isContainerContruct(object);
+    return object && !isAnimationConstruct(object) && !isContainerConstruct(object);
 }
 
 /**
@@ -83,18 +98,10 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     }
 
     let displayObject : DisplayObject = null;
-
     if (isAnimationConstruct(drawnConstruct)) {
-        displayObject = _determineAnimationDisplayObject(drawnConstruct, totalMillis);
-    } else if (isContainerContruct(drawnConstruct)) {
-        let container = new Container();
-        for (let childConstruct of drawnConstruct.childConstructs) {
-            let child = displayObjectForDrawnConstruct(childConstruct, totalMillis);
-            if (child) {
-                container.addChild(child);
-            }
-        }
-        displayObject = container;
+        displayObject = _displayObjectForAnimationConstruct(drawnConstruct, totalMillis);
+    } else if (isContainerConstruct(drawnConstruct)) {
+        displayObject = _displayObjectForContainerConstruct(drawnConstruct, totalMillis);
     } else if (isDisplayObject(drawnConstruct)) {
         displayObject = drawnConstruct;
     } else {
@@ -102,6 +109,28 @@ export function displayObjectForDrawnConstruct(drawnConstruct : DrawnConstruct, 
     }
 
     return displayObject;
+}
+
+function _displayObjectForAnimationConstruct(animationConstruct : AnimationConstruct, totalMillis : number) : DisplayObject {
+    let container = new Container();
+    let displayObject = _determineAnimationDisplayObject(animationConstruct, totalMillis);
+    if (displayObject) {
+        container.addChild(displayObject);
+    }
+    _applyDrawnConstructProperties(container, animationConstruct);
+    return container;
+}
+
+function _displayObjectForContainerConstruct(containerConstruct : ContainerConstruct, totalMillis : number) : DisplayObject {
+    let container = new Container();
+    for (let childConstruct of containerConstruct.childConstructs) {
+        let child = displayObjectForDrawnConstruct(childConstruct, totalMillis);
+        if (child) {
+            container.addChild(child);
+        }
+    }
+    _applyDrawnConstructProperties(container, containerConstruct);
+    return container;
 }
 
 /**
@@ -113,18 +142,43 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
     if (!drawnConstruct) {
         return null;
     }
-
-    let bounds : Box2;
-    if (isAnimationConstruct(drawnConstruct)) {
-        bounds = _animationBounds(drawnConstruct);
-    } else if (isContainerContruct(drawnConstruct)) {
-        bounds = _containerBounds(drawnConstruct);
-    } else if (isDisplayObject(drawnConstruct)) {
-        bounds = _displayObjectBounds(drawnConstruct);
-    } else {
+    if (!isDrawnConstruct(drawnConstruct)) {
         throw Error("Unknown DrawnConstruct type in drawable-bounding-box::getDrawnConstructBounds");
     }
-    return bounds;
+
+    if (isAnimationConstruct(drawnConstruct)) {
+        return _animationBounds(drawnConstruct);
+    } else {
+        return _displayObjectBounds(displayObjectForDrawnConstruct(drawnConstruct));
+    }
+}
+
+function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
+    if (!displayObject) {
+        return null;
+    }
+    
+    let container = new Container();
+    container.addChild(displayObject);
+    displayObject.updateTransform();
+    let displayObjectBounds = container.getBounds();
+    return boxFromWidthHeight(displayObjectBounds.width, displayObjectBounds.height);
+}
+
+/**
+ * Animation bounds are the union of all the frames
+ */
+function _animationBounds(animationConstruct : AnimationConstruct) : Box2 {
+    let box : Box2 = immutableAssign(EMPTY_BOX, {});
+    for (let frame of animationConstruct.frames) {
+        if (frame) {
+            let frameBox = drawnConstructBounds(frame);
+            if (frameBox) {
+                box = boxUnion(box, frameBox);
+            }
+        }
+    }
+    return box;
 }
 
 /**
@@ -133,62 +187,25 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
  * @param  position Position to apply to the drawn construct
  */
 export function setConstructPosition(drawable : DrawnConstruct, position : Vector) {
+    function _setDisplayObjectPosition(displayObject : DrawnConstruct) {
+        displayObject.position.x += position.x;
+        displayObject.position.y += position.y;
+    }
     if (!drawable) {
         return;
     }
 
-    if (isAnimationConstruct(drawable)) {
-        for (let frame of drawable.frames) {
-            setConstructPosition(frame, position);
-        }
-    } else if (isContainerContruct(drawable)) {
-        for (let child of drawable.childConstructs) {
-            setConstructPosition(child, position);
-        }
-    } else if (isDisplayObject(drawable)) {
-        _setDisplayObjectPosition(drawable, position);
+    if (isAnimationConstruct(drawable) || isContainerConstruct(drawable) || isDisplayObject(drawable)) {
+        _setDisplayObjectPosition(drawable);
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-drawer::_setPosition");
     }
 }
 
-function _setDisplayObjectPosition(displayObject : DisplayObject, position : Vector) {
-    displayObject.position.x += position.x;
-    displayObject.position.y += position.y;
-}
-
-function _containerBounds(container : ContainerConstruct) : Box2 {
-    return _unionedBounds(container.childConstructs);
-}
-
-function _animationBounds(animation : AnimationConstruct) : Box2 {
-    return _unionedBounds(animation.frames);
-}
-
-function _unionedBounds(drawnConstructs : DrawnConstruct[]) : Box2 {
-    let entireBoundingBox = EMPTY_BOX;
-    for (let construct of drawnConstructs) {
-        let childBox = drawnConstructBounds(construct);
-        if (childBox) {
-            entireBoundingBox = boxUnion(entireBoundingBox, childBox);
-        }
-    }
-    return entireBoundingBox;
-}
-
-function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
-    let container = new Container();
-    container.addChild(displayObject);
-    displayObject.updateTransform();
-    let displayObjectBounds = container.getBounds();
-    return {
-        position: {x: 0, y: 0},
-        dimension: {
-            x: displayObjectBounds.width,
-            y: displayObjectBounds.height
-        },
-        rotation: 0
-    };
+function _applyDrawnConstructProperties(container : Container, drawnConstruct : DrawnConstruct) {
+    container.position = drawnConstruct.position as Point;
+    container.rotation = drawnConstruct.rotation;
+    container.scale = drawnConstruct.scale as Point;
 }
 
 function _determineAnimationDisplayObject(animation : AnimationConstruct, totalMillis : number) : DisplayObject {

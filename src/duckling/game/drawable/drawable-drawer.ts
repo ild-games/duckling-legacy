@@ -1,6 +1,6 @@
 import {ReflectiveInjector} from '@angular/core';
 
-import {Texture, Sprite, Graphics, DisplayObject, Container} from 'pixi.js';
+import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container} from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
 import {AssetService} from '../../project';
@@ -13,8 +13,9 @@ import {
     drawRectangle,
     AnimationConstruct,
     DrawnConstruct,
+    isDrawnConstruct,
     isAnimationConstruct,
-    isContainerContruct,
+    isContainerConstruct,
     isDisplayObject,
     ContainerConstruct
 } from '../../canvas/drawing';
@@ -85,7 +86,7 @@ function _drawDrawable(drawable : Drawable, assetService : AssetService) : Drawn
     return drawnObject;
 }
 
-function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : DisplayObject {
+function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : Graphics {
     let graphics = new Graphics();
     let colorHex = colorToHex(shapeDrawable.shape.fillColor);
     graphics.beginFill(parseInt(colorHex, 16), 1);
@@ -109,7 +110,10 @@ function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetServ
     if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
         return {
             type: "CONTAINER",
-            childConstructs: []
+            childConstructs: [],
+            position: {x: 0, y: 0},
+            rotation: 0,
+            scale: {x: 0, y: 0}
         };
     }
 
@@ -122,7 +126,10 @@ function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetServ
     }
     return {
         type: "CONTAINER",
-        childConstructs: childConstructs
+        childConstructs: childConstructs,
+        position: {x: 0, y: 0},
+        rotation: 0,
+        scale: {x: 0, y: 0}
     };
 }
 
@@ -131,7 +138,10 @@ function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService
         return {
             type: "ANIMATION",
             duration: 0,
-            frames: []
+            frames: [],
+            position: {x: 0, y: 0},
+            rotation: 0,
+            scale: {x: 0, y: 0}
         }
     }
 
@@ -146,7 +156,10 @@ function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService
     return {
         type: "ANIMATION",
         duration: animatedDrawable.duration,
-        frames: framesDisplayObjects
+        frames: framesDisplayObjects,
+        position: {x: 0, y: 0},
+        rotation: 0,
+        scale: {x: 0, y: 0}
     }
 }
 
@@ -203,26 +216,18 @@ function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture :
 
 
 function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
-    function _applyDisplayObjectProperties(displayObject : DisplayObject) {
-        displayObject.scale.x *= drawable.scale.x;
-        displayObject.scale.y *= drawable.scale.y;
-        displayObject.rotation += degreesToRadians(drawable.rotation);
-        displayObject.position.x += drawable.positionOffset.x;
-        displayObject.position.y += drawable.positionOffset.y;
+    function _applyDisplayObjectProperties(displayObject : DrawnConstruct) {
+        displayObject.rotation = degreesToRadians(drawable.rotation);
+        displayObject.position.x = drawable.positionOffset.x;
+        displayObject.position.y = drawable.positionOffset.y;
+        displayObject.scale.x = drawable.scale.x;
+        displayObject.scale.y = drawable.scale.y;
     }
     if (!drawableDisplayObject) {
         return;
     }
 
-    if (isAnimationConstruct(drawableDisplayObject)) {
-        for (let frame of drawableDisplayObject.frames) {
-            _applyDrawableProperties(drawable, frame);
-        }
-    } else if (isContainerContruct(drawableDisplayObject)) {
-        for (let child of drawableDisplayObject.childConstructs) {
-            _applyDrawableProperties(drawable, child);
-        }
-    } else if (isDisplayObject(drawableDisplayObject)) {
+    if (isDrawnConstruct(drawableDisplayObject)) {
         _applyDisplayObjectProperties(drawableDisplayObject);
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-drawer::_applyDrawableProperties");
@@ -244,7 +249,7 @@ function _setNonInteractive(drawable : DrawnConstruct) {
         for (let frame of drawable.frames) {
             _setNonInteractive(frame);
         }
-    } else if (isContainerContruct(drawable)) {
+    } else if (isContainerConstruct(drawable)) {
         for (let child of drawable.childConstructs) {
             _setNonInteractive(child);
         }

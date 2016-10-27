@@ -82,3 +82,20 @@ export function boxFromEdges(minX : number, maxX : number, minY : number, maxY :
     let position = {x : (maxX + minX) / 2, y : (maxY + minY) / 2};
     return {dimension, position, rotation : 0};
 }
+
+/**
+ * Create a box given a width and height
+ * @param  width of the box
+ * @param  height of the box
+ * @return A new Box2 object
+ */
+export function boxFromWidthHeight(width : number, height : number) {
+    return {
+        position: {x: 0, y: 0},
+        dimension: {
+            x: width,
+            y: height
+        },
+        rotation: 0
+    };
+}
