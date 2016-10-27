@@ -8,28 +8,9 @@ import {
     AfterViewInit
 } from '@angular/core';
 
-import {immutableAssign} from '../util/model';
+import {immutableAssign, immutableArrayAssign} from '../util/model';
 import {ChangeType, changeType} from '../state';
 
-
-export type Json = JsonObject | JsonArray;
-export type JsonObject = {
-    key: string,
-    pieces: JsonPiece[]
-};
-export type JsonArray = {
-    key: string,
-    elements: JsonObject[]
-};
-
-export type JsonPiece = {
-    key: string,
-    value: JsonValue,
-    type: string
-    rawValue: any
-};
-
-export type JsonValue = JsonObject | JsonArray | number | string | boolean;
 
 /**
  * A Component used to display the json representing an arbitrary value.
@@ -38,41 +19,56 @@ export type JsonValue = JsonObject | JsonArray | number | string | boolean;
     selector: "dk-json",
     styleUrls: ['./duckling/controls/json.component.css'],
     template: `
-        <div
-            *ngFor="let jsonPiece of jsonObject.pieces"
-            class="jsonPiece">
-            <div *ngIf="jsonPiece.type !== 'object'">
-                <dk-number-input
-                    *ngIf="jsonPiece.type === 'number'"
-                    [label]="jsonPiece.key"
-                    [value]="jsonPiece.value"
-                    (validInput)="onValueChanged($event, jsonPiece.key)">
-                </dk-number-input>
-                <dk-input
-                    *ngIf="jsonPiece.type === 'string'"
-                    [label]="jsonPiece.key"
-                    [value]="jsonPiece.value"
-                    (inputChanged)="onValueChanged($event, jsonPiece.key)">
-                </dk-input>
-                <dk-checkbox
-                    *ngIf="jsonPiece.type === 'boolean'"
-                    [checked]="jsonPiece.value"
-                    [text]="jsonPiece.key"
-                    (input)="onValueChanged($event, jsonPiece.key)">
-                </dk-checkbox>
-            </div>
+        <div *ngFor="let key of jsonKeys">
+            <dk-number-input
+                *ngIf="isNumber(value[key])"
+                [label]="key"
+                [value]="value[key]"
+                (validInput)="onValueChanged($event, key)">
+            </dk-number-input>
+            <dk-input
+                *ngIf="isString(value[key])"
+                [label]="key"
+                [value]="value[key]"
+                (inputChanged)="onValueChanged($event, key)">
+            </dk-input>
+            <dk-checkbox
+                *ngIf="isBoolean(value[key])"
+                [text]="key"
+                [checked]="value[key]"
+                (input)="onValueChanged($event, key)">
+            </dk-checkbox>
             <dk-section
-                *ngIf="jsonPiece.type === 'object'"
-                [headerText]="jsonPiece.key">
+                *ngIf="isObject(value[key])"
+                [headerText]="key">
                 <dk-json
-                    [value]="jsonPiece.rawValue"
-                    (valueChanged)="onValueChanged($event, jsonPiece.key)">
+                    [value]="value[key]"
+                    (valueChanged)="onValueChanged($event, key)">
                 </dk-json>
             </dk-section>
+            <div *ngIf="isArray(value[key])">
+                <md-card class="array-card">
+                    <dk-accordian
+                        [elements]="value[key]"
+                        [titlePrefix]="key + ': '"
+                        [clone]="true"
+                        (elementDeleted)="onValueChanged($event, key)"
+                        (elementMovedDown)="onValueChanged($event, key)"
+                        (elementMovedUp)="onValueChanged($event, key)"
+                        (elementCloned)="onValueChanged($event, key)">
+                        <template let-element="$element" let-index="$index">
+                            <dk-json
+                                [value]="element"
+                                (valueChanged)="onValueChanged($event, key, index)">
+                            </dk-json>
+                        </template>
+                    </dk-accordian>
+                </md-card>
+            </div>
         </div>
     `
 })
-export class JsonComponent implements OnChanges {
+export class JsonComponent {
     /**
      * The object that will be displayed as json.
      */
@@ -83,77 +79,48 @@ export class JsonComponent implements OnChanges {
      */
     @Output() valueChanged = new EventEmitter<any>();
 
-    jsonObject : JsonObject = {
-        key: "",
-        pieces: []
-    };
-
-    ngOnChanges(changes : {value? : SimpleChange}) {
-        if (changes.value) {
-            this.jsonObject = this._jsonObject(changes.value.currentValue);
-        }
-    }
-
-    isValidJSON(json : string) {
-        try {
-            JSON.parse(json);
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
-
-    onValueChanged(newValue : any, jsonKey : string) {
+    onValueChanged(newValue : any, jsonKey : string, arrayIndex? : number) {
         let patch : any = {};
-        patch[jsonKey] = newValue;
+        if (arrayIndex !== undefined && arrayIndex !== null) {
+            let patchArray : any[] = [];
+            patchArray[arrayIndex] = newValue;
+            patch[jsonKey] = immutableArrayAssign(this.value[jsonKey], patchArray);
+        } else {
+            patch[jsonKey] = newValue;
+        }
         this.valueChanged.emit(immutableAssign(this.value, patch));
     }
 
-    private _jsonObject(json : any) : JsonObject {
-        let jsonPieces : JsonObject = {
-            key: "",
-            pieces: []
-        };
-        for (let key in json) {
-            jsonPieces.pieces.push(this._jsonPiece(key, json[key]));
-        }
-        return jsonPieces;
+    isArray(json : any) {
+        return Array.isArray(json);
     }
 
-    private _jsonPiece(key : string, value : any) : JsonPiece {
-        let type = this._jsonValueType(value);
-        return {
-            key: key,
-            type: type,
-            value: this._jsonValue(value, type),
-            rawValue: value
-        };
+    isObject(json : any) {
+        return typeof json === 'object' && !this.isArray(json);
     }
 
-    private _jsonValue(rawValue : any, type : string) : JsonValue {
-        let returnValue : JsonValue;
-        if (type === 'object') {
-            returnValue = this._jsonObject(rawValue);
-        } else if (type === 'array') {
-            let array : JsonArray = {
-                key: "",
-                elements: []
-            };
-            for (let i = 0; i < rawValue['length']; i++) {
-                array.elements.push(this._jsonObject(rawValue[i]));
-            }
-            returnValue = array;
-        } else {
-            returnValue = rawValue;
-        }
-        return returnValue;
+    isNumber(json : any) {
+        return typeof json === 'number';
     }
 
-    private _jsonValueType(rawValue : any) : string {
-        let type = typeof rawValue;
-        if (type === 'object' && Array.isArray(rawValue)) {
-            type = 'array';
+    isString(json : any) {
+        return typeof json === 'string';
+    }
+
+    isBoolean(json : any) {
+        return typeof json === 'boolean';
+    }
+
+    get jsonKeys() : string[] {
+        let keys : string[] = [];
+        for (let key in this.value) {
+            keys.push(key);
         }
-        return type;
+        return keys;
+    }
+
+    noop(element : any, i : number) {
+        console.log(i);
+        console.log(element);
     }
 }
