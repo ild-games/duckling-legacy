@@ -25,9 +25,9 @@ import {
     ToolbarButtonGroupComponent,
     ValidatedInputComponent,
     VectorInputComponent,
-    BrowseAssetComponent,
     SectionComponent,
-    SectionHeaderComponent
+    SectionHeaderComponent,
+    InlineEditLabelComponent
 } from './index';
 
 const CONTROL_DECLARATIONS : Array<any> = [
@@ -52,9 +52,9 @@ const CONTROL_DECLARATIONS : Array<any> = [
     ToolbarButtonGroupComponent,
     ValidatedInputComponent,
     VectorInputComponent,
-    BrowseAssetComponent,
     SectionComponent,
-    SectionHeaderComponent
+    SectionHeaderComponent,
+    InlineEditLabelComponent
 ];
 
 @NgModule({

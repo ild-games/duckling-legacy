@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 import {immutableAssign, DialogService, PathService} from '../util';
-import {ProjectService} from '../project';
+import {ProjectService} from './project.service';
 
 /**
  * Component for loading asset files.
@@ -65,7 +65,7 @@ export class BrowseAssetComponent {
             return;
         }
 
-        let homeResourceString = this._path.join(this._project.project.home, 'resources');
+        let homeResourceString = this._path.join(this._project.home, 'resources');
         if (file.indexOf(homeResourceString) === -1) {
             this._dialog.showErrorDialog(
                 "Unable to load asset",

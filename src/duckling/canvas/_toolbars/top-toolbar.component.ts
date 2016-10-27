@@ -3,13 +3,15 @@ import {
     ChangeDetectionStrategy,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    ViewContainerRef
 } from '@angular/core';
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
 import {ProjectService} from '../../project';
 import {ToolbarOption} from '../../controls';
+import {MapSelectComponent} from '../../project/map-select.component';
 
 @Component({
     selector: "dk-top-toolbar",
@@ -46,6 +48,14 @@ import {ToolbarOption} from '../../controls';
             [selectedValue]="selectedToolKey"
             (selected)="onToolSelected($event)">
         </dk-toolbar-button-group>
+
+        <span class="map-name">
+            <dk-inline-edit-label
+                label="Map: {{mapName}}"
+                tooltip="Select a different map"
+                (startEdit)="onChangeMap()">
+            </dk-inline-edit-label>
+        </span>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -55,13 +65,26 @@ export class TopToolbarComponent {
 
     @Output() toolSelection = new EventEmitter<BaseTool>();
 
+    @Input() mapName : string;
+
+    @Output() mapSelected = new EventEmitter<String>();
+
     constructor(public store : StoreService,
                 public project : ProjectService,
-                public toolService : ToolService) {
+                public toolService : ToolService,
+                private _viewContainer : ViewContainerRef) {
         this.toolOptions = this.toolService.toolOptions;
     }
 
     onToolSelected(tool : ToolbarOption) {
         this.toolSelection.emit(this.toolService.getTool(tool.value));
+    }
+
+    onChangeMap() {
+        MapSelectComponent.open(this._viewContainer).subscribe((mapName) => {
+            if (mapName) {
+                this.mapSelected.emit(mapName);
+            }
+        });
     }
 }

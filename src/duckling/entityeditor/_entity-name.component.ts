@@ -19,12 +19,12 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
     template: `
         <span class="entity-name-row">
             <div *ngIf="!isEditingName" class="entity-name">
-                <span class="entity-name-text">Entity: {{currentSelectedEntity}}</span>
-                <dk-icon-button
-                    icon="pencil"
+                <dk-inline-edit-label
+                    class="entity-name"
+                    label="Entity: {{currentSelectedEntity}}"
                     tooltip="Edit entity name"
-                    (click)="onEditEntityName()">
-                </dk-icon-button>
+                    (startEdit)="onEditEntityName()">
+                </dk-inline-edit-label>
             </div>
             <div *ngIf="isEditingName" class="entity-name">
                 <span class="entity-name-text">Entity:</span>

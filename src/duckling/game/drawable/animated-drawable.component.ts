@@ -6,7 +6,6 @@ import {
     AfterViewInit,
     ViewContainerRef
 } from '@angular/core';
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
@@ -79,11 +78,7 @@ export class AnimatedDrawableComponent {
     @Input() animatedDrawable : AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
-    private _autoCreateDialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>;
-
-    constructor(private _materialDialog : MdDialog,
-                private _viewContainerRef : ViewContainerRef) {
-    }
+    constructor(private _viewContainerRef : ViewContainerRef) { }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let newFrames = this.animatedDrawable.frames.slice(0);
@@ -119,10 +114,7 @@ export class AnimatedDrawableComponent {
     }
 
     onCreateFromTilesheetClicked() {
-        let dialogConfig = new MdDialogConfig();
-        dialogConfig.viewContainerRef = this._viewContainerRef;
-        this._autoCreateDialogRef = this._materialDialog.open(AutoCreateAnimationDialogComponent, dialogConfig);
-        this._autoCreateDialogRef.afterClosed().subscribe(result => this._autoCreateAnimationFromTilesheet(result));
+        AutoCreateAnimationDialogComponent.open(this._viewContainerRef).subscribe(result => this._autoCreateAnimationFromTilesheet(result));
     }
 
     private _autoCreateAnimationFromTilesheet(dialogResult : AutoCreateDialogResult) {
