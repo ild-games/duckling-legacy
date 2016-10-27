@@ -1,8 +1,9 @@
 import {Component, ViewContainerRef} from '@angular/core';
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
 
 import {ProjectService} from './project.service';
+import {openDialog} from '../util/md-dialog';
 
 /**
  * Dialog that allows user to choose a map. The result of the dialog is the map key the
@@ -48,12 +49,8 @@ export class MapSelectComponent {
     /**
      * Open a dialog and return an observable that resolves to the name of the map to open.
      */
-    static open(viewContainer : ViewContainerRef, currentMap? : string) : Observable<String> {
-        let config = new MdDialogConfig();
-        let mDialog = viewContainer.injector.get(MdDialog);
-        config.viewContainerRef = viewContainer;
-        let dialog = mDialog.open(MapSelectComponent, config);
-        return dialog.afterClosed();
+    static open(viewContainer : ViewContainerRef) : Observable<String> {
+        return openDialog<string>(viewContainer, MapSelectComponent);
     }
 
     listLoaded : boolean = false;

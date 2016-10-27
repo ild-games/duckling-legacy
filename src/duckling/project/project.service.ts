@@ -102,7 +102,7 @@ export class ProjectService {
     }
 
     private _mapPathToRoot(root : string, path : string) {
-        return path.slice(root.length, -(".maps".length - 1));
+        return path.slice(root.length, -(".map".length));
     }
 
     private get _mapRoot() {

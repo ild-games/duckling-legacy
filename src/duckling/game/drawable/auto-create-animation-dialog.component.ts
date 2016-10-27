@@ -6,11 +6,13 @@ import {
     AfterViewInit,
     ViewContainerRef
 } from '@angular/core';
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {MdDialogConfig, MdDialogRef} from '@angular/material';
+import {Observable} from 'rxjs';
 
 import {Vector} from '../../math';
 import {ProjectService, AssetService} from '../../project';
 import {DialogService} from '../../util';
+import {openDialog} from '../../util/md-dialog';
 
 export type AutoCreateDialogResult = {
     numFrames : number,
@@ -63,6 +65,10 @@ export class AutoCreateAnimationDialogComponent {
     numFrames : number = 0;
     frameDimensions : Vector = {x: 0, y: 0};
     imageKey : string;
+
+    static open(viewContainer : ViewContainerRef) : Observable<AutoCreateDialogResult> {
+        return openDialog<AutoCreateDialogResult>(viewContainer, AutoCreateAnimationDialogComponent);
+    }
 
     constructor(private _dialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>,
                 private _dialog : DialogService,
