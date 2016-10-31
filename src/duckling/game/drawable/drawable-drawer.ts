@@ -81,7 +81,7 @@ function _drawDrawable(drawable : Drawable, assetService : AssetService) : Drawn
     }
 
     if (drawnObject) {
-        _applyDrawableProperties(drawable, drawnObject);
+        drawnObject = _applyDrawableProperties(drawable, drawnObject);
     }
     return drawnObject;
 }
@@ -215,20 +215,40 @@ function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture :
 }
 
 
-function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
-    function _applyDisplayObjectProperties(displayObject : DrawnConstruct) {
-        displayObject.rotation = degreesToRadians(drawable.rotation);
-        displayObject.position.x = drawable.positionOffset.x;
-        displayObject.position.y = drawable.positionOffset.y;
-        displayObject.scale.x = drawable.scale.x;
-        displayObject.scale.y = drawable.scale.y;
+function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) : DrawnConstruct {
+    function _applyDisplayObjectProperties(displayObject : DrawnConstruct) : DrawnConstruct {
+        if (isDisplayObject(displayObject)) {
+            let container = new Container();
+            container.addChild(displayObject);
+            displayObject.rotation = degreesToRadians(drawable.rotation);
+        } else {
+            displayObject.rotation = degreesToRadians(drawable.rotation);
+        }
+
+        if (isDisplayObject(displayObject)) {
+            displayObject.parent.position.x = drawable.positionOffset.x;
+            displayObject.parent.position.y = drawable.positionOffset.y;
+        } else {
+            displayObject.position.x = drawable.positionOffset.x;
+            displayObject.position.y = drawable.positionOffset.y;
+        }
+
+        if (isDisplayObject(displayObject)) {
+            displayObject.parent.scale.x = drawable.scale.x;
+            displayObject.parent.scale.y = drawable.scale.y;
+            return displayObject.parent;
+        } else {
+            displayObject.scale.x = drawable.scale.x;
+            displayObject.scale.y = drawable.scale.y;
+            return displayObject;
+        }
     }
     if (!drawableDisplayObject) {
         return;
     }
 
     if (isDrawnConstruct(drawableDisplayObject)) {
-        _applyDisplayObjectProperties(drawableDisplayObject);
+        return _applyDisplayObjectProperties(drawableDisplayObject);
     } else {
         throw Error("Unknown DrawnConstruct type in drawable-drawer::_applyDrawableProperties");
     }
