@@ -28,7 +28,7 @@ import {ImageDrawable} from './image-drawable';
 import {AnimatedDrawable} from './animated-drawable';
 import {TextDrawable} from './text-drawable';
 import {ShapeType, Shape, cppTypeToShapeType} from './shape';
-import {Circle} from './circle';
+import {Oval} from './oval';
 import {Rectangle} from './rectangle';
 
 /**
@@ -93,9 +93,10 @@ function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : Graphics {
     graphics.fillAlpha = shapeDrawable.shape.fillColor.a / 255;
     let shapeType = cppTypeToShapeType(shapeDrawable.shape.__cpp_type)
     switch (shapeType) {
-        case ShapeType.Circle:
-            let radius = (shapeDrawable.shape as Circle).radius;
-            drawEllipse({x: 0, y: 0}, radius, radius, graphics);
+        case ShapeType.Oval:
+            let radiusWidth = (shapeDrawable.shape as Oval).radiusWidth;
+            let radiusHeight = (shapeDrawable.shape as Oval).radiusHeight;
+            drawEllipse({x: 0, y: 0}, radiusWidth, radiusHeight, graphics);
             break;
         case ShapeType.Rectangle:
             let dimension = (shapeDrawable.shape as Rectangle).dimension;

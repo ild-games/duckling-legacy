@@ -12,7 +12,7 @@ import {RotateComponent} from './rotate/rotate.component';
 import {AnimatedDrawableComponent} from './drawable/animated-drawable.component';
 import {AutoCreateAnimationDialogComponent} from './drawable/auto-create-animation-dialog.component';
 import {ContainerDrawableComponent} from './drawable/container-drawable.component';
-import {CircleComponent} from './drawable/circle.component';
+import {OvalComponent} from './drawable/oval.component';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
 import {GenericDrawableComponent} from './drawable/generic-drawable.component';
 import {ImageDrawableComponent} from './drawable/image-drawable.component';
@@ -56,7 +56,7 @@ const ATTRIBUTE_COMPONENTS = [
         ATTRIBUTE_COMPONENTS,
         AnimatedDrawableComponent,
         ContainerDrawableComponent,
-        CircleComponent,
+        OvalComponent,
         DrawableComponent,
         GenericDrawableComponent,
         ImageDrawableComponent,
