@@ -114,7 +114,7 @@ export class EntityMoveTool extends BaseTool {
             let coordsOffset = vectorSubtract(currentCoords, this._selectedCornerFirstCoords);
             newSizeAttributeMap[key] = vectorAdd(
                 this._entitySizeAttributeMap[key],
-                vectorMultiply(coordsOffset, {x: 2, y: 2}));
+                vectorMultiply(vectorMultiply(coordsOffset, {x: 2, y: 2}), this._selectedCorner));
         }
         return newSizeAttributeMap;
     }
@@ -218,7 +218,7 @@ export class EntityMoveTool extends BaseTool {
             x: entitySelectionBox.position.x + (entitySelectionBox.dimension.x / 2 * whichCorner.x),
             y: entitySelectionBox.position.y + (entitySelectionBox.dimension.y / 2 * whichCorner.y)
         };
-        let cornerDimension = 6 / scale;
+        let cornerDimension = 10 / scale;
         return {
             position: position,
             dimension: {x: cornerDimension, y: cornerDimension},

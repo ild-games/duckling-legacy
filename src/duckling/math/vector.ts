@@ -75,3 +75,19 @@ export function vectorAbsolute(vector : Vector) : Vector {
         y: Math.abs(vector.y),
     };
 }
+
+/**
+ * Get the sign value of a vector
+ * @param  vector Vector to get the sign value of
+ * @return Resulting vector with the sign values
+ */
+export function vectorSign(vector : Vector) : Vector {
+    return {
+        x: Math.sign(vector.x),
+        y: Math.sign(vector.y)
+    }
+}
+
+export function vectorToString(vector : Vector) : string {
+    return `{x: ${vector.x}, y: ${vector.y}}`;
+}

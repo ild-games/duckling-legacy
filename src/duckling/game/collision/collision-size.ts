@@ -1,4 +1,4 @@
-import {Vector, vectorAbsolute} from '../../math/vector';
+import {Vector, vectorAbsolute, vectorSign, vectorMultiply, vectorDivide} from '../../math/vector';
 import {Entity} from '../../entitysystem/entity';
 import {immutableAssign} from '../../util/model';
 import {AssetService} from '../../project/asset.service';
@@ -8,10 +8,24 @@ import {collisionBoundingBox} from './collision-box';
 
 export function setCollisionSize(entity : Entity, newSize : Vector, assetService : AssetService) : CollisionAttribute {
     let collisionAttribute = getCollision(entity);
-    let dimensionObj = immutableAssign(collisionAttribute.dimension, {dimension: vectorAbsolute(newSize)});
-    return immutableAssign(collisionAttribute, {dimension: dimensionObj});
+    let scaleSign = vectorSign(collisionAttribute.scale);
+    let oldScale = vectorAbsolute(collisionAttribute.scale);
+    let oldSize = vectorAbsolute(getCollisionSize(entity, assetService));
+    let newScale = vectorAbsolute(vectorDivide(vectorMultiply(oldScale, newSize), oldSize));
+    if (_isValidScale(newScale)) {
+        return immutableAssign(collisionAttribute, {scale: newScale});
+    }
+    return collisionAttribute;
 }
 
 export function getCollisionSize(entity : Entity, assetService : AssetService) : Vector {
     return collisionBoundingBox(entity).dimension;
+}
+
+function _isValidScale(scale : Vector) : boolean {
+    return (
+        !isNaN(scale.x) && !isNaN(scale.y) &&
+        isFinite(scale.x) && isFinite(scale.y) &&
+        scale.x !== 0  && scale.y !== 0
+    );
 }

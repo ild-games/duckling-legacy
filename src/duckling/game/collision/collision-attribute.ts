@@ -22,6 +22,10 @@ export interface CollisionAttribute extends Attribute {
      */
     dimension : Box2;
     /**
+     * Scale of the collision box
+     */
+    scale: Vector;
+    /**
      * Describes how the entity behaves in the solid body system.
      */
     bodyType : BodyType;
@@ -47,6 +51,10 @@ export let defaultCollison : CollisionAttribute = {
             y: 0
         },
         rotation: 0
+    },
+    scale: {
+        x: 1,
+        y: 1
     },
     bodyType: "environment",
     collisionType: "none",

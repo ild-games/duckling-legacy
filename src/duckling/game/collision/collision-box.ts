@@ -1,5 +1,6 @@
 import {Entity} from '../../entitysystem/entity';
-import {Box2} from '../../math';
+import {Box2} from '../../math/box2';
+import {vectorMultiply} from '../../math/vector';
 
 import {getCollision} from './collision-attribute';
 
@@ -15,7 +16,7 @@ export function collisionBoundingBox(entity : Entity) : Box2 {
     }
     return {
         position: {x: 0, y: 0},
-        dimension: collisionAttribute.dimension.dimension,
+        dimension: vectorMultiply(collisionAttribute.dimension.dimension, collisionAttribute.scale),
         rotation: collisionAttribute.dimension.rotation
     }
 }
