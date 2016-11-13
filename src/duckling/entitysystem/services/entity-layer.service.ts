@@ -47,6 +47,7 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
                 return getLayerImpl(entity[key]);
             }
         }
+        return null;
     }
 
     getLayers() : Layer[] {
@@ -55,9 +56,8 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         let entitySystem = this._entitySystemService.entitySystem.value;
 
         entitySystem.forEach((entity : Entity) => {
-            let layerKey = "" + this.getLayer(entity);
-            if (layersAccountedFor.has(layerKey)) return;
-            if (layerKey !== undefined && layerKey !== null) {
+            let layerKey = this.getLayer(entity);
+            if (!layersAccountedFor(layerKey) && layerKey !== undefined && layerKey !== null) {
                 layers.push({
                     layerName: layerKey,
                     isVisible: !this._hiddenLayers[layerKey]

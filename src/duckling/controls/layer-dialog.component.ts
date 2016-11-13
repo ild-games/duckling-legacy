@@ -66,7 +66,6 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     }
 
     toggleLayerVisibility(layer : Layer) {
-        console.log("Waddup");
         this._entityLayerService.toggleLayerVisibility(layer.layerName);
     }
 

@@ -41,7 +41,7 @@ export class EntitySelectionService {
     }
 
     private _getVisibleEntities(entities : Array<Entity>) : Array<Entity> {
-        let visibleEntities : Array<Entity>;
+        let visibleEntities : Array<Entity> = [];
         for (let entity of entities){
             if (this._entityLayerService.isEntityVisible(entity)){
                 visibleEntities.push(entity);
