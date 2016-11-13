@@ -46,9 +46,9 @@ export class IconButtonComponent {
     @Input() tooltip : string = "";
     @Input() isRaised : boolean = false;
     @Input() disabled : boolean = false;
-    @Output() click = new EventEmitter<boolean>();
+    @Output() iconClick = new EventEmitter<boolean>();
 
     onButtonClicked() {
-        this.click.emit(true);
+        this.iconClick.emit(true);
     }
 }

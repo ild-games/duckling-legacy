@@ -23,7 +23,7 @@ import {AttributeComponent} from '../entityeditor';
             <md-card>
                 <md-card-title>
                     {{formatCardTitle(key)}}
-                    <dk-delete-button (click)="deleteAttribute(key)"></dk-delete-button>
+                    <dk-delete-button (deleteClick)="deleteAttribute(key)"></dk-delete-button>
                 </md-card-title>
                 <md-card-content>
                     <dk-attribute

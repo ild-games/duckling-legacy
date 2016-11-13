@@ -18,6 +18,7 @@ import {AssetService, Asset, ProjectService} from '../project';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityBoxService} from '../entitysystem/services';
+import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 import {Vector} from '../math';
 import {KeyboardService} from '../util';
 import {CopyPasteService, SelectionService} from '../selection';
@@ -124,6 +125,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _assetServiceSubscription : Subscriber<any>;
     private _selectionServiceSubscription : Subscriber<any>;
     private _redrawInterval : Subscriber<any>;
+    private _layerServiceSubscription : Subscriber<any>;
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
 
@@ -135,7 +137,8 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
                 public projectService : ProjectService,
                 private _entityDrawerService : EntityDrawerService,
                 private _keyboardService : KeyboardService,
-                private _entityBoxService : EntityBoxService) {
+                private _entityBoxService : EntityBoxService,
+                private _entityLayerService : EntityLayerService) {
         this._setTool(this._toolService.defaultTool);
     }
 
@@ -161,6 +164,11 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._redrawInterval = TimerObservable
             .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this._drawFrame()) as Subscriber<any>;
+
+        this._layerServiceSubscription = this._entityLayerService.layerChanged.subscribe(() => {
+            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
+            this._entitiesDrawnConstructsChanged(drawnConstructs);
+        }) as Subscriber<any>;
     }
 
     ngOnDestroy() {
@@ -168,6 +176,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._assetServiceSubscription.unsubscribe();
         this._selectionServiceSubscription.unsubscribe();
         this._redrawInterval.unsubscribe();
+        this._layerServiceSubscription.unsubscribe();
     }
 
     private _entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {

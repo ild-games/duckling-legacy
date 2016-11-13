@@ -6,6 +6,7 @@ import {
     AfterViewInit,
     Injectable
 } from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 
 import {Attribute, Entity, EntityKey} from '../entity';
 import {BaseAttributeService} from '../base-attribute-service';
@@ -15,7 +16,7 @@ import {EntitySystemService} from '../entity-system.service';
  * Function type that is used to set a position.
  * @returns Returns the new value of the attribute.
  */
-export type LayerGetter = (attribute : Attribute) => Number;
+export type LayerGetter = (attribute : Attribute) => string;
 
 /**
  * The EntityLayerService is used to retrieve the layer of an entity.
@@ -24,21 +25,26 @@ export type LayerGetter = (attribute : Attribute) => Number;
 export class EntityLayerService extends BaseAttributeService<LayerGetter> {
 
     private _hiddenLayers : {[layerKey : string] : boolean} = {};
+    layerChanged : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(private _entitySystemService : EntitySystemService) {
         super();
     }
 
+    isEntityVisible(entity : Entity) : boolean {
+        let layerKey : string = this.getLayer(entity);
+        return (!this._hiddenLayers[layerKey]);
+    }
 
     /**
      * Get the layer of the entity
      * @param entityKey The key of the entity to get the layer from
      */
-     getLayer(entity: Entity) {
+     getLayer(entity: Entity) : string {
         for (let key in entity) {
-            let getLayer = this.getImplementation(key);
-            if (getLayer) {
-                return getLayer(entity[key]);
+            let getLayerImpl = this.getImplementation(key);
+            if (getLayerImpl) {
+                return getLayerImpl(entity[key]);
             }
         }
     }
@@ -65,7 +71,9 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
 
     toggleLayerVisibility(layerKey : string) {
         this._hiddenLayers[layerKey] = !this._hiddenLayers[layerKey];
+        this.layerChanged.next(true);
     }
+
 }
 
 export type Layer = {

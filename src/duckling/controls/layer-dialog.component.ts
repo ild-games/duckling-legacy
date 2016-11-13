@@ -3,9 +3,11 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit
+    AfterViewInit,
+    OnDestroy
 } from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {Subscriber} from 'rxjs';
 
 import {ProjectService, AssetService} from '../project';
 import {EntityLayerService,Layer} from '../entitysystem';
@@ -20,14 +22,16 @@ import {DialogService, PathService} from '../util';
                 <md-list-item
                 *ngFor="let layer of layers">
                     <dk-icon-button *ngIf="layer.isVisible"
+                        class="shown-layer-button"
                         tooltip="Hide layer"
                         icon="eye"
-                        (click)="console.log('hello')">
+                        (iconClick)="toggleLayerVisibility(layer)">
                     </dk-icon-button>
                     <dk-icon-button *ngIf="!layer.isVisible"
+                        class="hidden-layer-button"
                         tooltip="Show layer"
                         icon="eye-slash"
-                        (click)="toggleLayerVisibility(layer)">
+                        (iconClick)="toggleLayerVisibility(layer)">
                     </dk-icon-button>
 
                     <h2>{{layer.layerName}}</h2>
@@ -36,7 +40,11 @@ import {DialogService, PathService} from '../util';
         </div>
     `
 })
-export class LayerDialogComponent {
+export class LayerDialogComponent implements AfterViewInit, OnDestroy{
+
+    layers : Layer[] = [];
+
+    private _layerServiceSubscription : Subscriber<any>;
 
     constructor(private _dialogRef : MdDialogRef<LayerDialogComponent>,
                 private _path : PathService,
@@ -44,14 +52,25 @@ export class LayerDialogComponent {
                 private _assets : AssetService,
                 private _project : ProjectService,
                 private _entityLayerService : EntityLayerService) {
+        this._refreshLayers();
     }
 
-    get layers() : Layer[] {
-        return Array.from(this._entityLayerService.getLayers());
+    ngAfterViewInit() {
+        this._layerServiceSubscription = this._entityLayerService.layerChanged.subscribe(() => {
+            this._refreshLayers();
+        }) as Subscriber<any>;
+    }
+
+    ngOnDestroy() {
+        this._layerServiceSubscription.unsubscribe;
     }
 
     toggleLayerVisibility(layer : Layer) {
         console.log("Waddup");
         this._entityLayerService.toggleLayerVisibility(layer.layerName);
+    }
+
+    private _refreshLayers(){
+        this.layers = Array.from(this._entityLayerService.getLayers());
     }
 }
