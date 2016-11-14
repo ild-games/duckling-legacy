@@ -57,7 +57,7 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
 
         entitySystem.forEach((entity : Entity) => {
             let layerKey = this.getLayer(entity);
-            if (!layersAccountedFor(layerKey) && layerKey !== undefined && layerKey !== null) {
+            if (!layersAccountedFor.has(layerKey) && layerKey !== undefined && layerKey !== null) {
                 layers.push({
                     layerName: layerKey,
                     isVisible: !this._hiddenLayers[layerKey]
