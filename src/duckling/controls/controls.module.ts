@@ -19,7 +19,6 @@ import {
     IconButtonComponent,
     InputComponent,
     JsonComponent,
-    LayerDialogComponent,
     NumberInputComponent,
     TemplateWrapperDirective,
     ToolbarButtonComponent,
@@ -30,6 +29,7 @@ import {
     SectionHeaderComponent,
     InlineEditLabelComponent
 } from './index';
+import {LayerDialogComponent} from './layer-dialog.component';
 
 const CONTROL_DECLARATIONS : Array<any> = [
     AccordianComponent,
@@ -47,7 +47,6 @@ const CONTROL_DECLARATIONS : Array<any> = [
     IconButtonComponent,
     InputComponent,
     JsonComponent,
-    LayerDialogComponent,
     NumberInputComponent,
     TemplateWrapperDirective,
     ToolbarButtonComponent,
@@ -56,7 +55,8 @@ const CONTROL_DECLARATIONS : Array<any> = [
     VectorInputComponent,
     SectionComponent,
     SectionHeaderComponent,
-    InlineEditLabelComponent
+    InlineEditLabelComponent,
+    LayerDialogComponent
 ];
 
 @NgModule({

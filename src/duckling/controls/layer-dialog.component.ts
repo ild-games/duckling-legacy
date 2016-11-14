@@ -9,9 +9,11 @@ import {
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Subscriber} from 'rxjs';
 
-import {ProjectService, AssetService} from '../project';
-import {EntityLayerService,Layer} from '../entitysystem';
-import {DialogService, PathService} from '../util';
+import {ProjectService} from '../project/project.service';
+import {AssetService} from '../project/asset.service';
+import {EntityLayerService, Layer} from '../entitysystem/services/entity-layer.service';
+import {DialogService} from '../util/dialog.service';
+import {PathService} from '../util/path.service';
 
 @Component({
     selector: 'dk-layer-dialog',
@@ -71,14 +73,13 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
 
     private _refreshLayers(){
         this.layers = Array.from(this._entityLayerService.getLayers());
-        this.layers = this.layers.sort((layer1 : Layer, layer2: Layer) : number => {
-                if (layer1.layerName > layer2.layerName) {
-                    return 1;
-                } else if (layer1.layerName < layer2.layerName) {
-                    return -1;
-                } else {
-                    return 0;
-                }
+        this.layers.sort((a, b) => {
+            if (a.layerName > b.layerName) {
+                return 1;
+            } else if(a.layerName < b.layerName) {
+                return -1;
+            }
+            return 0;
         });
     }
 }

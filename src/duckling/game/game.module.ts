@@ -26,7 +26,7 @@ import {
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
-    EntityPositionService
+    EntityPositionService,
     EntityLayerService
 } from '../entitysystem';
 import {AttributeComponentService} from '../entityeditor';
