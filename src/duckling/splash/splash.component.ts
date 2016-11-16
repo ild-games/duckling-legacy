@@ -10,6 +10,7 @@ import {PathService} from '../util/path.service';
 import {DialogService} from '../util/dialog.service';
 import {WindowService} from '../util/window.service';
 import {IconComponent} from '../controls';
+import {VERSION, MAP_VERSION} from '../version';
 
 interface ProjectModel {
     title : string,
@@ -55,7 +56,10 @@ const MAX_SPLASH_ENTRIES : number = 7;
                         Duckling
                     </div>
                     <div class="duckling-version">
-                        {{_version}}
+                        {{VERSION}}
+                    </div>
+                    <div class="duckling-map-version">
+                        Map Version: {{MAP_VERSION}}
                     </div>
                 </div>
             </div>
@@ -65,7 +69,10 @@ const MAX_SPLASH_ENTRIES : number = 7;
     `
 })
 export class SplashComponent implements OnInit {
-    private _version : string = "0.0.1";
+    // hoist version numbers
+    VERSION = VERSION;
+    MAP_VERSION = MAP_VERSION;
+
     private _projects : ProjectModel[] = [];
     private _dialogOptions : {};
 

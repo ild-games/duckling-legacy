@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {createEntitySystem, Entity, EntitySystem, EntityKey} from '../entitysystem';
+import {MAP_VERSION, majorMapVersion, minorMapVersion} from '../version';
 
 import {Asset, AssetService} from './asset.service'
 import {RequiredAssetService} from './required-asset.service'
@@ -24,8 +25,10 @@ export interface RawMapFile {
     key : string,
     entities : string [],
     assets: Asset[],
-    systems : {[systemName : string] : RawSystem}
+    systems : {[systemName : string] : RawSystem},
+    version: string
 }
+
 
 @Injectable()
 export class MapParserService {
@@ -39,6 +42,16 @@ export class MapParserService {
      * @return An EntitySystem with the entities contained in the map.
      */
     mapToSystem(map : RawMapFile) : EntitySystem {
+        if (map.version === null || map.version === undefined) {
+            throw new Error(`Incompatible map version! Editor expects ${MAP_VERSION} but map has no version`);
+        }
+        if (majorMapVersion(map.version) !== majorMapVersion(MAP_VERSION)) {
+            throw new Error(`Incompatible map version! Editor expects map major version ${majorMapVersion(MAP_VERSION)} but map major version is ${majorMapVersion(map.version)}`);
+        }
+        if (parseInt(minorMapVersion(map.version)) > parseInt(minorMapVersion(MAP_VERSION))) {
+            throw new Error(`Incompatible map version! Editor expects map minor version ${minorMapVersion(MAP_VERSION)} but map minor version is greater: ${minorMapVersion(map.version)}`);
+        }
+
         let entities : {[entityKey : string] : Entity} = {};
 
         for (let entityKey of map.entities) {
@@ -96,7 +109,8 @@ export class MapParserService {
             key : mapKey,
             systems : systems,
             entities : entities,
-            assets : assetList
+            assets : assetList,
+            version: MAP_VERSION
         }
     }
 }
