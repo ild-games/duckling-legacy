@@ -4,7 +4,8 @@ import {
     Output,
     EventEmitter,
     AfterViewInit,
-    OnDestroy
+    OnDestroy,
+    ViewContainerRef
 } from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Subscriber} from 'rxjs';
@@ -14,6 +15,7 @@ import {AssetService} from '../project/asset.service';
 import {EntityLayerService, Layer} from '../entitysystem/services/entity-layer.service';
 import {DialogService} from '../util/dialog.service';
 import {PathService} from '../util/path.service';
+import {openDialog} from '../util/md-dialog';
 
 @Component({
     selector: 'dk-layer-dialog',
@@ -55,6 +57,10 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
                 private _project : ProjectService,
                 private _entityLayerService : EntityLayerService) {
         this._refreshLayers();
+    }
+
+    static open(viewContainer : ViewContainerRef) {
+        openDialog<string>(viewContainer, LayerDialogComponent);
     }
 
     ngAfterViewInit() {

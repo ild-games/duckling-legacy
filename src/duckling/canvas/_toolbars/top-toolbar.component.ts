@@ -42,6 +42,9 @@ import {EntityLayerService} from '../../entitysystem';
             tooltip="Redo"
             (click)="store.redo()">
         </dk-toolbar-button>
+
+        <span class="separator"></span>
+
         <dk-toolbar-button
             icon="eye"
             tooltip="Show/hide layers"
@@ -76,8 +79,6 @@ export class TopToolbarComponent {
 
     @Output() mapSelected = new EventEmitter<String>();
 
-    private _layerDialogRef : MdDialogRef<LayerDialogComponent>;
-
     constructor(public store : StoreService,
                 public project : ProjectService,
                 public toolService : ToolService,
@@ -100,8 +101,6 @@ export class TopToolbarComponent {
     }
 
     onShowHideLayersClicked() {
-        let dialogConfig = new MdDialogConfig();
-        dialogConfig.viewContainerRef = this._viewContainerRef;
-        this._layerDialogRef = this._materialDialog.open(LayerDialogComponent, dialogConfig);
+        LayerDialogComponent.open(this._viewContainer);
     }
 }
