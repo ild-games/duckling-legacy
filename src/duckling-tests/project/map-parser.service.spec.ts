@@ -7,7 +7,7 @@ import {RawMapFile, MapParserService, AssetService, RequiredAssetService} from '
 import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
 import {immutableAssign, PathService} from '../../duckling/util';
-import {MAP_VERSION, majorMapVersion, minorMapVersion} from '../../duckling/version';
+import {MAP_VERSION} from '../../duckling/version';
 
 let emptyMap : RawMapFile = {
     key : "",
@@ -114,35 +114,5 @@ describe("MapLoaderService", function() {
         let map = immutableAssign(emptyMap, {systems : { sa}});
         let system = this.parser.mapToSystem(map);
         expect(system.get("ea")).to.eql(entityA);
-    });
-
-    it("if a map version is the same as MAP_VERSION, there are no errors", function () {
-        let map = immutableAssign(emptyMap, {version : MAP_VERSION});
-        expect(() => this.parser.mapToSystem(map)).to.not.throw(Error);
-    });
-
-    it("if a map's major version is different, it will throw an error", function () {
-        let majorVersion = parseInt(majorMapVersion(MAP_VERSION)) + 1;
-        let newMapVersion = majorVersion + "." + minorMapVersion(MAP_VERSION);
-        let map = immutableAssign(emptyMap, {version : newMapVersion});
-        expect(() => this.parser.mapToSystem(map)).to.throw(Error);
-    });
-
-    it("if a map's minor version is greater, it will throw an error", function () {
-        let minorVersion = parseInt(minorMapVersion(MAP_VERSION)) + 1;
-        let newMapVersion = majorMapVersion(MAP_VERSION) + "." + minorVersion;
-        let map = immutableAssign(emptyMap, {version : newMapVersion});
-        expect(() => this.parser.mapToSystem(map)).to.throw(Error);
-    });
-
-    it("if a map's minor version is smaller, it will not throw an error", function () {
-        let minorVersion = parseInt(minorMapVersion(MAP_VERSION)) - 1;
-        let newMapVersion = majorMapVersion(MAP_VERSION) + "." + minorVersion;
-        let map = immutableAssign(emptyMap, {version : newMapVersion});
-        expect(() => this.parser.mapToSystem(map)).to.not.throw(Error);
-    });
-
-    it("if a map doesn't have a version, it will throw an error", function () {
-        expect(() => this.parser.mapToSystem({})).to.throw(Error);
     });
 });

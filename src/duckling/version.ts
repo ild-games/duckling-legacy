@@ -1,36 +1,60 @@
 export const VERSION = "0.0.1";
-export const MAP_VERSION = "1.1";
+export const MAP_VERSION = "0.1";
 
 
 type MapVersion = {
-    major : string,
-    minor : string
+    major : number,
+    minor : number
 };
 
-/**
- * Get the major version for the given map version.
- * @param mapVersion Map version to check, MAP_VERSION will be used if not supplied
- * @return The major version for the given map version
- */
-export function majorMapVersion(mapVersion? : string) : string {
-    if (mapVersion === null || mapVersion === undefined) {
-        mapVersion = MAP_VERSION;
-    }
-
-    return _mapVersionParts(mapVersion).major;
+export enum VersionCompatibility {
+    Compatible,
+    MinorIncompatible,
+    MajorIncompatible,
+    NoVersionGiven
 }
 
 /**
- * Get the minor version for the given map version.
- * @param mapVersion Map version to check, MAP_VERSION will be used if not supplied
- * @return The minor version for the given map version
+ * Compares two versions and determines their compatibility to each other
+ * @param  actualVersion   Version to compare to the expected version
+ * @param  expectedVersion Version to compare against, defaults to version.ts::MAP_VERSION constant
+ * @return VersinoCompatibility describing the two versions compatibility to each other
  */
-export function minorMapVersion(mapVersion? : string) : string {
-    if (mapVersion === null || mapVersion === undefined) {
-        mapVersion = MAP_VERSION;
+export function compareVersions(actualVersion : string, expectedVersion? : string) : VersionCompatibility {
+    expectedVersion = expectedVersion || MAP_VERSION;
+    if (actualVersion === null || actualVersion === undefined) {
+        return VersionCompatibility.NoVersionGiven;
     }
 
-    return _mapVersionParts(mapVersion).minor;
+    let actualVersionParts = _mapVersionParts(actualVersion);
+    let expectedVersionParts = _mapVersionParts(expectedVersion);
+
+    if (actualVersionParts.major !== expectedVersionParts.major) {
+        return VersionCompatibility.MajorIncompatible;
+    }
+    if (actualVersionParts.minor > expectedVersionParts.minor) {
+        return VersionCompatibility.MinorIncompatible;
+    }
+    return VersionCompatibility.Compatible;
+}
+
+/**
+ * Gives a message describing any incompatibilites in the version number
+ * @param  versionCompatibility VersionCompatibility object that describes the compatibility
+ * @return Brief message explaining the incompatibility or simply describing the versions as compatible
+ */
+export function incompatibleReason(versionCompatibility : VersionCompatibility) : string {
+    switch (versionCompatibility) {
+        case VersionCompatibility.Compatible:
+            return "Versions are compatible";
+        case VersionCompatibility.MajorIncompatible:
+            return "Incompatible map version! Major version mismatch";
+        case VersionCompatibility.MinorIncompatible:
+            return "Incompatible map version! Map minor version is greater than editor expected minor version";
+        case VersionCompatibility.NoVersionGiven:
+            return `Incompatible map version! Editor expects ${MAP_VERSION} but map has no version`;
+    }
+    return "";
 }
 
 function _mapVersionParts(mapVersion : string) : MapVersion {
@@ -48,8 +72,8 @@ function _mapVersionParts(mapVersion : string) : MapVersion {
     }
 
     return {
-        major: mapVersionParts[0],
-        minor: mapVersionParts[1]
+        major: parseInt(mapVersionParts[0]),
+        minor: parseInt(mapVersionParts[1])
     };
 }
 
