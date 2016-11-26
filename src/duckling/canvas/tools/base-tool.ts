@@ -58,6 +58,16 @@ export interface CanvasMouseEvent {
      * Canvas component the event came from
      */
     canvas : CanvasComponent;
+
+    /**
+     * Boolean that shows whether the ctrl key modifier was pressed during the event
+     */
+    ctrlKey : boolean;
+
+    /**
+     * Boolean that shows whether the shift key modifier was pressed during the event
+     */
+    shiftKey : boolean;
 }
 
 /**

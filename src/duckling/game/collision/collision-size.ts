@@ -1,4 +1,4 @@
-import {Vector, vectorAbsolute, vectorSign, vectorMultiply, vectorDivide} from '../../math/vector';
+import {Vector, vectorAbsolute, vectorSign, vectorMultiply, vectorDivide, vectorToFixed} from '../../math/vector';
 import {Entity} from '../../entitysystem/entity';
 import {immutableAssign} from '../../util/model';
 import {AssetService} from '../../project/asset.service';
@@ -6,12 +6,12 @@ import {AssetService} from '../../project/asset.service';
 import {CollisionAttribute, getCollision} from './collision-attribute';
 import {collisionBoundingBox} from './collision-box';
 
-export function setCollisionSize(entity : Entity, newSize : Vector, assetService : AssetService) : CollisionAttribute {
+export function setCollisionSize(entity : Entity, newSize : Vector, fixedNum : number, assetService : AssetService) : CollisionAttribute {
     let collisionAttribute = getCollision(entity);
     let scaleSign = vectorSign(collisionAttribute.scale);
     let oldScale = vectorAbsolute(collisionAttribute.scale);
     let oldSize = vectorAbsolute(getCollisionSize(entity, assetService));
-    let newScale = vectorAbsolute(vectorDivide(vectorMultiply(oldScale, newSize), oldSize));
+    let newScale = vectorToFixed(vectorAbsolute(vectorDivide(vectorMultiply(oldScale, newSize), oldSize)), fixedNum);
     if (_isValidScale(newScale)) {
         return immutableAssign(collisionAttribute, {scale: newScale});
     }

@@ -10,7 +10,7 @@ import {
     EntityBoxService
 } from '../../entitysystem';
 import {EntitySizeService, SizeAttributeMap} from '../../entitysystem/services/entity-size.service';
-import {Box2, Vector, vectorMultiply, vectorAdd, vectorSubtract, vectorRound, boxContainsPoint} from '../../math';
+import {Box2, Vector, vectorMultiply, vectorAdd, vectorSubtract, vectorRound, vectorToFixed, vectorToString, boxContainsPoint} from '../../math';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
 import {KeyboardCode} from '../../util';
@@ -70,8 +70,12 @@ export class EntityMoveTool extends BaseTool {
                 vectorRound(vectorAdd(event.stageCoords, this._selectOffsetCoords)),
                 this._mergeKey);
         } else if (this._selectedCorner) {
-            this._processCornerResize(event.stageCoords);
+            this._processCornerResize(event.stageCoords, this._cornerFixedNumResize(event.ctrlKey), event.shiftKey);
         }
+    }
+
+    private _cornerFixedNumResize(ctrlKey : boolean) {
+        return ctrlKey ? 0 : 1;
     }
 
     onStageUp(event : CanvasMouseEvent) {
@@ -93,7 +97,7 @@ export class EntityMoveTool extends BaseTool {
         this._cancel();
     }
 
-    private _processCornerResize(currentCoords : Vector) {
+    private _processCornerResize(currentCoords : Vector, fixedNum : number, lockScaleToMax : boolean) {
         let selectedEntityKey = this._selectionService.selection.value.selectedEntity;
         if (!selectedEntityKey) {
             return;
@@ -102,17 +106,23 @@ export class EntityMoveTool extends BaseTool {
         let anchorCorner = this._getAnchorCorner(this._selectedCorner);
         this._entitySizeService.setSize(
             selectedEntityKey,
-            this._getNewSizeAttributeMap(currentCoords),
+            this._getNewSizeAttributeMap(currentCoords, lockScaleToMax),
+            fixedNum,
             this._mergeKey);
     }
 
-    private _getNewSizeAttributeMap(currentCoords : Vector) : SizeAttributeMap {
+    private _getNewSizeAttributeMap(currentCoords : Vector, lockScaleToMax : boolean) : SizeAttributeMap {
         let newSizeAttributeMap : SizeAttributeMap = {};
         for (let key in this._entitySizeAttributeMap) {
             let coordsOffset = vectorSubtract(currentCoords, this._selectedCornerFirstCoords);
             newSizeAttributeMap[key] = vectorAdd(
                 this._entitySizeAttributeMap[key],
                 vectorMultiply(vectorMultiply(coordsOffset, {x: 2, y: 2}), this._selectedCorner));
+            if (lockScaleToMax) {
+                let max = Math.max(newSizeAttributeMap[key].x, newSizeAttributeMap[key].y);
+                newSizeAttributeMap[key].x = max;
+                newSizeAttributeMap[key].y = max;
+            }
         }
         return newSizeAttributeMap;
     }

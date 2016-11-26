@@ -26,14 +26,14 @@ export class EntitySizeService extends BaseAttributeService<SizeServiceOperation
         super();
     }
 
-    setSize(entityKey : EntityKey, sizeAttributeMap : SizeAttributeMap, mergeKey? : any) {
+    setSize(entityKey : EntityKey, sizeAttributeMap : SizeAttributeMap, fixedNum : number, mergeKey? : any) {
         let entity = this._entitySystemService.getEntity(entityKey);
         let patch : Entity = {};
 
         for (let key in entity) {
             let setSize = this.getImplementation(key);
             if (setSize && setSize.set && sizeAttributeMap[key]) {
-                patch[key] = setSize.set(entity, sizeAttributeMap[key], this._assetService);
+                patch[key] = setSize.set(entity, sizeAttributeMap[key], fixedNum, this._assetService);
             }
         }
 

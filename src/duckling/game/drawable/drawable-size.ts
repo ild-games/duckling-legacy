@@ -1,4 +1,4 @@
-import {Vector, vectorDivide, vectorMultiply, vectorAbsolute, vectorSign, vectorToString} from '../../math/vector';
+import {Vector, vectorDivide, vectorMultiply, vectorAbsolute, vectorSign, vectorToFixed} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
 import {Entity} from '../../entitysystem/entity';
 import {AssetService} from '../../project/asset.service';
@@ -6,7 +6,7 @@ import {AssetService} from '../../project/asset.service';
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
 import {drawableBoundingBox} from './drawable-bounding-box';
 
-export function setDrawableSize(entity : Entity, newSize : Vector, assetService : AssetService) : DrawableAttribute {
+export function setDrawableSize(entity : Entity, newSize : Vector, fixedNum : number, assetService : AssetService) : DrawableAttribute {
     let drawableAttribute = getDrawableAttribute(entity);
     if (!drawableAttribute.topDrawable) {
         return drawableAttribute;
@@ -15,7 +15,7 @@ export function setDrawableSize(entity : Entity, newSize : Vector, assetService 
     let scaleSign = vectorSign(drawableAttribute.topDrawable.scale);
     let oldScale = vectorAbsolute(drawableAttribute.topDrawable.scale);
     let oldSize = vectorAbsolute(getDrawableSize(entity, assetService));
-    let newScale = vectorDivide(vectorMultiply(oldScale, newSize), oldSize);
+    let newScale = vectorToFixed(vectorDivide(vectorMultiply(oldScale, newSize), oldSize), fixedNum);
     if (_isValidScale(newScale)) {
         let newTopDrawable = immutableAssign(drawableAttribute.topDrawable, {scale: newScale});
         return immutableAssign(drawableAttribute, {topDrawable: newTopDrawable});

@@ -88,6 +88,19 @@ export function vectorSign(vector : Vector) : Vector {
     }
 }
 
+/**
+ * Clamp a vector to the fixed decimal amount
+ * @param  vector Vector to clamp to the fixed decimal amount
+ * @param  fixedNum Decimal places to clamp the vector to
+ * @return Resulting vector with the clamped decimal
+ */
+export function vectorToFixed(vector : Vector, fixedNum : number) : Vector {
+    return {
+        x: parseFloat(vector.x.toFixed(fixedNum)),
+        y: parseFloat(vector.y.toFixed(fixedNum))
+    }
+}
+
 export function vectorToString(vector : Vector) : string {
     return `{x: ${vector.x}, y: ${vector.y}}`;
 }
