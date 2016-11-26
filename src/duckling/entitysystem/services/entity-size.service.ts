@@ -53,4 +53,15 @@ export class EntitySizeService extends BaseAttributeService<SizeServiceOperation
 
         return sizeAttributeMap;
     }
+
+    isEntityResizable(entity : Entity) {
+        let resizable = false;
+        for (let key in entity) {
+            let implementation = this.getImplementation(key);
+            if (implementation && implementation.set) {
+                resizable = true;
+            }
+        }
+        return resizable;
+    }
 }

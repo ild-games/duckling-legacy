@@ -9,7 +9,6 @@ import {
     Entity,
     EntityBoxService
 } from '../../entitysystem';
-import {EntityEligibleResizeService} from '../../entitysystem/services/entity-eligible-resize.service';
 import {EntitySizeService, SizeAttributeMap} from '../../entitysystem/services/entity-size.service';
 import {Box2, Vector, vectorMultiply, vectorAdd, vectorSubtract, vectorRound, boxContainsPoint} from '../../math';
 import {newMergeKey} from '../../state';
@@ -33,7 +32,6 @@ export class EntityMoveTool extends BaseTool {
                 private _entitySystemService : EntitySystemService,
                 private _entityPositionService : EntityPositionService,
                 private _selectionService : SelectionService,
-                private _entityEligibleForResizeService : EntityEligibleResizeService,
                 private _entitySizeService : EntitySizeService,
                 private _entityBoxService : EntityBoxService) {
         super();
@@ -58,7 +56,7 @@ export class EntityMoveTool extends BaseTool {
     onStageDown(event : CanvasMouseEvent) {
         let whichCorner = this._isCornerClicked(event.stageCoords, event.canvas.scale);
         let selectedEntity = this._entityAlreadySelected();
-        if (selectedEntity && whichCorner && this._entityEligibleForResizeService.isEntityResizable(selectedEntity)) {
+        if (selectedEntity && whichCorner && this._entitySizeService.isEntityResizable(selectedEntity)) {
             this._cornerClicked(whichCorner, event.stageCoords);
         } else {
             this._tryEntitySelect(event.stageCoords);
@@ -188,7 +186,7 @@ export class EntityMoveTool extends BaseTool {
             graphics = new Graphics();
             graphics.lineStyle(1 / scale, 0x3355cc, 1);
             drawRectangle(box.position, box.dimension, graphics);
-            if (this._entityEligibleForResizeService.isEntityResizable(entity)) {
+            if (this._entitySizeService.isEntityResizable(entity)) {
                 this._drawTransformCorners(graphics, box, scale);
             }
         }

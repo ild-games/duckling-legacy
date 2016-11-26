@@ -28,7 +28,6 @@ import {
     EntitySystemService,
     EntityPositionService
 } from '../entitysystem';
-import {EntityEligibleResizeService} from '../entitysystem/services/entity-eligible-resize.service';
 import {EntitySizeService} from '../entitysystem/services/entity-size.service';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
@@ -85,7 +84,6 @@ export class GameModule {
                 public attributeComponentService : AttributeComponentService,
                 public entityDrawerService : EntityDrawerService,
                 public requiredAssetService : RequiredAssetService,
-                public entityEligibleResizeService : EntityEligibleResizeService,
                 public entitySizeService : EntitySizeService) {
         bootstrapGameComponents(this);
     }

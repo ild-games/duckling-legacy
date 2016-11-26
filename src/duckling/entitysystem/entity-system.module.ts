@@ -10,7 +10,6 @@ import {
     BaseAttributeService,
     EntitySystemService
 } from './index';
-import {EntityEligibleResizeService} from './services/entity-eligible-resize.service';
 import {EntitySizeService} from './services/entity-size.service';
 
 @NgModule({
@@ -22,7 +21,6 @@ import {EntitySizeService} from './services/entity-size.service';
         EntitySelectionService,
         BaseAttributeService,
         EntitySystemService,
-        EntityEligibleResizeService,
         EntitySizeService
     ]
 })

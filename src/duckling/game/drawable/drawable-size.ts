@@ -8,6 +8,10 @@ import {drawableBoundingBox} from './drawable-bounding-box';
 
 export function setDrawableSize(entity : Entity, newSize : Vector, assetService : AssetService) : DrawableAttribute {
     let drawableAttribute = getDrawableAttribute(entity);
+    if (!drawableAttribute.topDrawable) {
+        return drawableAttribute;
+    }
+
     let scaleSign = vectorSign(drawableAttribute.topDrawable.scale);
     let oldScale = vectorAbsolute(drawableAttribute.topDrawable.scale);
     let oldSize = vectorAbsolute(getDrawableSize(entity, assetService));
@@ -20,7 +24,11 @@ export function setDrawableSize(entity : Entity, newSize : Vector, assetService 
 }
 
 export function getDrawableSize(entity : Entity, assetService : AssetService) : Vector {
-    return drawableBoundingBox(entity, assetService).dimension;
+    let boundingBox = drawableBoundingBox(entity, assetService);
+    if (boundingBox) {
+        return boundingBox.dimension;
+    }
+    return {x: 0, y: 0};
 }
 
 function _isValidScale(scale : Vector) : boolean {
