@@ -43,7 +43,7 @@ export class SectionHeaderComponent {
     headerText : string = "";
 
     @Input()
-    collapsible : boolean = false;
+    collapsible : boolean = true;
 
     @Output()
     sectionOpenChanged = new EventEmitter<boolean>();

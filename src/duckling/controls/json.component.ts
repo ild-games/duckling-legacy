@@ -11,6 +11,13 @@ import {
 import {immutableAssign, immutableArrayAssign} from '../util/model';
 import {ChangeType, changeType} from '../state';
 
+enum JsonValueType {
+    Number,
+    String,
+    Boolean,
+    Object,
+    Array
+}
 
 /**
  * A Component used to display the json representing an arbitrary value.
@@ -19,34 +26,36 @@ import {ChangeType, changeType} from '../state';
     selector: "dk-json",
     styleUrls: ['./duckling/controls/json.component.css'],
     template: `
-        <div *ngFor="let key of jsonKeys">
+        <div
+            *ngFor="let key of jsonKeys"
+            [ngSwitch]="jsonValueType(value[key])">
             <dk-number-input
-                *ngIf="isNumber(value[key])"
+                *ngSwitchCase="JsonValueType.Number"
                 [label]="key"
                 [value]="value[key]"
                 (validInput)="onValueChanged($event, key)">
             </dk-number-input>
             <dk-input
-                *ngIf="isString(value[key])"
+                *ngSwitchCase="JsonValueType.String"
                 [label]="key"
                 [value]="value[key]"
                 (inputChanged)="onValueChanged($event, key)">
             </dk-input>
             <dk-checkbox
-                *ngIf="isBoolean(value[key])"
+                *ngSwitchCase="JsonValueType.Boolean"
                 [text]="key"
                 [checked]="value[key]"
                 (input)="onValueChanged($event, key)">
             </dk-checkbox>
             <dk-section
-                *ngIf="isObject(value[key])"
+                *ngSwitchCase="JsonValueType.Object"
                 [headerText]="key">
                 <dk-json
                     [value]="value[key]"
                     (valueChanged)="onValueChanged($event, key)">
                 </dk-json>
             </dk-section>
-            <div *ngIf="isArray(value[key])">
+            <div *ngSwitchCase="JsonValueType.Array">
                 <md-card class="array-card">
                     <dk-accordian
                         [elements]="value[key]"
@@ -69,6 +78,9 @@ import {ChangeType, changeType} from '../state';
     `
 })
 export class JsonComponent {
+    // hoist for template
+    JsonValueType = JsonValueType;
+
     /**
      * The object that will be displayed as json.
      */
@@ -91,26 +103,6 @@ export class JsonComponent {
         this.valueChanged.emit(immutableAssign(this.value, patch));
     }
 
-    isArray(json : any) {
-        return Array.isArray(json);
-    }
-
-    isObject(json : any) {
-        return typeof json === 'object' && !this.isArray(json);
-    }
-
-    isNumber(json : any) {
-        return typeof json === 'number';
-    }
-
-    isString(json : any) {
-        return typeof json === 'string';
-    }
-
-    isBoolean(json : any) {
-        return typeof json === 'boolean';
-    }
-
     get jsonKeys() : string[] {
         let keys : string[] = [];
         for (let key in this.value) {
@@ -119,8 +111,38 @@ export class JsonComponent {
         return keys;
     }
 
-    noop(element : any, i : number) {
-        console.log(i);
-        console.log(element);
+    jsonValueType(json : any) : JsonValueType {
+        if (this._isNumber(json)) {
+            return JsonValueType.Number;
+        } else if (this._isString(json)) {
+            return JsonValueType.String;
+        } else if (this._isBoolean(json)) {
+            return JsonValueType.Boolean;
+        } else if (this._isObject(json)) {
+            return JsonValueType.Object;
+        } else if (this._isArray(json)) {
+            return JsonValueType.Array;
+        }
+        return null;
+    }
+
+    private _isArray(json : any) {
+        return Array.isArray(json);
+    }
+
+    private _isObject(json : any) {
+        return typeof json === 'object' && !this._isArray(json);
+    }
+
+    private _isNumber(json : any) {
+        return typeof json === 'number';
+    }
+
+    private _isString(json : any) {
+        return typeof json === 'string';
+    }
+
+    private _isBoolean(json : any) {
+        return typeof json === 'boolean';
     }
 }

@@ -6,16 +6,14 @@ $form-label-padding: $form-label-padding-top $form-label-padding-right $form-lab
 
 $spacer-unit: 13px;
 
-.form-label:not(:first-child) {
+.form-label {
     padding: $form-label-padding;
     overflow: hidden;
     text-overflow: ellipsis;
-}
 
-.form-label:first-child {
-    padding: 0 $form-label-padding-right $form-label-padding-down $form-label-padding-left;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    :first-child {
+        padding: 0 $form-label-padding-right $form-label-padding-down $form-label-padding-left;
+    }
 }
 
 .inline-entry-field {
