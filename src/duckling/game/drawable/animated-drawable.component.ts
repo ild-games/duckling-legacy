@@ -53,10 +53,10 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
             *ngIf="hasAnyFrames"
             class="drawables-card">
             <dk-accordian
-                [elements]="animatedDrawable?.frames"
-                clone="true"
                 titleProperty="key"
                 keyProperty="key"
+                [elements]="animatedDrawable?.frames"
+                [clone]="true"
                 (elementDeleted)="onChildDrawablesChanged($event)"
                 (elementMovedDown)="onChildDrawablesChanged($event)"
                 (elementMovedUp)="onChildDrawablesChanged($event)"

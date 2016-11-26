@@ -18,7 +18,7 @@ import {TemplateWrapperDirective} from './template-wrapper.directive';
     template: `
         <dk-accordian-element
             *ngFor="let index of indices()"
-            [title]="elements[index][titleProperty]"
+            [title]="titleForIndex(index)"
             [opened]="openedElements[keyForIndex(index)]"
             [first]="index === 0"
             [last]="index === elements.length - 1"
@@ -44,6 +44,10 @@ export class AccordianComponent<T> {
      * The property on the element being displayed in the accordian used for the title
      */
     @Input() titleProperty : string;
+    /**
+     * An optional prefix that will appear before each element's title
+     */
+    @Input() titlePrefix : string = "";
     /**
      * The property on the element that is used to uniquely identify the element
      */
@@ -118,7 +122,21 @@ export class AccordianComponent<T> {
     }
 
     keyForIndex(index : number) : string {
-        let element : any = this.elements[index];
-        return element[this.keyProperty] as string;
+        if (this.keyProperty) {
+            let element : any = this.elements[index];
+            return element[this.keyProperty] as string;
+        } else {
+            return index + "";
+        }
+    }
+
+    titleForIndex(index : number) : string {
+        let title = "";
+        if (this.titleProperty) {
+            title = (<any>this.elements[index])[this.titleProperty] as string;
+        } else {
+            title = index + "";
+        }
+        return this.titlePrefix + title;
     }
 }
