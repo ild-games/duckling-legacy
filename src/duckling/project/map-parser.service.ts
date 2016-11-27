@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {createEntitySystem, Entity, EntitySystem, EntityKey} from '../entitysystem';
+import {compareVersions, incompatibleReason, MAP_VERSION, VersionCompatibility} from '../version';
 
 import {Asset, AssetService} from './asset.service'
 import {RequiredAssetService} from './required-asset.service'
@@ -24,8 +25,10 @@ export interface RawMapFile {
     key : string,
     entities : string [],
     assets: Asset[],
-    systems : {[systemName : string] : RawSystem}
+    systems : {[systemName : string] : RawSystem},
+    version: string
 }
+
 
 @Injectable()
 export class MapParserService {
@@ -39,6 +42,11 @@ export class MapParserService {
      * @return An EntitySystem with the entities contained in the map.
      */
     mapToSystem(map : RawMapFile) : EntitySystem {
+        let compatibility = compareVersions(map.version);
+        if (compatibility !== VersionCompatibility.Compatible) {
+            throw new Error(incompatibleReason(compatibility));
+        }
+
         let entities : {[entityKey : string] : Entity} = {};
 
         for (let entityKey of map.entities) {
@@ -96,7 +104,8 @@ export class MapParserService {
             key : mapKey,
             systems : systems,
             entities : entities,
-            assets : assetList
+            assets : assetList,
+            version: MAP_VERSION
         }
     }
 }

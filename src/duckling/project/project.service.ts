@@ -4,6 +4,7 @@ import {BehaviorSubject} from 'rxjs';
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
 import {StoreService, clearUndoHistoryAction} from '../state';
 import {JsonLoaderService, PathService} from '../util';
+import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
 import {MapParserService} from './map-parser.service';
 import {switchProjectAction, doneLoadingProjectAction, openMapAction, Project} from './project';
@@ -22,7 +23,8 @@ export class ProjectService {
                 private _storeService : StoreService,
                 private _jsonLoader : JsonLoaderService,
                 private _pathService : PathService,
-                private _mapParser : MapParserService) {
+                private _mapParser : MapParserService,
+                private _dialog : DialogService) {
         this.project = new BehaviorSubject(this._project);
         this._storeService.state.subscribe((state) => {
             this.project.next(state.project);
@@ -45,17 +47,21 @@ export class ProjectService {
         this._storeService.dispatch(openMapAction(mapKey));
         this._jsonLoader.getJsonFromPath(this.getMapPath(mapKey))
         .then((json : any) => {
-            let system : EntitySystem;
-            if (json) {
-                system = this._mapParser.mapToSystem(JSON.parse(json));
-            } else {
-                system = createEntitySystem();
+            try {
+                let system : EntitySystem;
+                if (json) {
+                    system = this._mapParser.mapToSystem(JSON.parse(json));
+                } else {
+                    system = createEntitySystem();
+                }
+
+                this._entitySystem.replaceSystem(system);
+
+                this._storeService.dispatch(doneLoadingProjectAction());
+                this._storeService.dispatch(clearUndoHistoryAction());
+            } catch (error) {
+                this._dialog.showErrorDialog("Error Parsing Map File", error.message);
             }
-
-            this._entitySystem.replaceSystem(system);
-
-            this._storeService.dispatch(doneLoadingProjectAction());
-            this._storeService.dispatch(clearUndoHistoryAction());
         });
     }
 

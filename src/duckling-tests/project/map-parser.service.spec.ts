@@ -7,12 +7,14 @@ import {RawMapFile, MapParserService, AssetService, RequiredAssetService} from '
 import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
 import {immutableAssign, PathService} from '../../duckling/util';
+import {MAP_VERSION} from '../../duckling/version';
 
 let emptyMap : RawMapFile = {
     key : "",
     entities : [],
     assets : [],
-    systems : {}
+    systems : {},
+    version: MAP_VERSION
 };
 
 let entityA = {
@@ -53,7 +55,8 @@ let basicMap : RawMapFile = {
                 }
             }
         }
-    }
+    },
+    version: MAP_VERSION
 }
 
 describe("MapLoaderService", function() {
