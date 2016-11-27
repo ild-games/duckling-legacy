@@ -27,6 +27,12 @@ import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collisi
             (validInput)="onDimensionInput($event)">
         </dk-vector-input>
         <dk-vector-input
+            xLabel="Scale X"
+            yLabel="Scale Y"
+            [value]="attribute.scale"
+            (validInput)="onScaleInput($event)">
+        </dk-vector-input>
+        <dk-vector-input
             xLabel="One Way Normal X"
             yLabel="One Way Normal Y"
             [value]="attribute.oneWayNormal"
@@ -54,6 +60,10 @@ export class CollisionComponent {
 
     bodyTypes = BodyTypeSelect;
     collisionTypes = CollisionTypeSelect;
+
+    onScaleInput(newScale : Vector) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {scale: newScale}));
+    }
 
     onOneWayNormalInput(oneWayNormal : Vector) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {oneWayNormal}));

@@ -13,7 +13,7 @@ export function vectorAdd(vectorA : Vector, vectorB : Vector) : Vector {
     return {
         x: vectorA.x + vectorB.x,
         y: vectorA.y + vectorB.y,
-    }
+    };
 }
 
 /**
@@ -35,5 +35,72 @@ export function vectorRound(vector : Vector) : Vector {
     return {
         x: Math.round(vector.x),
         y: Math.round(vector.y)
+    };
+}
+
+/**
+ * Multiply two vectors
+ * @param  vectorA First vector to multiply
+ * @param  vectorB Second vector to multiply
+ * @return Resulting vector from the multiplication
+ */
+export function vectorMultiply(vectorA : Vector, vectorB: Vector) : Vector {
+    return {
+        x: vectorA.x * vectorB.x,
+        y: vectorA.y * vectorB.y
+    };
+}
+
+/**
+ * Divide two vectors
+ * @param  vectorA First vector to divide
+ * @param  vectorB Second vector to divide
+ * @return Resulting vector from the division
+ */
+export function vectorDivide(vectorA : Vector, vectorB: Vector) : Vector {
+    return {
+        x: vectorA.x / vectorB.x,
+        y: vectorA.y / vectorB.y
+    };
+}
+
+/**
+ * Get the absolute value of a vector
+ * @param  vector Vector to get the absolute value of
+ * @return Resulting vector from the absolute value operation
+ */
+export function vectorAbsolute(vector : Vector) : Vector {
+    return {
+        x: Math.abs(vector.x),
+        y: Math.abs(vector.y),
+    };
+}
+
+/**
+ * Get the sign value of a vector
+ * @param  vector Vector to get the sign value of
+ * @return Resulting vector with the sign values
+ */
+export function vectorSign(vector : Vector) : Vector {
+    return {
+        x: Math.sign(vector.x),
+        y: Math.sign(vector.y)
     }
+}
+
+/**
+ * Clamp a vector to the fixed decimal amount
+ * @param  vector Vector to clamp to the fixed decimal amount
+ * @param  fixedNum Decimal places to clamp the vector to
+ * @return Resulting vector with the clamped decimal
+ */
+export function vectorToFixed(vector : Vector, fixedNum : number) : Vector {
+    return {
+        x: parseFloat(vector.x.toFixed(fixedNum)),
+        y: parseFloat(vector.y.toFixed(fixedNum))
+    }
+}
+
+export function vectorToString(vector : Vector) : string {
+    return `{x: ${vector.x}, y: ${vector.y}}`;
 }

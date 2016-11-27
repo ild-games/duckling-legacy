@@ -7,9 +7,7 @@ import {
     SimpleChange,
     ViewChild,
     ChangeDetectorRef,
-    EventEmitter,
-    Output
-} from '@angular/core';
+    EventEmitter, Output } from '@angular/core';
 import {Observable} from 'rxjs';
 import {
     autoDetectRenderer,
@@ -375,6 +373,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         return {
             canvasCoords: canvasCoords,
             stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
+            ctrlKey: event.ctrlKey,
+            shiftKey: event.shiftKey,
             canvas: this
         }
     }
@@ -385,6 +385,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             keyCode: event.keyCode,
             canvasCoords: canvasCoords,
             stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
+            ctrlKey: event.ctrlKey,
+            shiftKey : event.shiftKey,
             canvas: this
         }
     }

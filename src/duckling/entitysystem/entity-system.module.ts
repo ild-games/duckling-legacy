@@ -10,6 +10,7 @@ import {
     BaseAttributeService,
     EntitySystemService
 } from './index';
+import {EntitySizeService} from './services/entity-size.service';
 
 @NgModule({
     providers: [
@@ -19,7 +20,8 @@ import {
         EntityPositionService,
         EntitySelectionService,
         BaseAttributeService,
-        EntitySystemService
+        EntitySystemService,
+        EntitySizeService
     ]
 })
 export class EntitySystemModule {

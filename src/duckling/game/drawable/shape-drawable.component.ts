@@ -14,8 +14,8 @@ import {NumberInputComponent} from '../../controls/number-input.component';
 import {ShapeDrawable} from './shape-drawable';
 import {GenericShapeComponent} from './generic-shape.component';
 import {Shape, ShapeType, cppTypeToShapeType} from './shape';
-import {defaultCircle} from './circle';
-import {CircleComponent} from './circle.component';
+import {defaultOval} from './oval';
+import {OvalComponent} from './oval.component';
 import {defaultRectangle} from './rectangle';
 import {RectangleComponent} from './rectangle.component';
 
@@ -35,15 +35,15 @@ import {RectangleComponent} from './rectangle.component';
             <dk-enum-choice
                 *ngSwitchDefault
                 [enum]="ShapeType"
-                [selected]="ShapeType.Circle"
+                [selected]="ShapeType.Oval"
                 (addClicked)="onShapeTypePicked($event)">
             </dk-enum-choice>
 
-            <dk-circle-drawable
-                *ngSwitchCase="ShapeType.Circle"
-                [circle]="shapeDrawable.shape"
-                (circleChanged)="onShapeChanged($event)">
-            </dk-circle-drawable>
+            <dk-oval-drawable
+                *ngSwitchCase="ShapeType.Oval"
+                [oval]="shapeDrawable.shape"
+                (ovalChanged)="onShapeChanged($event)">
+            </dk-oval-drawable>
 
             <dk-rectangle-drawable
                 *ngSwitchCase="ShapeType.Rectangle"
@@ -76,8 +76,8 @@ export class ShapeDrawableComponent {
 
     private _getDefaultShape(type : ShapeType) : Shape {
         switch (type) {
-            case ShapeType.Circle:
-                return defaultCircle;
+            case ShapeType.Oval:
+                return defaultOval;
             case ShapeType.Rectangle:
                 return defaultRectangle;
             default:
