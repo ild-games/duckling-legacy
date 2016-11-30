@@ -79,9 +79,14 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     private _refreshLayers(){
         this.layers = Array.from(this._entityLayerService.getLayers());
         this.layers.sort((a, b) => {
-            if (a.layerName > b.layerName) {
+            let aAsInt = parseInt(a.layerName);
+            let bAsInt = parseInt(b.layerName);
+            let layerA = isNaN(aAsInt) ? a.layerName : aAsInt;
+            let layerB = isNaN(bAsInt) ? b.layerName : bAsInt;
+
+            if (layerA > layerB) {
                 return 1;
-            } else if(a.layerName < b.layerName) {
+            } else if (layerA < layerB) {
                 return -1;
             }
             return 0;
