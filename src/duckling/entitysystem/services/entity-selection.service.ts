@@ -5,6 +5,7 @@ import {Vector, boxContainsPoint} from '../../math';
 import {RenderPriorityService} from '../../canvas/drawing/render-priority.service';
 
 import {EntityBoxService} from './entity-box.service';
+import {EntityLayerService} from './entity-layer.service';
 
 /**
  * The EntitySelectionService is used to select entities.
@@ -14,7 +15,8 @@ export class EntitySelectionService {
 
     constructor(private _entitySystemService : EntitySystemService,
                 private _entityBoxService : EntityBoxService,
-                private _renderPriority : RenderPriorityService) {
+                private _renderPriority : RenderPriorityService,
+                private _entityLayerService : EntityLayerService) {
 
     }
 
@@ -27,7 +29,8 @@ export class EntitySelectionService {
     getEntityKey(position : Vector) : EntityKey {
         let entities = Array.from(this._renderPriority.sortEntities(this._entitySystemService.entitySystem.getValue()));
         entities.reverse();
-        let entity = entities.find(entity => this._entityContainsPoint(entity, position));
+        let visibleEntities : Array<Entity> = this._entityLayerService.getVisibleEntities(entities);
+        let entity = visibleEntities.find(entity => this._entityContainsPoint(entity, position));
         let key = this._entitySystemService.getKey(entity);
 
         if (key) {
@@ -36,7 +39,6 @@ export class EntitySelectionService {
             return null;
         }
     }
-
     private _entityContainsPoint(entity : Entity, position : Vector) {
         return boxContainsPoint(this._entityBoxService.getEntityBox(entity), position);
     }

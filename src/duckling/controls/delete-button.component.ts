@@ -19,7 +19,7 @@ import {IconButtonComponent} from './icon-button.component';
                 class="non-hover-button"
                 tooltip="Delete"
                 icon="trash"
-                (click)="onClick()">
+                (iconClick)="onClick()">
             </dk-icon-button>
             <dk-icon-button
                 class="hover-button"
@@ -27,15 +27,15 @@ import {IconButtonComponent} from './icon-button.component';
                 color="warn"
                 icon="trash-o"
                 [isRaised]="true"
-                (click)="onClick()">
+                (iconClick)="onClick()">
             </dk-icon-button>
         </div>
     `
 })
 export class DeleteButtonComponent {
-    @Output() click = new EventEmitter<any>();
+    @Output() deleteClick = new EventEmitter<any>();
 
     onClick() {
-        this.click.emit(true);
+        this.deleteClick.emit(true);
     }
 }

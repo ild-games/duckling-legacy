@@ -38,10 +38,10 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
                     icon="save"
                     [tooltip]="getSaveNameTooltip()"
                     [disabled]="!isValidEntityName(editEntityName)"
-                    (click)="onSaveEntityName()">
+                    (iconClick)="onSaveEntityName()">
                 </dk-icon-button>
             </div>
-            <dk-delete-button (click)="onDeleteClicked()"></dk-delete-button>
+            <dk-delete-button (deleteClick)="onDeleteClicked()"></dk-delete-button>
         </span>
     `
 })

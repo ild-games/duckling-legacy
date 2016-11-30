@@ -9,7 +9,7 @@ import {
 import {MapSelectComponent} from './map-select.component';
 import {BrowseAssetComponent} from './browse-asset.component';
 
-import {ControlsModule} from '../controls';
+import {ControlsModule} from '../controls/controls.module';
 
 @NgModule({
     imports: [

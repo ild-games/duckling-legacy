@@ -5,6 +5,7 @@ import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
 import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey, EntityPositionService, EntitySystemService} from '../../entitysystem';
 import {drawMissingAsset} from '../../canvas/drawing/util';
+import {EntityLayerService} from '../../entitysystem/services/entity-layer.service';
 
 import {RenderPriorityService} from './render-priority.service';
 import {DrawnConstruct, setConstructPosition} from './drawn-construct';
@@ -23,7 +24,8 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     constructor(private _assets : AssetService,
                 private _renderPriority : RenderPriorityService,
                 private _entityPosition : EntityPositionService,
-                private _entitySystem : EntitySystemService) {
+                private _entitySystem : EntitySystemService,
+                private _layers : EntityLayerService) {
         super();
     }
 
@@ -61,6 +63,9 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
      */
     drawEntity(entity : Entity) : DrawnConstruct[] {
         let drawnConstructs : DrawnConstruct[] = [];
+        if (!this._layers.isEntityVisible(entity)) {
+            return drawnConstructs;
+        }
         for (let key in entity) {
             let drawableConstruct = this.drawAttribute(key, entity);
             if (drawableConstruct) {

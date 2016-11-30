@@ -4,6 +4,7 @@ import {BehaviorSubject} from 'rxjs';
 import {Action, StoreService} from '../state';
 import {ACTION_OPEN_MAP} from '../project/project';
 import {EntityKey, EntitySystemService, Entity} from '../entitysystem';
+import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 
 /**
  * Interface describing the currently selected entity. Will be an empty object
@@ -23,7 +24,8 @@ export class SelectionService {
     public selection : BehaviorSubject<Selection>;
 
     constructor(private _store : StoreService,
-                private _entitySystem : EntitySystemService) {
+                private _entitySystem : EntitySystemService,
+                private _layerService : EntityLayerService) {
         this.selection = new BehaviorSubject({});
         this._store.state.subscribe(state => {
             this.selection.next(this._getSelection(state.selection.selectedEntity))
@@ -49,13 +51,15 @@ export class SelectionService {
 
     private _getSelection(selectedEntity : EntityKey) : Selection {
         if (selectedEntity) {
-            return {
-                selectedEntity,
-                entity : this._entitySystem.getEntity(selectedEntity) || null
+            let entity = this._entitySystem.getEntity(selectedEntity);
+            if (this._layerService.isEntityVisible(entity)) {
+                return {
+                    selectedEntity,
+                    entity : entity || null
+                }
             }
-        } else {
-            return {};
         }
+        return {};
     }
 }
 

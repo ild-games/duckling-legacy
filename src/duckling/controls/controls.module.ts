@@ -54,7 +54,7 @@ const CONTROL_DECLARATIONS : Array<any> = [
     VectorInputComponent,
     SectionComponent,
     SectionHeaderComponent,
-    InlineEditLabelComponent
+    InlineEditLabelComponent,
 ];
 
 @NgModule({
@@ -69,6 +69,8 @@ const CONTROL_DECLARATIONS : Array<any> = [
         MaterialModule,
         CommonModule,
         FormsModule
+    ],
+    entryComponents: [
     ]
 })
 export class ControlsModule {

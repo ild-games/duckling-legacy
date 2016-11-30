@@ -12,6 +12,8 @@ import {StoreService} from '../../state';
 import {ProjectService} from '../../project';
 import {ToolbarOption} from '../../controls';
 import {MapSelectComponent} from '../../project/map-select.component';
+import {EntityLayerService} from '../../entitysystem';
+import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.component';
 
 @Component({
     selector: "dk-top-toolbar",
@@ -39,6 +41,14 @@ import {MapSelectComponent} from '../../project/map-select.component';
             icon="repeat"
             tooltip="Redo"
             (click)="store.redo()">
+        </dk-toolbar-button>
+
+        <span class="separator"></span>
+
+        <dk-toolbar-button
+            icon="eye"
+            tooltip="Show/hide layers"
+            (click)="onShowHideLayersClicked()">
         </dk-toolbar-button>
 
         <span class="separator"></span>
@@ -81,10 +91,14 @@ export class TopToolbarComponent {
     }
 
     onChangeMap() {
-        MapSelectComponent.open(this._viewContainer).subscribe((mapName) => {
+        MapSelectComponent.open(this._viewContainer).subscribe((mapName : string) => {
             if (mapName) {
                 this.mapSelected.emit(mapName);
             }
         });
+    }
+
+    onShowHideLayersClicked() {
+        LayerDialogComponent.open(this._viewContainer);
     }
 }

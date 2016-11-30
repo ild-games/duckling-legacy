@@ -8,8 +8,10 @@ import {
     EntityPositionService,
     EntitySelectionService,
     BaseAttributeService,
-    EntitySystemService
+    EntitySystemService,
+    EntityLayerService
 } from './index';
+import {LayerDialogComponent} from './services/layer-dialog.component';
 
 @NgModule({
     providers: [
@@ -18,8 +20,21 @@ import {
         EntityBoxService,
         EntityPositionService,
         EntitySelectionService,
+        EntityLayerService,
         BaseAttributeService,
         EntitySystemService
+    ],
+    imports: [
+        ControlsModule
+    ],
+    declarations: [
+        LayerDialogComponent
+    ],
+    exports: [
+        LayerDialogComponent
+    ],
+    entryComponents: [
+        LayerDialogComponent
     ]
 })
 export class EntitySystemModule {

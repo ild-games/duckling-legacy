@@ -26,7 +26,8 @@ import {
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
-    EntityPositionService
+    EntityPositionService,
+    EntityLayerService
 } from '../entitysystem';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
@@ -82,7 +83,8 @@ export class GameModule {
                 public entityBoxService : EntityBoxService,
                 public attributeComponentService : AttributeComponentService,
                 public entityDrawerService : EntityDrawerService,
-                public requiredAssetService : RequiredAssetService) {
+                public requiredAssetService : RequiredAssetService,
+                public entityLayerService : EntityLayerService) {
         bootstrapGameComponents(this);
     }
 }

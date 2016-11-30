@@ -2,7 +2,8 @@ import {
     AttributeDefaultService,
     EntityBoxService,
     EntitySystemService,
-    EntityPositionService
+    EntityPositionService,
+    EntityLayerService
 } from '../entitysystem';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
@@ -33,6 +34,7 @@ import {DrawableAttributeComponent} from './drawable/drawable-attribute.componen
 import {drawDrawableAttribute} from './drawable/drawable-drawer';
 import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
+import {getLayer} from './drawable/get-layer';
 
 type Services = {
     attributeDefaultService : AttributeDefaultService;
@@ -40,7 +42,8 @@ type Services = {
     entityBoxService: EntityBoxService,
     attributeComponentService: AttributeComponentService,
     entityDrawerService: EntityDrawerService,
-    requiredAssetService  : RequiredAssetService
+    requiredAssetService  : RequiredAssetService,
+    entityLayerService : EntityLayerService
 };
 
 let _bootstrapFunctions : Function[] = [
@@ -85,6 +88,8 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
     services.entityDrawerService.register(DRAWABLE_KEY, drawDrawableAttribute);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
+    services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
+    services.entityLayerService.register(DRAWABLE_KEY, getLayer);
 }
 
 function _bootstrapActionAttribute(services : Services) {
