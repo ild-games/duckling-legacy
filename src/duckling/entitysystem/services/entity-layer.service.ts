@@ -69,6 +69,16 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         return layers;
     }
 
+    getVisibleEntities(entities: Array<Entity>) : Array<Entity> {
+        let visibleEntities : Array<Entity> = [];
+        for (let entity of entities){
+            if (this.isEntityVisible(entity)){
+                visibleEntities.push(entity);
+            }
+        }
+        return visibleEntities;
+    }
+
     toggleLayerVisibility(layerKey : string) {
         this._hiddenLayers[layerKey] = !this._hiddenLayers[layerKey];
         this.layerChanged.next(true);

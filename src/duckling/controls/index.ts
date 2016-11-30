@@ -22,5 +22,4 @@ export * from './json.component';
 export * from './section.component';
 export * from './section-header.component';
 export * from './inline-edit-label.component';
-export * from './layer-dialog.component';
 export * from './controls.module';

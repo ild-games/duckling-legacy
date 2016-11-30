@@ -29,7 +29,7 @@ export class EntitySelectionService {
     getEntityKey(position : Vector) : EntityKey {
         let entities = Array.from(this._renderPriority.sortEntities(this._entitySystemService.entitySystem.getValue()));
         entities.reverse();
-        let visibleEntities : Array<Entity> = this._getVisibleEntities(entities);
+        let visibleEntities : Array<Entity> = this._entityLayerService.getVisibleEntities(entities);
         let entity = visibleEntities.find(entity => this._entityContainsPoint(entity, position));
         let key = this._entitySystemService.getKey(entity);
 
@@ -39,17 +39,6 @@ export class EntitySelectionService {
             return null;
         }
     }
-
-    private _getVisibleEntities(entities : Array<Entity>) : Array<Entity> {
-        let visibleEntities : Array<Entity> = [];
-        for (let entity of entities){
-            if (this._entityLayerService.isEntityVisible(entity)){
-                visibleEntities.push(entity);
-            }
-        }
-        return visibleEntities;
-    }
-
     private _entityContainsPoint(entity : Entity, position : Vector) {
         return boxContainsPoint(this._entityBoxService.getEntityBox(entity), position);
     }

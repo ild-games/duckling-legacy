@@ -17,7 +17,6 @@ import {StoreService} from '../state';
 import {AssetService, Asset, ProjectService} from '../project';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
-import {EntityBoxService} from '../entitysystem/services';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 import {Vector} from '../math';
 import {KeyboardService} from '../util';
@@ -137,7 +136,6 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
                 public projectService : ProjectService,
                 private _entityDrawerService : EntityDrawerService,
                 private _keyboardService : KeyboardService,
-                private _entityBoxService : EntityBoxService,
                 private _entityLayerService : EntityLayerService) {
         this._setTool(this._toolService.defaultTool);
     }
