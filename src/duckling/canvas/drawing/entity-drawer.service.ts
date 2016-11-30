@@ -2,7 +2,7 @@ import {Component, Injectable} from '@angular/core';
 import {Container, DisplayObject} from 'pixi.js';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
-import {AssetService, RequiredAssetService} from '../../project';
+import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey, EntityPositionService, EntitySystemService} from '../../entitysystem';
 import {drawMissingAsset} from '../../canvas/drawing/util';
 import {EntityLayerService} from '../../entitysystem/services/entity-layer.service';
@@ -25,7 +25,6 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
                 private _renderPriority : RenderPriorityService,
                 private _entityPosition : EntityPositionService,
                 private _entitySystem : EntitySystemService,
-                private _requiredAssets : RequiredAssetService,
                 private _layers : EntityLayerService) {
         super();
     }

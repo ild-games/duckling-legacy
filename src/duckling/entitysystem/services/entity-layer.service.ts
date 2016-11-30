@@ -84,6 +84,16 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         patchLayers[layerKey] = !this.hiddenLayers.value[layerKey];
         this._store.dispatch(_layerAction(immutableAssign(this.hiddenLayers.value, patchLayers)), mergeKey);
     }
+
+    getVisibleEntities(entities: Array<Entity>) : Array<Entity> {
+        let visibleEntities : Array<Entity> = [];
+        for (let entity of entities){
+            if (this.isEntityVisible(entity)){
+                visibleEntities.push(entity);
+            }
+        }
+        return visibleEntities;
+    }
 }
 
 export type Layer = {

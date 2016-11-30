@@ -6,14 +6,14 @@ import {
     EventEmitter,
     ViewContainerRef
 } from '@angular/core';
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
 import {ProjectService} from '../../project';
-import {ToolbarOption, LayerDialogComponent} from '../../controls';
+import {ToolbarOption} from '../../controls';
 import {MapSelectComponent} from '../../project/map-select.component';
 import {EntityLayerService} from '../../entitysystem';
+import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.component';
 
 @Component({
     selector: "dk-top-toolbar",
@@ -83,7 +83,6 @@ export class TopToolbarComponent {
                 public project : ProjectService,
                 public toolService : ToolService,
                 private _viewContainer : ViewContainerRef,
-                private _materialDialog : MdDialog,
                 private _viewContainerRef : ViewContainerRef) {
         this.toolOptions = this.toolService.toolOptions;
     }
@@ -93,7 +92,7 @@ export class TopToolbarComponent {
     }
 
     onChangeMap() {
-        MapSelectComponent.open(this._viewContainer).subscribe((mapName) => {
+        MapSelectComponent.open(this._viewContainer).subscribe((mapName : string) => {
             if (mapName) {
                 this.mapSelected.emit(mapName);
             }

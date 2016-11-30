@@ -29,7 +29,6 @@ import {
     SectionHeaderComponent,
     InlineEditLabelComponent
 } from './index';
-import {LayerDialogComponent} from './layer-dialog.component';
 
 const CONTROL_DECLARATIONS : Array<any> = [
     AccordianComponent,
@@ -56,7 +55,6 @@ const CONTROL_DECLARATIONS : Array<any> = [
     SectionComponent,
     SectionHeaderComponent,
     InlineEditLabelComponent,
-    LayerDialogComponent
 ];
 
 @NgModule({
@@ -73,7 +71,6 @@ const CONTROL_DECLARATIONS : Array<any> = [
         FormsModule
     ],
     entryComponents: [
-        LayerDialogComponent
     ]
 })
 export class ControlsModule {

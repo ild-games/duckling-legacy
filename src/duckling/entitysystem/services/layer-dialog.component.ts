@@ -10,16 +10,15 @@ import {
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Subscriber} from 'rxjs';
 
-import {ProjectService} from '../project/project.service';
-import {AssetService} from '../project/asset.service';
-import {EntityLayerService, Layer} from '../entitysystem/services/entity-layer.service';
-import {DialogService} from '../util/dialog.service';
-import {PathService} from '../util/path.service';
-import {openDialog} from '../util/md-dialog';
+import {ProjectService} from '../../project/project.service';
+import {AssetService} from '../../project/asset.service';
+import {EntityLayerService, Layer} from '../../entitysystem/services/entity-layer.service';
+import {DialogService} from '../../util/dialog.service';
+import {PathService} from '../../util/path.service';
+import {openDialog} from '../../util/md-dialog';
 
 @Component({
     selector: 'dk-layer-dialog',
-    styleUrls: ['./duckling/controls/layer-dialog.component.css'],
     template: `
         <div>
             <md-list>
