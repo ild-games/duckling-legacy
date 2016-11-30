@@ -4,6 +4,7 @@ import {expect} from 'chai';
 
 import {createStoreService, createEntityService} from '../helper/state';
 import {EntitySystemService, EntityPositionService, EntityKey} from '../../duckling/entitysystem';
+import {EntityLayerService} from '../../duckling/entitysystem/services/entity-layer.service';
 import {SelectionService, CopyPasteService} from '../../duckling/selection';
 import {Vector} from '../../duckling/math';
 import {immutableAssign} from '../../duckling/util';
@@ -36,7 +37,8 @@ describe("CopyPasteService", function() {
     beforeEach(function() {
         this.store = createStoreService();
         this.entitySystem = createEntityService(this.store);
-        this.selection = new SelectionService(this.store, this.entitySystem);
+        this.layerService = new EntityLayerService(this.entitySytem, this.store);
+        this.selection = new SelectionService(this.store, this.entitySystem, this.layerService);
         this.positionService = new MockPositionService(this.entitySystem);
         this.copyPaste = new CopyPasteService(this.store, this.entitySystem, this.selection, this.positionService);
     });

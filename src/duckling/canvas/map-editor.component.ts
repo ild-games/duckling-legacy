@@ -165,7 +165,7 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
             .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this._drawFrame()) as Subscriber<any>;
 
-        this._layerServiceSubscription = this._entityLayerService.layerChanged.subscribe(() => {
+        this._layerServiceSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
             this._entitiesDrawnConstructsChanged(drawnConstructs);
         }) as Subscriber<any>;

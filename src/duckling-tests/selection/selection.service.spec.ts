@@ -5,6 +5,7 @@ import {expect} from 'chai';
 import {createStoreService, createEntityService} from '../helper/state';
 import {SelectionService} from '../../duckling/selection';
 import {immutableAssign} from '../../duckling/util';
+import {EntityLayerService} from '../../duckling/entitysystem/services/entity-layer.service';
 
 let entity = {
     foo : {
@@ -17,7 +18,8 @@ describe("SelectionService", function() {
     beforeEach(function() {
         this.store = createStoreService();
         this.entitySystem = createEntityService(this.store);
-        this.selection = new SelectionService(this.store, this.entitySystem);
+        this.layerService = new EntityLayerService(this.entitySytem, this.store);
+        this.selection = new SelectionService(this.store, this.entitySystem, this.layerService);
     });
 
     it("with no selection, the selction behavior is empty", function() {
