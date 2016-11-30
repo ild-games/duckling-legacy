@@ -82,8 +82,7 @@ export class TopToolbarComponent {
     constructor(public store : StoreService,
                 public project : ProjectService,
                 public toolService : ToolService,
-                private _viewContainer : ViewContainerRef,
-                private _viewContainerRef : ViewContainerRef) {
+                private _viewContainer : ViewContainerRef) {
         this.toolOptions = this.toolService.toolOptions;
     }
 
