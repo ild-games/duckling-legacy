@@ -56,9 +56,7 @@ export class EntityPositionService extends BaseAttributeService<PositionServiceO
      *
      * @param entityKey The key of the entity to get the position of.
      */
-    getPosition(entityKey : EntityKey, mergeKey? : any) {
-        let entity = this._entitySystemService.getEntity(entityKey);
-
+    getPosition(entity : Entity) {
         for (let key in entity) {
             let getPosition = this.getImplementation(key);
             if (getPosition && getPosition.get) {

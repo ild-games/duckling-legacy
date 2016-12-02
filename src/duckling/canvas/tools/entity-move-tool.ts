@@ -40,7 +40,8 @@ export class EntityMoveTool extends BaseTool {
         this._selection = this._entitySelectionService.getEntityKey(event.stageCoords);
         this._selectOffsetCoords = {x: 0, y: 0};
         if (this._selection) {
-            let position = this._entityPositionService.getPosition(this._selection);
+            let entity = this._entitySystemService.getEntity(this._selection);
+            let position = this._entityPositionService.getPosition(entity);
             this._selectOffsetCoords = vectorSubtract(position, event.stageCoords);
         }
         this._mergeKey = newMergeKey();
@@ -62,7 +63,7 @@ export class EntityMoveTool extends BaseTool {
 
     onKeyDown(event : CanvasKeyEvent) {
         if (this._selectionService.selection.value.entity && this._isMovementKey(event.keyCode)) {
-            let oldPosition = this._entityPositionService.getPosition(this._selectionService.selection.value.selectedEntity);
+            let oldPosition = this._entityPositionService.getPosition(this._selectionService.selection.value.entity);
             let adjustment = this._keyEventToPositionAdjustment(event.keyCode);
             this._entityPositionService.setPosition(
                 this._selectionService.selection.value.selectedEntity,

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 
-import {Entity, EntitySystem} from '../../entitysystem/entity';
+import {TaggedEntity, EntitySystem} from '../../entitysystem/entity';
 
 
 /**
@@ -15,7 +15,7 @@ export class RenderPriorityService {
      * @param  entitySystem EntitySystem to sort for drawing
      * @return Array of entities sorted for drawing
      */
-    sortEntities(entitySystem : EntitySystem) : Array<Entity> {
+    sortEntities(entitySystem : EntitySystem) : Array<TaggedEntity> {
         throw new Error("Not yet implemented");
     }
 }
