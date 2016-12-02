@@ -15,19 +15,34 @@ import {DrawnConstruct, setConstructPosition} from './drawn-construct';
  */
 export type AttributeDrawer = (entity : Entity, assetService? : any) => DrawnConstruct;
 
+type EntityCache = {[key:string]:EntityCacheEntry};
+
+
+interface EntityCacheEntry {
+    entity : Entity,
+    renderedEntity : DrawnConstruct []
+}
+
 /**
  * The AttributeComponentService is used to find and instantiate a component class
  * for an attribute.
  */
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
+    private _cache : EntityCache = {};
+
     constructor(private _assets : AssetService,
                 private _renderPriority : RenderPriorityService,
                 private _entityPosition : EntityPositionService,
                 private _entitySystem : EntitySystemService,
                 private _layers : EntityLayerService) {
         super();
+        _assets.assetLoaded.subscribe(() => this._clearCache());
+        _assets.preloadImagesLoaded.subscribe(() => this._clearCache());
+        _layers.hiddenLayers.subscribe(() => this._clearCache());
     }
+
+
 
     /**
      * Get a DisplayObject for the attribute.
@@ -82,8 +97,26 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     getSystemMapper() {
         return (entitySystem : EntitySystem) : DrawnConstruct[] => {
             let drawnConstructs : DrawnConstruct[] = [];
-            this._renderPriority.sortEntities(entitySystem).forEach(entity => drawnConstructs = drawnConstructs.concat(this.drawEntity(entity.entity)));
+            let newCache : EntityCache = {};
+            this._renderPriority.sortEntities(entitySystem).forEach(entity => {
+                let entry = this._cache[entity.key];
+                if (!entry || entry.entity !== entity.entity) {
+                    entry = {
+                        entity : entity.entity,
+                        renderedEntity : this.drawEntity(entity.entity)
+                    }
+                }
+                for (let construct of entry.renderedEntity) {
+                    drawnConstructs.push(construct);
+                }
+                newCache[entity.key] = entry;
+            });
+            this._cache = newCache;
             return drawnConstructs;
         }
+    }
+
+    private _clearCache() {
+        this._cache = {};
     }
 }
