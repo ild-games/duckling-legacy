@@ -42,7 +42,7 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox>
             }
 
             if (box) {
-                box = immutableAssign(box, {position: this._entityPosition.getPosition(this._entitySystem.getKey(entity))});
+                box = immutableAssign(box, {position: this._entityPosition.getPosition(entity)});
             }
             return box;
         }

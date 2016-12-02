@@ -29,12 +29,12 @@ export class EntitySelectionService {
     getEntityKey(position : Vector) : EntityKey {
         let entities = Array.from(this._renderPriority.sortEntities(this._entitySystemService.entitySystem.getValue()));
         entities.reverse();
-        let visibleEntities : Array<Entity> = this._entityLayerService.getVisibleEntities(entities);
-        let entity = visibleEntities.find(entity => this._entityContainsPoint(entity, position));
-        let key = this._entitySystemService.getKey(entity);
+        let taggedEntity = entities
+            .filter(entity => this._entityLayerService.isEntityVisible(entity.entity))
+            .find(entity => this._entityContainsPoint(entity.entity, position));
 
-        if (key) {
-            return key;
+        if (taggedEntity) {
+            return taggedEntity.key;
         } else {
             return null;
         }

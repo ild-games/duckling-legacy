@@ -1,4 +1,4 @@
-import {Attribute, Entity} from '../../entitysystem/entity';
+import {Attribute, Entity, TaggedEntity} from '../../entitysystem/entity';
 import {immutableAssign} from '../../util';
 
 import {Drawable, defaultDrawable} from './drawable';
@@ -29,9 +29,9 @@ export function getDrawableAttribute(entity : Entity) : DrawableAttribute {
 /**
  * Given two entities with drawable attribute, provide a sorting algorithm
  */
-export function drawableAttributeSorter(entity1 : Entity, entity2 : Entity) {
-    let drawable1 : DrawableAttribute = getDrawableAttribute(entity1);
-    let drawable2 : DrawableAttribute = getDrawableAttribute(entity2);
+export function drawableAttributeSorter(entity1 : TaggedEntity, entity2 : TaggedEntity) {
+    let drawable1 : DrawableAttribute = getDrawableAttribute(entity1.entity);
+    let drawable2 : DrawableAttribute = getDrawableAttribute(entity2.entity);
     if (drawable1.topDrawable.renderPriority > drawable2.topDrawable.renderPriority) {
         return 1;
     }

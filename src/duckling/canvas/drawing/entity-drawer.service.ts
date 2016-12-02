@@ -48,7 +48,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
             if (drawnConstruct) {
                 setConstructPosition(
                     drawnConstruct,
-                    this._entityPosition.getPosition(this._entitySystem.getKey(entity)));
+                    this._entityPosition.getPosition(entity));
             }
             return drawnConstruct;
         }
@@ -82,7 +82,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
     getSystemMapper() {
         return (entitySystem : EntitySystem) : DrawnConstruct[] => {
             let drawnConstructs : DrawnConstruct[] = [];
-            this._renderPriority.sortEntities(entitySystem).forEach(entity => drawnConstructs = drawnConstructs.concat(this.drawEntity(entity)));
+            this._renderPriority.sortEntities(entitySystem).forEach(entity => drawnConstructs = drawnConstructs.concat(this.drawEntity(entity.entity)));
             return drawnConstructs;
         }
     }
