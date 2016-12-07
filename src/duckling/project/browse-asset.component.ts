@@ -73,6 +73,9 @@ export class BrowseAssetComponent {
             return;
         }
         let splitAssetKey = file.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
+        if (this._path.folderSeparator === "\\") {
+            splitAssetKey = splitAssetKey.replace(/\\/g, "/");
+        }
         this.filePicked.emit(splitAssetKey);
     }
 
