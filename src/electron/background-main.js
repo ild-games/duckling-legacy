@@ -15,7 +15,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
       width: 800,
       title: "Duckling",
-      height: 600
+      height: 600,
+      icon: __dirname + "/../resources/images/icon.png"
   });
 
   // Open the DevTools.
