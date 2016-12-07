@@ -68,4 +68,9 @@ export interface CanvasKeyEvent extends CanvasMouseEvent {
      * Key that was pressed during the event
      */
     keyCode : number;
+
+    /**
+     * Boolean determining if the ctrl key modifier was down
+     */
+    ctrlKey : boolean;
 }

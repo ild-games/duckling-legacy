@@ -62,13 +62,15 @@ export class EntityMoveTool extends BaseTool {
     }
 
     onKeyDown(event : CanvasKeyEvent) {
-        if (this._selectionService.selection.value.entity && this._isMovementKey(event.keyCode)) {
-            let oldPosition = this._entityPositionService.getPosition(this._selectionService.selection.value.entity);
-            let adjustment = this._keyEventToPositionAdjustment(event.keyCode);
-            this._entityPositionService.setPosition(
-                this._selectionService.selection.value.selectedEntity,
-                vectorAdd(oldPosition, adjustment),
-                this._mergeKey);
+        if (!this._selectionService.selection.value.entity) {
+            return;
+        }
+        
+        if (this._isMovementKey(event.keyCode)) {
+            this._adjustEntityPosition(this._keyEventToPositionAdjustment(event));
+        }
+        else if (this._isDeleteKey(event.keyCode)) {
+            this._deleteSelectedEntity();
         }
     }
 
@@ -92,6 +94,21 @@ export class EntityMoveTool extends BaseTool {
         this._selection = null;
     }
 
+    private _adjustEntityPosition(adjustment : Vector) {
+        let oldPosition = this._entityPositionService.getPosition(this._selectionService.selection.value.entity);
+        this._entityPositionService.setPosition(
+            this._selectionService.selection.value.selectedEntity,
+            vectorAdd(oldPosition, adjustment),
+            this._mergeKey);
+    }
+
+    private _deleteSelectedEntity() {
+        let mergeKey = newMergeKey();
+        let entityKey = this._selectionService.selection.value.selectedEntity;
+        this._selectionService.deselect(mergeKey);
+        this._entitySystemService.deleteEntity(entityKey, mergeKey);
+    }
+
     private _buildSelectionBox(canvasZoom : number) : DisplayObject {
         let graphics : Graphics = null;
         let selectedEntityKey = this._selectionService.selection.value.selectedEntity;
@@ -113,16 +130,18 @@ export class EntityMoveTool extends BaseTool {
         return graphics;
     }
 
-    private _keyEventToPositionAdjustment(keyCode : number) : Vector {
+    private _keyEventToPositionAdjustment(event : CanvasKeyEvent) : Vector {
+        let modifier = event.ctrlKey ? 10 : 1;
+        let keyCode = event.keyCode;
         let adjustment : Vector;
         if (keyCode === KeyboardCode.UP) {
-            adjustment = { x: 0, y: -1 };
+            adjustment = { x: 0, y: -modifier };
         } else if (keyCode === KeyboardCode.RIGHT) {
-            adjustment = { x: 1, y: 0 };
+            adjustment = { x: modifier, y: 0 };
         } else if (keyCode === KeyboardCode.DOWN) {
-            adjustment = { x: 0, y: 1 };
+            adjustment = { x: 0, y: modifier };
         } else if (keyCode === KeyboardCode.LEFT) {
-            adjustment = { x: -1, y: 0 };
+            adjustment = { x: -modifier, y: 0 };
         }
         return adjustment;
     }
@@ -134,5 +153,9 @@ export class EntityMoveTool extends BaseTool {
             keyCode === KeyboardCode.DOWN ||
             keyCode === KeyboardCode.LEFT
         );
+    }
+
+    private _isDeleteKey(keyCode : number) : boolean {
+        return keyCode === KeyboardCode.DELETE;
     }
 }
