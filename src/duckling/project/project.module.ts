@@ -8,7 +8,6 @@ import {
 } from './index';
 import {MapSelectComponent} from './map-select.component';
 import {BrowseAssetComponent} from './browse-asset.component';
-import {MapDimensionService} from './map-dimension.service';
 
 import {ControlsModule} from '../controls/controls.module';
 
@@ -20,8 +19,7 @@ import {ControlsModule} from '../controls/controls.module';
         AssetService,
         MapParserService,
         ProjectService,
-        RequiredAssetService,
-        MapDimensionService
+        RequiredAssetService
     ],
     declarations: [
         MapSelectComponent,

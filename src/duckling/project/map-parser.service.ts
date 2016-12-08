@@ -36,10 +36,19 @@ export interface RawMapFile {
  * Interface describing the structure of a parsed in map file.
  */
 export interface ParsedMap {
+    key: string,
+    version: string,
     entitySystem: EntitySystem,
     dimension: Vector,
     gridSize: number
 }
+export let STARTER_PARSED_MAP : ParsedMap = {
+    key: "",
+    version: MAP_VERSION,
+    entitySystem: null,
+    dimension: {x: 1200, y: 800},
+    gridSize: 16
+};
 
 
 @Injectable()
@@ -86,6 +95,8 @@ export class MapParserService {
         });
 
         return {
+            key: map.key,
+            version: map.version,
             entitySystem: entitySystem,
             dimension: map.dimension,
             gridSize: map.gridSize
@@ -94,11 +105,10 @@ export class MapParserService {
 
     /**
      * Convert a parsed map with an entity system to a map file.
-     * @param  mapKey The key of the map file.
      * @param  parsedMap The parsed map
      * @return An object that can be serialized into a map.
      */
-    parsedMapToRawMap(mapKey : string, parsedMap : ParsedMap) : RawMapFile {
+    parsedMapToRawMap(parsedMap : ParsedMap) : RawMapFile {
         let systems : {[systemKey : string] : RawSystem} = {};
         let entities : EntityKey[] = [];
 
@@ -119,7 +129,7 @@ export class MapParserService {
         }
 
         return {
-            key : mapKey,
+            key : parsedMap.key,
             systems : systems,
             entities : entities,
             assets : assetList,

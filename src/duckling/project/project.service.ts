@@ -4,12 +4,20 @@ import {BehaviorSubject} from 'rxjs';
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
 import {StoreService, clearUndoHistoryAction} from '../state';
 import {JsonLoaderService, PathService} from '../util';
+import {immutableAssign} from '../util/model';
 import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
+import {Vector} from '../math/vector';
 
-import {MapParserService, ParsedMap} from './map-parser.service';
-import {switchProjectAction, doneLoadingProjectAction, openMapAction, Project} from './project';
-import {MapDimensionService} from './map-dimension.service';
+import {MapParserService, ParsedMap, STARTER_PARSED_MAP} from './map-parser.service';
+import {
+    switchProjectAction, 
+    doneLoadingProjectAction, 
+    openMapAction, 
+    changeCurrentMapDimensionAction, 
+    changeCurrentMapGridAction, 
+    Project
+} from './project';
 
 const MAP_DIR = "maps";
 const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
@@ -26,8 +34,7 @@ export class ProjectService {
                 private _jsonLoader : JsonLoaderService,
                 private _pathService : PathService,
                 private _mapParser : MapParserService,
-                private _dialog : DialogService,
-                private _mapDimension : MapDimensionService) {
+                private _dialog : DialogService) {
         this.project = new BehaviorSubject(this._project);
         this._storeService.state.subscribe((state) => {
             this.project.next(state.project);
@@ -47,11 +54,10 @@ export class ProjectService {
      * @param mapKey Key of the map to open.
      */
     openMap(mapKey : string) {
-        this._storeService.dispatch(openMapAction(mapKey));
         this._jsonLoader.getJsonFromPath(this.getMapPath(mapKey))
         .then((json : any) => {
             try {
-                this._parseMapJson(json);
+                this._parseMapJson(json, mapKey);
             } catch (error) {
                 this._dialog.showErrorDialog("Error Parsing Map File", error.message);
             }
@@ -62,22 +68,38 @@ export class ProjectService {
      * Save the projects current state.
      */
     save() {
-        let map = this._mapParser.parsedMapToRawMap(
-            this._project.currentMap, 
-            {
+        let map = this._mapParser.parsedMapToRawMap({
+                key: this._project.currentMap.key,
+                version: this._project.currentMap.key,
                 entitySystem: this._entitySystem.entitySystem.value,
-                dimension: this._mapDimension.dimension,
-                gridSize: this._mapDimension.gridSize,
+                dimension: this._project.currentMap.dimension,
+                gridSize: this._project.currentMap.gridSize,
             });
         let json = JSON.stringify(map, null, 4);
-        this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap), json);
+        this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
     }
 
     /**
      * Reload the current project.
      */
     reload() {
-        this.openMap(this._project.currentMap);
+        this.openMap(this._project.currentMap.key);
+    }
+
+    /**
+     * Change the dimension of the map
+     * @param newDimension new dimensions of the map
+     */
+    changeDimension(newDimension : Vector) {
+        this._storeService.dispatch(changeCurrentMapDimensionAction(newDimension));
+    }
+    
+    /**
+     * Change the grid size of the map
+     * @param newGridSize new grid size of the map
+     */
+    changeGridSize(newGridSize : number) {
+        this._storeService.dispatch(changeCurrentMapGridAction(newGridSize));
     }
 
     /**
@@ -106,22 +128,28 @@ export class ProjectService {
         return this._project.home;
     }
 
-    private _parseMapJson(json : any) {
-        let parsedMap : ParsedMap;
+    private _parseMapJson(json : any, key : string) {
+        let parsedMap : ParsedMap = immutableAssign(STARTER_PARSED_MAP, {});
         if (json) {
             parsedMap = this._mapParser.rawMapToParsedMap(JSON.parse(json));
         } else {
-            parsedMap.entitySystem = createEntitySystem();
+            parsedMap = immutableAssign(parsedMap, {entitySystem: createEntitySystem()});
         }
 
         this._entitySystem.replaceSystem(parsedMap.entitySystem);
-        if (parsedMap.dimension) {
-            this._mapDimension.dimension = parsedMap.dimension;
+        if (!parsedMap.dimension) {
+            parsedMap = immutableAssign(parsedMap, {dimension: STARTER_PARSED_MAP.dimension});
         }
-        if (parsedMap.gridSize) {
-            this._mapDimension.gridSize = parsedMap.gridSize;
+        if (!parsedMap.gridSize) {
+            parsedMap = immutableAssign(parsedMap, {gridSize: STARTER_PARSED_MAP.gridSize});
         }
 
+        this._storeService.dispatch(openMapAction({
+            key: key,
+            version: parsedMap.version,
+            dimension: parsedMap.dimension,
+            gridSize: parsedMap.gridSize 
+        }));
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());
     }
