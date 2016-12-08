@@ -78,10 +78,12 @@ describe("MapLoaderService", function() {
     });
 
     it("turns an empty system into an empty map", function() {
-        let map = this.parser.parsedMapToRawMap("", {
+        let map = this.parser.parsedMapToRawMap({
             entitySystem: createEntitySystem(),
             dimension: {x: 0, y: 0},
-            gridSize: 0
+            gridSize: 0,
+            key: "",
+            version: ""
         });
         expect(map).to.eql(emptyMap);
     });
@@ -106,7 +108,7 @@ describe("MapLoaderService", function() {
 
     it("loading and saving a map preserves the original map", function() {
         let parsedMap = this.parser.rawMapToParsedMap(basicMap);
-        let map = this.parser.parsedMapToRawMap("aBasicMap", parsedMap);
+        let map = this.parser.parsedMapToRawMap(parsedMap);
         map.entities.sort();
         expect(map).to.eql(basicMap);
     });
