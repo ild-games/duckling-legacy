@@ -12,8 +12,8 @@ import {
 import {Vector, vectorAdd, vectorSubtract, vectorRound} from '../../math';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
+import {ProjectService} from '../../project/project.service';
 import {KeyboardCode} from '../../util';
-import {MapDimensionService} from '../../project/map-dimension.service';
 import {drawRectangle} from '../drawing';
 
 
@@ -30,7 +30,7 @@ export class EntityMoveTool extends BaseTool {
                 private _entityPositionService : EntityPositionService,
                 private _selectionService : SelectionService,
                 private _entityBoxService : EntityBoxService,
-                private _mapDimension : MapDimensionService) {
+                private _projectService : ProjectService) {
         super();
     }
 
@@ -137,9 +137,9 @@ export class EntityMoveTool extends BaseTool {
         if (event.altKey) {
             modifier = 1;
         } else if (event.shiftKey) {
-            modifier = this._mapDimension.gridSize * 2; 
+            modifier = this._projectService.project.getValue().currentMap.gridSize * 2; 
         } else {
-            modifier = this._mapDimension.gridSize / 4;
+            modifier = this._projectService.project.getValue().currentMap.gridSize / 2; 
         }
         let keyCode = event.keyCode;
         let adjustment : Vector;
