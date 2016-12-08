@@ -11,11 +11,15 @@ import {
 @Component({
     selector: "dk-array-select",
     template:`
-        <select [ngModel]="value" (input)="onSelectionChanged($event.target.selectedIndex)">
-            <option *ngFor="let option of options" [value]="option.value">
+        <md-select 
+            [(ngModel)]="value" 
+            (onClose)="onSelectionChanged()">
+            <md-option 
+                *ngFor="let option of options" 
+                [value]="option.value">
                 {{option.title}}
-            </option>
-        </select>
+            </md-option>
+        </md-select>
     `
 })
 export class ArraySelectComponent {
@@ -32,10 +36,10 @@ export class ArraySelectComponent {
     /**
      * Event that is published with the new value whenever the user changes it.
      */
-    @Output() selection = new EventEmitter<String>();
+    @Output() selection = new EventEmitter<string>();
 
-    onSelectionChanged(index : number) {
-        this.selection.emit(this.options[index].value);
+    onSelectionChanged() {
+        this.selection.emit(this.value);
     }
 
     indexOfValue(value : string) {

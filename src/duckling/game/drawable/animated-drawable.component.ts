@@ -46,7 +46,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
             title="Create from tilesheet"
             disableRipple="true"
             (click)="onCreateFromTilesheetClicked()">
-            Create from tilesheet
+            From tilesheet
         </button>
 
         <md-card
