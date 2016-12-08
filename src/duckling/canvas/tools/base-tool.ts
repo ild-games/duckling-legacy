@@ -58,16 +58,6 @@ export interface CanvasMouseEvent {
      * Canvas component the event came from
      */
     canvas : CanvasComponent;
-}
-
-/**
- * Event describing a keyboard action on the canvas
- */
-export interface CanvasKeyEvent extends CanvasMouseEvent {
-    /**
-     * Key that was pressed during the event
-     */
-    keyCode : number;
 
     /**
      * Boolean determining if the ctrl key modifier was down
@@ -83,4 +73,14 @@ export interface CanvasKeyEvent extends CanvasMouseEvent {
      * Boolean determining if the alt key modifier was down
      */
     altKey : boolean;
+}
+
+/**
+ * Event describing a keyboard action on the canvas
+ */
+export interface CanvasKeyEvent extends CanvasMouseEvent {
+    /**
+     * Key that was pressed during the event
+     */
+    keyCode : number;
 }

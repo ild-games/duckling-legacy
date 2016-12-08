@@ -373,6 +373,9 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _createCanvasMouseEvent(event : MouseEvent) : CanvasMouseEvent {
         let canvasCoords = this._canvasCoordsFromEvent(event);
         return {
+            ctrlKey: event.ctrlKey,
+            shiftKey: event.shiftKey,
+            altKey: event.altKey,
             canvasCoords: canvasCoords,
             stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
             canvas: this
