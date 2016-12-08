@@ -14,7 +14,9 @@ let emptyMap : RawMapFile = {
     entities : [],
     assets : [],
     systems : {},
-    version: MAP_VERSION
+    version: MAP_VERSION,
+    dimension: {x: 0, y: 0},
+    gridSize: 0
 };
 
 let entityA = {
@@ -56,7 +58,9 @@ let basicMap : RawMapFile = {
             }
         }
     },
-    version: MAP_VERSION
+    version: MAP_VERSION,
+    dimension: {x: 1200, y: 800},
+    gridSize: 16
 }
 
 describe("MapLoaderService", function() {
@@ -69,36 +73,40 @@ describe("MapLoaderService", function() {
     });
 
     it("turns an empty map into an empty system", function() {
-        let system = this.parser.mapToSystem(emptyMap);
-        expect(system.isEmpty()).to.eql(true);
+        let parsedMap = this.parser.rawMapToParsedMap(emptyMap);
+        expect(parsedMap.entitySystem.isEmpty()).to.eql(true);
     });
 
     it("turns an empty system into an empty map", function() {
-        let map = this.parser.systemToMap("", createEntitySystem());
+        let map = this.parser.parsedMapToRawMap("", {
+            entitySystem: createEntitySystem(),
+            dimension: {x: 0, y: 0},
+            gridSize: 0
+        });
         expect(map).to.eql(emptyMap);
     });
 
     describe("loading a map into an entity system", function() {
         beforeEach(function() {
-            this.system = this.parser.mapToSystem(basicMap);
+            this.parsedMap = this.parser.rawMapToParsedMap(basicMap);
         });
 
         it("allows for the creation of empty entities", function() {
-            expect(this.system.get("ec")).to.eql({});
+            expect(this.parsedMap.entitySystem.get("ec")).to.eql({});
         });
 
         it("allows for the creation of entities with a single component", function() {
-            expect(this.system.get("ea")).to.eql(entityA);
+            expect(this.parsedMap.entitySystem.get("ea")).to.eql(entityA);
         });
 
         it("allows for the creation of entities with multiple components", function() {
-            expect(this.system.get("eb")).to.eql(entityB);
+            expect(this.parsedMap.entitySystem.get("eb")).to.eql(entityB);
         });
     });
 
     it("loading and saving a map preserves the original map", function() {
-        let system = this.parser.mapToSystem(basicMap);
-        let map = this.parser.systemToMap("aBasicMap",system);
+        let parsedMap = this.parser.rawMapToParsedMap(basicMap);
+        let map = this.parser.parsedMapToRawMap("aBasicMap", parsedMap);
         map.entities.sort();
         expect(map).to.eql(basicMap);
     });
@@ -112,7 +120,7 @@ describe("MapLoaderService", function() {
             }
         };
         let map = immutableAssign(emptyMap, {systems : { sa}});
-        let system = this.parser.mapToSystem(map);
-        expect(system.get("ea")).to.eql(entityA);
+        let parsedMap = this.parser.rawMapToParsedMap(map);
+        expect(parsedMap.entitySystem.get("ea")).to.eql(entityA);
     });
 });
