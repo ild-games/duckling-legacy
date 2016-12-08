@@ -57,6 +57,7 @@ export class EntityMoveTool extends BaseTool {
             let destination = vectorRound(vectorAdd(event.stageCoords, this._selectOffsetCoords));
             let gridSize = this._projectService.project.getValue().currentMap.gridSize;
             if (!this._isSnapToGrid(event)) {
+                let gridSize = this._projectService.project.getValue().currentMap.gridSize;
                 destination = vectorSubtract(destination, minCornerSnapDistance(
                     destination, 
                     this._getSelectedEntityBox(), 
