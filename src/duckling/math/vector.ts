@@ -27,6 +27,33 @@ export function vectorSubtract(vectorA : Vector, vectorB : Vector) : Vector {
 }
 
 /**
+ * Multiply two vectors
+ * @param  vectorA First vector to multiply
+ * @param  vectorB Second vector to multiply
+ * @return Resulting vector from the multiplication
+ */
+export function vectorMultiply(vectorA : Vector, vectorB : Vector) : Vector {
+    return {
+        x: vectorA.x * vectorB.x,
+        y: vectorA.y * vectorB.y,
+    }
+}
+
+/**
+ * Get the modulus vector between two vectors
+ * @param  vectorA First vector to get the modulus of
+ * @param  vectorB Second vector that is the modulus value
+ * @return Resulting vector from the modulus
+ */
+export function vectorModulus(vectorA : Vector, vectorB : Vector) : Vector {
+    return {
+        x: vectorA.x % vectorB.x,
+        y: vectorA.y % vectorB.y,
+    }
+}
+
+
+/**
  * Round a vector to the nearest integer
  * @param  vector Vector to round
  * @return Resulting rounded vector

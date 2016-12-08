@@ -9,7 +9,8 @@ import {
     Entity,
     EntityBoxService
 } from '../../entitysystem';
-import {Vector, vectorAdd, vectorSubtract, vectorRound} from '../../math';
+import {Vector, vectorAdd, vectorSubtract, vectorRound, vectorMultiply, vectorModulus} from '../../math/vector';
+import {Box2} from '../../math/box2';
 import {newMergeKey} from '../../state';
 import {SelectionService} from '../../selection';
 import {ProjectService} from '../../project/project.service';
@@ -18,6 +19,7 @@ import {drawRectangle} from '../drawing';
 
 
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
+import {minCornerSnapDistance} from './_grid-snap';
 
 @Injectable()
 export class EntityMoveTool extends BaseTool {
@@ -35,7 +37,7 @@ export class EntityMoveTool extends BaseTool {
     }
 
     getDisplayObject(canvasZoom : number) : DisplayObject {
-        return this._buildSelectionBox(canvasZoom);
+        return this._drawSelectionBox(this._getSelectedEntityBox(), canvasZoom);
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -52,13 +54,17 @@ export class EntityMoveTool extends BaseTool {
 
     onStageMove(event : CanvasMouseEvent) {
         if (this._selection) {
-            this._entityPositionService.setPosition(
-                this._selection,
-                vectorRound(vectorAdd(event.stageCoords, this._selectOffsetCoords)),
-                this._mergeKey);
+            let destination = vectorRound(vectorAdd(event.stageCoords, this._selectOffsetCoords));
+            let gridSize = this._projectService.project.getValue().currentMap.gridSize;
+            if (!this._isSnapToGrid(event)) {
+                destination = vectorSubtract(destination, minCornerSnapDistance(
+                    destination, 
+                    this._getSelectedEntityBox(), 
+                    {x: gridSize, y: gridSize}));
+            }
+            this._entityPositionService.setPosition(this._selection, destination, this._mergeKey);
         }
     }
-
     onStageUp(event : CanvasMouseEvent) {
         this._cancel();
     }
@@ -92,8 +98,8 @@ export class EntityMoveTool extends BaseTool {
         return "arrows";
     }
 
-    private _cancel() {
-        this._selection = null;
+    private _isSnapToGrid(event : CanvasMouseEvent) {
+        return event.shiftKey;
     }
 
     private _adjustEntityPosition(adjustment : Vector) {
@@ -110,26 +116,29 @@ export class EntityMoveTool extends BaseTool {
         this._selectionService.deselect(mergeKey);
         this._entitySystemService.deleteEntity(entityKey, mergeKey);
     }
-
-    private _buildSelectionBox(canvasZoom : number) : DisplayObject {
-        let graphics : Graphics = null;
-        let selectedEntityKey = this._selectionService.selection.value.selectedEntity;
-        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
-        if (selectedEntity) {
-            graphics = this._buildSelectionBoxAroundEntity(selectedEntity, canvasZoom);
-        }
-        return graphics;
+    
+    private _cancel() {
+        this._selection = null;
     }
 
-    private _buildSelectionBoxAroundEntity(entity : Entity, canvasZoom : number) : Graphics {
+    private _drawSelectionBox(box : Box2, canvasZoom : number) : Graphics {
         let graphics : Graphics = null;
-        let box = this._entityBoxService.getEntityBox(entity);
         if (box) {
             graphics = new Graphics();
             graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
             drawRectangle(box.position, box.dimension, graphics);
         }
         return graphics;
+    }
+    
+    private _getSelectedEntityBox() {
+        let selectedEntityKey = this._selectionService.selection.value.selectedEntity;
+        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
+        let box : Box2 = null;
+        if (selectedEntity) {
+            box = this._entityBoxService.getEntityBox(selectedEntity);
+        }
+        return box;
     }
 
     private _keyEventToPositionAdjustment(event : CanvasKeyEvent) : Vector {
@@ -141,8 +150,8 @@ export class EntityMoveTool extends BaseTool {
         } else {
             modifier = this._projectService.project.getValue().currentMap.gridSize / 4; 
         }
-        let keyCode = event.keyCode;
         let adjustment : Vector;
+        let keyCode = event.keyCode;
         if (keyCode === KeyboardCode.UP) {
             adjustment = { x: 0, y: -modifier };
         } else if (keyCode === KeyboardCode.RIGHT) {
