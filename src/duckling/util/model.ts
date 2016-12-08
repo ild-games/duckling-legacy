@@ -30,7 +30,7 @@ export function immutableDelete<T>(existingObject : T, keyToRemove : string) : T
  * Create a new object that is a copy of the existingObject with the specific key removed.
  * @returns A new object of the same type as the original object with the key removed.
  */
-export function immutableArrayDelete<T>(existingArray : T[], elementToRemove : number) : T[] {
+export function immutableArrayDelete<T>(existingArray : T[], elementToRemove : number) : ReadonlyArray<T> {
     let head = existingArray.slice(0, elementToRemove);
     let tail = existingArray.slice(elementToRemove + 1, existingArray.length);
     return Object.freeze(head.concat(tail)) as T[];
