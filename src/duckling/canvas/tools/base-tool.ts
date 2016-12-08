@@ -73,4 +73,14 @@ export interface CanvasKeyEvent extends CanvasMouseEvent {
      * Boolean determining if the ctrl key modifier was down
      */
     ctrlKey : boolean;
+
+    /**
+     * Boolean determining if the shift key modifier was down
+     */
+    shiftKey : boolean;
+
+    /**
+     * Boolean determining if the alt key modifier was down
+     */
+    altKey : boolean;
 }

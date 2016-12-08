@@ -384,6 +384,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         return {
             keyCode: event.keyCode,
             ctrlKey: event.ctrlKey,
+            shiftKey: event.shiftKey,
+            altKey: event.altKey,
             canvasCoords: canvasCoords,
             stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
             canvas: this
