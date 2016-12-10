@@ -40,14 +40,14 @@ export interface ParsedMap {
     version: string,
     entitySystem: EntitySystem,
     dimension: Vector,
-    gridSize: number
+    gridSize: number,
 }
 export let STARTER_PARSED_MAP : ParsedMap = {
     key: "",
     version: MAP_VERSION,
     entitySystem: null,
     dimension: {x: 1200, y: 800},
-    gridSize: 16
+    gridSize: 16,
 };
 
 

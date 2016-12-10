@@ -6,7 +6,7 @@ interface ProjectMap {
     key: string,
     version: string,
     dimension: Vector,
-    gridSize: number    
+    gridSize: number,
 }
 
 /**
@@ -15,7 +15,8 @@ interface ProjectMap {
 export interface Project {
     home? : string,
     loaded? : boolean,
-    currentMap? : ProjectMap
+    currentMap? : ProjectMap,
+    collisionTypes?: string[]
 }
 
 /**
@@ -104,6 +105,24 @@ function _changeCurrentMapGrid(project : Project, action : ChangeCurrentMapGridA
 }
 
 /**
+ * Create an action that changes the collision types of the project
+ * @param newCollisionTypes The new collision types for the project
+ */
+export function changeCollisionTypesAction(newCollisionTypes : string[]) {
+    return {
+        type: ACTION_CHANGE_COLLISION_TYPES,
+        newCollisionTypes: newCollisionTypes
+    }
+}
+export const ACTION_CHANGE_COLLISION_TYPES = "Project.changeCollisionTypes";
+interface ChangeCollisionTypesAction extends Action {
+    newCollisionTypes: string[]
+}
+function _changeCollisionTypes(project : Project, action : ChangeCollisionTypesAction) {
+    return immutableAssign(project, {collisionTypes: action.newCollisionTypes});
+}
+
+/**
  * Create an action that marks the project as done loading.
  */
 export function doneLoadingProjectAction() {
@@ -129,6 +148,8 @@ export function projectReducer(state : Project = {}, action : Action) {
             return _changeCurrentMapDimension(state, action as ChangeCurrentMapDimensionAction);
         case ACTION_CHANGE_MAP_GRID:
             return _changeCurrentMapGrid(state, action as ChangeCurrentMapGridAction);
+        case ACTION_CHANGE_COLLISION_TYPES:
+            return _changeCollisionTypes(state, action as ChangeCollisionTypesAction);
     }
 
     return state;

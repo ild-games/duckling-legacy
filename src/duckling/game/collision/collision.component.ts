@@ -2,14 +2,18 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    ViewContainerRef
 } from '@angular/core';
 
-import {VectorInputComponent, FormLabelComponent, ArraySelectComponent} from '../../controls';
+import {VectorInputComponent, FormLabelComponent} from '../../controls';
+import {SelectOption, ArraySelectComponent} from '../../controls/array-select.component';
 import {EnumSelectComponent} from '../../controls/enum-select.component';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
-import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collision-attribute';
+import {ProjectService} from '../../project/project.service';
+import {EditCollisionTypesComponent} from '../../project/edit-collision-types.component';
+import {CollisionAttribute, BodyTypeSelect} from './collision-attribute';
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -46,6 +50,12 @@ import {CollisionAttribute, BodyTypeSelect, CollisionTypeSelect} from './collisi
             [options]="collisionTypes"
             (selection)="onCollisionTypeInput($event)">
         </dk-array-select>
+        <button
+            md-icon-button
+            [disableRipple]="true"
+            (click)="onEditCollisionTypesClicked()">
+            <dk-icon iconClass="pencil"></dk-icon>
+        </button>
     `
 })
 export class CollisionComponent {
@@ -53,7 +63,10 @@ export class CollisionComponent {
     @Output() attributeChanged = new EventEmitter<CollisionAttribute>();
 
     bodyTypes = BodyTypeSelect;
-    collisionTypes = CollisionTypeSelect;
+
+    constructor(private _project : ProjectService,
+                private _viewContainer: ViewContainerRef) {
+    }
 
     onOneWayNormalInput(oneWayNormal : Vector) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {oneWayNormal}));
@@ -68,7 +81,22 @@ export class CollisionComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {bodyType}));
     }
 
+    onEditCollisionTypesClicked() {
+        EditCollisionTypesComponent.open(this._viewContainer);
+    }
+
     onCollisionTypeInput(collisionType : string) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {collisionType}));
+    }
+
+    get collisionTypes() : SelectOption[] {
+        let selectOptions : SelectOption[] = [];
+        for (let collisionType of this._project.project.getValue().collisionTypes) {
+            selectOptions.push({
+                value: collisionType,
+                title: collisionType
+            });
+        }
+        return selectOptions;
     }
 }

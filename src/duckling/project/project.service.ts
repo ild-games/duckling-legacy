@@ -16,11 +16,16 @@ import {
     openMapAction, 
     changeCurrentMapDimensionAction, 
     changeCurrentMapGridAction, 
-    Project
+    Project,
+    changeCollisionTypesAction
 } from './project';
 
 const MAP_DIR = "maps";
 const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
+
+interface CollisionTypeMetaData {
+    collisionTypes: string
+}
 
 /**
  * The project service provides access to project level state and operations.
@@ -46,7 +51,31 @@ export class ProjectService {
      */
     open(projectPath : string) {
         this._storeService.dispatch(switchProjectAction(projectPath));
+        this._openProjectMetaData();
         this.openMap(MAP_NAME);
+    }
+
+    /**
+     * Open the meta data settings for a project
+     */
+    private _openProjectMetaData() {
+        this._parseCollisionTypes();
+    }
+
+    /**
+     * Parse out the collision type meta data
+     */
+    private _parseCollisionTypes() {
+        this._jsonLoader.getJsonFromPath(this.getMetaDataPath("collision-types")).then((json : any) => {
+            let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
+            let collisionTypes = ["none"];
+            for (let collisionType of collisionTypeMetaData.collisionTypes) {
+                if (collisionType !== "none") {
+                    collisionTypes.push(collisionType);
+                }
+            }
+            this._storeService.dispatch(changeCollisionTypesAction(collisionTypes));
+        });
     }
 
     /**
@@ -73,7 +102,7 @@ export class ProjectService {
                 version: this._project.currentMap.key,
                 entitySystem: this._entitySystem.entitySystem.value,
                 dimension: this._project.currentMap.dimension,
-                gridSize: this._project.currentMap.gridSize,
+                gridSize: this._project.currentMap.gridSize
             });
         let json = JSON.stringify(map, null, 4);
         this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
@@ -122,6 +151,15 @@ export class ProjectService {
     }
 
     /**
+     * Get the path to a specific meta data file for the project.
+     * @param metaDataFile The name of the meta data file stored in the project/ folder (excluding file type)
+     * @return the path that can be used to load the meta data file
+     */
+    getMetaDataPath(metaDataFile : string) : string {
+        return this._pathService.join(this._project.home, "project", metaDataFile + ".json");
+    }
+
+    /**
      * The project's root directory.
      */
     get home() {
@@ -148,7 +186,7 @@ export class ProjectService {
             key: key,
             version: parsedMap.version,
             dimension: parsedMap.dimension,
-            gridSize: parsedMap.gridSize 
+            gridSize: parsedMap.gridSize
         }));
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());

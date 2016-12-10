@@ -8,8 +8,6 @@ export const COLLISION_KEY = "collision";
 
 export type BodyType = "none" | "solid" | "environment";
 export let BodyTypeSelect : SelectOption[] = toSelectOptions<BodyType>("none", "solid", "environment");
-export type CollisionType = "none" | "player" | "ground";
-export let CollisionTypeSelect : SelectOption[] = toSelectOptions<CollisionType>("none", "player", "ground");
 
 
 /**
@@ -28,7 +26,7 @@ export interface CollisionAttribute extends Attribute {
     /**
      * Describes what actions are taken for the entity on collision.
      */
-    collisionType : CollisionType;
+    collisionType : string;
     /**
      * Used to implement one way platforms and walls.  The normal vector should point
      * towards the direction other entities are unable to pass through.
