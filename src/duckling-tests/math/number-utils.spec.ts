@@ -1,6 +1,6 @@
 import 'mocha';
 import {expect} from 'chai';
-import {isInteger, isNumber, degreesToRadians, radiansToDegrees} from '../../duckling/math/number-utils';
+import {isInteger, isNumber, degreesToRadians, radiansToDegrees, roundToMultiple, floorToMultiple} from '../../duckling/math/number-utils';
 
 describe("isInteger", function() {
     it("0 is an integer", function() {
@@ -120,5 +120,19 @@ describe("radiansToDegrees", function() {
     it("handles negatives", function() {
         expect(degreesToRadians(-90)).to.eql(-Math.PI / 2);
         expect(radiansToDegrees(-Math.PI / 2)).to.eql(-90);
+    });
+});
+
+describe("roundToMultiple", function() {
+    it("Acts like round when given a radex of 1", function() {
+        expect(roundToMultiple(17.4, 1)).to.eql(17);
+    });
+
+    it("Can round up to base 10", function() {
+        expect(roundToMultiple(37, 10)).to.eql(40);
+    });
+
+    it("Can round to odd radex", function() {
+        expect(roundToMultiple(20, 7)).to.eql(21);
     });
 });

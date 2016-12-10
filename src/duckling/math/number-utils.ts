@@ -34,3 +34,23 @@ export function degreesToRadians(degrees : number) : number {
 export function radiansToDegrees(radians : number) : number {
     return radians * 180 / Math.PI;
 }
+
+/**
+ * Round to the nearest multiple of the radix.
+ * @param  value Number to round.
+ * @param  radex The result will be rounded to the nearest multiple of the radex.
+ * @return The rounded value.
+ */
+export function roundToMultiple(value : number, radex : number) {
+    return floorToMultiple(value + radex / 2, radex);
+}
+
+/**
+ * Floor the value to a multiple of the radex.
+ * @param  value Value to floor.
+ * @param  radex The result will be floored to the nearest lesser multiple of the radex.
+ * @return The floored value.
+ */
+export function floorToMultiple(value : number, radex : number) {
+    return value - value % radex;
+}
