@@ -56,29 +56,6 @@ export class ProjectService {
     }
 
     /**
-     * Open the meta data settings for a project
-     */
-    private _openProjectMetaData() {
-        this._parseCollisionTypes();
-    }
-
-    /**
-     * Parse out the collision type meta data
-     */
-    private _parseCollisionTypes() {
-        this._jsonLoader.getJsonFromPath(this.getMetaDataPath("collision-types")).then((json : any) => {
-            let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
-            let collisionTypes = ["none"];
-            for (let collisionType of collisionTypeMetaData.collisionTypes) {
-                if (collisionType !== "none") {
-                    collisionTypes.push(collisionType);
-                }
-            }
-            this._storeService.dispatch(changeCollisionTypesAction(collisionTypes));
-        });
-    }
-
-    /**
      * Open the map described by the key.
      * @param mapKey Key of the map to open.
      */
@@ -106,8 +83,37 @@ export class ProjectService {
             });
         let json = JSON.stringify(map, null, 4);
         this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
+        this._saveMetaData();
     }
 
+    /**
+     * Open the meta data settings for a project
+     */
+    private _openProjectMetaData() {
+        this._parseCollisionTypes();
+    }
+
+    /**
+     * Parse out the collision type meta data
+     */
+    private _parseCollisionTypes() {
+        this._jsonLoader.getJsonFromPath(this.getMetaDataPath("collision-types")).then((json : any) => {
+            let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
+            let collisionTypes = ["none"];
+            for (let collisionType of collisionTypeMetaData.collisionTypes) {
+                if (collisionType !== "none") {
+                    collisionTypes.push(collisionType);
+                }
+            }
+            this._storeService.dispatch(changeCollisionTypesAction(collisionTypes));
+        });
+    }
+
+    private _saveMetaData() {
+        let json = JSON.stringify({collisionTypes: this._project.collisionTypes}, null, 4);
+        this._jsonLoader.saveJsonToPath(this.getMetaDataPath("collision-types"), json);
+    }
+    
     /**
      * Reload the current project.
      */
