@@ -129,11 +129,11 @@ export class ProjectService {
     }
 
     private _parseMapJson(json : any, key : string) {
-        let parsedMap : ParsedMap = immutableAssign(STARTER_PARSED_MAP, {});
+        let parsedMap : ParsedMap;
         if (json) {
             parsedMap = this._mapParser.rawMapToParsedMap(JSON.parse(json));
         } else {
-            parsedMap = immutableAssign(parsedMap, {entitySystem: createEntitySystem()});
+            parsedMap = immutableAssign(STARTER_PARSED_MAP, {entitySystem: createEntitySystem()});
         }
 
         this._entitySystem.replaceSystem(parsedMap.entitySystem);
