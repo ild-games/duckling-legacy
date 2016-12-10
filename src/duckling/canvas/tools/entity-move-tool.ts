@@ -139,7 +139,7 @@ export class EntityMoveTool extends BaseTool {
         } else if (event.shiftKey) {
             modifier = this._projectService.project.getValue().currentMap.gridSize * 2; 
         } else {
-            modifier = this._projectService.project.getValue().currentMap.gridSize / 2; 
+            modifier = this._projectService.project.getValue().currentMap.gridSize / 4; 
         }
         let keyCode = event.keyCode;
         let adjustment : Vector;
