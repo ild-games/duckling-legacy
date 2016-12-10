@@ -4,10 +4,20 @@ import {BehaviorSubject} from 'rxjs';
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
 import {StoreService, clearUndoHistoryAction} from '../state';
 import {JsonLoaderService, PathService} from '../util';
+import {immutableAssign} from '../util/model';
 import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
-import {MapParserService} from './map-parser.service';
-import {switchProjectAction, doneLoadingProjectAction, openMapAction, Project} from './project';
+import {Vector} from '../math/vector';
+
+import {MapParserService, ParsedMap, STARTER_PARSED_MAP} from './map-parser.service';
+import {
+    switchProjectAction, 
+    doneLoadingProjectAction, 
+    openMapAction, 
+    changeCurrentMapDimensionAction, 
+    changeCurrentMapGridAction, 
+    Project
+} from './project';
 
 const MAP_DIR = "maps";
 const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
@@ -44,21 +54,10 @@ export class ProjectService {
      * @param mapKey Key of the map to open.
      */
     openMap(mapKey : string) {
-        this._storeService.dispatch(openMapAction(mapKey));
         this._jsonLoader.getJsonFromPath(this.getMapPath(mapKey))
         .then((json : any) => {
             try {
-                let system : EntitySystem;
-                if (json) {
-                    system = this._mapParser.mapToSystem(JSON.parse(json));
-                } else {
-                    system = createEntitySystem();
-                }
-
-                this._entitySystem.replaceSystem(system);
-
-                this._storeService.dispatch(doneLoadingProjectAction());
-                this._storeService.dispatch(clearUndoHistoryAction());
+                this._parseMapJson(json, mapKey);
             } catch (error) {
                 this._dialog.showErrorDialog("Error Parsing Map File", error.message);
             }
@@ -69,16 +68,38 @@ export class ProjectService {
      * Save the projects current state.
      */
     save() {
-        let map = this._mapParser.systemToMap(this._project.currentMap, this._entitySystem.entitySystem.value);
+        let map = this._mapParser.parsedMapToRawMap({
+                key: this._project.currentMap.key,
+                version: this._project.currentMap.key,
+                entitySystem: this._entitySystem.entitySystem.value,
+                dimension: this._project.currentMap.dimension,
+                gridSize: this._project.currentMap.gridSize,
+            });
         let json = JSON.stringify(map, null, 4);
-        this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap), json);
+        this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
     }
 
     /**
      * Reload the current project.
      */
     reload() {
-        this.openMap(this._project.currentMap);
+        this.openMap(this._project.currentMap.key);
+    }
+
+    /**
+     * Change the dimension of the map
+     * @param newDimension new dimensions of the map
+     */
+    changeDimension(newDimension : Vector) {
+        this._storeService.dispatch(changeCurrentMapDimensionAction(newDimension));
+    }
+    
+    /**
+     * Change the grid size of the map
+     * @param newGridSize new grid size of the map
+     */
+    changeGridSize(newGridSize : number) {
+        this._storeService.dispatch(changeCurrentMapGridAction(newGridSize));
     }
 
     /**
@@ -105,6 +126,32 @@ export class ProjectService {
      */
     get home() {
         return this._project.home;
+    }
+
+    private _parseMapJson(json : any, key : string) {
+        let parsedMap : ParsedMap;
+        if (json) {
+            parsedMap = this._mapParser.rawMapToParsedMap(JSON.parse(json));
+        } else {
+            parsedMap = immutableAssign(STARTER_PARSED_MAP, {entitySystem: createEntitySystem()});
+        }
+
+        this._entitySystem.replaceSystem(parsedMap.entitySystem);
+        if (!parsedMap.dimension) {
+            parsedMap = immutableAssign(parsedMap, {dimension: STARTER_PARSED_MAP.dimension});
+        }
+        if (!parsedMap.gridSize) {
+            parsedMap = immutableAssign(parsedMap, {gridSize: STARTER_PARSED_MAP.gridSize});
+        }
+
+        this._storeService.dispatch(openMapAction({
+            key: key,
+            version: parsedMap.version,
+            dimension: parsedMap.dimension,
+            gridSize: parsedMap.gridSize 
+        }));
+        this._storeService.dispatch(doneLoadingProjectAction());
+        this._storeService.dispatch(clearUndoHistoryAction());
     }
 
     private _mapPathToRoot(root : string, path : string) {

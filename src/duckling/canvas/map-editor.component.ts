@@ -48,7 +48,7 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
                 <dk-top-toolbar
                     class="canvas-top-toolbar md-elevation-z4"
                     [selectedToolKey]="tool.key"
-                    [mapName]="projectService.project.getValue().currentMap"
+                    [mapName]="projectService.project.getValue().currentMap.key"
                     (toolSelection)="onToolSelected($event)"
                     (mapSelected)="openMap($event)">
                 </dk-top-toolbar>
@@ -56,8 +56,8 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
                 <dk-canvas #canvasElement
                     class="canvas"
                     [tool]="tool"
-                    [stageDimensions]="stageDimensions"
-                    [gridSize]="gridSize"
+                    [stageDimensions]="projectService.project.getValue().currentMap.dimension"
+                    [gridSize]="projectService.project.getValue().currentMap.gridSize"
                     [scale]="scale"
                     [showGrid]="showGrid"
                     [canvasDisplayObject]="canvasDisplayObject"
@@ -68,8 +68,8 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
 
                 <dk-bottom-toolbar
                     class="canvas-bottom-toolbar md-elevation-z4"
-                    [stageDimensions]="stageDimensions"
-                    [gridSize]="gridSize"
+                    [stageDimensions]="projectService.project.getValue().currentMap.dimension"
+                    [gridSize]="projectService.project.getValue().currentMap.gridSize"
                     [scale]="scale"
                     [showGrid]="showGrid"
                     (stageDimensionsChanged)="onStageDimensonsChanged($event)"
@@ -86,16 +86,6 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
      * Current tool in use
      */
     tool : BaseTool;
-
-    /**
-     * Size of the stage being edited
-     */
-    stageDimensions : Vector = {x: 1200, y: 800};
-
-    /**
-     * Width/Height dimension of the grid
-     */
-    gridSize : number = 16;
 
     /**
      * Scale of the map elements
@@ -215,12 +205,12 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     onStageDimensonsChanged(stageDimensions : Vector) {
-        this.stageDimensions = stageDimensions;
+        this.projectService.changeDimension(stageDimensions);
         this._redrawAllDisplayObjects();
     }
 
     onGridSizeChanged(gridSize : number) {
-        this.gridSize = gridSize;
+        this.projectService.changeGridSize(gridSize);
         this._gridDisplayObject = this._buildGrid();
         this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
@@ -250,19 +240,22 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _buildGrid() : DisplayObject {
         let graphics = new Graphics();
         graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
+        let dimension = this.projectService.project.value.currentMap.dimension;
+        let gridSize = this.projectService.project.value.currentMap.gridSize;
         drawGrid(
             {x: 0, y: 0},
-            {x: this.stageDimensions.x, y: this.stageDimensions.y},
-            {x: this.gridSize, y: this.gridSize},
+            dimension,
+            {x: gridSize, y: gridSize},
             graphics);
         return graphics;
     }
 
     private _buildCanvasBackground() : DisplayObject {
         let bg = new Graphics();
+        let dimension = this.projectService.project.value.currentMap.dimension;
         drawCanvasBackground(
             {x: 0, y: 0},
-            this.stageDimensions,
+            dimension,
             bg);
         return bg;
     }
@@ -270,9 +263,10 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _buildCanvasBorder() : DisplayObject {
         let border = new Graphics();
         border.lineWidth = 1 / this.scale;
+        let dimension = this.projectService.project.value.currentMap.dimension;
         drawCanvasBorder(
             {x: 0, y: 0},
-            this.stageDimensions,
+            dimension,
             border);
         return border;
     }
