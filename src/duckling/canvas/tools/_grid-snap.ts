@@ -6,11 +6,10 @@ import {Box2} from '../../math/box2';
  * Get the minimum snap distance for the given corners
  */
 export function minCornerSnapDistance(movementDestinationWithoutSnap : Vector, box : Box2, gridSize : Vector) : Vector {
-    let minSnap = {x : gridSize.x, y : gridSize.y};
     const snapFraction = 2;
     return {
-        x : -_getDistance(movementDestinationWithoutSnap.x, box.dimension.x, gridSize.x / snapFraction),
-        y : -_getDistance(movementDestinationWithoutSnap.y, box.dimension.y, gridSize.y / snapFraction)
+        x : _getDistance(movementDestinationWithoutSnap.x, box.dimension.x, gridSize.x / snapFraction),
+        y : _getDistance(movementDestinationWithoutSnap.y, box.dimension.y, gridSize.y / snapFraction)
     }
 }
 

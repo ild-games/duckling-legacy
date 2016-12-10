@@ -57,8 +57,7 @@ export class EntityMoveTool extends BaseTool {
             let destination = vectorRound(vectorAdd(event.stageCoords, this._selectOffsetCoords));
             let gridSize = this._projectService.project.getValue().currentMap.gridSize;
             if (!this._isSnapToGrid(event)) {
-                let gridSize = this._projectService.project.getValue().currentMap.gridSize;
-                destination = vectorSubtract(destination, minCornerSnapDistance(
+                destination = vectorAdd(destination, minCornerSnapDistance(
                     destination, 
                     this._getSelectedEntityBox(), 
                     {x: gridSize, y: gridSize}));
@@ -133,8 +132,7 @@ export class EntityMoveTool extends BaseTool {
     }
     
     private _getSelectedEntityBox() {
-        let selectedEntityKey = this._selectionService.selection.value.selectedEntity;
-        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
+        let selectedEntity = this._selectionService.selection.getValue().entity;
         let box : Box2 = null;
         if (selectedEntity) {
             box = this._entityBoxService.getEntityBox(selectedEntity);
