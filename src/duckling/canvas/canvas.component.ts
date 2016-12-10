@@ -87,7 +87,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
      * Event that is published whenever a user trys to paste something in the canvas.
      */
     @Output() elementPaste = new EventEmitter<Vector>();
-
+    
     /**
      * Event that is published when the scale changes via the canvas (ctrl+scroll)
      */
@@ -373,6 +373,9 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _createCanvasMouseEvent(event : MouseEvent) : CanvasMouseEvent {
         let canvasCoords = this._canvasCoordsFromEvent(event);
         return {
+            ctrlKey: event.ctrlKey,
+            shiftKey: event.shiftKey,
+            altKey: event.altKey,
             canvasCoords: canvasCoords,
             stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
             canvas: this
@@ -383,6 +386,9 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         let canvasCoords = this._mouseLocation;
         return {
             keyCode: event.keyCode,
+            ctrlKey: event.ctrlKey,
+            shiftKey: event.shiftKey,
+            altKey: event.altKey,
             canvasCoords: canvasCoords,
             stageCoords: this._stageCoordsFromCanvasCoords(canvasCoords),
             canvas: this

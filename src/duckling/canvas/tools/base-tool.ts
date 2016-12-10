@@ -58,6 +58,21 @@ export interface CanvasMouseEvent {
      * Canvas component the event came from
      */
     canvas : CanvasComponent;
+
+    /**
+     * Boolean determining if the ctrl key modifier was down
+     */
+    ctrlKey : boolean;
+
+    /**
+     * Boolean determining if the shift key modifier was down
+     */
+    shiftKey : boolean;
+
+    /**
+     * Boolean determining if the alt key modifier was down
+     */
+    altKey : boolean;
 }
 
 /**
