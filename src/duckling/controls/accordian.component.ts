@@ -59,19 +59,19 @@ export class AccordianComponent<T> {
     /**
      * Function emitted when an element has been deleted, passes the new elements array up
      */
-    @Output() elementDeleted = new EventEmitter<T[]>();
+    @Output() elementDeleted = new EventEmitter<ReadonlyArray<T>>();
     /**
      * Function emitted when an element has been moved up the accordian, passes the new elements array up
      */
-    @Output() elementMovedDown = new EventEmitter<T[]>();
+    @Output() elementMovedDown = new EventEmitter<ReadonlyArray<T>>();
     /**
      * Function emitted when an element has been moved down the accordian, passes the new elements array up
      */
-    @Output() elementMovedUp = new EventEmitter<T[]>();
+    @Output() elementMovedUp = new EventEmitter<ReadonlyArray<T>>();
     /**
      * Function emitted when an element has been cloned to the bottom of the accordian
      */
-    @Output() elementCloned = new EventEmitter<T[]>();
+    @Output() elementCloned = new EventEmitter<ReadonlyArray<T>>();
 
     /**
      * Keeps track of what elements are currently opened
