@@ -4,7 +4,8 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit
+    AfterViewInit,
+    ChangeDetectorRef
 } from '@angular/core';
 
 import {SelectOption, ArraySelectComponent} from './array-select.component';
@@ -42,8 +43,12 @@ export class EnumSelectComponent implements AfterViewInit {
 
     public options : SelectOption[] = [];
 
+    constructor(private _changeDetector : ChangeDetectorRef) {
+    }
+
     ngAfterViewInit() {
         this.options = this.enumOptions();
+        setTimeout(() => this._changeDetector.markForCheck(), 100);
     }
 
     enumOptions() {

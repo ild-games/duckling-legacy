@@ -17,7 +17,7 @@ import {IconComponent} from './icon.component';
     selector: "dk-enum-choice",
     template: `
         <dk-enum-select
-            [value]="selected"
+            [value]="_selected"
             [enum]="enum"
             (selection)="select($event)">
         </dk-enum-select>
@@ -31,7 +31,7 @@ import {IconComponent} from './icon.component';
 })
 export class EnumChoiceComponent {
     @Input() enum : any;
-    @Input() selected : any;
+    @Input() selected : number;
     @Output() addClicked = new EventEmitter<any>();
 
     select(enumSelection : any) {
@@ -40,5 +40,12 @@ export class EnumChoiceComponent {
 
     onAddClicked() {
         this.addClicked.emit(this.selected);
+    }
+
+    private get _selected() : number {
+        if (this.selected === null || this.selected === undefined) {
+            return this.enum[0];
+        }
+        return this.selected;
     }
 }
