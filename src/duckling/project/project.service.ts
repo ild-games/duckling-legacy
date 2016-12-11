@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
+import {CollisionTypesService} from '../entitysystem/services/collision-types.service';
 import {StoreService, clearUndoHistoryAction} from '../state';
 import {JsonLoaderService, PathService} from '../util';
 import {immutableAssign} from '../util/model';
@@ -19,6 +20,7 @@ import {
     Project,
     changeCollisionTypesAction
 } from './project';
+import {SnackBarService} from './snackbar.service';
 
 const MAP_DIR = "maps";
 const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
@@ -39,7 +41,9 @@ export class ProjectService {
                 private _jsonLoader : JsonLoaderService,
                 private _pathService : PathService,
                 private _mapParser : MapParserService,
-                private _dialog : DialogService) {
+                private _dialog : DialogService,
+                private _collisionTypesService : CollisionTypesService,
+                private _snackbar : SnackBarService) {
         this.project = new BehaviorSubject(this._project);
         this._storeService.state.subscribe((state) => {
             this.project.next(state.project);
@@ -64,6 +68,7 @@ export class ProjectService {
         .then((json : any) => {
             try {
                 this._parseMapJson(json, mapKey);
+                this._snackbar.invokeSnacks();
             } catch (error) {
                 this._dialog.showErrorDialog("Error Parsing Map File", error.message);
             }
@@ -98,11 +103,13 @@ export class ProjectService {
      */
     private _parseCollisionTypes() {
         this._jsonLoader.getJsonFromPath(this.getMetaDataPath("collision-types")).then((json : any) => {
-            let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
             let collisionTypes = ["none"];
-            for (let collisionType of collisionTypeMetaData.collisionTypes) {
-                if (collisionType !== "none") {
-                    collisionTypes.push(collisionType);
+            if (json) {
+                let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
+                for (let collisionType of collisionTypeMetaData.collisionTypes) {
+                    if (collisionType !== "none") {
+                        collisionTypes.push(collisionType);
+                    }
                 }
             }
             this._storeService.dispatch(changeCollisionTypesAction(collisionTypes));
@@ -188,6 +195,7 @@ export class ProjectService {
             parsedMap = immutableAssign(parsedMap, {gridSize: STARTER_PARSED_MAP.gridSize});
         }
 
+        this._registerUnknownCollisionTypes(parsedMap.entitySystem);
         this._storeService.dispatch(openMapAction({
             key: key,
             version: parsedMap.version,
@@ -196,6 +204,21 @@ export class ProjectService {
         }));
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());
+    }
+
+    private _registerUnknownCollisionTypes(entitySystem : EntitySystem) {
+        let collisionTypes = this._collisionTypesService.getUniqueCollisionTypesInEntitySystem(entitySystem);
+        let unknownCollisionTypes : string[] = [];
+        for (let collisionType of collisionTypes) {
+            if (this._project.collisionTypes.indexOf(collisionType) === -1) {
+                unknownCollisionTypes.push(collisionType);
+                this._snackbar.addSnack({
+                    message: `Unknown collision type registered from map: ${collisionType}`, 
+                    action: "OK"
+                });
+            }
+        }
+        this._storeService.dispatch(changeCollisionTypesAction(this._project.collisionTypes.concat(unknownCollisionTypes)));
     }
 
     private _mapPathToRoot(root : string, path : string) {

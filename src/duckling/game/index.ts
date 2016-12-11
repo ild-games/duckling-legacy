@@ -5,6 +5,7 @@ import {
     EntityPositionService,
     EntityLayerService
 } from '../entitysystem';
+import {CollisionTypesService} from '../entitysystem/services/collision-types.service';
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 import {RequiredAssetService} from '../project';
@@ -20,6 +21,7 @@ import {PositionComponent} from './position/position.component';
 import {CollisionComponent} from './collision/collision.component';
 import {drawCollision} from './collision/collision-drawer';
 import {collisionBoundingBox} from './collision/collision-box';
+import {collisionType} from './collision/collision-type';
 
 import {defaultCamera, CAMERA_KEY} from './camera/camera-attribute';
 import {drawCameraAttribute} from './camera/camera-drawer';
@@ -46,7 +48,8 @@ type Services = {
     attributeComponentService: AttributeComponentService,
     entityDrawerService: EntityDrawerService,
     requiredAssetService  : RequiredAssetService,
-    entityLayerService : EntityLayerService
+    entityLayerService : EntityLayerService,
+    collisionTypesService : CollisionTypesService
 };
 
 let _bootstrapFunctions : Function[] = [
@@ -82,6 +85,7 @@ function _bootstrapCollisionAttribute(services : Services) {
     services.entityDrawerService.register(COLLISION_KEY, drawCollision);
     services.entityBoxService.register(COLLISION_KEY, collisionBoundingBox);
     services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollison});
+    services.collisionTypesService.register(COLLISION_KEY, collisionType);
 }
 
 function _bootstrapCameraAttribute(services : Services) {
