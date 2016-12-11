@@ -218,7 +218,10 @@ export class ProjectService {
                 });
             }
         }
-        this._storeService.dispatch(changeCollisionTypesAction(this._project.collisionTypes.concat(unknownCollisionTypes)));
+        if (unknownCollisionTypes.length > 0) {
+            this._storeService.dispatch(changeCollisionTypesAction(this._project.collisionTypes.concat(unknownCollisionTypes)));
+            this._saveMetaData();
+        }
     }
 
     private _mapPathToRoot(root : string, path : string) {
