@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
-import {CollisionTypesService} from '../entitysystem/services/collision-types.service';
 import {StoreService, clearUndoHistoryAction} from '../state';
 import {JsonLoaderService, PathService} from '../util';
 import {immutableAssign} from '../util/model';
@@ -10,7 +9,7 @@ import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
 import {Vector} from '../math/vector';
 
-import {MapParserService, ParsedMap, STARTER_PARSED_MAP} from './map-parser.service';
+import {MapParserService, ParsedMap, STARTER_RAW_MAP} from './map-parser.service';
 import {
     switchProjectAction, 
     doneLoadingProjectAction, 
@@ -18,16 +17,11 @@ import {
     changeCurrentMapDimensionAction, 
     changeCurrentMapGridAction, 
     Project,
-    changeCollisionTypesAction
 } from './project';
 import {SnackBarService} from './snackbar.service';
 
 const MAP_DIR = "maps";
 const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
-
-interface CollisionTypeMetaData {
-    collisionTypes: string
-}
 
 /**
  * The project service provides access to project level state and operations.
@@ -42,7 +36,6 @@ export class ProjectService {
                 private _pathService : PathService,
                 private _mapParser : MapParserService,
                 private _dialog : DialogService,
-                private _collisionTypesService : CollisionTypesService,
                 private _snackbar : SnackBarService) {
         this.project = new BehaviorSubject(this._project);
         this._storeService.state.subscribe((state) => {
@@ -55,7 +48,6 @@ export class ProjectService {
      */
     open(projectPath : string) {
         this._storeService.dispatch(switchProjectAction(projectPath));
-        this._openProjectMetaData();
         this.openMap(MAP_NAME);
     }
 
@@ -63,23 +55,21 @@ export class ProjectService {
      * Open the map described by the key.
      * @param mapKey Key of the map to open.
      */
-    openMap(mapKey : string) {
-        this._jsonLoader.getJsonFromPath(this.getMapPath(mapKey))
-        .then((json : any) => {
-            try {
-                this._parseMapJson(json, mapKey);
-                this._snackbar.invokeSnacks();
-            } catch (error) {
-                this._dialog.showErrorDialog("Error Parsing Map File", error.message);
-            }
-        });
+    async openMap(mapKey : string) {
+        let json = await this._jsonLoader.getJsonFromPath(this.getMapPath(mapKey));
+        try {
+            await this._parseMapJson(json, mapKey);
+            this._snackbar.invokeSnacks();
+        } catch (error) {
+            this._dialog.showErrorDialog("Error Parsing Map File", error.message);
+        }
     }
 
     /**
      * Save the projects current state.
      */
-    save() {
-        let map = this._mapParser.parsedMapToRawMap({
+    async save() {
+        let map = await this._mapParser.parsedMapToRawMap({
                 key: this._project.currentMap.key,
                 version: this._project.currentMap.key,
                 entitySystem: this._entitySystem.entitySystem.value,
@@ -88,37 +78,6 @@ export class ProjectService {
             });
         let json = JSON.stringify(map, null, 4);
         this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
-        this._saveMetaData();
-    }
-
-    /**
-     * Open the meta data settings for a project
-     */
-    private _openProjectMetaData() {
-        this._parseCollisionTypes();
-    }
-
-    /**
-     * Parse out the collision type meta data
-     */
-    private _parseCollisionTypes() {
-        this._jsonLoader.getJsonFromPath(this.getMetaDataPath("collision-types")).then((json : any) => {
-            let collisionTypes = ["none"];
-            if (json) {
-                let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
-                for (let collisionType of collisionTypeMetaData.collisionTypes) {
-                    if (collisionType !== "none") {
-                        collisionTypes.push(collisionType);
-                    }
-                }
-            }
-            this._storeService.dispatch(changeCollisionTypesAction(collisionTypes));
-        });
-    }
-
-    private _saveMetaData() {
-        let json = JSON.stringify({collisionTypes: this._project.collisionTypes}, null, 4);
-        this._jsonLoader.saveJsonToPath(this.getMetaDataPath("collision-types"), json);
     }
     
     /**
@@ -162,7 +121,7 @@ export class ProjectService {
         let mapsPromise = glob(`${mapsRoot}/**/*.map`);
         return mapsPromise.then(maps => maps.map(map => this._mapPathToRoot(mapsRoot, map)));
     }
-
+    
     /**
      * Get the path to a specific meta data file for the project.
      * @param metaDataFile The name of the meta data file stored in the project/ folder (excluding file type)
@@ -171,7 +130,7 @@ export class ProjectService {
     getMetaDataPath(metaDataFile : string) : string {
         return this._pathService.join(this._project.home, "project", metaDataFile + ".json");
     }
-
+    
     /**
      * The project's root directory.
      */
@@ -179,23 +138,22 @@ export class ProjectService {
         return this._project.home;
     }
 
-    private _parseMapJson(json : any, key : string) {
+    private async _parseMapJson(json : any, key : string) {
         let parsedMap : ParsedMap;
         if (json) {
-            parsedMap = this._mapParser.rawMapToParsedMap(JSON.parse(json));
+            parsedMap = await this._mapParser.rawMapToParsedMap(JSON.parse(json));
         } else {
-            parsedMap = immutableAssign(STARTER_PARSED_MAP, {entitySystem: createEntitySystem()});
+            parsedMap = await this._mapParser.rawMapToParsedMap(Object.assign({}, STARTER_RAW_MAP));
         }
 
         this._entitySystem.replaceSystem(parsedMap.entitySystem);
         if (!parsedMap.dimension) {
-            parsedMap = immutableAssign(parsedMap, {dimension: STARTER_PARSED_MAP.dimension});
+            parsedMap = immutableAssign(parsedMap, {dimension: STARTER_RAW_MAP.dimension});
         }
         if (!parsedMap.gridSize) {
-            parsedMap = immutableAssign(parsedMap, {gridSize: STARTER_PARSED_MAP.gridSize});
+            parsedMap = immutableAssign(parsedMap, {gridSize: STARTER_RAW_MAP.gridSize});
         }
-
-        this._registerUnknownCollisionTypes(parsedMap.entitySystem);
+        
         this._storeService.dispatch(openMapAction({
             key: key,
             version: parsedMap.version,
@@ -204,24 +162,6 @@ export class ProjectService {
         }));
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());
-    }
-
-    private _registerUnknownCollisionTypes(entitySystem : EntitySystem) {
-        let collisionTypes = this._collisionTypesService.getUniqueCollisionTypesInEntitySystem(entitySystem);
-        let unknownCollisionTypes : string[] = [];
-        for (let collisionType of collisionTypes) {
-            if (this._project.collisionTypes.indexOf(collisionType) === -1) {
-                unknownCollisionTypes.push(collisionType);
-                this._snackbar.addSnack({
-                    message: `Unknown collision type registered from map: ${collisionType}`, 
-                    action: "OK"
-                });
-            }
-        }
-        if (unknownCollisionTypes.length > 0) {
-            this._storeService.dispatch(changeCollisionTypesAction(this._project.collisionTypes.concat(unknownCollisionTypes)));
-            this._saveMetaData();
-        }
     }
 
     private _mapPathToRoot(root : string, path : string) {

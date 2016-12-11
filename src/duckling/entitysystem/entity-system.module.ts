@@ -12,7 +12,6 @@ import {
     EntityLayerService
 } from './index';
 import {LayerDialogComponent} from './services/layer-dialog.component';
-import {CollisionTypesService} from './services/collision-types.service';
 
 @NgModule({
     providers: [
@@ -23,8 +22,7 @@ import {CollisionTypesService} from './services/collision-types.service';
         EntitySelectionService,
         EntityLayerService,
         BaseAttributeService,
-        EntitySystemService,
-        CollisionTypesService
+        EntitySystemService
     ],
     imports: [
         ControlsModule

@@ -3,8 +3,11 @@ import {
     Input,
     Output,
     EventEmitter,
-    ViewContainerRef
+    ViewContainerRef,
+    OnDestroy,
+    ChangeDetectorRef
 } from '@angular/core';
+import {Subscriber} from 'rxjs';
 
 import {VectorInputComponent, FormLabelComponent} from '../../controls';
 import {SelectOption, ArraySelectComponent} from '../../controls/array-select.component';
@@ -12,8 +15,10 @@ import {EnumSelectComponent} from '../../controls/enum-select.component';
 import {Vector} from '../../math/vector';
 import {immutableAssign} from '../../util/model';
 import {ProjectService} from '../../project/project.service';
-import {EditCollisionTypesComponent} from '../../project/edit-collision-types.component';
+
 import {CollisionAttribute, BodyTypeSelect} from './collision-attribute';
+import {EditCollisionTypesComponent} from './edit-collision-types.component';
+import {CollisionTypesService} from './collision-types.service';
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -47,7 +52,7 @@ import {CollisionAttribute, BodyTypeSelect} from './collision-attribute';
         <div class="form-label">Collision Type</div>
         <dk-array-select
             [value]="attribute.collisionType"
-            [options]="collisionTypes"
+            [options]="collisionTypeOptions"
             (selection)="onCollisionTypeInput($event)">
         </dk-array-select>
         <button
@@ -58,14 +63,28 @@ import {CollisionAttribute, BodyTypeSelect} from './collision-attribute';
         </button>
     `
 })
-export class CollisionComponent {
+export class CollisionComponent implements OnDestroy {
     @Input() attribute : CollisionAttribute;
     @Output() attributeChanged = new EventEmitter<CollisionAttribute>();
 
     bodyTypes = BodyTypeSelect;
+    collisionTypeOptions : SelectOption[] = [];
+    
+    private _collisionTypeSubscription : Subscriber<any>;
 
-    constructor(private _project : ProjectService,
-                private _viewContainer: ViewContainerRef) {
+    constructor(private _viewContainer: ViewContainerRef,
+                private _collisionTypes : CollisionTypesService,
+                private _changeDectector : ChangeDetectorRef) {
+        this.collisionTypeOptions = this._buildCollisionTypeOptions();
+
+        this._collisionTypeSubscription = this._collisionTypes.collisionTypes.subscribe(() => {
+            this.collisionTypeOptions = this._buildCollisionTypeOptions();
+            this._changeDectector.markForCheck();
+        }) as Subscriber<any>;
+    }
+
+    ngOnDestroy() {
+        this._collisionTypeSubscription.unsubscribe();
     }
 
     onOneWayNormalInput(oneWayNormal : Vector) {
@@ -89,9 +108,9 @@ export class CollisionComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {collisionType}));
     }
 
-    get collisionTypes() : SelectOption[] {
+    private _buildCollisionTypeOptions() : SelectOption[] {
         let selectOptions : SelectOption[] = [];
-        for (let collisionType of this._project.project.getValue().collisionTypes) {
+        for (let collisionType of this._collisionTypes.collisionTypes.getValue()) {
             selectOptions.push({
                 value: collisionType,
                 title: collisionType

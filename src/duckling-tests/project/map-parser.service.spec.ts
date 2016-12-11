@@ -4,6 +4,7 @@ import "reflect-metadata";
 
 import {createEntitySystem, mergeEntityAction} from '../../duckling/entitysystem';
 import {RawMapFile, MapParserService, AssetService, RequiredAssetService} from '../../duckling/project';
+import {ProjectLifecycleService} from '../../duckling/project/project-lifecycle.service';
 import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
 import {immutableAssign, PathService} from '../../duckling/util';
@@ -69,7 +70,8 @@ describe("MapLoaderService", function() {
         let requiredAssetService = new RequiredAssetService();
         this.parser = new MapParserService(
             new AssetService(storeService, new PathService(), requiredAssetService),
-            requiredAssetService);
+            requiredAssetService,
+            new ProjectLifecycleService());
     });
 
     it("turns an empty map into an empty system", function() {

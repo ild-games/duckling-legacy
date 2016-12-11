@@ -8,8 +8,8 @@ import {
 } from './index';
 import {SnackBarService} from './snackbar.service';
 import {MapSelectComponent} from './map-select.component';
-import {EditCollisionTypesComponent} from './edit-collision-types.component';
 import {BrowseAssetComponent} from './browse-asset.component';
+import {ProjectLifecycleService} from './project-lifecycle.service';
 
 import {ControlsModule} from '../controls/controls.module';
 
@@ -22,11 +22,11 @@ import {ControlsModule} from '../controls/controls.module';
         MapParserService,
         ProjectService,
         RequiredAssetService,
-        SnackBarService
+        SnackBarService,
+        ProjectLifecycleService
     ],
     declarations: [
         MapSelectComponent,
-        EditCollisionTypesComponent,
         BrowseAssetComponent
     ],
     exports: [
@@ -34,7 +34,6 @@ import {ControlsModule} from '../controls/controls.module';
     ],
     entryComponents: [
         MapSelectComponent,
-        EditCollisionTypesComponent
     ]
 })
 export class ProjectModule {

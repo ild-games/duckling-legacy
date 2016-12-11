@@ -2,27 +2,19 @@ import {Component, ViewContainerRef} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
 
-import {openDialog} from '../util/md-dialog';
-import {StoreService} from '../state/store.service';
+import {openDialog} from '../../util/md-dialog';
+import {StoreService} from '../../state/store.service';
+import {ProjectService} from '../../project/project.service';
 
-import {ProjectService} from './project.service';
-import {changeCollisionTypesAction} from './project';
+import {CollisionTypesService} from './collision-types.service';
 
 /**
  * Dialog to allow the user to manager their collision types
  */
 @Component({
     selector: "dk-edit-collision-types",
-    styleUrls: ["./duckling/layout.css"],
+    styleUrls: ["./duckling/layout.css", "./duckling/game/collision/edit-collision-types.component.css"],
     template: `
-        <dk-section headerText="Current Collision Types">
-            <md-list>
-                <md-list-item
-                    *ngFor="let collisionType of collisionTypes">
-                    {{collisionType}}
-                </md-list-item>
-            </md-list>
-        </dk-section>
         <dk-section headerText="Create Collision Type">
             <div>
                 <dk-input class="dk-inline"
@@ -38,6 +30,14 @@ import {changeCollisionTypesAction} from './project';
                 </dk-icon-button>
             </div>
         </dk-section>
+        <dk-section headerText="Current Collision Types">
+            <md-list class="current-collision-types">
+                <md-list-item
+                    *ngFor="let collisionType of collisionTypes">
+                    {{collisionType}}
+                </md-list-item>
+            </md-list>
+        </dk-section>
     `
 })
 export class EditCollisionTypesComponent {
@@ -51,14 +51,14 @@ export class EditCollisionTypesComponent {
 
     newCollisionType : string = "";
 
-    constructor(private _project : ProjectService,
+    constructor(private _collisionTypes : CollisionTypesService,
                 private _storeService : StoreService,
                 private _dialogRef : MdDialogRef<EditCollisionTypesComponent>) {
     }
 
     createCollisionType() {
         if (this.newCollisionTypeIsValid()) {
-            this._storeService.dispatch(changeCollisionTypesAction(this.collisionTypes.concat([this.newCollisionType])));
+            this._collisionTypes.addCollisionType(this.newCollisionType);
         }
     }
 
@@ -67,6 +67,6 @@ export class EditCollisionTypesComponent {
     }
 
     get collisionTypes() : string[] {
-        return this._project.project.getValue().collisionTypes;
+        return this._collisionTypes.collisionTypes.getValue();
     }
 }
