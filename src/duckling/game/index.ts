@@ -9,6 +9,9 @@ import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 import {RequiredAssetService} from '../project';
 
+import {defaultButton, BUTTON_KEY} from './button/button-attribute';
+import {ButtonComponent} from './button/button.component';
+
 import {defaultPosition, POSITION_KEY} from './position/position-attribute';
 import {setPosition} from './position/set-position';
 import {getPosition} from './position/get-position';
@@ -52,7 +55,8 @@ let _bootstrapFunctions : Function[] = [
     _bootstrapCameraAttribute,
     _bootstrapDrawableAttribute,
     _bootstrapActionAttribute,
-    _bootstrapRotateAttribute
+    _bootstrapRotateAttribute,
+    _bootstrapButtonAttribute
 ];
 
 /**
@@ -66,6 +70,11 @@ function _bootstrapPositionAttribute(services : Services) {
     services.attributeComponentService.register(POSITION_KEY, PositionComponent);
     services.attributeDefaultService.register(POSITION_KEY, {createByDefault: true, default: defaultPosition});
     services.entityPositionService.register(POSITION_KEY, {set: setPosition, get: getPosition});
+}
+
+function _bootstrapButtonAttribute(services : Services) {
+    services.attributeComponentService.register(BUTTON_KEY, ButtonComponent);
+    services.attributeDefaultService.register(BUTTON_KEY, {createByDefault: false, default: defaultButton});
 }
 
 function _bootstrapCollisionAttribute(services : Services) {
