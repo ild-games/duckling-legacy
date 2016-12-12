@@ -19,6 +19,18 @@ export class ElectronToolbarService extends FileToolbarService {
             shortcut: "CmdOrCtrl+R",
             callback : () => remote.getCurrentWindow().reload()
         });
+        this.addAction({
+            menuPath : ["Edit"],
+            label: "Copy",
+            shortcut: "CmdOrCtrl+C",
+            role: "copy"
+        });
+        this.addAction({
+            menuPath : ["Edit"],
+            label: "Paste",
+            shortcut: "CmdOrCtrl+V",
+            role: "paste"
+        });
     }
 
     bootstrapMenu() {
@@ -59,6 +71,7 @@ export class ElectronToolbarService extends FileToolbarService {
             type : "normal",
             label : action.label,
             accelerator : action.shortcut,
+            role: action.role
         });
     }
 
@@ -68,7 +81,8 @@ export class ElectronToolbarService extends FileToolbarService {
                 menuPath : action.menuPath.slice(1),
                 label : action.label,
                 shortcut : action.shortcut,
-                callback : action.callback
+                callback : action.callback,
+                role: action.role
             }
         });
     }
