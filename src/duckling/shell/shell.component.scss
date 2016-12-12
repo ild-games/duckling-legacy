@@ -20,7 +20,7 @@ $shell-padding: 16px;
     .entity-editor-container {
         flex-basis: auto;
         flex-grow: 1;
-        min-width: 400px;
+        width: 500px;
         margin-left: $shell-padding / 2;
         overflow-y: auto;
     }

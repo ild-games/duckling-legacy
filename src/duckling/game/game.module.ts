@@ -8,6 +8,7 @@ import {CollisionComponent} from './collision/collision.component';
 import {DrawableComponent} from './drawable/drawable.component';
 import {PositionComponent} from './position/position.component';
 import {RotateComponent} from './rotate/rotate.component';
+import {ButtonComponent} from './button/button.component'
 
 import {AnimatedDrawableComponent} from './drawable/animated-drawable.component';
 import {AutoCreateAnimationDialogComponent} from './drawable/auto-create-animation-dialog.component';
@@ -43,7 +44,8 @@ const ATTRIBUTE_COMPONENTS = [
         CollisionComponent,
         DrawableAttributeComponent,
         PositionComponent,
-        RotateComponent
+        RotateComponent,
+        ButtonComponent
 ]
 
 @NgModule({
