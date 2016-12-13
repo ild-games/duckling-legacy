@@ -16,7 +16,7 @@ import {IconComponent} from './icon.component';
     template: `
         <button
             *ngIf="!isRaised"
-            md-button
+            md-icon-button
             [title]="tooltip"
             [disableRipple]=true
             [disabled]="disabled"
@@ -28,7 +28,7 @@ import {IconComponent} from './icon.component';
         </button>
         <button
             *ngIf="isRaised"
-            md-raised-button
+            md-mini-fab
             [title]="tooltip"
             [disableRipple]=true
             [disabled]="disabled"

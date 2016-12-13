@@ -3,7 +3,8 @@ import {
     Input,
     ChangeDetectorRef,
     OnDestroy,
-    OnInit
+    OnInit,
+    ViewContainerRef
 } from '@angular/core';
 import {Subscriber} from 'rxjs';
 
@@ -14,13 +15,17 @@ import {SplashComponent} from '../splash/splash.component';
 import {FileToolbarService} from './file-toolbar.service';
 import {Asset, AssetService} from '../project/asset.service';
 import {ProjectService} from '../project/project.service';
+import {CustomAttributesComponent} from '../project/custom-attributes.component';
 import {WindowService, PathService} from '../util';
 import {StoreService} from '../state';
 import {OptionsService} from '../state/options.service';
 
 @Component({
     selector: 'dk-shell',
-    styleUrls: ['./duckling/shell/shell.component.css', './duckling/layout.css'],
+    styleUrls: [
+        './duckling/shell/shell.component.css', 
+        './duckling/layout.css'
+    ],
     template: `
         <div *ngIf="showSplash">
             <dk-splash-screen
@@ -56,7 +61,8 @@ export class ShellComponent implements OnInit, OnDestroy {
                 private _optionsService : OptionsService,
                 private _windowService : WindowService,
                 private _fileToolbar : FileToolbarService,
-                private _store : StoreService) {
+                private _store : StoreService,
+                private _viewContainer : ViewContainerRef) {
     }
 
     ngOnDestroy() {
@@ -68,7 +74,7 @@ export class ShellComponent implements OnInit, OnDestroy {
         this._optionsService.loadSettings(this._pathService.join(home, ".duckling", "options.json"));
 
         this._windowService.setMinimumSize(0, 0);
-        this._initToolbar();
+        this._initSplashToolbar();
         this._assetService.loadPreloadedEditorImages();
 
         this._assetServiceSubscription = this._assetService.preloadImagesLoaded.subscribe((allLoaded : boolean) => {
@@ -79,9 +85,10 @@ export class ShellComponent implements OnInit, OnDestroy {
     onProjectOpened(path : string) {
         this.projectService.open(path);
         this._windowService.setMinimumSize(1300, 500);
+        this._initProjectToolbar();
     }
 
-    private _initToolbar() {
+    private _initSplashToolbar() {
         this._fileToolbar.addAction({
             menuPath : ["File"],
             label: "Undo",
@@ -94,6 +101,15 @@ export class ShellComponent implements OnInit, OnDestroy {
             label: "Redo",
             shortcut: "CmdOrCtrl+Shift+Z",
             callback : () => this._store.redo()
+        });
+    }
+
+    private _initProjectToolbar() {
+        this._fileToolbar.addAction({
+            menuPath: ["Project"],
+            label: "Edit Custom Attributes",
+            shortcut: "CmdOrCtrl+Shift+E",
+            callback: () => CustomAttributesComponent.open(this._viewContainer)
         });
 
         this._fileToolbar.bootstrapMenu();

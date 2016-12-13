@@ -1,0 +1,67 @@
+@import '../forms';
+@import '../fonts';
+@import '../colors';
+
+$background-color: #FFFFFF;
+$attribute-list-background-color: $ultra-light-primary-color;
+$attribute-list-border-color: $light-primary-color;
+
+.container {
+    background-color: $background-color;
+    width: 800px;
+    height: 600px;
+    display: flex;
+
+    .left-section {
+        display: flex;
+        flex-direction: column;
+
+        
+        md-card-content {
+            flex: 1 1 auto;
+            overflow: auto;
+            
+            md-list {
+                padding: 0;
+                overflow: auto;
+            }
+        }
+
+        md-card-actions {
+
+            .actions {
+                padding: $spacer-unit;
+            }
+
+            .actions > a {
+                @include clean-link;
+                font-size: $font-size-heading;
+                line-height: $font-size-heading;
+                font-weight: 300;
+            }
+        }
+    }
+
+    .right-section {
+        flex: 1 1 auto;
+        overflow: auto;
+        padding-top: $spacer-unit * 2;
+        padding-left: $spacer-unit * 2;
+        padding-right: $spacer-unit * 2;
+        display: flex;
+        flex-direction: column;
+
+        dk-json-schema {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
+        .adding-section-footer {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: $spacer-unit 0;
+        }
+    }
+}

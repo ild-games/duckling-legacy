@@ -18,6 +18,7 @@ import {
     openMapAction,
     changeCurrentMapDimensionAction,
     changeCurrentMapGridAction,
+    changeCustomAttributes,
     Project,
     setVersionInfo
 } from './project';
@@ -52,14 +53,29 @@ export class ProjectService {
      */
     async open(projectPath : string) {
         this._storeService.dispatch(switchProjectAction(projectPath));
-
         try {
             let versionInfo = await this._migrationService.openProject(projectPath);
             this._storeService.dispatch(setVersionInfo(versionInfo));
-            this.openMap(MAP_NAME);
+            await this._loadProjectMetaData();
+            await this.openMap(MAP_NAME);
         } catch (error) {
             this._dialog.showErrorDialog("Unable to Open the Project", error.message);
         }
+    }
+
+    private async _loadProjectMetaData() {
+        await this._loadCustomAttributes();
+    }
+
+    private async _loadCustomAttributes() {
+        let attributes = await glob(`${this._customAttributesRoot}/*.json`);
+        let attributePromises : Promise<void>[] = [];
+        for (let customAttribute of attributes) {
+            attributePromises.push(this._jsonLoader.getJsonFromPath(customAttribute).then(json => {
+                this.addCustomAttribute(this._customAttributeFileToName(customAttribute), JSON.parse(json))
+            }));
+        }
+        return Promise.all(attributePromises);
     }
 
     /**
@@ -88,14 +104,43 @@ export class ProjectService {
                 gridSize: this._project.currentMap.gridSize
             }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
-        this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
+        await this._saveProjectMetaData();
+        await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
     }
 
+    private async _saveProjectMetaData() {
+        await this._saveCustomAttributes();
+    }
+
+    private async _saveCustomAttributes() {
+        if (!this._project.customAttributes) {
+            return;
+        }
+        
+        for (let customAttribute of this._project.customAttributes) {
+            await this._jsonLoader.saveJsonToPath(
+                `${this._customAttributesRoot}/${customAttribute.key}.json`,
+                JSON.stringify(customAttribute.content, null, 4));
+        }
+    }
+    
     /**
      * Reload the current project.
      */
     reload() {
         this.openMap(this._project.currentMap.key);
+    }
+    
+    /**
+     * Adds a new custom attribute to the project
+     * @param key The key of the custom attribute
+     * @param content The json that describes the attribute
+     */
+    addCustomAttribute(key : string, content : any) {
+        let currentAttributes = this._project.customAttributes;
+        let newAttribute = {key, content };
+        let newAttributes = currentAttributes ? currentAttributes.concat([newAttribute]) : [].concat([newAttribute]);
+        this._storeService.dispatch(changeCustomAttributes(newAttributes));
     }
 
     /**
@@ -128,7 +173,7 @@ export class ProjectService {
      * @return A promise for an array of map names.
      */
     getMaps() : Promise<string []> {
-        let mapsRoot = `${this._project.home}/maps/`;
+        let mapsRoot = `${this._project.home}/maps`;
         let mapsPromise = glob(`${mapsRoot}/**/*.map`);
         return mapsPromise.then(maps => maps.map(map => this._mapPathToRoot(mapsRoot, map)));
     }
@@ -181,11 +226,19 @@ export class ProjectService {
     }
 
     private _mapPathToRoot(root : string, path : string) {
-        return path.slice(root.length, -(".map".length));
+        return path.slice(root.length+1, -(".map".length));
+    }
+
+    private _customAttributeFileToName(customAttributePath : string) : string {
+        return customAttributePath.slice(this._customAttributesRoot.length+1, -(".json".length));
     }
 
     private get _mapRoot() {
-        return `${this._project.home}/maps/`
+        return `${this._project.home}/maps`
+    }
+
+    private get _customAttributesRoot() {
+        return `${this._project.home}/project/custom-attributes`;
     }
 
     private get _project() : Project {
