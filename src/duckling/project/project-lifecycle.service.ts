@@ -11,28 +11,28 @@ export interface MapLifecycleHook {
  */
 @Injectable()
 export class ProjectLifecycleService {
-    private _afterMapLoad : MapLifecycleHook[] = [];
-    private _beforeMapSave : MapLifecycleHook[] = []; 
+    private _postLoadHooks : MapLifecycleHook[] = [];
+    private _preSaveHooks : MapLifecycleHook[] = []; 
 
-    async executeAfterMapLoad(map : RawMapFile) : Promise<RawMapFile> {
-        for (let hook of this._afterMapLoad) {
+    async executePostLoadMapHooks(map : RawMapFile) : Promise<RawMapFile> {
+        for (let hook of this._postLoadHooks) {
             map = await hook(map);
         }
         return map;
     }
 
-    async executeBeforeMapSave(map : RawMapFile) : Promise<RawMapFile> {
-        for (let hook of this._beforeMapSave) {
+    async executePreSaveMapHooks(map : RawMapFile) : Promise<RawMapFile> {
+        for (let hook of this._preSaveHooks) {
             map = await hook(map);
         }
         return map;
     }
 
-    addAfterMapLoadHook(hook : MapLifecycleHook) {
-        this._afterMapLoad.push(hook);
+    addPostLoadMapHook(hook : MapLifecycleHook) {
+        this._postLoadHooks.push(hook);
     }
     
-    addBeforeMapSaveHook(hook : MapLifecycleHook) {
-        this._beforeMapSave.push(hook);
+    addPreSaveMapHook(hook : MapLifecycleHook) {
+        this._preSaveHooks.push(hook);
     }
 }

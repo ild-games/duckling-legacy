@@ -34,7 +34,7 @@ export interface CollisionAttribute extends Attribute {
     oneWayNormal : Vector;
 }
 
-export let defaultCollison : CollisionAttribute = {
+export let defaultCollision : CollisionAttribute = {
     dimension: {
         dimension: {
             x: 10,

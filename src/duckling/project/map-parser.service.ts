@@ -68,7 +68,7 @@ export class MapParserService {
      * @return A ParsedMap with the entities and other information about the map
      */
     async rawMapToParsedMap(map : RawMapFile) : Promise<ParsedMap> {
-        map = await this._projectLifecycle.executeAfterMapLoad(map);
+        map = await this._projectLifecycle.executePostLoadMapHooks(map);
         let compatibility = compareVersions(map.version);
         if (compatibility !== VersionCompatibility.Compatible) {
             throw new Error(incompatibleReason(compatibility));
@@ -143,6 +143,6 @@ export class MapParserService {
             gridSize : parsedMap.gridSize,
             version: MAP_VERSION
         }
-        return await this._projectLifecycle.executeBeforeMapSave(rawMap);
+        return await this._projectLifecycle.executePreSaveMapHooks(rawMap);
     }
 }

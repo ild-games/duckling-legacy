@@ -106,10 +106,10 @@ export class GameModule {
     }
 
     private _bootstrapAfterMapLoadLifecycle() {
-        this._projectLifecycleService.addAfterMapLoadHook(map => this._collisionTypesService.registerGameCollisionTypes(map));
+        this._projectLifecycleService.addPostLoadMapHook(map => this._collisionTypesService.postLoadMapHook(map));
     }
 
     private _bootstrapBeforeMapSaveLifecycle() {
-        this._projectLifecycleService.addBeforeMapSaveHook(map => this._collisionTypesService.saveGameCollisionTypes(map));
+        this._projectLifecycleService.addPreSaveMapHook(map => this._collisionTypesService.preSaveMapHook(map));
     }
 }

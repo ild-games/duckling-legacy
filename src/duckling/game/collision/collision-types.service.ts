@@ -1,4 +1,4 @@
-import {Injectable, OnInit} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
@@ -16,33 +16,45 @@ export type CollisionTypeGetter = (entity : Entity) => string;
 export const NONE_COLLISION_TYPE = "none";
 
 interface CollisionTypeMetaData {
-    collisionTypes: string
+    collisionTypes: string[]
 }
 
 /**
  * This service can be used to get the collision types for an entity or all unique collision types in an entity system
  */
 @Injectable()
-export class CollisionTypesService implements OnInit {
+export class CollisionTypesService {
     collisionTypes = new BehaviorSubject<string[]>([]);
     
     constructor(private _jsonLoader : JsonLoaderService,
                 private _store : StoreService,
                 private _project : ProjectService,
                 private _snackbar : SnackBarService) {
-    }
-
-    ngOnInit() {
         this._store.state.subscribe(state => {
             if (state.collision.collisionTypes) {
                 this.collisionTypes.next(state.collision.collisionTypes);
             }
         });
     }
+
+    async postLoadMapHook(map : RawMapFile)  : Promise<RawMapFile> {
+        let json = await this._jsonLoader.getJsonFromPath(this._project.getMetaDataPath("collision-types"));
+        if (this._tryParseJsonFile(json)) {
+            this._registerAnconaCollisionTypes(JSON.parse(json));
+        } else {
+            this._notifyFileError("Error: collision-types.json not properly formatted!");
+        }
+        let unknownCollisionTypes = this._findUnknownCollisionTypes(map);
+        this._registerMultipleCollisionTypes(unknownCollisionTypes);
+        this._notifyUnknownCollisionTypes(unknownCollisionTypes);
+        return Promise.resolve(map);
+    }
     
-    /**
-     * Get the collision type for a specific entity
-     */
+    async preSaveMapHook(map : RawMapFile) : Promise<RawMapFile> {
+        this._saveCollisionTypesMetaData();
+        return Promise.resolve(map);
+    }
+    
     getCollisionTypeForEntity(entity : Entity) : string {
         let collisionAttribute = getCollision(entity);
         if (!collisionAttribute) {
@@ -51,47 +63,24 @@ export class CollisionTypesService implements OnInit {
         return collisionAttribute.collisionType;
     }
 
-    /**
-     * Get all the unique collision types for an entity system
-     */
-    getUniqueCollisionTypesInEntitySystem(entitySystem : EntitySystem) : string[] {
-        let collisionTypes = new Set<string>();
-        entitySystem.forEach((entity : Entity, key : EntityKey)  => {
-            let collisionType = this.getCollisionTypeForEntity(entity);
-            if (collisionType) {
-                collisionTypes.add(collisionType);
-            }
-        });
-        return Array.from(collisionTypes.values());
-    }
-
-    /**
-     * Add a new collision type to the game's collision types
-     */
     addCollisionType(collisionType : string) {
         this._store.dispatch(_collisionTypesAction(Array.from(this.collisionTypes.getValue().concat([collisionType]))));
     }
 
-    /**
-     * Registers the game collision types from the project/collision-types.json file during
-     * the map's after load lifecycle.
-     */
-    async registerGameCollisionTypes(map : RawMapFile) : Promise<RawMapFile> {
-        let json = await this._jsonLoader.getJsonFromPath(this._project.getMetaDataPath("collision-types"));
+    private _registerAnconaCollisionTypes(collisionTypeMetaData : CollisionTypeMetaData) {
         let collisionTypes = new Set<string>([NONE_COLLISION_TYPE]);
-        if (json) {
-            let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
+        if (collisionTypeMetaData) {
             for (let collisionType of collisionTypeMetaData.collisionTypes) {
                 if (collisionType !== NONE_COLLISION_TYPE) {
                     collisionTypes.add(collisionType);
                 }
             }
         }
-        
-        let unknownCollisionTypes = this._findUnknownCollisionTypes(map, collisionTypes);
-        this._notifyUnknownCollisionTypes(unknownCollisionTypes);
-        this._store.dispatch(_collisionTypesAction(Array.from(collisionTypes).concat(unknownCollisionTypes)));
-        return Promise.resolve(map);
+        this._registerMultipleCollisionTypes(Array.from(collisionTypes.values()));
+    }
+
+    private _registerMultipleCollisionTypes(collisionTypes : string[]) {
+        this._store.dispatch(_collisionTypesAction(Array.from(this.collisionTypes.getValue()).concat(collisionTypes)));
     }
 
     private _notifyUnknownCollisionTypes(unknownCollisionTypes : string[]) {
@@ -100,12 +89,16 @@ export class CollisionTypesService implements OnInit {
         }
     }
 
-    private _findUnknownCollisionTypes(map : RawMapFile, existingTypes : Set<string>) : string[] {
+    private _notifyFileError(message : string) {
+        this._snackbar.addSnack(message);
+    }
+
+    private _findUnknownCollisionTypes(map : RawMapFile) : string[] {
         let rawMapCollisionTypes = this._getUniqueCollisionTypesInRawMapFile(map);
         let unknownCollisionTypes : string[] = [];
         if (rawMapCollisionTypes) {
             for (let type of rawMapCollisionTypes) {
-                if (!existingTypes.has(type)) {
+                if (this.collisionTypes.getValue().indexOf(type) === -1) {
                     unknownCollisionTypes.push(type);
                 }
             }
@@ -126,23 +119,27 @@ export class CollisionTypesService implements OnInit {
         return Array.from(collisionTypes.values());
     }
 
-    /**
-     * Saves the collision types to project/collision-types.json during the map's
-     * before save lifecycle 
-     */
-    async saveGameCollisionTypes(map : RawMapFile) : Promise<RawMapFile> {
-        this._saveCollisionTypesMetaData();
-        return Promise.resolve(map);
-    }
-
     private _saveCollisionTypesMetaData() {
         let json = JSON.stringify({collisionTypes: this.collisionTypes.getValue()}, null, 4);
         this._jsonLoader.saveJsonToPath(this._project.getMetaDataPath("collision-types"), json);
     }
+
+    private _tryParseJsonFile(jsonStream : string) : boolean {
+        try {
+            JSON.parse(jsonStream);
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+                return false; 
+            } else {
+                throw new Error(e);
+            }
+        }
+        return true;
+    }
 }
 
-/* Reducer and action for storing collision types in the store */
-
+//////////////////////////////////////////////////////////////
+// Reducer and action for storing collision types in the store
 interface CollisionTypesState {
     collisionTypes?: string[];
 }

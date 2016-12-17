@@ -7,7 +7,7 @@ import "reflect-metadata";
 chai.use(spies);
 
 import {createEntitySystem, mergeEntityAction} from '../../duckling/entitysystem';
-import {RawMapFile, MapParserService, AssetService, RequiredAssetService} from '../../duckling/project';
+import {RawMapFile, ParsedMap, MapParserService, AssetService, RequiredAssetService} from '../../duckling/project';
 import {ProjectLifecycleService} from '../../duckling/project/project-lifecycle.service';
 import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
@@ -68,28 +68,36 @@ let basicMap : RawMapFile = {
     gridSize: 16
 }
 
+let emptyParsedMap : ParsedMap = {
+    entitySystem: createEntitySystem(),
+    dimension: {x: 0, y: 0},
+    gridSize: 0,
+    key: "",
+    version: ""
+}
+
 describe("MapLoaderService.LifecycleHooks", function() {
-    it ("successfully executes a post-load and pre-save hook", async function() {
-        let storeService = new StoreService(mainReducer, mergeEntityAction);
-        let requiredAssetService = new RequiredAssetService();
-        let projectLifecycleService = new ProjectLifecycleService();
-        let postLoadHook = function(map : RawMapFile) {
-            return Promise.resolve(map);
-        }
-        let preSaveHook = function(map : RawMapFile) {
-            return Promise.resolve(map);
-        }
-        let postLoadSpy = chai.spy(postLoadHook);
-        let preSaveSpy = chai.spy(preSaveHook);
-        projectLifecycleService.addAfterMapLoadHook(postLoadSpy);
-        projectLifecycleService.addBeforeMapSaveHook(preSaveSpy);
+    beforeEach(function() {
+        this.storeService = new StoreService(mainReducer, mergeEntityAction);
+        this.requiredAssetService = new RequiredAssetService();
+        this.projectLifecycleService = new ProjectLifecycleService();
         this.parser = new MapParserService(
-            new AssetService(storeService, new PathService(), requiredAssetService),
-            requiredAssetService,
-            projectLifecycleService);
-        let parsedMap = await this.parser.rawMapToParsedMap(Object.assign({}, emptyMap));
+            new AssetService(this.storeService, new PathService(), this.requiredAssetService),
+            this.requiredAssetService,
+            this.projectLifecycleService);
+    });
+    
+    it("successfully executes a post-load hook", async function() {
+        let postLoadSpy = chai.spy((map : RawMapFile) => Promise.resolve(map));
+        this.projectLifecycleService.addPostLoadMapHook(postLoadSpy);
+        await this.parser.rawMapToParsedMap(emptyMap);
         expect(postLoadSpy).to.have.been.called();
-        let map = await this.parser.parsedMapToRawMap(parsedMap);
+    });
+    
+    it("successfully executes a pre-save hook", async function() {
+        let preSaveSpy = chai.spy((map : RawMapFile) => Promise.resolve(map));
+        this.projectLifecycleService.addPreSaveMapHook(preSaveSpy);
+        await this.parser.parsedMapToRawMap(emptyParsedMap);
         expect(preSaveSpy).to.have.been.called();
     });
 });
@@ -110,13 +118,7 @@ describe("MapLoaderService", function() {
     });
 
     it("turns an empty system into an empty map", async function() {
-        let map = await this.parser.parsedMapToRawMap({
-            entitySystem: createEntitySystem(),
-            dimension: {x: 0, y: 0},
-            gridSize: 0,
-            key: "",
-            version: ""
-        });
+        let map = await this.parser.parsedMapToRawMap(emptyParsedMap);
         expect(map).to.eql(emptyMap);
     });
 

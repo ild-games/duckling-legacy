@@ -13,7 +13,7 @@ interface SnackBar {
 export class SnackBarService {
     private _snacks : SnackBar[] = [];
 
-    constructor(private _snackbar : MdSnackBar) {
+    constructor(private _snackbar? : MdSnackBar) {
     }
 
     /**
@@ -25,8 +25,10 @@ export class SnackBarService {
         }
         
         let nextSnack = this._snacks.shift();
-        let ref = this._snackbar.open(nextSnack.message, nextSnack.action);
-        ref.afterDismissed().subscribe(() => this.invokeSnacks());
+        if (this._snackbar) {
+            let ref = this._snackbar.open(nextSnack.message, nextSnack.action); 
+            ref.afterDismissed().subscribe(() => this.invokeSnacks());
+        }
     }
 
     /**
