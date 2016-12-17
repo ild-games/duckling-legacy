@@ -52,5 +52,19 @@ export function roundToMultiple(value : number, radex : number) {
  * @return The floored value.
  */
 export function floorToMultiple(value : number, radex : number) {
-    return value - value % radex;
+    return value - modulo(value, radex);
+}
+
+/**
+ * Compute modulo the correct way.
+ * @param  value Value to compute the modulo of.
+ * @param  divisor Divisor used to compute the modulo.
+ * @return value % divisor
+ */
+export function modulo(value : number, divisor : number) {
+    if (value >= 0) {
+        return value % divisor;
+    } else {
+        return value % divisor + divisor;
+    }
 }

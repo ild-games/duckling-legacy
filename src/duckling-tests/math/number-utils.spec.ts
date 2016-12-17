@@ -135,4 +135,20 @@ describe("roundToMultiple", function() {
     it("Can round to odd radex", function() {
         expect(roundToMultiple(20, 7)).to.eql(21);
     });
+
+    it("Does not change a round number", function() {
+        expect(roundToMultiple(21, 7)).to.eql(21);
+    });
+
+    it("Can round down", function() {
+        expect(roundToMultiple(43, 10)).to.eql(40);
+    });
+
+    it("Can round negative numbers up", function() {
+        expect(roundToMultiple(-43, 10)).to.eql(-40);
+    });
+
+    it("Can roudn negative numbers down", function() {
+        expect(roundToMultiple(-37, 10)).to.eql(-40);
+    });
 });
