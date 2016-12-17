@@ -7,6 +7,7 @@ export interface MapLifecycleHook {
 }
 
 /**
+ * Service for storing and executing map post-load and pre-save hooks
  */
 @Injectable()
 export class ProjectLifecycleService {

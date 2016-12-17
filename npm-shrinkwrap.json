@@ -47,6 +47,11 @@
       "from": "@angular/upgrade@>=2.2.3 <3.0.0",
       "resolved": "https://registry.npmjs.org/@angular/upgrade/-/upgrade-2.2.3.tgz"
     },
+    "@types/chai": {
+      "version": "3.4.34",
+      "from": "@types/chai@>=3.4.34 <4.0.0",
+      "resolved": "https://registry.npmjs.org/@types/chai/-/chai-3.4.34.tgz"
+    },
     "@types/electron": {
       "version": "1.4.27",
       "from": "@types/electron@>=1.4.27 <2.0.0",

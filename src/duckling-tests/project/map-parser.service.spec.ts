@@ -1,6 +1,10 @@
 import 'mocha';
+import * as chai from 'chai';
 import {expect} from 'chai';
+import * as spies from 'chai-spies';
 import "reflect-metadata";
+
+chai.use(spies);
 
 import {createEntitySystem, mergeEntityAction} from '../../duckling/entitysystem';
 import {RawMapFile, MapParserService, AssetService, RequiredAssetService} from '../../duckling/project';
@@ -64,6 +68,32 @@ let basicMap : RawMapFile = {
     gridSize: 16
 }
 
+describe("MapLoaderService.LifecycleHooks", function() {
+    it ("successfully executes a post-load and pre-save hook", async function() {
+        let storeService = new StoreService(mainReducer, mergeEntityAction);
+        let requiredAssetService = new RequiredAssetService();
+        let projectLifecycleService = new ProjectLifecycleService();
+        let postLoadHook = function(map : RawMapFile) {
+            return Promise.resolve(map);
+        }
+        let preSaveHook = function(map : RawMapFile) {
+            return Promise.resolve(map);
+        }
+        let postLoadSpy = chai.spy(postLoadHook);
+        let preSaveSpy = chai.spy(preSaveHook);
+        projectLifecycleService.addAfterMapLoadHook(postLoadSpy);
+        projectLifecycleService.addBeforeMapSaveHook(preSaveSpy);
+        this.parser = new MapParserService(
+            new AssetService(storeService, new PathService(), requiredAssetService),
+            requiredAssetService,
+            projectLifecycleService);
+        let parsedMap = await this.parser.rawMapToParsedMap(Object.assign({}, emptyMap));
+        expect(postLoadSpy).to.have.been.called();
+        let map = await this.parser.parsedMapToRawMap(parsedMap);
+        expect(preSaveSpy).to.have.been.called();
+    });
+});
+
 describe("MapLoaderService", function() {
     beforeEach(function() {
         let storeService = new StoreService(mainReducer, mergeEntityAction);
@@ -74,13 +104,13 @@ describe("MapLoaderService", function() {
             new ProjectLifecycleService());
     });
 
-    it("turns an empty map into an empty system", function() {
-        let parsedMap = this.parser.rawMapToParsedMap(emptyMap);
+    it("turns an empty map into an empty system", async function() {
+        let parsedMap = await this.parser.rawMapToParsedMap(Object.assign({}, emptyMap));
         expect(parsedMap.entitySystem.isEmpty()).to.eql(true);
     });
 
-    it("turns an empty system into an empty map", function() {
-        let map = this.parser.parsedMapToRawMap({
+    it("turns an empty system into an empty map", async function() {
+        let map = await this.parser.parsedMapToRawMap({
             entitySystem: createEntitySystem(),
             dimension: {x: 0, y: 0},
             gridSize: 0,
@@ -91,8 +121,8 @@ describe("MapLoaderService", function() {
     });
 
     describe("loading a map into an entity system", function() {
-        beforeEach(function() {
-            this.parsedMap = this.parser.rawMapToParsedMap(basicMap);
+        beforeEach(async function() {
+            this.parsedMap = await this.parser.rawMapToParsedMap(basicMap);
         });
 
         it("allows for the creation of empty entities", function() {
@@ -108,14 +138,14 @@ describe("MapLoaderService", function() {
         });
     });
 
-    it("loading and saving a map preserves the original map", function() {
-        let parsedMap = this.parser.rawMapToParsedMap(basicMap);
-        let map = this.parser.parsedMapToRawMap(parsedMap);
+    it("loading and saving a map preserves the original map", async function() {
+        let parsedMap = await this.parser.rawMapToParsedMap(basicMap);
+        let map = await this.parser.parsedMapToRawMap(parsedMap);
         map.entities.sort();
         expect(map).to.eql(basicMap);
     });
 
-    it("if an entity is in a system, but not the entities array, it will create the entity", function () {
+    it("if an entity is in a system, but not the entities array, it will create the entity", async function () {
         let sa = {
             components : {
                 ea : {
@@ -124,7 +154,7 @@ describe("MapLoaderService", function() {
             }
         };
         let map = immutableAssign(emptyMap, {systems : { sa}});
-        let parsedMap = this.parser.rawMapToParsedMap(map);
+        let parsedMap = await this.parser.rawMapToParsedMap(map);
         expect(parsedMap.entitySystem.get("ea")).to.eql(entityA);
     });
 });
