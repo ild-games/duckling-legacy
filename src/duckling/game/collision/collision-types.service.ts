@@ -40,7 +40,11 @@ export class CollisionTypesService {
      * Get the collision type for a specific entity
      */
     getCollisionTypeForEntity(entity : Entity) : string {
-        return this._collisionType(entity);
+        let collisionAttribute = getCollision(entity);
+        if (!collisionAttribute) {
+            return null;
+        }
+        return collisionAttribute.collisionType;
     }
 
     /**
@@ -125,14 +129,6 @@ export class CollisionTypesService {
     private _saveCollisionTypesMetaData() {
         let json = JSON.stringify({collisionTypes: this.collisionTypes.getValue()}, null, 4);
         this._jsonLoader.saveJsonToPath(this._project.getMetaDataPath("collision-types"), json);
-    }
-
-    private _collisionType(entity : Entity) : string {
-        let collisionAttribute = getCollision(entity);
-        if (!collisionAttribute) {
-            return null;
-        }
-        return collisionAttribute.collisionType;
     }
 }
 
