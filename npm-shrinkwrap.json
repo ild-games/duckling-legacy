@@ -52,11 +52,6 @@
       "from": "@types/electron@>=1.4.27 <2.0.0",
       "resolved": "https://registry.npmjs.org/@types/electron/-/electron-1.4.27.tgz"
     },
-    "@types/es6-shim": {
-      "version": "0.31.32",
-      "from": "@types/es6-shim@0.31.32",
-      "resolved": "https://registry.npmjs.org/@types/es6-shim/-/es6-shim-0.31.32.tgz"
-    },
     "@types/glob": {
       "version": "5.0.30",
       "from": "@types/glob@>=5.0.30 <6.0.0",

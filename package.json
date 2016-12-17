@@ -25,7 +25,6 @@
     "@angular/platform-browser-dynamic": "^2.2.3",
     "@angular/upgrade": "^2.2.3",
     "@types/electron": "^1.4.27",
-    "@types/es6-shim": "0.31.32",
     "@types/glob": "^5.0.30",
     "@types/hammerjs": "^2.0.33",
     "@types/lodash": "^4.14.40",

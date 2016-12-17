@@ -117,10 +117,11 @@ export class CollisionTypesService {
         if (!map.systems["collision"] || !map.systems["collision"]["components"]) {
             return;
         }
+        let collisionAttributes = map.systems["collision"]["components"];
         
         let collisionTypes = new Set<string>();
-        for (let rawEntityAttribute in map.systems["collision"]["components"]) {
-            collisionTypes.add(map.systems["collision"]["components"][rawEntityAttribute]["collisionType"]);
+        for (let rawEntityAttribute in collisionAttributes) {
+            collisionTypes.add(collisionAttributes[rawEntityAttribute]["collisionType"]);
         }
         return Array.from(collisionTypes.values());
     }
