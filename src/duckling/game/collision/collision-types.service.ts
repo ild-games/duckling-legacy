@@ -13,6 +13,7 @@ import {SnackBarService} from '../../project/snackbar.service';
 import {getCollision} from './collision-attribute';
 
 export type CollisionTypeGetter = (entity : Entity) => string;
+export const NONE_COLLISION_TYPE = "none";
 
 interface CollisionTypeMetaData {
     collisionTypes: string
@@ -74,11 +75,11 @@ export class CollisionTypesService {
      */
     async registerGameCollisionTypes(map : RawMapFile) : Promise<RawMapFile> {
         let json = await this._jsonLoader.getJsonFromPath(this._project.getMetaDataPath("collision-types"));
-        let collisionTypes = new Set<string>(["none"]);
+        let collisionTypes = new Set<string>([NONE_COLLISION_TYPE]);
         if (json) {
             let collisionTypeMetaData : CollisionTypeMetaData = JSON.parse(json);
             for (let collisionType of collisionTypeMetaData.collisionTypes) {
-                if (collisionType !== "none") {
+                if (collisionType !== NONE_COLLISION_TYPE) {
                     collisionTypes.add(collisionType);
                 }
             }
