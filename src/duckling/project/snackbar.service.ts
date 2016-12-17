@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {MdSnackBar} from '@angular/material';
 
-export interface SnackBar {
+interface SnackBar {
     message: string,
     action: string
 }
@@ -17,20 +17,29 @@ export class SnackBarService {
     }
 
     /**
-     * Invoke all the current snackbars, first one put in is the first one displayed
+     * @brief Invoke all the current snackbars, first one put in is the first one displayed
      */
     invokeSnacks() {
-        if (this._snacks.length > 0) {
-            let ref = this._snackbar.open(this._snacks[0].message, this._snacks[0].action);
-            this._snacks = this._snacks.slice(1);
-            ref.afterDismissed().subscribe(() => this.invokeSnacks());
+        if (this._snacks.length === 0) {
+            return;
         }
+        
+        let nextSnack = this._snacks.shift();
+        let ref = this._snackbar.open(nextSnack.message, nextSnack.action);
+        ref.afterDismissed().subscribe(() => this.invokeSnacks());
     }
 
     /**
-     * Adds a new snackbar to the service
+     * @brief Adds a new snackbar to the service
+     * 
+     * @param message The message displayed to the user
+     * @param actionText (optional) The text on the button the user clicks to dismiss the snackbar. Default is 'OK'
      */
-    addSnack(snack : SnackBar) {
-        this._snacks.push(snack);
+    addSnack(message : string, actionText? : string) {
+        actionText = actionText || "OK";
+        this._snacks.push({
+            message: message,
+            action: actionText
+        });
     }
 }

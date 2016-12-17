@@ -93,10 +93,7 @@ export class CollisionTypesService {
 
     private _notifyUnknownCollisionTypes(unknownCollisionTypes : string[]) {
         for (let type of unknownCollisionTypes) {
-            this._snackbar.addSnack({
-                message: `Unknown collision type registered from map: ${type}`, 
-                action: "OK"
-            });
+            this._snackbar.addSnack(`Unknown collision type registered from map: ${type}`);
         }
     }
 
