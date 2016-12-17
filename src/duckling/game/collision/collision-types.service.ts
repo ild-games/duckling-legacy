@@ -85,25 +85,32 @@ export class CollisionTypesService {
             }
         }
         
-        collisionTypes = this._findUnknownCollisionTypes(map, collisionTypes);
-        this._store.dispatch(_collisionTypesAction(Array.from(collisionTypes)));
+        let unknownCollisionTypes = this._findUnknownCollisionTypes(map, collisionTypes);
+        this._notifyUnknownCollisionTypes(unknownCollisionTypes);
+        this._store.dispatch(_collisionTypesAction(Array.from(collisionTypes).concat(unknownCollisionTypes)));
         return Promise.resolve(map);
     }
 
-    private _findUnknownCollisionTypes(map : RawMapFile, existingTypes : Set<string>) : Set<string> {
+    private _notifyUnknownCollisionTypes(unknownCollisionTypes : string[]) {
+        for (let type of unknownCollisionTypes) {
+            this._snackbar.addSnack({
+                message: `Unknown collision type registered from map: ${type}`, 
+                action: "OK"
+            });
+        }
+    }
+
+    private _findUnknownCollisionTypes(map : RawMapFile, existingTypes : Set<string>) : string[] {
         let rawMapCollisionTypes = this._getUniqueCollisionTypesInRawMapFile(map);
+        let unknownCollisionTypes : string[] = [];
         if (rawMapCollisionTypes) {
             for (let type of rawMapCollisionTypes) {
                 if (!existingTypes.has(type)) {
-                    existingTypes.add(type);
-                    this._snackbar.addSnack({
-                        message: `Unknown collision type registered from map: ${type}`, 
-                        action: "OK"
-                    });
+                    unknownCollisionTypes.push(type);
                 }
             }
         }
-        return existingTypes;
+        return unknownCollisionTypes;
     }
 
     private _getUniqueCollisionTypesInRawMapFile(map : RawMapFile) : string[] {
