@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
@@ -23,13 +23,16 @@ interface CollisionTypeMetaData {
  * This service can be used to get the collision types for an entity or all unique collision types in an entity system
  */
 @Injectable()
-export class CollisionTypesService {
+export class CollisionTypesService implements OnInit {
     collisionTypes = new BehaviorSubject<string[]>([]);
     
     constructor(private _jsonLoader : JsonLoaderService,
                 private _store : StoreService,
                 private _project : ProjectService,
                 private _snackbar : SnackBarService) {
+    }
+
+    ngOnInit() {
         this._store.state.subscribe(state => {
             if (state.collision.collisionTypes) {
                 this.collisionTypes.next(state.collision.collisionTypes);
