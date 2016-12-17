@@ -109,8 +109,8 @@ export class CollisionComponent implements OnDestroy {
     }
 
     private _buildCollisionTypeOptions() : SelectOption[] {
-        let selectOptions : SelectOption[] = [];
-        this._collisionTypes.collisionTypes.getValue().map(collisionType => selectOptions.push({value: collisionType, title: collisionType}));
-        return selectOptions;
+        return this._collisionTypes.collisionTypes.getValue().map(collisionType => {
+            return {value: collisionType, title: collisionType}
+        });
     }
 }
