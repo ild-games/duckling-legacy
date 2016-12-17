@@ -82,7 +82,6 @@ export class CollisionTypesService {
         
         collisionTypes = this._findUnknownCollisionTypes(map, collisionTypes);
         this._store.dispatch(_collisionTypesAction(Array.from(collisionTypes)));
-        this._saveCollisionTypesMetaData();
         return Promise.resolve(map);
     }
 
