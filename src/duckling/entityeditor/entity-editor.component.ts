@@ -7,6 +7,8 @@ import {SelectionService, Selection} from '../selection';
 import {newMergeKey} from '../state';
 import {immutableAssign} from '../util';
 import {DeleteButtonComponent, ToolbarButtonComponent, InputComponent} from '../controls';
+import {ProjectService} from '../project/project.service';
+import {getDefaultCustomAttributeValue} from '../project/custom-attribute';
 
 import {EntityComponent} from './entity.component';
 import {EntityNameComponent} from './_entity-name.component';
@@ -47,7 +49,8 @@ export class EntityEditorComponent {
 
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
-                private _attributeDefault : AttributeDefaultService) {
+                private _attributeDefault : AttributeDefaultService,
+                private _projectService : ProjectService) {
         _selection.selection.subscribe((selection) => {
             this.selection = selection
         });
@@ -71,7 +74,12 @@ export class EntityEditorComponent {
     }
 
     addAttribute(key : AttributeKey) {
-        let defaultAttribute = this._attributeDefault.createAttribute(key);
+        let defaultAttribute = {};
+        if (this._projectService.hasCustomAttribute(key)) {
+            defaultAttribute = getDefaultCustomAttributeValue(this._projectService.getCustomAttribute(key));
+        } else {
+            defaultAttribute = this._attributeDefault.createAttribute(key);
+        }
 
         let patch : any = {};
         patch[key] = defaultAttribute;

@@ -8,23 +8,25 @@ import {
     SimpleChange
 } from '@angular/core';
 
-import {CustomAttribute} from './custom-attribute';
+import {CustomAttribute} from '../project/custom-attribute';
 import {JsonValueType} from '../controls/json.component';
 import {immutableAssign, immutableArrayAssign, immutableArrayDelete} from '../util/model';
 import {toSelectOptions, SelectOption} from '../controls/array-select.component';
+import {JsonSchema} from '../util/json-schema';
 
-export interface JsonSchema {
+
+export interface JsonSchemaEdit {
     keys: string[],
-    contents: JsonSchemaValue[]
+    contents: JsonSchemaEditValue[]
 }
 
-export type JsonSchemaValue = "number" | "string" | "boolean" | JsonSchema | JsonSchema[];
+export type JsonSchemaEditValue = "number" | "string" | "boolean" | JsonSchemaEdit | JsonSchemaEdit[];
 
 @Component({
-    selector: "dk-json-schema",
+    selector: "dk-json-schema-edit",
     styleUrls: [
         './duckling/layout.css',
-        './duckling/project/json-schema.component.css'
+        './duckling/controls/json-schema-edit.component.css'
     ],
     template: `
         <div class="json-content">
@@ -52,20 +54,20 @@ export type JsonSchemaValue = "number" | "string" | "boolean" | JsonSchema | Jso
                 
                 <div [ngSwitch]="jsonType(jsonSchema.contents[index])">
                     <div *ngSwitchCase="JsonValueType.Object">
-                        <dk-json-schema
+                        <dk-json-schema-edit
                             [jsonSchema]="jsonSchema.contents[index]"
                             (jsonSchemaChanged)="onChildJsonObjectChanged($event, index)">
-                        </dk-json-schema>
+                        </dk-json-schema-edit>
                     </div>
                     
                     <div *ngSwitchCase="JsonValueType.Array">
                         <div>{{ '[' }}</div>
                         <div class="array-type">
-                            <dk-json-schema
+                            <dk-json-schema-edit
                                 class="array-type"
                                 [jsonSchema]="jsonSchema.contents[index][0]"
                                 (jsonSchemaChanged)="onChildJsonArrayChanged($event, index)">
-                            </dk-json-schema>
+                            </dk-json-schema-edit>
                         </div>
                         <div>{{ ']' }}</div>
                     </div>
@@ -84,13 +86,13 @@ export type JsonSchemaValue = "number" | "string" | "boolean" | JsonSchema | Jso
             
     `
 })
-export class JsonSchemaComponent {
+export class JsonSchemaEditComponent {
     // hoist for template
     JsonValueType = JsonValueType;
     jsonTypeSelects : SelectOption[] = toSelectOptions<string>("number", "string", "boolean", "object", "array");
     
-    @Input() jsonSchema : JsonSchema;
-    @Output() jsonSchemaChanged = new EventEmitter<JsonSchema>();
+    @Input() jsonSchema : JsonSchemaEdit;
+    @Output() jsonSchemaChanged = new EventEmitter<JsonSchemaEdit>();
 
     private _newPropertyKey = "new-property";
 
@@ -109,7 +111,7 @@ export class JsonSchemaComponent {
     }
 
     onTypeChanged(newType : string, index : number) {
-        let contentsPatch : JsonSchemaValue[];
+        let contentsPatch : JsonSchemaEditValue[];
         switch (newType) {
             case "array":
                 let newArrayValue : any = [];
@@ -138,7 +140,7 @@ export class JsonSchemaComponent {
 
     onNewPropertyAdded() {
         let keysPatch : string[] = [];
-        let contentsPatch : JsonSchemaValue[] = [];
+        let contentsPatch : JsonSchemaEditValue[] = [];
         keysPatch[this.jsonSchema.keys.length] = this._generateUniquePropertyKey();
         contentsPatch[this.jsonSchema.contents.length] = "number";
         this.jsonSchemaChanged.emit({
@@ -150,7 +152,7 @@ export class JsonSchemaComponent {
     deleteProperty(index : number) {
         let newSchema = {
             keys: (immutableArrayDelete(this.jsonSchema.keys, index) as string[]),
-            contents: (immutableArrayDelete(this.jsonSchema.contents, index) as JsonSchemaValue[])
+            contents: (immutableArrayDelete(this.jsonSchema.contents, index) as JsonSchemaEditValue[])
         };
         this.jsonSchemaChanged.emit(newSchema);
     }
@@ -171,8 +173,8 @@ export class JsonSchemaComponent {
         return this._newPropertyKey + nextInstance;
     }
     
-    onChildJsonObjectChanged(newJsonSchema : JsonSchema, index : number) {
-        let contentsPatch : JsonSchemaValue[] = [];
+    onChildJsonObjectChanged(newJsonSchema : JsonSchemaEdit, index : number) {
+        let contentsPatch : JsonSchemaEditValue[] = [];
         contentsPatch[index] = newJsonSchema;
         this.jsonSchemaChanged.emit({
             keys: this.jsonSchema.keys,
@@ -180,17 +182,17 @@ export class JsonSchemaComponent {
         });
     }
     
-    onChildJsonArrayChanged(newJsonSchema : JsonSchema, index : number) {
-        let contentsPatch : JsonSchemaValue[] = [];
+    onChildJsonArrayChanged(newJsonSchema : JsonSchemaEdit, index : number) {
+        let contentsPatch : JsonSchemaEditValue[] = [];
         contentsPatch[index] = [];
-        (contentsPatch[index] as JsonSchema[])[0] = newJsonSchema;
+        (contentsPatch[index] as JsonSchemaEdit[])[0] = newJsonSchema;
         this.jsonSchemaChanged.emit({
             keys: this.jsonSchema.keys,
             contents: immutableArrayAssign(this.jsonSchema.contents, contentsPatch)
         });
     }
     
-    isValidKeyName(newKeyName : string, index : number, schemaToCheck? : JsonSchema) : boolean {
+    isValidKeyName(newKeyName : string, index : number, schemaToCheck? : JsonSchemaEdit) : boolean {
         schemaToCheck = schemaToCheck || this.jsonSchema;
         if (!this._isKeySafe(newKeyName)) {
             return false;
@@ -215,7 +217,7 @@ export class JsonSchemaComponent {
         );
     }
 
-    jsonType(rhs : JsonSchemaValue) : JsonValueType {
+    jsonType(rhs : JsonSchemaEditValue) : JsonValueType {
         if (rhs === "string") {
             return JsonValueType.String;
         } else if (rhs === "number") {
@@ -257,25 +259,71 @@ export class JsonSchemaComponent {
 /**
  * Takes in a schema for a json skeleton and returns that skeleton in a json object
  * 
- * @param jsonSchema the JsonSchema to convert to json
+ * @param jsonSchema the JsonSchemaEdit to convert to json
  * 
  * @returns json representation of the schema
  */
-export function schemaToJson(jsonSchema : JsonSchema) : any {
+export function schemaEditToJson(jsonSchema : JsonSchemaEdit) : any {
     let json : any = {};
     for (let i = 0; i < jsonSchema.keys.length; i++) {
         let content : any;
         if (Array.isArray(jsonSchema.contents[i])) {
             content = [];
-            for (let schema of jsonSchema.contents[i] as JsonSchema[]) {
-                content.push(schemaToJson(schema));
+            for (let schema of jsonSchema.contents[i] as JsonSchemaEdit[]) {
+                content.push(schemaEditToJson(schema));
             }
         } else if (typeof jsonSchema.contents[i] === "object") {
-            content = schemaToJson(jsonSchema.contents[i] as JsonSchema);
+            content = schemaEditToJson(jsonSchema.contents[i] as JsonSchemaEdit);
         } else {
             content = jsonSchema.contents[i];
         }
         json[jsonSchema.keys[i]] = content;
     }
     return json;
+}
+
+/**
+ * 
+ * If an array in the given json is empty then the array will simply not be present in the
+ * schema as no contextual information about the contents of the array can be made.
+ */
+export function jsonToSchema(json : any) : JsonSchema {
+    let jsonSchema : JsonSchema = {};
+    for (let key in json) {
+        if (_isNumber(json[key])) {
+            jsonSchema[key] = "number";
+        } else if (_isString(json[key])) {
+            jsonSchema[key] = "string";
+        } else if (_isBoolean(json[key])) {
+            jsonSchema[key] = "boolean";
+        } else if (_isObject(json[key])) {
+            jsonSchema[key] = jsonToSchema(json[key]);
+        } else if (_isArray(json[key])) {
+            if (json[key].length > 0) {
+                jsonSchema[key] = []; 
+                (jsonSchema[key] as JsonSchema[]).push(jsonToSchema(json[key][0]));
+            }
+        }
+    }
+    return jsonSchema;
+}
+
+function _isArray(json : any) {
+    return Array.isArray(json);
+}
+
+function _isObject(json : any) {
+    return typeof json === 'object' && !_isArray(json);
+}
+
+function _isNumber(json : any) {
+    return typeof json === 'number';
+}
+
+function _isString(json : any) {
+    return typeof json === 'string';
+}
+
+function _isBoolean(json : any) {
+    return typeof json === 'boolean';
 }

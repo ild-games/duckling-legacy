@@ -4,13 +4,17 @@ import {
     Input,
     Output,
     OnChanges,
-    AfterViewInit
+    AfterViewInit,
+    OnInit,
+    OnDestroy
 } from '@angular/core';
+import {Subscriber} from 'rxjs';
 
 import {ArrayChoiceComponent, SelectOption} from '../controls';
 import {Entity, AvailableAttributeService, AttributeKey} from '../entitysystem';
 import {toTitleCase} from '../util';
 import {changeType, ChangeType} from '../state';
+import {ProjectService} from '../project/project.service';
 
 /**
  * Allows the user to add attributes to an entity.
@@ -27,7 +31,7 @@ import {changeType, ChangeType} from '../state';
         </div>
     `
 })
-export class AttributeSelectorComponent implements OnChanges, AfterViewInit {
+export class AttributeSelectorComponent implements OnChanges, AfterViewInit, OnInit, OnDestroy {
     /**
      * The entity the user will add attributes to.
      */
@@ -35,20 +39,35 @@ export class AttributeSelectorComponent implements OnChanges, AfterViewInit {
 
     /**
      * Fired when the user clicks on the add button and the attribute should be added.
-     * @return {[type]} [description]
      */
     @Output() addAttribute = new EventEmitter<AttributeKey>();
 
     selection : string;
     options : SelectOption[] = [];
+    private _projectSubscription : Subscriber<any>;
 
-    constructor(private _availableAttribute : AvailableAttributeService) {
+    constructor(private _availableAttribute : AvailableAttributeService,
+                private _projectService : ProjectService) {
+    }
+
+    ngOnInit() {
+        this._projectSubscription = this._projectService.project.subscribe(() => {
+            this._rebuildOptions();
+        }) as Subscriber<any>;
     }
 
     ngAfterViewInit() {
         if (this.options[0]) {
             this.selection = this.options[0].value;
         }
+    }
+
+    ngOnDestroy() {
+        this._projectSubscription.unsubscribe(); 
+    }
+
+    ngOnChanges() {
+        this._rebuildOptions();
     }
 
     onAddClicked(selection : string) {
@@ -62,7 +81,7 @@ export class AttributeSelectorComponent implements OnChanges, AfterViewInit {
         });
     }
 
-    ngOnChanges() {
+    private _rebuildOptions() {
         let newOptions = this.newOptions();
         newOptions.sort((left, right) => left.title.localeCompare(right.title));
         if (changeType(newOptions, this.options) !== ChangeType.Equal) {

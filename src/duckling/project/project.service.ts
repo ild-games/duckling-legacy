@@ -2,11 +2,13 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
+import {AttributeKey} from '../entitysystem/entity'
 import {StoreService, clearUndoHistoryAction} from '../state';
 import {JsonLoaderService, PathService} from '../util';
 import {immutableAssign} from '../util/model';
 import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
+import {JsonSchema} from '../util/json-schema';
 import {Vector} from '../math/vector';
 import {MigrationService, ProjectVersionInfo} from '../migration/migration.service';
 import {compareVersions, EDITOR_VERSION} from '../util/version';
@@ -23,6 +25,7 @@ import {
     setVersionInfo
 } from './project';
 import {SnackBarService} from './snackbar.service';
+import {CustomAttribute} from './custom-attribute';
 
 const MAP_DIR = "maps";
 const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
@@ -136,11 +139,29 @@ export class ProjectService {
      * @param key The key of the custom attribute
      * @param content The json that describes the attribute
      */
-    addCustomAttribute(key : string, content : any) {
+    addCustomAttribute(key : string, content : JsonSchema) {
         let currentAttributes = this._project.customAttributes;
         let newAttribute = {key, content };
         let newAttributes = currentAttributes ? currentAttributes.concat([newAttribute]) : [].concat([newAttribute]);
         this._storeService.dispatch(changeCustomAttributes(newAttributes));
+    }
+
+    hasCustomAttribute(attributeKey : AttributeKey) : boolean {
+        for (let customAttribute of this._project.customAttributes) {
+            if (customAttribute.key === attributeKey) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    getCustomAttribute(attributeKey : AttributeKey) : CustomAttribute {
+        for (let customAttribute of this._project.customAttributes) {
+            if (customAttribute.key === attributeKey) {
+                return customAttribute;
+            }
+        }
+        return null;
     }
 
     /**
