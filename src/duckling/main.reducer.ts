@@ -4,6 +4,7 @@ import {selectionReducer, copyPasteReducer} from './selection';
 import {Action} from './state';
 import {optionsReducer} from './state/options.service';
 import {layerReducer} from './entitysystem/services/entity-layer.service';
+import {collisionTypesReducer} from './game/collision/collision-types.service';
 
 /**
  * Main reducer for a duckling application. It is a composition of all the reducers
@@ -16,6 +17,7 @@ export function mainReducer(state : any = {}, action : Action) {
         selection : selectionReducer(state.selection, action),
         clipboard : copyPasteReducer(state.clipboard, action),
         options : optionsReducer(state.options, action),
-        layers : layerReducer(state.layers, action)
+        layers : layerReducer(state.layers, action),
+        collision: collisionTypesReducer(state.collision, action)
     };
 }

@@ -23,7 +23,7 @@ import {IconComponent} from './icon.component';
         </dk-enum-select>
         <button
             md-icon-button
-            [disableRipple]=true
+            [disableRipple]="true"
             (click)="onAddClicked()">
             <dk-icon iconClass="plus"></dk-icon>
         </button>

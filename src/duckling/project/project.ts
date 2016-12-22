@@ -6,7 +6,7 @@ interface ProjectMap {
     key: string,
     version: string,
     dimension: Vector,
-    gridSize: number    
+    gridSize: number,
 }
 
 /**

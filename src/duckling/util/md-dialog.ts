@@ -9,9 +9,9 @@ import {Observable} from 'rxjs';
  * @return An observable for the dialog's result.
  */
 export function openDialog<R>(viewContainer : ViewContainerRef, dialogClass : any) : Observable<R> {
-        let config = new MdDialogConfig();
-        let mDialog = viewContainer.injector.get(MdDialog);
-        config.viewContainerRef = viewContainer;
-        let dialog = mDialog.open(dialogClass, config);
-        return dialog.afterClosed();
+    let config = new MdDialogConfig();
+    let mDialog = viewContainer.injector.get(MdDialog);
+    config.viewContainerRef = viewContainer;
+    let dialog = mDialog.open(dialogClass, config);
+    return dialog.afterClosed();
 }

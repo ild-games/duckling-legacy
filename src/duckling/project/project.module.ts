@@ -6,8 +6,10 @@ import {
     ProjectService,
     RequiredAssetService
 } from './index';
+import {SnackBarService} from './snackbar.service';
 import {MapSelectComponent} from './map-select.component';
 import {BrowseAssetComponent} from './browse-asset.component';
+import {ProjectLifecycleService} from './project-lifecycle.service';
 
 import {ControlsModule} from '../controls/controls.module';
 
@@ -19,7 +21,9 @@ import {ControlsModule} from '../controls/controls.module';
         AssetService,
         MapParserService,
         ProjectService,
-        RequiredAssetService
+        RequiredAssetService,
+        SnackBarService,
+        ProjectLifecycleService
     ],
     declarations: [
         MapSelectComponent,
@@ -29,7 +33,7 @@ import {ControlsModule} from '../controls/controls.module';
         BrowseAssetComponent
     ],
     entryComponents: [
-        MapSelectComponent
+        MapSelectComponent,
     ]
 })
 export class ProjectModule {

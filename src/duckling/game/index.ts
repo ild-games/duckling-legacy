@@ -15,7 +15,7 @@ import {ButtonComponent} from './button/button.component';
 import {defaultPosition, POSITION_KEY} from './position/position-attribute';
 import {setPosition} from './position/set-position';
 import {getPosition} from './position/get-position';
-import {defaultCollison, COLLISION_KEY} from './collision/collision-attribute';
+import {defaultCollision, COLLISION_KEY} from './collision/collision-attribute';
 import {PositionComponent} from './position/position.component';
 import {CollisionComponent} from './collision/collision.component';
 import {drawCollision} from './collision/collision-drawer';
@@ -46,7 +46,7 @@ type Services = {
     attributeComponentService: AttributeComponentService,
     entityDrawerService: EntityDrawerService,
     requiredAssetService  : RequiredAssetService,
-    entityLayerService : EntityLayerService
+    entityLayerService : EntityLayerService,
 };
 
 let _bootstrapFunctions : Function[] = [
@@ -81,7 +81,7 @@ function _bootstrapCollisionAttribute(services : Services) {
     services.attributeComponentService.register(COLLISION_KEY, CollisionComponent);
     services.entityDrawerService.register(COLLISION_KEY, drawCollision);
     services.entityBoxService.register(COLLISION_KEY, collisionBoundingBox);
-    services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollison});
+    services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollision});
 }
 
 function _bootstrapCameraAttribute(services : Services) {

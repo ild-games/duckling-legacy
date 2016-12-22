@@ -6,6 +6,7 @@ import {Vector} from '../math/vector';
 
 import {Asset, AssetService} from './asset.service'
 import {RequiredAssetService} from './required-asset.service'
+import {ProjectLifecycleService} from './project-lifecycle.service';
 
 /**
  * Interface describing the structure of an attribute in the map file.
@@ -31,6 +32,16 @@ export interface RawMapFile {
     dimension: Vector,
     gridSize: number
 }
+export let STARTER_RAW_MAP : RawMapFile = {
+    key: "",
+    version: MAP_VERSION,
+    systems: {},
+    assets: [],
+    entities: [],
+    dimension: {x: 1200, y: 800},
+    gridSize: 16,
+};
+
 
 /**
  * Interface describing the structure of a parsed in map file.
@@ -40,21 +51,15 @@ export interface ParsedMap {
     version: string,
     entitySystem: EntitySystem,
     dimension: Vector,
-    gridSize: number
+    gridSize: number,
 }
-export let STARTER_PARSED_MAP : ParsedMap = {
-    key: "",
-    version: MAP_VERSION,
-    entitySystem: null,
-    dimension: {x: 1200, y: 800},
-    gridSize: 16
-};
 
 
 @Injectable()
 export class MapParserService {
     constructor(private _assets : AssetService,
-                private _requiredAssets : RequiredAssetService) {
+                private _requiredAssets : RequiredAssetService,
+                private _projectLifecycle : ProjectLifecycleService) {
     }
 
     /**
@@ -62,7 +67,8 @@ export class MapParserService {
      * @param  map Object deserialized from a map file.
      * @return A ParsedMap with the entities and other information about the map
      */
-    rawMapToParsedMap(map : RawMapFile) : ParsedMap {
+    async rawMapToParsedMap(map : RawMapFile) : Promise<ParsedMap> {
+        map = await this._projectLifecycle.executePostLoadMapHooks(map);
         let compatibility = compareVersions(map.version);
         if (compatibility !== VersionCompatibility.Compatible) {
             throw new Error(incompatibleReason(compatibility));
@@ -94,13 +100,13 @@ export class MapParserService {
             }
         });
 
-        return {
+        return Promise.resolve({
             key: map.key,
             version: map.version,
             entitySystem: entitySystem,
             dimension: map.dimension,
             gridSize: map.gridSize
-        };
+        });
     }
 
     /**
@@ -108,7 +114,7 @@ export class MapParserService {
      * @param  parsedMap The parsed map
      * @return An object that can be serialized into a map.
      */
-    parsedMapToRawMap(parsedMap : ParsedMap) : RawMapFile {
+    async parsedMapToRawMap(parsedMap : ParsedMap) : Promise<RawMapFile> {
         let systems : {[systemKey : string] : RawSystem} = {};
         let entities : EntityKey[] = [];
 
@@ -128,7 +134,7 @@ export class MapParserService {
             assetList.push(assetMap[assetKey]);
         }
 
-        return {
+        let rawMap = {
             key : parsedMap.key,
             systems : systems,
             entities : entities,
@@ -137,5 +143,6 @@ export class MapParserService {
             gridSize : parsedMap.gridSize,
             version: MAP_VERSION
         }
+        return await this._projectLifecycle.executePreSaveMapHooks(rawMap);
     }
 }

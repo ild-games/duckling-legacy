@@ -23,6 +23,9 @@ import {RectangleComponent} from './drawable/rectangle.component';
 import {ShapeDrawableComponent} from './drawable/shape-drawable.component';
 import {GenericShapeComponent} from './drawable/generic-shape.component';
 
+import {CollisionTypesService} from './collision/collision-types.service';
+import {EditCollisionTypesComponent} from './collision/edit-collision-types.component';
+
 import {
     AttributeDefaultService,
     EntityBoxService,
@@ -33,19 +36,20 @@ import {
 import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 import {RequiredAssetService} from '../project';
+import {ProjectLifecycleService} from '../project/project-lifecycle.service';
 import {AnconaSFMLRenderPriorityService} from './ancona-sfml-render-priority.service';
 import {RenderPriorityService} from '../canvas/drawing/render-priority.service';
 
 import {bootstrapGameComponents} from './index';
 
 const ATTRIBUTE_COMPONENTS = [
-        ActionComponent,
-        CameraComponent,
-        CollisionComponent,
-        DrawableAttributeComponent,
-        PositionComponent,
-        RotateComponent,
-        ButtonComponent
+    ActionComponent,
+    CameraComponent,
+    CollisionComponent,
+    DrawableAttributeComponent,
+    PositionComponent,
+    RotateComponent,
+    ButtonComponent
 ]
 
 @NgModule({
@@ -66,17 +70,20 @@ const ATTRIBUTE_COMPONENTS = [
         RectangleComponent,
         ShapeDrawableComponent,
         GenericShapeComponent,
-        AutoCreateAnimationDialogComponent
+        AutoCreateAnimationDialogComponent,
+        EditCollisionTypesComponent
     ],
     exports: [
         ATTRIBUTE_COMPONENTS
     ],
     providers: [
-        {provide: RenderPriorityService, useClass: AnconaSFMLRenderPriorityService}
+        {provide: RenderPriorityService, useClass: AnconaSFMLRenderPriorityService},
+        CollisionTypesService
     ],
     entryComponents: [
         ATTRIBUTE_COMPONENTS,
-        AutoCreateAnimationDialogComponent
+        AutoCreateAnimationDialogComponent,
+        EditCollisionTypesComponent
     ]
 })
 export class GameModule {
@@ -86,7 +93,23 @@ export class GameModule {
                 public attributeComponentService : AttributeComponentService,
                 public entityDrawerService : EntityDrawerService,
                 public requiredAssetService : RequiredAssetService,
-                public entityLayerService : EntityLayerService) {
+                public entityLayerService : EntityLayerService,
+                private _collisionTypesService : CollisionTypesService,
+                private _projectLifecycleService : ProjectLifecycleService) {
         bootstrapGameComponents(this);
+        this._bootstrapLifecycle();
+    }
+
+    private _bootstrapLifecycle() {
+        this._bootstrapAfterMapLoadLifecycle();
+        this._bootstrapBeforeMapSaveLifecycle();
+    }
+
+    private _bootstrapAfterMapLoadLifecycle() {
+        this._projectLifecycleService.addPostLoadMapHook(map => this._collisionTypesService.postLoadMapHook(map));
+    }
+
+    private _bootstrapBeforeMapSaveLifecycle() {
+        this._projectLifecycleService.addPreSaveMapHook(map => this._collisionTypesService.preSaveMapHook(map));
     }
 }

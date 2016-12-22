@@ -1,9 +1,14 @@
 import 'mocha';
+import * as chai from 'chai';
 import {expect} from 'chai';
+import * as spies from 'chai-spies';
 import "reflect-metadata";
 
+chai.use(spies);
+
 import {createEntitySystem, mergeEntityAction} from '../../duckling/entitysystem';
-import {RawMapFile, MapParserService, AssetService, RequiredAssetService} from '../../duckling/project';
+import {RawMapFile, ParsedMap, MapParserService, AssetService, RequiredAssetService} from '../../duckling/project';
+import {ProjectLifecycleService} from '../../duckling/project/project-lifecycle.service';
 import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
 import {immutableAssign, PathService} from '../../duckling/util';
@@ -63,34 +68,63 @@ let basicMap : RawMapFile = {
     gridSize: 16
 }
 
+let emptyParsedMap : ParsedMap = {
+    entitySystem: createEntitySystem(),
+    dimension: {x: 0, y: 0},
+    gridSize: 0,
+    key: "",
+    version: ""
+}
+
+describe("MapLoaderService.LifecycleHooks", function() {
+    beforeEach(function() {
+        this.storeService = new StoreService(mainReducer, mergeEntityAction);
+        this.requiredAssetService = new RequiredAssetService();
+        this.projectLifecycleService = new ProjectLifecycleService();
+        this.parser = new MapParserService(
+            new AssetService(this.storeService, new PathService(), this.requiredAssetService),
+            this.requiredAssetService,
+            this.projectLifecycleService);
+    });
+    
+    it("successfully executes a post-load hook", async function() {
+        let postLoadSpy = chai.spy((map : RawMapFile) => Promise.resolve(map));
+        this.projectLifecycleService.addPostLoadMapHook(postLoadSpy);
+        await this.parser.rawMapToParsedMap(emptyMap);
+        expect(postLoadSpy).to.have.been.called();
+    });
+    
+    it("successfully executes a pre-save hook", async function() {
+        let preSaveSpy = chai.spy((map : RawMapFile) => Promise.resolve(map));
+        this.projectLifecycleService.addPreSaveMapHook(preSaveSpy);
+        await this.parser.parsedMapToRawMap(emptyParsedMap);
+        expect(preSaveSpy).to.have.been.called();
+    });
+});
+
 describe("MapLoaderService", function() {
     beforeEach(function() {
         let storeService = new StoreService(mainReducer, mergeEntityAction);
         let requiredAssetService = new RequiredAssetService();
         this.parser = new MapParserService(
             new AssetService(storeService, new PathService(), requiredAssetService),
-            requiredAssetService);
+            requiredAssetService,
+            new ProjectLifecycleService());
     });
 
-    it("turns an empty map into an empty system", function() {
-        let parsedMap = this.parser.rawMapToParsedMap(emptyMap);
+    it("turns an empty map into an empty system", async function() {
+        let parsedMap = await this.parser.rawMapToParsedMap(Object.assign({}, emptyMap));
         expect(parsedMap.entitySystem.isEmpty()).to.eql(true);
     });
 
-    it("turns an empty system into an empty map", function() {
-        let map = this.parser.parsedMapToRawMap({
-            entitySystem: createEntitySystem(),
-            dimension: {x: 0, y: 0},
-            gridSize: 0,
-            key: "",
-            version: ""
-        });
+    it("turns an empty system into an empty map", async function() {
+        let map = await this.parser.parsedMapToRawMap(emptyParsedMap);
         expect(map).to.eql(emptyMap);
     });
 
     describe("loading a map into an entity system", function() {
-        beforeEach(function() {
-            this.parsedMap = this.parser.rawMapToParsedMap(basicMap);
+        beforeEach(async function() {
+            this.parsedMap = await this.parser.rawMapToParsedMap(basicMap);
         });
 
         it("allows for the creation of empty entities", function() {
@@ -106,14 +140,14 @@ describe("MapLoaderService", function() {
         });
     });
 
-    it("loading and saving a map preserves the original map", function() {
-        let parsedMap = this.parser.rawMapToParsedMap(basicMap);
-        let map = this.parser.parsedMapToRawMap(parsedMap);
+    it("loading and saving a map preserves the original map", async function() {
+        let parsedMap = await this.parser.rawMapToParsedMap(basicMap);
+        let map = await this.parser.parsedMapToRawMap(parsedMap);
         map.entities.sort();
         expect(map).to.eql(basicMap);
     });
 
-    it("if an entity is in a system, but not the entities array, it will create the entity", function () {
+    it("if an entity is in a system, but not the entities array, it will create the entity", async function () {
         let sa = {
             components : {
                 ea : {
@@ -122,7 +156,7 @@ describe("MapLoaderService", function() {
             }
         };
         let map = immutableAssign(emptyMap, {systems : { sa}});
-        let parsedMap = this.parser.rawMapToParsedMap(map);
+        let parsedMap = await this.parser.rawMapToParsedMap(map);
         expect(parsedMap.entitySystem.get("ea")).to.eql(entityA);
     });
 });
