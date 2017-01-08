@@ -1,6 +1,6 @@
 import {Entity, Attribute} from '../../entitysystem/entity';
 
-export const TRIGGER_DEATH_KEY = "trigger-death";
+export const TRIGGER_DEATH_KEY = "triggerDeath";
 
 export interface TriggerDeathAttribute extends Attribute {
     animationToWatch: string
