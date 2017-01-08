@@ -20,13 +20,13 @@ import {Validator} from './validated-input.component';
     template:`
         <dk-number-input
             [label]="xLabel"
-            [value]="value.x"
+            [value]="value?.x"
             [validator]="xValidator"
             (validInput)="onXInput($event)">
         </dk-number-input>
         <dk-number-input
             [label]="yLabel"
-            [value]="value.y"
+            [value]="value?.y"
             [validator]="yValidator"
             (validInput)="onYInput($event)">
         </dk-number-input>
