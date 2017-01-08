@@ -32,6 +32,9 @@ import {ActionComponent} from './action/action.component';
 import {defaultRotate, ROTATE_KEY} from './rotate/rotate-attribute';
 import {RotateComponent} from './rotate/rotate.component';
 
+import {defaultTriggerDeath, TRIGGER_DEATH_KEY} from './trigger-death/trigger-death-attribute';
+import {TriggerDeathComponent} from './trigger-death/trigger-death.component';
+
 import {defaultDrawableAttribute, DRAWABLE_KEY} from './drawable/drawable-attribute';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
 import {drawDrawableAttribute} from './drawable/drawable-drawer';
@@ -56,7 +59,8 @@ let _bootstrapFunctions : Function[] = [
     _bootstrapDrawableAttribute,
     _bootstrapActionAttribute,
     _bootstrapRotateAttribute,
-    _bootstrapButtonAttribute
+    _bootstrapButtonAttribute,
+    _bootstrapTriggerDeathAttribute
 ];
 
 /**
@@ -109,4 +113,9 @@ function _bootstrapActionAttribute(services : Services) {
 function _bootstrapRotateAttribute(services : Services) {
     services.attributeComponentService.register(ROTATE_KEY, RotateComponent);
     services.attributeDefaultService.register(ROTATE_KEY, {createByDefault: false, default: defaultRotate});
+}
+
+function _bootstrapTriggerDeathAttribute(services : Services) {
+    services.attributeComponentService.register(TRIGGER_DEATH_KEY, TriggerDeathComponent);
+    services.attributeDefaultService.register(TRIGGER_DEATH_KEY, {createByDefault: false, default: defaultTriggerDeath});
 }
