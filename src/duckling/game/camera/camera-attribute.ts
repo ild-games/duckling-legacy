@@ -12,7 +12,9 @@ export interface CameraAttribute extends Attribute {
     size : Vector,
     offset : Vector,
     default : boolean,
-    follows : EntityKey
+    follows : EntityKey,
+    upperBounds : Vector,
+    lowerBounds : Vector
 }
 
 export let defaultCamera : CameraAttribute = {
@@ -27,5 +29,13 @@ export let defaultCamera : CameraAttribute = {
         y: 0
     },
     default: false,
-    follows: ""
+    follows: "",
+    upperBounds: {
+        x: 1000000,
+        y: 1000000
+    },
+    lowerBounds: {
+        x: -1000000,
+        y: -1000000
+    }
 };
