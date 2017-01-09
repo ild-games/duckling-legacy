@@ -11,6 +11,7 @@ import {Rectangle} from 'pixi.js';
 import {FormLabelComponent, InputComponent, NumberInputComponent, Box2Component, CheckboxComponent, Validator} from '../../controls';
 import {immutableAssign, DialogService} from '../../util';
 import {Box2} from '../../math';
+import {Vector} from '../../math/vector';
 import {AssetService, ProjectService} from '../../project';
 
 import {ImageDrawable} from './image-drawable';
@@ -25,6 +26,21 @@ import {ImageDrawable} from './image-drawable';
             [selectedFile]="imageDrawable.textureKey"
             (filePicked)="onImageFilePicked($event)">
         </dk-browse-asset>
+
+        <dk-section
+            headerText="Tiled Image?"
+            checkboxMode="true"
+            collapsible="true"
+            [sectionOpen]="imageDrawable.isTiled"
+            (sectionOpenChanged)="onTiledChanged($event)">
+            <dk-vector-input
+                title="Tiled Area"
+                xLabel="Tiled Area Width"
+                yLabel="Tiled Area Height"
+                [value]="imageDrawable.tiledArea"
+                (validInput)="onTiledAreaChanged($event)">
+            </dk-vector-input>
+        </dk-section>
 
         <dk-section
             headerText="Partial Image?"
@@ -55,6 +71,14 @@ export class ImageDrawableComponent {
     onImageFilePicked(imageKey : string) {
         this._assets.add({type: "TexturePNG", key: imageKey});
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: imageKey}));
+    }
+
+    onTiledChanged(newIsTiled : boolean) {
+        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {isTiled: newIsTiled}));
+    }
+
+    onTiledAreaChanged(newTiledArea : Vector) {
+        this.drawableChanged.emit(immutableAssign(this.imageDrawable, {tiledArea: newTiledArea}));
     }
 
     onPartialImageChanged(partialImage : boolean) {
