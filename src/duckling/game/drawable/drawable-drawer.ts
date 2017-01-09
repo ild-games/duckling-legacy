@@ -187,20 +187,18 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
         }
     }
     
+    let sprite : any;
     if (imageDrawable.isTiled && imageDrawable.tiledArea) {
-        let sprite = new (<any>PIXI).TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
+        sprite = new (<any>PIXI).TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
         sprite.x = -(sprite.width / 2);
         sprite.y = -(sprite.height / 2);
-        let container = new Container();
-        container.addChild(sprite);
-        return container;
     } else {
-        let sprite = new Sprite(texture);
+        sprite = new Sprite(texture);
         sprite.anchor.set(0.5, 0.5);
-        let container = new Container();
-        container.addChild(sprite);
-        return container;
     }
+    let container = new Container();
+    container.addChild(sprite);
+    return container;
 }
 
 function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService) : DisplayObject {
