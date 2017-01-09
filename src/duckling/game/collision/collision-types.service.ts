@@ -24,7 +24,7 @@ interface CollisionTypeMetaData {
  */
 @Injectable()
 export class CollisionTypesService {
-    collisionTypes = new BehaviorSubject<string[]>([]);
+    collisionTypes = new BehaviorSubject<Set<string>>(new Set<string>([]));
     
     constructor(private _jsonLoader : JsonLoaderService,
                 private _store : StoreService,
@@ -46,7 +46,7 @@ export class CollisionTypesService {
         }
         let unknownCollisionTypes = this._findUnknownCollisionTypes(map);
         this._registerMultipleCollisionTypes(unknownCollisionTypes);
-        this._notifyUnknownCollisionTypes(unknownCollisionTypes);
+        this._notifyUnknownCollisionTypes(Array.from(unknownCollisionTypes.values()));
         return Promise.resolve(map);
     }
     
@@ -64,7 +64,9 @@ export class CollisionTypesService {
     }
 
     addCollisionType(collisionType : string) {
-        this._store.dispatch(_collisionTypesAction(Array.from(this.collisionTypes.getValue().concat([collisionType]))));
+        let newCollisionTypes = new Set<string>(this.collisionTypes.getValue());
+        newCollisionTypes.add(collisionType);
+        this._store.dispatch(_collisionTypesAction(newCollisionTypes));
     }
 
     private _registerAnconaCollisionTypes(collisionTypeMetaData : CollisionTypeMetaData) {
@@ -76,11 +78,13 @@ export class CollisionTypesService {
                 }
             }
         }
-        this._registerMultipleCollisionTypes(Array.from(collisionTypes.values()));
+        this._registerMultipleCollisionTypes(collisionTypes);
     }
 
-    private _registerMultipleCollisionTypes(collisionTypes : string[]) {
-        this._store.dispatch(_collisionTypesAction(Array.from(this.collisionTypes.getValue()).concat(collisionTypes)));
+    private _registerMultipleCollisionTypes(collisionTypes : Set<string>) {
+        let newCollisionTypes = new Set<string>(this.collisionTypes.getValue());
+        collisionTypes.forEach(type => newCollisionTypes.add(type));
+        this._store.dispatch(_collisionTypesAction(newCollisionTypes));
     }
 
     private _notifyUnknownCollisionTypes(unknownCollisionTypes : string[]) {
@@ -93,13 +97,13 @@ export class CollisionTypesService {
         this._snackbar.addSnack(message);
     }
 
-    private _findUnknownCollisionTypes(map : RawMapFile) : string[] {
+    private _findUnknownCollisionTypes(map : RawMapFile) : Set<string> {
         let rawMapCollisionTypes = this._getUniqueCollisionTypesInRawMapFile(map);
-        let unknownCollisionTypes : string[] = [];
+        let unknownCollisionTypes = new Set<string>([]);
         if (rawMapCollisionTypes) {
             for (let type of rawMapCollisionTypes) {
-                if (this.collisionTypes.getValue().indexOf(type) === -1) {
-                    unknownCollisionTypes.push(type);
+                if (!this.collisionTypes.getValue().has(type)) {
+                    unknownCollisionTypes.add(type);
                 }
             }
         }
@@ -120,7 +124,7 @@ export class CollisionTypesService {
     }
 
     private _saveCollisionTypesMetaData() {
-        let json = JSON.stringify({collisionTypes: this.collisionTypes.getValue()}, null, 4);
+        let json = JSON.stringify({collisionTypes: Array.from(this.collisionTypes.getValue().values())}, null, 4);
         this._jsonLoader.saveJsonToPath(this._project.getMetaDataPath("collision-types"), json);
     }
 
@@ -141,7 +145,7 @@ export class CollisionTypesService {
 //////////////////////////////////////////////////////////////
 // Reducer and action for storing collision types in the store
 interface CollisionTypesState {
-    collisionTypes?: string[];
+    collisionTypes?: Set<string>;
 }
 
 export function collisionTypesReducer(state: CollisionTypesState = {}, action: CollisionTypesAction) {
@@ -157,7 +161,7 @@ const ACTION_CHANGE_COLLISION_TYPES = "CollisionTypes.ChangeTypes";
 interface CollisionTypesAction extends Action {
     collisionTypes?: string[];
 }
-function _collisionTypesAction(newCollisionTypes: string[]) {
+function _collisionTypesAction(newCollisionTypes: Set<string>) {
     return {
         collisionTypes: newCollisionTypes,
         type: ACTION_CHANGE_COLLISION_TYPES

@@ -67,6 +67,6 @@ export class EditCollisionTypesComponent {
     }
 
     get collisionTypes() : string[] {
-        return this._collisionTypes.collisionTypes.getValue();
+        return Array.from(this._collisionTypes.collisionTypes.getValue().values());
     }
 }
