@@ -15,7 +15,7 @@ import {TriggerDeathAttribute} from './trigger-death-attribute';
         <dk-input
             label="Animation to Watch"
             [value]="attribute.animationToWatch"
-            (validInput)="onAnimationToWatchInput($event)">
+            (inputChanged)="onAnimationToWatchInput($event)">
         </dk-input>
     `
 })
