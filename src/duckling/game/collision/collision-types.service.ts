@@ -16,7 +16,7 @@ export type CollisionTypeGetter = (entity : Entity) => string;
 export const NONE_COLLISION_TYPE = "none";
 
 interface CollisionTypeMetaData {
-    collisionTypes: string[]
+    collisionTypes: Set<string>
 }
 
 /**
@@ -45,8 +45,8 @@ export class CollisionTypesService {
             this._notifyFileError("Error: collision-types.json not properly formatted!");
         }
         let unknownCollisionTypes = this._findUnknownCollisionTypes(map);
-        this._registerMultipleCollisionTypes(unknownCollisionTypes);
-        this._notifyUnknownCollisionTypes(Array.from(unknownCollisionTypes.values()));
+        this._registerCollisionTypes(unknownCollisionTypes);
+        this._notifyUnknownCollisionTypes(unknownCollisionTypes);
         return Promise.resolve(map);
     }
     
@@ -64,27 +64,25 @@ export class CollisionTypesService {
     }
 
     addCollisionType(collisionType : string) {
-        let newCollisionTypes = new Set<string>(this.collisionTypes.getValue());
-        newCollisionTypes.add(collisionType);
-        this._store.dispatch(_collisionTypesAction(newCollisionTypes));
+        this._registerCollisionTypes([collisionType]);
     }
 
     private _registerAnconaCollisionTypes(collisionTypeMetaData : CollisionTypeMetaData) {
-        let collisionTypes = new Set<string>([NONE_COLLISION_TYPE]);
+        let collisionTypes = [NONE_COLLISION_TYPE];
         if (collisionTypeMetaData) {
             for (let collisionType of collisionTypeMetaData.collisionTypes) {
                 if (collisionType !== NONE_COLLISION_TYPE) {
-                    collisionTypes.add(collisionType);
+                    collisionTypes.push(collisionType);
                 }
             }
         }
-        this._registerMultipleCollisionTypes(collisionTypes);
+        this._registerCollisionTypes(collisionTypes);
     }
 
-    private _registerMultipleCollisionTypes(collisionTypes : Set<string>) {
+    private _registerCollisionTypes(collisionTypes : string[]) {
         let newCollisionTypes = new Set<string>(this.collisionTypes.getValue());
         collisionTypes.forEach(type => newCollisionTypes.add(type));
-        this._store.dispatch(_collisionTypesAction(newCollisionTypes));
+        this._store.dispatch(_collisionTypesAction(new Set<string>(newCollisionTypes)));
     }
 
     private _notifyUnknownCollisionTypes(unknownCollisionTypes : string[]) {
@@ -97,13 +95,13 @@ export class CollisionTypesService {
         this._snackbar.addSnack(message);
     }
 
-    private _findUnknownCollisionTypes(map : RawMapFile) : Set<string> {
+    private _findUnknownCollisionTypes(map : RawMapFile) : string[] {
         let rawMapCollisionTypes = this._getUniqueCollisionTypesInRawMapFile(map);
-        let unknownCollisionTypes = new Set<string>([]);
+        let unknownCollisionTypes : string[] = [];
         if (rawMapCollisionTypes) {
             for (let type of rawMapCollisionTypes) {
                 if (!this.collisionTypes.getValue().has(type)) {
-                    unknownCollisionTypes.add(type);
+                    unknownCollisionTypes.push(type);
                 }
             }
         }
