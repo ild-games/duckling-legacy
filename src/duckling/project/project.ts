@@ -1,6 +1,8 @@
 import {Action} from '../state';
 import {immutableAssign} from '../util';
 import {Vector} from '../math/vector';
+import {MapVersion} from '../util/version';
+import {ProjectVersionInfo} from '../migration/migration.service';
 
 interface ProjectMap {
     key: string,
@@ -15,7 +17,8 @@ interface ProjectMap {
 export interface Project {
     home? : string,
     loaded? : boolean,
-    currentMap? : ProjectMap
+    currentMap? : ProjectMap,
+    versionInfo? : ProjectVersionInfo
 }
 
 /**
@@ -34,11 +37,20 @@ const ACTION_SWITCH_PROJECT = "Project.Switch";
 interface SwitchProjectAction extends Action {
     home : string,
 }
-function _switchProject(action : SwitchProjectAction) : Project {
-    return {
-        home : action.home,
-        loaded: false
-    }
+function _switchProject(project : Project, action : SwitchProjectAction) : Project {
+    return {loaded: false, home : action.home};
+}
+
+const ACTION_SET_VERSION = "Project.SetVersion";
+interface SetVersionAction extends Action {
+    type : "Project.SetVersion",
+    version : ProjectVersionInfo
+}
+function _setMapVersion(project : Project, action : SetVersionAction) : Project {
+    return {...project, versionInfo: action.version}
+}
+export function setVersionInfo(version : ProjectVersionInfo) {
+    return {type : ACTION_SET_VERSION, version};
 }
 
 /**
@@ -66,7 +78,7 @@ function _openMap(project : Project, action : OpenMapAction) {
 }
 
 /**
- * Create an action that changes the dimension of the current map. 
+ * Create an action that changes the dimension of the current map.
  * @param newDimension The new dimensions of the map
  */
 export function changeCurrentMapDimensionAction(newDimension : Vector) {
@@ -85,7 +97,7 @@ function _changeCurrentMapDimension(project : Project, action : ChangeCurrentMap
 }
 
 /**
- * Create an action that changes the grid size of the current map. 
+ * Create an action that changes the grid size of the current map.
  * @param newGridSize The new grid size of the map
  */
 export function changeCurrentMapGridAction(newGridSize : number) {
@@ -120,7 +132,7 @@ export function projectReducer(state : Project = {}, action : Action) {
 
     switch (action.type) {
         case ACTION_SWITCH_PROJECT:
-            return _switchProject(action as SwitchProjectAction);
+            return _switchProject(state, action as SwitchProjectAction);
         case ACTION_DONE_LOADING:
             return immutableAssign(state, {loaded: true});
         case ACTION_OPEN_MAP:
@@ -129,6 +141,8 @@ export function projectReducer(state : Project = {}, action : Action) {
             return _changeCurrentMapDimension(state, action as ChangeCurrentMapDimensionAction);
         case ACTION_CHANGE_MAP_GRID:
             return _changeCurrentMapGrid(state, action as ChangeCurrentMapGridAction);
+        case ACTION_SET_VERSION:
+            return _setMapVersion(state, action as SetVersionAction);
     }
 
     return state;

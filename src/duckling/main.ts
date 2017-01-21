@@ -25,6 +25,7 @@ import {SplashModule} from './splash';
 import {mainReducer} from './main.reducer';
 import {UtilModule} from './util';
 import {DucklingElectronModule} from '../electron/duckling-electron.module';
+import {MigrationModule} from './migration/migration.module';
 
 remote.getCurrentWindow().removeAllListeners();
 
@@ -45,7 +46,8 @@ let storeService = new StoreService(mainReducer, mergeEntityAction);
         SplashModule,
         StateModule,
         UtilModule,
-        DucklingElectronModule
+        DucklingElectronModule,
+        MigrationModule
     ],
     providers: [
         {provide: StoreService, useValue: storeService},

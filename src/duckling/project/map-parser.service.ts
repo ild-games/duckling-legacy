@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 
 import {createEntitySystem, Entity, EntitySystem, EntityKey} from '../entitysystem';
-import {compareVersions, incompatibleReason, MAP_VERSION, VersionCompatibility} from '../version';
+import {MapVersion} from '../util/version';
 import {Vector} from '../math/vector';
+import {ProjectVersionInfo} from '../migration/migration.service';
 
 import {Asset, AssetService} from './asset.service'
 import {RequiredAssetService} from './required-asset.service'
@@ -32,14 +33,16 @@ export interface RawMapFile {
     dimension: Vector,
     gridSize: number
 }
-export let STARTER_RAW_MAP : RawMapFile = {
-    key: "",
-    version: MAP_VERSION,
-    systems: {},
-    assets: [],
-    entities: [],
-    dimension: {x: 1200, y: 800},
-    gridSize: 16,
+export function createRawMap(version : MapVersion) : RawMapFile {
+    return {
+        key: "",
+        version, // REPLACE WITH A FUNCTION OR SOMETHING.
+        systems: {},
+        assets: [],
+        entities: [],
+        dimension: {x: 1200, y: 800},
+        gridSize: 16
+    }
 };
 
 
@@ -69,11 +72,6 @@ export class MapParserService {
      */
     async rawMapToParsedMap(map : RawMapFile) : Promise<ParsedMap> {
         map = await this._projectLifecycle.executePostLoadMapHooks(map);
-        let compatibility = compareVersions(map.version);
-        if (compatibility !== VersionCompatibility.Compatible) {
-            throw new Error(incompatibleReason(compatibility));
-        }
-
         let entities : {[entityKey : string] : Entity} = {};
 
         for (let entityKey of map.entities) {
@@ -114,7 +112,7 @@ export class MapParserService {
      * @param  parsedMap The parsed map
      * @return An object that can be serialized into a map.
      */
-    async parsedMapToRawMap(parsedMap : ParsedMap) : Promise<RawMapFile> {
+    async parsedMapToRawMap(parsedMap : ParsedMap, versionInfo : ProjectVersionInfo) : Promise<RawMapFile> {
         let systems : {[systemKey : string] : RawSystem} = {};
         let entities : EntityKey[] = [];
 
@@ -141,7 +139,7 @@ export class MapParserService {
             assets : assetList,
             dimension : parsedMap.dimension,
             gridSize : parsedMap.gridSize,
-            version: MAP_VERSION
+            version: versionInfo.mapVersion
         }
         return await this._projectLifecycle.executePreSaveMapHooks(rawMap);
     }

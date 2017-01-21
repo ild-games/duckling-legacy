@@ -4,6 +4,7 @@
   "scripts": {
     "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
     "test": "tsc && npm run mocha",
+    "test-debug": "tsc && npm run mocha",
     "build": "gulp && tsc",
     "watch": "concurrently \"npm run gulp:w\" \"npm run tsc:w\"",
     "gulp": "gulp",
@@ -11,6 +12,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "mocha": "electron-mocha --renderer \"build/duckling-tests/**/*.spec.js\"",
+    "mocha-debug": "electron-mocha --interactive \"build/duckling-tests/**/*.spec.js\"",
     "duckling": "electron build/electron/background-main.js"
   },
   "license": "ISC",
