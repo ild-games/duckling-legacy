@@ -21,6 +21,9 @@ export class MigrationService {
 
     }
 
+    /**
+     * Migrate a map to the newest version supported by the editor. Throws if the map is more advanced than the editor supports.
+     */
     async migrateMap<T>(map : T, versionInfo : ProjectVersionInfo, migrationRoot : string) : Promise<T> {
         let mapVersion = (map as any).version;
 
@@ -56,15 +59,14 @@ export class MigrationService {
             versionFile = JSON.parse(rawFile);
         }
 
+        if (versionCompareFunction(EDITOR_VERSION, versionFile.editorVersion) < 0) {
+            throw new Error(`You should update duckling. The project expects editor version ${versionFile.editorVersion}. The current version is  ${EDITOR_VERSION}`);
+        }
 
         return {
             mapMigrations : versionFile.mapMigrations,
             mapVersion : versionFile.projectVersion
         }
-    }
-
-    async migrateProject(projectPath : string) : Promise<any> {
-        // run all project migrations
     }
 
     protected _getMigration(migration : MapMigration, migrationRoot : string) : MapMigrationFunction {

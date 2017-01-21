@@ -9,6 +9,7 @@ import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
 import {Vector} from '../math/vector';
 import {MigrationService, ProjectVersionInfo} from '../migration/migration.service';
+import {compareVersions, EDITOR_VERSION} from '../util/version';
 
 import {MapParserService, ParsedMap, createRawMap} from './map-parser.service';
 import {
@@ -51,9 +52,14 @@ export class ProjectService {
      */
     async open(projectPath : string) {
         this._storeService.dispatch(switchProjectAction(projectPath));
-        let versionInfo = await this._migrationService.openProject(projectPath);
-        this._storeService.dispatch(setVersionInfo(versionInfo));
-        this.openMap(MAP_NAME);
+
+        try {
+            let versionInfo = await this._migrationService.openProject(projectPath);
+            this._storeService.dispatch(setVersionInfo(versionInfo));
+            this.openMap(MAP_NAME);
+        } catch (error) {
+            this._dialog.showErrorDialog("Unable to Open the Project", error.message);
+        }
     }
 
     /**
@@ -66,7 +72,7 @@ export class ProjectService {
             await this._parseMapJson(json, mapKey);
             this._snackbar.invokeSnacks();
         } catch (error) {
-            this._dialog.showErrorDialog("Error Parsing Map File", error.message);
+            this._dialog.showErrorDialog("Unable to Open the Map", error.message);
         }
     }
 

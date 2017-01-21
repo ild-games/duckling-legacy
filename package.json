@@ -4,7 +4,6 @@
   "scripts": {
     "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
     "test": "tsc && npm run mocha",
-    "test-debug": "tsc && npm run mocha",
     "build": "gulp && tsc",
     "watch": "concurrently \"npm run gulp:w\" \"npm run tsc:w\"",
     "gulp": "gulp",
