@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef} from '@angular/core';
+import {Component, ViewContainerRef, ElementRef} from '@angular/core';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
 
@@ -14,4 +14,30 @@ export function openDialog<R>(viewContainer : ViewContainerRef, dialogClass : an
     config.viewContainerRef = viewContainer;
     let dialog = mDialog.open(dialogClass, config);
     return dialog.afterClosed();
+}
+
+/**
+ * Removes the padding for the md-dialog that the given view container is in
+ * @param  viewContainer ViewContainer that is contained within the md-dialog
+ */
+export function removePadding(viewContainer : ViewContainerRef) {
+    let mdDialogFound = false;
+    let abort = false; 
+    let currentElement : HTMLElement = viewContainer.element.nativeElement;
+    while (!mdDialogFound && !abort) {
+        if (!currentElement || !currentElement.parentElement) {
+            abort = true;
+        }
+
+        currentElement = currentElement.parentElement;
+        mdDialogFound = isMdDialogContainer(currentElement);
+    }
+
+    if (!abort) {
+        currentElement.style.padding = "0";
+    }
+}
+
+function isMdDialogContainer(element : HTMLElement) : boolean {
+    return element.classList.contains('md-dialog-container');
 }

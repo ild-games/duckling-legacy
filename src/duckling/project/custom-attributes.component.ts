@@ -2,13 +2,13 @@ import {
     Component, 
     ViewContainerRef,
     ElementRef,
-    ViewChild
+    ViewChild,
+    AfterViewInit
 }  from '@angular/core';
 import {Observable} from 'rxjs';
 
-import {openDialog} from '../util/md-dialog';
+import {openDialog, removePadding} from '../util/md-dialog';
 import {JsonSchemaEdit, schemaEditToJson} from '../controls/json-schema-edit.component';
-
 import {ProjectService} from './project.service';
 import {CustomAttribute} from './custom-attribute';
 
@@ -64,18 +64,19 @@ import {CustomAttribute} from './custom-attribute';
         </div>
     `
 })
-export class CustomAttributesComponent {
+export class CustomAttributesComponent implements AfterViewInit {
 
     curAddingSchema : JsonSchemaEdit = { keys: [], contents: [] };
     curAddingName : string = "";
     @ViewChild('container') containerDiv : ElementRef;
 
-    constructor(private _project : ProjectService) {
+    constructor(private _project : ProjectService,
+                private _viewContainerRef : ViewContainerRef) {
         
     }
 
     ngAfterViewInit() {
-        this.containerDiv.nativeElement.parentElement.parentElement.parentElement.parentElement.style.padding = "0";
+        removePadding(this._viewContainerRef);
     }
      
     /**
