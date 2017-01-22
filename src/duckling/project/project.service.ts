@@ -146,7 +146,7 @@ export class ProjectService {
         this._storeService.dispatch(changeCustomAttributes(newAttributes));
     }
 
-    hasCustomAttribute(attributeKey : AttributeKey) : boolean {
+    isCustomAttribute(attributeKey : AttributeKey) : boolean {
         for (let customAttribute of this._project.customAttributes) {
             if (customAttribute.key === attributeKey) {
                 return true;
