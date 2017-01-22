@@ -5,11 +5,13 @@ import {
     EventEmitter,
     OnChanges,
     SimpleChange,
-    AfterViewInit
+    OnInit
 } from '@angular/core';
 
 import {immutableAssign, immutableArrayAssign} from '../util/model';
 import {ChangeType, changeType} from '../state';
+import {jsonToSchema} from '../controls/json-schema-edit.component';
+import {getDefaultForSchema, JsonSchema, JsonSchemaValue} from '../util/json-schema';
 
 export enum JsonValueType {
     Number,
@@ -24,11 +26,14 @@ export enum JsonValueType {
  */
 @Component({
     selector: "dk-json",
-    styleUrls: ['./duckling/controls/json.component.css'],
+    styleUrls: [
+        './duckling/controls/json.component.css',
+        './duckling/layout.css'
+    ],
     template: `
         <div
             *ngFor="let key of jsonKeys"
-            [ngSwitch]="jsonValueType(value[key])">
+            [ngSwitch]="jsonValueType(schema[key])">
             <dk-number-input
                 *ngSwitchCase="JsonValueType.Number"
                 [label]="key"
@@ -52,10 +57,19 @@ export enum JsonValueType {
                 [headerText]="key">
                 <dk-json
                     [value]="value[key]"
+                    [schema]="schema[key]"
                     (valueChanged)="onValueChanged($event, key)">
                 </dk-json>
             </dk-section>
             <div *ngSwitchCase="JsonValueType.Array">
+                <span>{{key}}</span>
+                <button
+                    md-icon-button
+                    class="dk-inline"
+                    [disableRipple]="true"
+                    (click)="onArrayAddClicked(key)">
+                    <dk-icon iconClass="plus"></dk-icon>
+                </button>
                 <md-card class="array-card">
                     <dk-accordian
                         [elements]="value[key]"
@@ -68,6 +82,7 @@ export enum JsonValueType {
                         <template let-element="$element" let-index="$index">
                             <dk-json
                                 [value]="element"
+                                [schema]="schema[key][0]"
                                 (valueChanged)="onValueChanged($event, key, index)">
                             </dk-json>
                         </template>
@@ -77,7 +92,7 @@ export enum JsonValueType {
         </div>
     `
 })
-export class JsonComponent {
+export class JsonComponent implements OnInit {
     // hoist for template
     JsonValueType = JsonValueType;
 
@@ -87,9 +102,21 @@ export class JsonComponent {
     @Input() value : any;
 
     /**
+     * Optional schema the json component should follow. If not provided the 
+     * schema will be inferred as best as it can be by the given json.
+     */
+    @Input() schema : JsonSchema;
+
+    /**
      * Emits when the json was changed with the new json
      */
     @Output() valueChanged = new EventEmitter<any>();
+
+    ngOnInit() {
+        if (!this.schema) {
+            this.schema = jsonToSchema(this.value); 
+        }
+    }
 
     onValueChanged(newValue : any, jsonKey : string, arrayIndex? : number) {
         let patch : any = {};
@@ -102,6 +129,29 @@ export class JsonComponent {
         }
         this.valueChanged.emit(immutableAssign(this.value, patch));
     }
+    
+    onArrayAddClicked(key : string) {
+        let patchArray = [];
+        patchArray[this.value[key].length] = getDefaultForSchema((this.schema[key] as JsonSchema[])[0] as JsonSchema);
+        let patch : any = {};
+        patch[key] = immutableArrayAssign(this.value[key], patchArray);
+        this.valueChanged.emit(immutableAssign(this.value, patch));
+    }
+    
+    jsonValueType(schemaValue : JsonSchemaValue) : JsonValueType {
+        if (schemaValue === "number") {
+            return JsonValueType.Number;
+        } else if (schemaValue === "string") {
+            return JsonValueType.String;
+        } else if (schemaValue === "boolean") {
+            return JsonValueType.Boolean;
+        } else if (Array.isArray(schemaValue)) {
+            return JsonValueType.Array;
+        } else if (typeof schemaValue === "object") {
+            return JsonValueType.Object;
+        }
+        return null;
+    }
 
     get jsonKeys() : string[] {
         let keys : string[] = [];
@@ -109,40 +159,5 @@ export class JsonComponent {
             keys.push(key);
         }
         return keys;
-    }
-
-    jsonValueType(json : any) : JsonValueType {
-        if (this._isNumber(json)) {
-            return JsonValueType.Number;
-        } else if (this._isString(json)) {
-            return JsonValueType.String;
-        } else if (this._isBoolean(json)) {
-            return JsonValueType.Boolean;
-        } else if (this._isObject(json)) {
-            return JsonValueType.Object;
-        } else if (this._isArray(json)) {
-            return JsonValueType.Array;
-        }
-        return null;
-    }
-
-    private _isArray(json : any) {
-        return Array.isArray(json);
-    }
-
-    private _isObject(json : any) {
-        return typeof json === 'object' && !this._isArray(json);
-    }
-
-    private _isNumber(json : any) {
-        return typeof json === 'number';
-    }
-
-    private _isString(json : any) {
-        return typeof json === 'string';
-    }
-
-    private _isBoolean(json : any) {
-        return typeof json === 'boolean';
     }
 }

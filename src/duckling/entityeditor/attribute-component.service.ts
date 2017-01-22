@@ -1,5 +1,9 @@
 import {Component, Injectable} from '@angular/core';
+
 import {AttributeKey, BaseAttributeService} from '../entitysystem';
+import {ProjectService} from '../project/project.service';
+import {CustomAttributeComponent} from '../project/custom-attribute.component';
+
 import {DefaultAttributeComponent} from './_default-attribute.component';
 
 /**
@@ -8,6 +12,10 @@ import {DefaultAttributeComponent} from './_default-attribute.component';
  */
 @Injectable()
 export class AttributeComponentService extends BaseAttributeService<any> {
+    constructor(private _projectService : ProjectService) {
+        super();
+    }
+    
     /**
      * Get the component class for the attribute.
      * @param  key The key of the attribute the component will be retrieved for.
@@ -18,6 +26,10 @@ export class AttributeComponentService extends BaseAttributeService<any> {
 
         if (implementation) {
             return implementation;
+        }
+        
+        if (this._projectService.isCustomAttribute(key)) {
+            return CustomAttributeComponent;
         }
 
         return DefaultAttributeComponent;

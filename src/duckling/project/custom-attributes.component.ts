@@ -2,9 +2,10 @@ import {Component, ViewContainerRef}  from '@angular/core';
 import {Observable} from 'rxjs';
 
 import {openDialog} from '../util/md-dialog';
+import {JsonSchemaEdit, schemaEditToJson} from '../controls/json-schema-edit.component';
+
 import {ProjectService} from './project.service';
 import {CustomAttribute} from './custom-attribute';
-import {JsonSchema, schemaToJson} from './json-schema.component';
 
 
 /**
@@ -41,10 +42,10 @@ import {JsonSchema, schemaToJson} from './json-schema.component';
                     [dividerColor]="isValidAttributeName(curAddingName) ? 'primary' : 'warn'"
                     (inputChanged)="onAttributeNameInput($event)">
                 </dk-input>
-                <dk-json-schema 
+                <dk-json-schema-edit
                     [jsonSchema]="curAddingSchema"
                     (jsonSchemaChanged)="onJsonSchemaChanged($event)">
-                </dk-json-schema>
+                </dk-json-schema-edit>
                 <div class="adding-section-footer">
                     <button 
                         md-raised-button
@@ -60,7 +61,7 @@ import {JsonSchema, schemaToJson} from './json-schema.component';
 })
 export class CustomAttributesComponent {
 
-    curAddingSchema : JsonSchema = { keys: [], contents: [] };
+    curAddingSchema : JsonSchemaEdit = { keys: [], contents: [] };
     curAddingName : string = "";
 
     constructor(private _project : ProjectService) {
@@ -83,12 +84,12 @@ export class CustomAttributesComponent {
         this.curAddingName = newCurAddingName;
     }
 
-    onJsonSchemaChanged(newJsonSchema : JsonSchema) {
+    onJsonSchemaChanged(newJsonSchema : JsonSchemaEdit) {
         this.curAddingSchema = newJsonSchema;
     }
     
     onAcceptCustomAttribute() {
-        this._project.addCustomAttribute(this.curAddingName, schemaToJson(this.curAddingSchema));
+        this._project.addCustomAttribute(this.curAddingName, schemaEditToJson(this.curAddingSchema));
         this.curAddingName = "";
         this.curAddingSchema = {keys: [], contents: []};
     }
@@ -97,12 +98,9 @@ export class CustomAttributesComponent {
         if (!newCurAddingName || newCurAddingName === "") {
             return false;
         }
-        for (let customAttribute of this.customAttributes) {
-            if (newCurAddingName === customAttribute.key) {
-                return false;
-            }
+        if (this._project.isCustomAttribute(newCurAddingName)) {
+            return false;
         }
-
         return true;
     }
 

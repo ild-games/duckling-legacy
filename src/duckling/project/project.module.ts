@@ -11,7 +11,7 @@ import {MapSelectComponent} from './map-select.component';
 import {BrowseAssetComponent} from './browse-asset.component';
 import {ProjectLifecycleService} from './project-lifecycle.service';
 import {CustomAttributesComponent} from './custom-attributes.component';
-import {JsonSchemaComponent} from './json-schema.component';
+import {CustomAttributeComponent} from './custom-attribute.component';
 
 import {ControlsModule} from '../controls/controls.module';
 
@@ -31,14 +31,15 @@ import {ControlsModule} from '../controls/controls.module';
         MapSelectComponent,
         BrowseAssetComponent,
         CustomAttributesComponent,
-        JsonSchemaComponent
+        CustomAttributeComponent
     ],
     exports: [
         BrowseAssetComponent
     ],
     entryComponents: [
         MapSelectComponent,
-        CustomAttributesComponent
+        CustomAttributesComponent,
+        CustomAttributeComponent
     ]
 })
 export class ProjectModule {

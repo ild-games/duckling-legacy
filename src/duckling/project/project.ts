@@ -1,13 +1,10 @@
 import {Action} from '../state';
+import {AttributeKey} from '../entitysystem/entity';
 import {immutableAssign} from '../util';
 import {Vector} from '../math/vector';
 import {MapVersion} from '../util/version';
 import {ProjectVersionInfo} from '../migration/migration.service';
 
-export interface CustomAttribute {
-    name: string,
-    content: any
-}
 import {CustomAttribute} from './custom-attribute';
 
 interface ProjectMap {

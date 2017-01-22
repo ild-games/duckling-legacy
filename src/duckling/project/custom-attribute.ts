@@ -1,9 +1,12 @@
 import {AttributeKey} from '../entitysystem/entity';
 
-export type CustomAttributeValueType = "number" | "string" | "boolean" | CustomAttributeContent | CustomAttributeContent[];
-type CustomAttributeContent = {[key : string] : CustomAttributeValueType};
+import {JsonSchema, JsonSchemaValue, getDefaultForSchema} from '../util/json-schema';
 
 export interface CustomAttribute {
     key: AttributeKey,
-    content: CustomAttributeContent
+    content: JsonSchema
+}
+
+export function getDefaultCustomAttributeValue(attribute : CustomAttribute) : any {
+    return getDefaultForSchema(attribute.content);
 }
