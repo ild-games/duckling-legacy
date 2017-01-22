@@ -30,19 +30,12 @@ import {CustomAttribute} from './custom-attribute';
                         <span [title]="attribute.key">{{attribute.key}}</span>
                     </md-list-item>
                 </md-list>
-
-                <div class="actions">
-                    <a (click)="onNewAttributeClicked()">
-                        <dk-icon iconClass="file-o">
-                        </dk-icon>
-                        New
-                    </a>
-                </div>
             </div>
             
             <div class="right-section md-elevation-z8">
                 <dk-input
                     class="dk-inline"
+                    label="Attribute Name"
                     [value]="curAddingName"
                     [dividerColor]="isValidAttributeName(curAddingName) ? 'primary' : 'warn'"
                     (inputChanged)="onAttributeNameInput($event)">
@@ -52,13 +45,22 @@ import {CustomAttribute} from './custom-attribute';
                     (jsonSchemaChanged)="onJsonSchemaChanged($event)">
                 </dk-json-schema-edit>
                 <div class="adding-section-footer">
-                    <button 
-                        md-raised-button
-                        color="primary"
-                        [disabled]="!isValidAttributeName(curAddingName)"
-                        (click)="onAcceptCustomAttribute()">
-                        Accept
-                    </button>
+                    <div>
+                        <button 
+                            md-raised-button
+                            class="dk-inline"
+                            (click)="onNewAttributeClicked()">
+                            Clear
+                        </button>
+                        <button 
+                            md-raised-button
+                            class="dk-inline"
+                            color="primary"
+                            [disabled]="!isValidAttributeName(curAddingName)"
+                            (click)="onAcceptCustomAttribute()">
+                            Accept
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

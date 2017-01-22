@@ -21,21 +21,20 @@ export function openDialog<R>(viewContainer : ViewContainerRef, dialogClass : an
  * @param  viewContainer ViewContainer that is contained within the md-dialog
  */
 export function removePadding(viewContainer : ViewContainerRef) {
-    let mdDialogFound = false;
-    let abort = false; 
-    let currentElement : HTMLElement = viewContainer.element.nativeElement;
-    while (!mdDialogFound && !abort) {
-        if (!currentElement || !currentElement.parentElement) {
-            abort = true;
+    let mdDialog = findDialogContainer(viewContainer.element.nativeElement);
+    if (mdDialog) {
+        mdDialog.style.padding = "0";
+    }
+}
+
+function findDialogContainer(element : HTMLElement) {
+    while (element) {
+        if (isMdDialogContainer(element)) {
+             return element;
         }
-
-        currentElement = currentElement.parentElement;
-        mdDialogFound = isMdDialogContainer(currentElement);
+        element = element.parentElement
     }
-
-    if (!abort) {
-        currentElement.style.padding = "0";
-    }
+    return null;
 }
 
 function isMdDialogContainer(element : HTMLElement) : boolean {

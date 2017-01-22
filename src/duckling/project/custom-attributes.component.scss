@@ -33,17 +33,6 @@ $attribute-list-width: 200px;
                 white-space: nowrap;
             }
         }
-        
-        .actions {
-            padding: $spacer-unit;
-        }
-
-        .actions > a {
-            @include clean-link;
-            font-size: $font-size-heading;
-            line-height: $font-size-heading;
-            font-weight: 300;
-        }
     }
 
     .right-section {
@@ -55,7 +44,7 @@ $attribute-list-width: 200px;
         display: flex;
         flex-direction: column;
 
-        dk-json-schema {
+        dk-json-schema-edit {
             flex: 1 1 auto;
             overflow: auto;
         }
@@ -66,6 +55,10 @@ $attribute-list-width: 200px;
             flex-direction: column;
             align-items: flex-end;
             padding: $spacer-unit 0;
+
+            button {
+                margin: 0 ($spacer-unit / 2);
+            }
         }
     }
 }
