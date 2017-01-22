@@ -1,9 +1,14 @@
-import {Component, ViewContainerRef}  from '@angular/core';
+import {
+    Component, 
+    ViewContainerRef,
+    ElementRef,
+    ViewChild,
+    AfterViewInit
+}  from '@angular/core';
 import {Observable} from 'rxjs';
 
-import {openDialog} from '../util/md-dialog';
+import {openDialog, removePadding} from '../util/md-dialog';
 import {JsonSchemaEdit, schemaEditToJson} from '../controls/json-schema-edit.component';
-
 import {ProjectService} from './project.service';
 import {CustomAttribute} from './custom-attribute';
 
@@ -15,29 +20,22 @@ import {CustomAttribute} from './custom-attribute';
     selector: "dk-custom-attributes",
     styleUrls: ["./duckling/layout.css", "./duckling/project/custom-attributes.component.css"],
     template: `
-        <div class="container">
-            <md-card class="left-section">
-                <md-card-content>
-                    <md-list>
-                        <md-list-item *ngFor="let attribute of customAttributes">
-                            {{attribute.key}}
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-
-                <md-card-actions>
-                    <div class="actions">
-                        <a (click)="onNewAttributeClicked()">
-                            <dk-icon iconClass="file-o">
-                            </dk-icon>
-                            New
-                        </a>
-                    </div>
-                </md-card-actions>
-            </md-card>
-            <div class="right-section">
+        <div 
+            #container 
+            class="container">
+            
+            <div class="left-section">
+                <md-list>
+                    <md-list-item *ngFor="let attribute of customAttributes">
+                        <span [title]="attribute.key">{{attribute.key}}</span>
+                    </md-list-item>
+                </md-list>
+            </div>
+            
+            <div class="right-section md-elevation-z8">
                 <dk-input
                     class="dk-inline"
+                    label="Attribute Name"
                     [value]="curAddingName"
                     [dividerColor]="isValidAttributeName(curAddingName) ? 'primary' : 'warn'"
                     (inputChanged)="onAttributeNameInput($event)">
@@ -47,25 +45,40 @@ import {CustomAttribute} from './custom-attribute';
                     (jsonSchemaChanged)="onJsonSchemaChanged($event)">
                 </dk-json-schema-edit>
                 <div class="adding-section-footer">
-                    <button 
-                        md-raised-button
-                        color="primary"
-                        [disabled]="!isValidAttributeName(curAddingName)"
-                        (click)="onAcceptCustomAttribute()">
-                        Accept
-                    </button>
+                    <div>
+                        <button 
+                            md-raised-button
+                            class="dk-inline"
+                            (click)="onNewAttributeClicked()">
+                            Clear
+                        </button>
+                        <button 
+                            md-raised-button
+                            class="dk-inline"
+                            color="primary"
+                            [disabled]="!isValidAttributeName(curAddingName)"
+                            (click)="onAcceptCustomAttribute()">
+                            Accept
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     `
 })
-export class CustomAttributesComponent {
+export class CustomAttributesComponent implements AfterViewInit {
 
     curAddingSchema : JsonSchemaEdit = { keys: [], contents: [] };
     curAddingName : string = "";
+    @ViewChild('container') containerDiv : ElementRef;
 
-    constructor(private _project : ProjectService) {
+    constructor(private _project : ProjectService,
+                private _viewContainerRef : ViewContainerRef) {
         
+    }
+
+    ngAfterViewInit() {
+        removePadding(this._viewContainerRef);
     }
      
     /**

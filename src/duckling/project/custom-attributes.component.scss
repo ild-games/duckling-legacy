@@ -1,10 +1,11 @@
 @import '../forms';
 @import '../fonts';
 @import '../colors';
+@import '../../../node_modules/@angular/material/core/style/elevation';
 
 $background-color: #FFFFFF;
 $attribute-list-background-color: $ultra-light-primary-color;
-$attribute-list-border-color: $light-primary-color;
+$attribute-list-width: 200px;
 
 .container {
     background-color: $background-color;
@@ -13,31 +14,23 @@ $attribute-list-border-color: $light-primary-color;
     display: flex;
 
     .left-section {
+        flex: 0 0 $attribute-list-width;
         display: flex;
         flex-direction: column;
+        background-color: $attribute-list-background-color;
 
         
-        md-card-content {
+        md-list {
+            max-width: $attribute-list-width;
             flex: 1 1 auto;
-            overflow: auto;
-            
-            md-list {
-                padding: 0;
-                overflow: auto;
-            }
-        }
+            padding: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
 
-        md-card-actions {
-
-            .actions {
-                padding: $spacer-unit;
-            }
-
-            .actions > a {
-                @include clean-link;
-                font-size: $font-size-heading;
-                line-height: $font-size-heading;
-                font-weight: 300;
+            span {
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
         }
     }
@@ -51,7 +44,7 @@ $attribute-list-border-color: $light-primary-color;
         display: flex;
         flex-direction: column;
 
-        dk-json-schema {
+        dk-json-schema-edit {
             flex: 1 1 auto;
             overflow: auto;
         }
@@ -62,6 +55,10 @@ $attribute-list-border-color: $light-primary-color;
             flex-direction: column;
             align-items: flex-end;
             padding: $spacer-unit 0;
+
+            button {
+                margin: 0 ($spacer-unit / 2);
+            }
         }
     }
 }
