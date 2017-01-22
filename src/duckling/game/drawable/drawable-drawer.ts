@@ -186,8 +186,16 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
             return drawMissingAsset(assetService);
         }
     }
-    let sprite = new Sprite(texture);
-    sprite.anchor.set(0.5, 0.5);
+    
+    let sprite : any;
+    if (imageDrawable.isTiled && imageDrawable.tiledArea) {
+        sprite = new (<any>PIXI).TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
+        sprite.x = -(sprite.width / 2);
+        sprite.y = -(sprite.height / 2);
+    } else {
+        sprite = new Sprite(texture);
+        sprite.anchor.set(0.5, 0.5);
+    }
     let container = new Container();
     container.addChild(sprite);
     return container;

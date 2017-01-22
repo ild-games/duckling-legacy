@@ -54,6 +54,20 @@ import {CameraAttribute} from './camera-attribute';
             [value]="attribute.follows"
             (inputChanged)="onFollowsChanged($event)">
         </dk-input>
+
+        <dk-vector-input
+            xLabel="Upper X Axis Bound"
+            yLabel="Upper Y Axis Bound"
+            [value]="attribute.upperBounds"
+            (validInput)="onUpperBoundsChanged($event)">
+        </dk-vector-input>
+
+        <dk-vector-input
+            xLabel="Lower X Axis Bound"
+            yLabel="Lower Y Axis Bound"
+            [value]="attribute.lowerBounds"
+            (validInput)="onLowerBoundsChanged($event)">
+        </dk-vector-input>
     `
 })
 export class CameraComponent {
@@ -72,6 +86,14 @@ export class CameraComponent {
 
     onOffsetChanged(newOffset : Vector) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {offset: newOffset}));
+    }
+
+    onUpperBoundsChanged(newUpperBounds : Vector) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {upperBounds: newUpperBounds}));
+    }
+
+    onLowerBoundsChanged(newLowerBounds : Vector) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {lowerBounds: newLowerBounds}));
     }
 
     onScaleChanged(newScale : Vector) {
