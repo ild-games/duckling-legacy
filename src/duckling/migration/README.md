@@ -108,6 +108,22 @@ module.exports = function (tools) {
 }
 ```
 
-# Add New Migrations
+# Tips and Tricks
+
+## Add New Migrations
 
 You add new migrations by incrementing the projectVersion and adding a new entry to the migrations array.
+
+## Debugging Migrations
+
+When testing migrations, make sure all of your maps are committed into version control. You can debug the migration by placing `debugger;` statments in the code.
+
+```
+debugger; // Fires when the migration is loaded.
+module.exports = function (tools) {
+    debugger; // Fires when the migration is loaded.
+    return tools.entityMigration(function (entity) {
+        debugger; // Fires for each migrated entity.
+    });
+}
+```
