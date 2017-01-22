@@ -59,6 +59,10 @@ export class ElectronWindowService extends WindowService {
         this._curWindow.maximize();
     }
 
+    unmaximize() : void {
+        this._curWindow.unmaximize();
+    }
+
     setResizable(isResizable : boolean) : void {
         this._curWindow.setResizable(isResizable);
     }

@@ -2,6 +2,7 @@
 @import '../fonts';
 @import '../forms';
 @import '../misc-mixins';
+@import '../../../node_modules/@angular/material/core/style/elevation';
 
 $project-title-color: $primary-text-color;
 $project-path-color: $secondary-text-color;
@@ -19,15 +20,14 @@ $splash-small-font: $font-size-normal;
 
     overflow: hidden;
     background-color: $splash-background-color;
+    display: flex;
+    flex-direction: row-reverse;
 
     .left-section {
-        float: left;
+        flex: 0 0 375px;
         height: 100%;
-        border-right: 1px solid $project-list-border-color;
 
         md-nav-list {
-            background-color: $project-list-background-color;
-            width: 375px;
             height: 100%;
 
             .project-title {
@@ -55,7 +55,8 @@ $splash-small-font: $font-size-normal;
     }
 
     .right-section {
-        float: left;
+        flex: 1 1 auto;
+        background-color: $project-list-background-color;
 
         .duckling-title {
             padding-left:2*$spacer-unit;
