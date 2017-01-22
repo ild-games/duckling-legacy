@@ -1,4 +1,9 @@
-import {Component, ViewContainerRef}  from '@angular/core';
+import {
+    Component, 
+    ViewContainerRef,
+    ElementRef,
+    ViewChild
+}  from '@angular/core';
 import {Observable} from 'rxjs';
 
 import {openDialog} from '../util/md-dialog';
@@ -15,7 +20,9 @@ import {CustomAttribute} from './custom-attribute';
     selector: "dk-custom-attributes",
     styleUrls: ["./duckling/layout.css", "./duckling/project/custom-attributes.component.css"],
     template: `
-        <div class="container">
+        <div 
+            #container 
+            class="container">
             <md-card class="left-section">
                 <md-card-content>
                     <md-list>
@@ -63,9 +70,14 @@ export class CustomAttributesComponent {
 
     curAddingSchema : JsonSchemaEdit = { keys: [], contents: [] };
     curAddingName : string = "";
+    @ViewChild('container') containerDiv : ElementRef;
 
     constructor(private _project : ProjectService) {
         
+    }
+
+    ngAfterViewInit() {
+        this.containerDiv.nativeElement.parentElement.parentElement.parentElement.parentElement.style.padding = "0";
     }
      
     /**
