@@ -24,11 +24,6 @@ import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.com
             tooltip="Save Project"
             (click)="project.save()">
         </dk-toolbar-button>
-        <dk-toolbar-button
-            icon="refresh"
-            tooltip="Reload Project"
-            (click)="project.reload()">
-        </dk-toolbar-button>
 
         <span class="separator"></span>
 
