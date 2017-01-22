@@ -1,6 +1,6 @@
 # Migration Engine
 
-Your duckling project has a `project/version.json` file that describes the project's version, expected editor version, and migrations.
+Your duckling project has a `project/version.json` file that describes the project's version, expected editor version, and migrations. An example might look like:
 
 ```
 {
@@ -16,13 +16,31 @@ Your duckling project has a `project/version.json` file that describes the proje
             "type" : "code",
             "updateTo" : "3.0",
             "name" : "migrations/add-drawable"
-        }]
+        }
+    ]
 }
 ```
 
 # Entity Migration
 
-Entity migrations are functions that accept a pre-migrated entity and returns the migrated entity. It can be used to add, remove, and modify attributes. Here is an example migration that adds a drawable attribute to every entity that does not have a drawable with a topDrawable. In the sample project above this would be in `project/migrations/add-drawable.js`
+Entity migrations run over every entity in the map. It can be used to add, remove, and modify the entity's attributes. The entity migration accepts an entity as the first argument and must return the migrated entity. The type of the entity argument and return value is:
+```
+interface Entity {
+    [attributeName] : Attribute
+}
+
+// Example
+let entity : Entity = {
+    position : {
+        x: 0,
+        y: 0
+    },
+    drawable : ...,
+    collision : ...
+}
+```
+
+Here is an example migration that adds a drawable attribute to every entity that does not have a drawable with a topDrawable. In the sample project above this would be in `project/migrations/add-drawable.js`
 
 ```
 var DRAWABLE = {
@@ -73,6 +91,9 @@ Attribute migrations run over all the attributes in a system. You write a functi
 
 ```
 module.exports = function (tools) {
+    /**
+     * The "collision" string describes the system the migration is running over.
+     */
     return tools.attributeMigration("collision", function (collisionAttribute) {
         return {
             dimension: {
