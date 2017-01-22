@@ -512,6 +512,11 @@
       "from": "ecc-jsbn@>=0.1.1 <0.2.0",
       "resolved": "https://registry.npmjs.org/ecc-jsbn/-/ecc-jsbn-0.1.1.tgz"
     },
+    "electron": {
+      "version": "1.4.15",
+      "from": "electron@latest",
+      "resolved": "https://registry.npmjs.org/electron/-/electron-1.4.15.tgz"
+    },
     "electron-download": {
       "version": "3.0.1",
       "from": "electron-download@>=3.0.1 <4.0.0",

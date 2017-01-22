@@ -8,15 +8,18 @@ import {immutableAssign} from '../util/model';
 import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
 import {Vector} from '../math/vector';
+import {MigrationService, ProjectVersionInfo} from '../migration/migration.service';
+import {compareVersions, EDITOR_VERSION} from '../util/version';
 
-import {MapParserService, ParsedMap, STARTER_RAW_MAP} from './map-parser.service';
+import {MapParserService, ParsedMap, createRawMap} from './map-parser.service';
 import {
-    switchProjectAction, 
-    doneLoadingProjectAction, 
-    openMapAction, 
-    changeCurrentMapDimensionAction, 
-    changeCurrentMapGridAction, 
+    switchProjectAction,
+    doneLoadingProjectAction,
+    openMapAction,
+    changeCurrentMapDimensionAction,
+    changeCurrentMapGridAction,
     Project,
+    setVersionInfo
 } from './project';
 import {SnackBarService} from './snackbar.service';
 
@@ -32,6 +35,7 @@ export class ProjectService {
 
     constructor(private _entitySystem : EntitySystemService,
                 private _storeService : StoreService,
+                private _migrationService : MigrationService,
                 private _jsonLoader : JsonLoaderService,
                 private _pathService : PathService,
                 private _mapParser : MapParserService,
@@ -46,9 +50,16 @@ export class ProjectService {
     /**
      * Open the project found at the given path.
      */
-    open(projectPath : string) {
+    async open(projectPath : string) {
         this._storeService.dispatch(switchProjectAction(projectPath));
-        this.openMap(MAP_NAME);
+
+        try {
+            let versionInfo = await this._migrationService.openProject(projectPath);
+            this._storeService.dispatch(setVersionInfo(versionInfo));
+            this.openMap(MAP_NAME);
+        } catch (error) {
+            this._dialog.showErrorDialog("Unable to Open the Project", error.message);
+        }
     }
 
     /**
@@ -61,7 +72,7 @@ export class ProjectService {
             await this._parseMapJson(json, mapKey);
             this._snackbar.invokeSnacks();
         } catch (error) {
-            this._dialog.showErrorDialog("Error Parsing Map File", error.message);
+            this._dialog.showErrorDialog("Unable to Open the Map", error.message);
         }
     }
 
@@ -75,11 +86,11 @@ export class ProjectService {
                 entitySystem: this._entitySystem.entitySystem.value,
                 dimension: this._project.currentMap.dimension,
                 gridSize: this._project.currentMap.gridSize
-            });
+            }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
         this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
     }
-    
+
     /**
      * Reload the current project.
      */
@@ -94,7 +105,7 @@ export class ProjectService {
     changeDimension(newDimension : Vector) {
         this._storeService.dispatch(changeCurrentMapDimensionAction(newDimension));
     }
-    
+
     /**
      * Change the grid size of the map
      * @param newGridSize new grid size of the map
@@ -121,16 +132,16 @@ export class ProjectService {
         let mapsPromise = glob(`${mapsRoot}/**/*.map`);
         return mapsPromise.then(maps => maps.map(map => this._mapPathToRoot(mapsRoot, map)));
     }
-    
+
     /**
      * Get the path to a specific meta data file for the project.
      * @param metaDataFile The name of the meta data file stored in the project/ folder (excluding file type)
      * @return the path that can be used to load the meta data file
      */
     getMetaDataPath(metaDataFile : string) : string {
-        return this._pathService.join(this._project.home, "project", metaDataFile + ".json");
+        return this._pathService.join(this.metaDataDir, metaDataFile + ".json");
     }
-    
+
     /**
      * The project's root directory.
      */
@@ -138,22 +149,27 @@ export class ProjectService {
         return this._project.home;
     }
 
+    /**
+     * The directory project metadata is stored in.
+     */
+    get metaDataDir() : string {
+        return this._pathService.join(this.home, "project");
+    }
+
     private async _parseMapJson(json : any, key : string) {
-        let parsedMap : ParsedMap;
-        if (json) {
-            parsedMap = await this._mapParser.rawMapToParsedMap(JSON.parse(json));
-        } else {
-            parsedMap = await this._mapParser.rawMapToParsedMap(Object.assign({}, STARTER_RAW_MAP));
-        }
+        let rawMap = json ? JSON.parse(json) : createRawMap(this._project.versionInfo.mapVersion);
+        rawMap = await this._migrationService.migrateMap(rawMap, this._project.versionInfo, this.metaDataDir);
+
+        let parsedMap = await this._mapParser.rawMapToParsedMap(rawMap);
 
         this._entitySystem.replaceSystem(parsedMap.entitySystem);
         if (!parsedMap.dimension) {
-            parsedMap = immutableAssign(parsedMap, {dimension: STARTER_RAW_MAP.dimension});
+            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.mapVersion));
         }
         if (!parsedMap.gridSize) {
-            parsedMap = immutableAssign(parsedMap, {gridSize: STARTER_RAW_MAP.gridSize});
+            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.mapVersion));
         }
-        
+
         this._storeService.dispatch(openMapAction({
             key: key,
             version: parsedMap.version,

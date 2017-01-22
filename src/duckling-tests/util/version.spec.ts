@@ -2,31 +2,26 @@ import 'mocha';
 import {expect} from 'chai';
 import "reflect-metadata";
 
-import {compareVersions, VersionCompatibility, MAP_VERSION} from '../duckling/version';
+import {compareVersions, versionCompareFunction, VersionCompatibility} from '../../duckling/util/version';
 
 describe("compareVersions", function() {
     it("throws an error for a blank version", function() {
-        expect(() => compareVersions("")).to.throw(Error);
+        expect(() => compareVersions("", "1.0")).to.throw(Error);
     });
 
     it("throws an error for a version number without a major and minor number separated by a decimal point", function() {
-        expect(() => compareVersions("1.")).to.throw(Error);
-        expect(() => compareVersions(".1")).to.throw(Error);
-        expect(() => compareVersions("1")).to.throw(Error);
-        expect(() => compareVersions("1.1.1")).to.throw(Error);
+        expect(() => compareVersions("1.", "1.0")).to.throw(Error);
+        expect(() => compareVersions(".1", "1.0")).to.throw(Error);
+        expect(() => compareVersions("1", "1.0")).to.throw(Error);
+        expect(() => compareVersions("1.1.1", "1.0")).to.throw(Error);
     });
 
     it("throws an error for a version number that doesn't contain numbers", function() {
-        expect(() => compareVersions("hello")).to.throw(Error);
-        expect(() => compareVersions(".bad")).to.throw(Error);
-        expect(() => compareVersions("super_bad.")).to.throw(Error);
-        expect(() => compareVersions("why.are")).to.throw(Error);
-        expect(() => compareVersions("why.are.you.doing.this")).to.throw(Error);
-    });
-
-    it("uses MAP_VERSION if no version was supplied", function() {
-        let compatible = compareVersions(MAP_VERSION);
-        expect(compatible).to.eql(VersionCompatibility.Compatible);
+        expect(() => compareVersions("hello", "1.0")).to.throw(Error);
+        expect(() => compareVersions(".bad", "1.0")).to.throw(Error);
+        expect(() => compareVersions("super_bad.", "1.0")).to.throw(Error);
+        expect(() => compareVersions("why.are", "1.0")).to.throw(Error);
+        expect(() => compareVersions("why.are.you.doing.this", "1.0")).to.throw(Error);
     });
 
     it("Returns incompatible if major versions mismatch", function() {
@@ -51,5 +46,11 @@ describe("compareVersions", function() {
         expect(compatible).to.eql(VersionCompatibility.Compatible);
         compatible = compareVersions("2.1", "2.2");
         expect(compatible).to.eql(VersionCompatibility.Compatible);
+    });
+});
+
+describe("versionCompareFunction", function() {
+    it("Sorts an array of versions", function() {
+        expect(["4.1", "1.2", "2.0", "1.0", "4.1", "1.1", "4.5"].sort(versionCompareFunction)).to.eql(["1.0", "1.1" ,"1.2", "2.0", "4.1", "4.1", "4.5"]);
     });
 });

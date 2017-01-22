@@ -12,14 +12,18 @@ import {ProjectLifecycleService} from '../../duckling/project/project-lifecycle.
 import {StoreService} from '../../duckling/state';
 import {mainReducer} from '../../duckling/main.reducer';
 import {immutableAssign, PathService} from '../../duckling/util';
-import {MAP_VERSION} from '../../duckling/version';
+
+const MAP_VERSION = "1.0";
+const PROJECT_VERSION_INFO = {
+    mapVersion : MAP_VERSION
+}
 
 let emptyMap : RawMapFile = {
     key : "",
     entities : [],
     assets : [],
     systems : {},
-    version: MAP_VERSION,
+    version: "1.0",
     dimension: {x: 0, y: 0},
     gridSize: 0
 };
@@ -86,18 +90,18 @@ describe("MapLoaderService.LifecycleHooks", function() {
             this.requiredAssetService,
             this.projectLifecycleService);
     });
-    
+
     it("successfully executes a post-load hook", async function() {
         let postLoadSpy = chai.spy((map : RawMapFile) => Promise.resolve(map));
         this.projectLifecycleService.addPostLoadMapHook(postLoadSpy);
         await this.parser.rawMapToParsedMap(emptyMap);
         expect(postLoadSpy).to.have.been.called();
     });
-    
+
     it("successfully executes a pre-save hook", async function() {
         let preSaveSpy = chai.spy((map : RawMapFile) => Promise.resolve(map));
         this.projectLifecycleService.addPreSaveMapHook(preSaveSpy);
-        await this.parser.parsedMapToRawMap(emptyParsedMap);
+        await this.parser.parsedMapToRawMap(emptyParsedMap, PROJECT_VERSION_INFO);
         expect(preSaveSpy).to.have.been.called();
     });
 });
@@ -118,7 +122,7 @@ describe("MapLoaderService", function() {
     });
 
     it("turns an empty system into an empty map", async function() {
-        let map = await this.parser.parsedMapToRawMap(emptyParsedMap);
+        let map = await this.parser.parsedMapToRawMap(emptyParsedMap, PROJECT_VERSION_INFO);
         expect(map).to.eql(emptyMap);
     });
 
@@ -142,7 +146,7 @@ describe("MapLoaderService", function() {
 
     it("loading and saving a map preserves the original map", async function() {
         let parsedMap = await this.parser.rawMapToParsedMap(basicMap);
-        let map = await this.parser.parsedMapToRawMap(parsedMap);
+        let map = await this.parser.parsedMapToRawMap(parsedMap, PROJECT_VERSION_INFO);
         map.entities.sort();
         expect(map).to.eql(basicMap);
     });

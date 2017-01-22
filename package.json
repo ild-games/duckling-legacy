@@ -11,6 +11,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "mocha": "electron-mocha --renderer \"build/duckling-tests/**/*.spec.js\"",
+    "mocha-debug": "electron-mocha --interactive \"build/duckling-tests/**/*.spec.js\"",
     "duckling": "electron build/electron/background-main.js"
   },
   "license": "ISC",
