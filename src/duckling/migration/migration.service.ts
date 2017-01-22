@@ -1,6 +1,7 @@
 import {posix} from "path";
 import {Injectable} from "@angular/core";
 
+import {rethrow} from '../util/rethrow';
 import {JsonLoaderService} from '../util/json-loader.service';
 import {PathService} from '../util/path.service';
 import {versionCompareFunction, MapVersion, EditorVersion, EDITOR_VERSION} from '../util/version';
@@ -35,7 +36,12 @@ export class MigrationService {
 
         let result : any = map;
         for (let migration of migrations) {
-            result = this._getMigration(migration, migrationRoot)(result);
+            let mapMigration = this._getMigration(migration, migrationRoot);
+            try {
+                result = mapMigration(result);
+            } catch (error) {
+                throw new Error(`Migration ${migration.name} threw an exception. Consider adding a breakpoint in MigrationService.migrateMap.`);
+            }
         }
 
         return Promise.resolve(result);
@@ -55,7 +61,11 @@ export class MigrationService {
             versionFile = DEFAULT_VERSION_FILE;
             await this._jsonLoader.saveJsonToPath(versionFileName, JSON.stringify(DEFAULT_VERSION_FILE, null, 4));
         } else {
-            versionFile = JSON.parse(rawFile);
+            try {
+                versionFile = JSON.parse(rawFile);
+            } catch (exception) {
+                rethrow(`Error loading "project/version.js"`, exception);
+            }
         }
 
         if (versionCompareFunction(EDITOR_VERSION, versionFile.editorVersion) < 0) {
@@ -77,8 +87,24 @@ export class MigrationService {
 
     private _loadMapMigration(migration : MapMigration, migrationRoot : string) : MapMigrationFunction {
         let fileName = this._path.join(migrationRoot, migration.name);
-        let migrationModule = require(fileName);
-        return migrationModule(new MigrationTools());
+        let mapMigration : MapMigrationFunction;
+
+        try {
+            let migrationModule = require(fileName);
+
+            if (typeof migrationModule === 'function') {
+                mapMigration = migrationModule(new MigrationTools());
+            }
+
+            if (typeof mapMigration !== 'function') {
+                throw new Error(`Migration "${migration.name}" does not export a function that returns a function.`);
+            }
+
+        } catch (error) {
+            rethrow(`Unable to load migration "${migration.name}" from "${fileName}".`, error);
+        }
+
+        return mapMigration;
     }
 }
 
