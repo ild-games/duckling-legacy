@@ -23,26 +23,24 @@ import {CustomAttribute} from './custom-attribute';
         <div 
             #container 
             class="container">
-            <md-card class="left-section">
-                <md-card-content>
-                    <md-list>
-                        <md-list-item *ngFor="let attribute of customAttributes">
-                            {{attribute.key}}
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
+            
+            <div class="left-section">
+                <md-list>
+                    <md-list-item *ngFor="let attribute of customAttributes">
+                        <span [title]="attribute.key">{{attribute.key}}</span>
+                    </md-list-item>
+                </md-list>
 
-                <md-card-actions>
-                    <div class="actions">
-                        <a (click)="onNewAttributeClicked()">
-                            <dk-icon iconClass="file-o">
-                            </dk-icon>
-                            New
-                        </a>
-                    </div>
-                </md-card-actions>
-            </md-card>
-            <div class="right-section">
+                <div class="actions">
+                    <a (click)="onNewAttributeClicked()">
+                        <dk-icon iconClass="file-o">
+                        </dk-icon>
+                        New
+                    </a>
+                </div>
+            </div>
+            
+            <div class="right-section md-elevation-z8">
                 <dk-input
                     class="dk-inline"
                     [value]="curAddingName"
