@@ -22,7 +22,7 @@ export interface Project {
     loaded? : boolean,
     currentMap? : ProjectMap,
     versionInfo? : ProjectVersionInfo,
-    customAttributes? : CustomAttribute[]
+    customAttributes : CustomAttribute[]
 }
 
 /**
@@ -42,7 +42,7 @@ interface SwitchProjectAction extends Action {
     home : string,
 }
 function _switchProject(project : Project, action : SwitchProjectAction) : Project {
-    return {loaded: false, home : action.home};
+    return {loaded: false, home : action.home, customAttributes: project.customAttributes};
 }
 
 const ACTION_SET_VERSION = "Project.SetVersion";
@@ -150,7 +150,7 @@ function _changeCustomAttributes(project : Project, action : ChangeCustomAttribu
 /**
  * Reducer used to update the state of the selected project.
  */
-export function projectReducer(state : Project = {}, action : Action) {
+export function projectReducer(state : Project = {customAttributes: []}, action : Action) {
 
     switch (action.type) {
         case ACTION_SWITCH_PROJECT:
