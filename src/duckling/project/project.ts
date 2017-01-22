@@ -4,6 +4,12 @@ import {Vector} from '../math/vector';
 import {MapVersion} from '../util/version';
 import {ProjectVersionInfo} from '../migration/migration.service';
 
+export interface CustomAttribute {
+    name: string,
+    content: any
+}
+import {CustomAttribute} from './custom-attribute';
+
 interface ProjectMap {
     key: string,
     version: string,
@@ -18,7 +24,8 @@ export interface Project {
     home? : string,
     loaded? : boolean,
     currentMap? : ProjectMap,
-    versionInfo? : ProjectVersionInfo
+    versionInfo? : ProjectVersionInfo,
+    customAttributes? : CustomAttribute[]
 }
 
 /**
@@ -126,6 +133,24 @@ export function doneLoadingProjectAction() {
 const ACTION_DONE_LOADING = "Project.DoneLoading";
 
 /**
+ * Create an action that changes the custom attributes of the project
+ * @param newCustomAttributes The new custom attributes for the project
+ */
+export function changeCustomAttributes(newCustomAttributes : CustomAttribute[]) {
+    return {
+        type: ACTION_CHANGE_CUSTOM_ATTRIBUTES,
+        newCustomAttributes
+    }
+}
+export const ACTION_CHANGE_CUSTOM_ATTRIBUTES = "Project.ChangeCustomAttributes";
+interface ChangeCustomAttributesAction extends Action {
+    newCustomAttributes: CustomAttribute[]
+}
+function _changeCustomAttributes(project : Project, action : ChangeCustomAttributesAction) {
+    return immutableAssign(project, {customAttributes : action.newCustomAttributes});
+}
+
+/**
  * Reducer used to update the state of the selected project.
  */
 export function projectReducer(state : Project = {}, action : Action) {
@@ -143,6 +168,8 @@ export function projectReducer(state : Project = {}, action : Action) {
             return _changeCurrentMapGrid(state, action as ChangeCurrentMapGridAction);
         case ACTION_SET_VERSION:
             return _setMapVersion(state, action as SetVersionAction);
+        case ACTION_CHANGE_CUSTOM_ATTRIBUTES:
+            return _changeCustomAttributes(state, action as ChangeCustomAttributesAction);
     }
 
     return state;

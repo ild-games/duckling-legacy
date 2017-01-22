@@ -11,7 +11,7 @@ import {
 import {immutableAssign, immutableArrayAssign} from '../util/model';
 import {ChangeType, changeType} from '../state';
 
-enum JsonValueType {
+export enum JsonValueType {
     Number,
     String,
     Boolean,
