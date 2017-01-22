@@ -116,21 +116,14 @@ export class ProjectService {
         if (!this._project.customAttributes) {
             return;
         }
-        
+
         for (let customAttribute of this._project.customAttributes) {
             await this._jsonLoader.saveJsonToPath(
                 `${this._customAttributesRoot}/${customAttribute.key}.json`,
                 JSON.stringify(customAttribute.content, null, 4));
         }
     }
-    
-    /**
-     * Reload the current project.
-     */
-    reload() {
-        this.openMap(this._project.currentMap.key);
-    }
-    
+
     /**
      * Adds a new custom attribute to the project
      * @param key The key of the custom attribute
