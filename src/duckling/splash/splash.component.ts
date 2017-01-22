@@ -30,7 +30,18 @@ const MAX_SPLASH_ENTRIES : number = 7;
     styleUrls: [ './duckling/splash/splash.component.css' ],
     template: `
         <div class="splash-screen">
-            <div class="left-section">
+            <div class="right-section">
+                <div class="duckling-title">
+                    <div class="duckling-name">
+                        Duckling
+                    </div>
+                    <div class="duckling-version">
+                        {{EDITOR_VERSION}}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="left-section md-elevation-z8">
                 <md-nav-list>
                     <md-list-item
                     md-list-item
@@ -49,17 +60,7 @@ const MAX_SPLASH_ENTRIES : number = 7;
                     </a>
                 </div>
             </div>
-
-            <div class="right-section">
-                <div class="duckling-title">
-                    <div class="duckling-name">
-                        Duckling
-                    </div>
-                    <div class="duckling-version">
-                        {{EDITOR_VERSION}}
-                    </div>
-                </div>
-            </div>
+            
             <div class="the-duck"></div>
         </div>
     `
@@ -112,9 +113,10 @@ export class SplashComponent implements OnInit {
     }
 
     private _resizeAndCenterWindow() {
+        this._window.unmaximize();
+        this._window.setResizable(false);
         this._window.setSize(945, 645);
         this._window.center();
-        this._window.setResizable(false);
     }
 
     onNewProjectClick(event : any) {
