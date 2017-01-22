@@ -90,8 +90,8 @@ export class CustomAttributesComponent {
     
     onAcceptCustomAttribute() {
         this._project.addCustomAttribute(this.curAddingName, schemaEditToJson(this.curAddingSchema));
-        this.curAddingName = undefined;
-        this.curAddingSchema = undefined;
+        this.curAddingName = "";
+        this.curAddingSchema = {keys: [], contents: []};
     }
     
     isValidAttributeName(newCurAddingName : string) : boolean {
