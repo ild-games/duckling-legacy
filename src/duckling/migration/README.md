@@ -76,12 +76,8 @@ module.exports = function (tools) {
     return tools.attributeMigration("collision", function (collisionAttribute) {
         return {
             dimension: {
-                dimension: {
-                    x: 100,
-                    y: 100
-                },
-                position: collisionAttribute.dimension.position,
-                rotation: collisionAttribute.dimension.rotation
+                x: 100,
+                y: 100
             },
             bodyType: collisionAttribute.bodyType,
             collisionType: collisionAttribute.collisionType,
