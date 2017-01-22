@@ -28,7 +28,7 @@ export class AttributeComponentService extends BaseAttributeService<any> {
             return implementation;
         }
         
-        if (this._projectService.hasCustomAttribute(key)) {
+        if (this._projectService.isCustomAttribute(key)) {
             return CustomAttributeComponent;
         }
 

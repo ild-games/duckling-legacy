@@ -98,7 +98,7 @@ export class CustomAttributesComponent {
         if (!newCurAddingName || newCurAddingName === "") {
             return false;
         }
-        if (this._project.hasCustomAttribute(newCurAddingName)) {
+        if (this._project.isCustomAttribute(newCurAddingName)) {
             return false;
         }
         return true;

@@ -75,7 +75,7 @@ export class EntityEditorComponent {
 
     addAttribute(key : AttributeKey) {
         let defaultAttribute = {};
-        if (this._projectService.hasCustomAttribute(key)) {
+        if (this._projectService.isCustomAttribute(key)) {
             defaultAttribute = getDefaultCustomAttributeValue(this._projectService.getCustomAttribute(key));
         } else {
             defaultAttribute = this._attributeDefault.createAttribute(key);
