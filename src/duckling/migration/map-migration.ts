@@ -5,7 +5,7 @@ import {MapVersion, compareVersions, versionCompareFunction, VersionCompatibilit
 export interface MapMigration {
     type : "code"; // | "editor-version" | "editor-built-in",
     updateTo : MapVersion,
-    name : string, // "migrations/updatecoints" or "2"
+    name : string, // "migrations/updatecoins" or "2"
     options? : any,
 }
 

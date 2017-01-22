@@ -49,7 +49,6 @@ export class MigrationService {
     async openProject(projectPath : string) : Promise<ProjectVersionInfo> {
         let versionFileName = this._path.join(projectPath, "project", "version.json");
         let rawFile = await this._jsonLoader.getJsonFromPath(versionFileName);
-        //await let json = this._jsonLoader.getJsonFromPath(versionFileName);
 
         let versionFile : VersionFile;
         if (!rawFile) {

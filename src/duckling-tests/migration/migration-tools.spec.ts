@@ -45,7 +45,7 @@ describe("MigrationTools.attributeMigration", function() {
         expect(migration(clone(MAP))).to.eql(MAP);
     });
 
-    it("Returning null removes the component from the entity", function() {
+    it("Returning null removes the attribute from the entity", function() {
         let migration = tools.attributeMigration("systemB", (attribute : any) => attribute.B === "A" ? null : attribute);
         expect(migration(clone(MAP))).to.eql(
             {
@@ -61,7 +61,7 @@ describe("MigrationTools.attributeMigration", function() {
             });
     });
 
-    it("Deleting a component does not modify the original map", function() {
+    it("Deleting a attribute does not modify the original map", function() {
         let migration = tools.attributeMigration("systemB", (attribute : any) => attribute.B === "A" ? null : attribute);
         let original = clone(MAP);
         migration(original);
