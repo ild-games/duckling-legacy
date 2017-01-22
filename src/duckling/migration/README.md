@@ -1,0 +1,96 @@
+# Migration Engine
+
+Your duckling project has a `project/version.json` file that describes the project's version, expected editor version, and migrations.
+
+```
+{
+    projectVersion : "3.0",
+    editorVersion : "0.1",
+    migrations : [
+        {
+            "type" : "code", // This indicates the migration is custom code written for the project.
+            "updateTo" : "2.0", // Run the migration when updating maps to project version "2.0"
+            "name" : "migrations/make-collision100" // The migration script is {ProjectRoot}/project/migrations/make-collision100.js
+        },
+        {
+            "type" : "code",
+            "updateTo" : "3.0",
+            "name" : "migrations/add-drawable"
+        }]
+}
+```
+
+# Entity Migration
+
+Entity migrations are functions that accept a pre-migrated entity and returns the migrated entity. It can be used to add, remove, and modify attributes. Here is an example migration that adds a drawable attribute to every entity that does not have a drawable with a topDrawable. In the sample project above this would be in `project/migrations/add-drawable.js`
+
+```
+var DRAWABLE = {
+    "topDrawable": {
+        "__cpp_type": "ild::ShapeDrawable",
+        "key": "ShapeDrawable",
+        "inactive": false,
+        "renderPriority": 0,
+        "scale": {
+            "x": 1,
+            "y": 1
+        },
+        "rotation": 0,
+        "positionOffset": {
+            "x": 0,
+            "y": 0
+        },
+        "priorityOffset": 0,
+        "shape": {
+            "__cpp_type": "sf::RectangleShape",
+            "fillColor": {
+                "r": 100,
+                "g": 200,
+                "b": 0,
+                "a": 255
+            },
+            "dimension": {
+                "x": 100,
+                "y": 100
+            }
+        }
+    }
+}
+
+module.exports = function (tools) {
+    return tools.entityMigration(function (entity) {
+        if (entity.drawable && entity.drawable.topDrawable && entity.drawable.topDrawable.__cpp_type) {
+            return entity;
+        } else {
+            return Object.assign({}, entity, {drawable : DRAWABLE});
+        }
+    });
+}
+```
+
+# Attribute Migrations
+Attribute migrations run over all the attributes in a system. You write a function that takes an attribute and returns a post migration attribute. It is possible to delete an attribute by returning null. Here is an example migration that changes the size of all collision attributes to 100. In the sample project above this would be in `project/migrations/make-collision100.js`
+
+```
+module.exports = function (tools) {
+    return tools.attributeMigration("collision", function (collisionAttribute) {
+        return {
+            dimension: {
+                dimension: {
+                    x: 100,
+                    y: 100
+                },
+                position: collisionAttribute.dimension.position,
+                rotation: collisionAttribute.dimension.rotation
+            },
+            bodyType: collisionAttribute.bodyType,
+            collisionType: collisionAttribute.collisionType,
+            oneWayNormal: collisionAttribute.oneWayNormal
+        };
+    });
+}
+```
+
+# Add New Migrations
+
+You add new migrations by incrementing the projectVersion and adding a new entry to the migrations array.
