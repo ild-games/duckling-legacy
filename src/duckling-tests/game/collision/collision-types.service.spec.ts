@@ -33,12 +33,12 @@ describe("CollisionTypesService", function() {
 
     it("puts new collision types in the store", function() {
         this.collisionTypesService.addCollisionType("collision-type1");
-        expect(this.storeService.state.getValue().collision.collisionTypes).to.contain("collision-type1");
+        expect(Array.from(this.storeService.state.getValue().collision.collisionTypes.values())).to.contain("collision-type1");
     });
     
     it("is aware of new collision types added", function() {
         this.collisionTypesService.addCollisionType("collision-type1");
-        expect(this.collisionTypesService.collisionTypes.getValue()).to.contain("collision-type1");
+        expect(Array.from(this.collisionTypesService.collisionTypes.getValue().values())).to.contain("collision-type1");
     });
 
     it("retrieve a collision type of 'none' on an entity that has the default collision", function() {
@@ -60,22 +60,22 @@ describe("CollisionTypesService", function() {
 
     it("registers only the 'none' collision type when not given json stream of collision types", function() {
         (this.collisionTypesService as any)._registerAnconaCollisionTypes(null);
-        expect(this.collisionTypesService.collisionTypes.getValue()).to.eql(['none']);
+        expect(Array.from(this.collisionTypesService.collisionTypes.getValue().values())).to.eql(['none']);
     });
 
     it("registers only the 'none' collision type when given stream of collision types that does not contain none", function() {
         (this.collisionTypesService as any)._registerAnconaCollisionTypes({collisionTypes: ["custom-type"]});
-        expect(this.collisionTypesService.collisionTypes.getValue()).to.contain('none');
+        expect(Array.from(this.collisionTypesService.collisionTypes.getValue().values())).to.contain('none');
     });
     
     it("registers custom collision types when given json of collision types that does not contain none", function() {
         (this.collisionTypesService as any)._registerAnconaCollisionTypes({collisionTypes: ["custom-type1", "custom-type2"]});
-        expect(this.collisionTypesService.collisionTypes.getValue()).to.contain('custom-type1').and.to.contain('custom-type2');
+        expect(Array.from(this.collisionTypesService.collisionTypes.getValue().values())).to.contain('custom-type1').and.to.contain('custom-type2');
     });
 
     it("can register multiple collision types at once", function() {
-        (this.collisionTypesService as any)._registerMultipleCollisionTypes(["custom-type1", "custom-type2"]);
-        expect(this.collisionTypesService.collisionTypes.getValue()).to.contain('custom-type1').and.to.contain('custom-type2');
+        (this.collisionTypesService as any)._registerCollisionTypes(["custom-type1", "custom-type2"]);
+        expect(Array.from(this.collisionTypesService.collisionTypes.getValue().values())).to.contain('custom-type1').and.to.contain('custom-type2');
     });
 
     it("notifies the user with a snackbar when unknown collision types are found", function() {
