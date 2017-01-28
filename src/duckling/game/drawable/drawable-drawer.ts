@@ -7,6 +7,7 @@ import {AssetService} from '../../project';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
 import {drawMissingAsset} from '../../canvas/drawing/util';
+import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 import {
     colorToHex,
     drawEllipse,
@@ -190,11 +191,10 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
     let sprite : any;
     if (imageDrawable.isTiled && imageDrawable.tiledArea) {
         sprite = new (<any>PIXI).TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
-        sprite.x = -(sprite.width / 2);
-        sprite.y = -(sprite.height / 2);
+        //sprite.x = -(sprite.width / 2);
+        //sprite.y = -(sprite.height / 2);
     } else {
         sprite = new Sprite(texture);
-        sprite.anchor.set(0.5, 0.5);
     }
     let container = new Container();
     container.addChild(sprite);
@@ -211,7 +211,7 @@ function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetServ
             fontSize: textDrawable.text.characterSize,
             fill: colorHex
         } as PIXI.TextStyle);
-    text.anchor.set(0.5, 0.5);
+    //text.anchor.set(0.5, 0.5);
     return text;
 }
 
@@ -230,6 +230,11 @@ function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : D
         displayObject.position.y = drawable.positionOffset.y;
         displayObject.scale.x = drawable.scale.x;
         displayObject.scale.y = drawable.scale.y;
+        if (isDisplayObject(displayObject)) {
+            let bounds = drawnConstructBounds(displayObject);
+            displayObject.pivot.x = displayObject.position.x + (bounds.dimension.x / 2);
+            displayObject.pivot.y = displayObject.position.y + (bounds.dimension.y / 2);
+        }
     }
     if (!drawableDisplayObject) {
         return;

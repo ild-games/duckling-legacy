@@ -5,15 +5,15 @@ import {AssetService} from '../../project/asset.service';
 
 
 /**
- * Draw a rectangle centered at the given position.
- * @param centerPosition Center of the rectangle.
- * @param dimension      Dimensions of the rectangle.
- * @param graphics       Graphics object used to draw.
+ * Draw a rectangle at the given position
+ * @param position  Top left of the rectangle
+ * @param dimension Dimensions of the rectangle
+ * @param graphics  Graphics object used to draw
  */
-export function drawRectangle(centerPosition : Vector, dimension : Vector, graphics : Graphics) {
+export function drawRectangle(position : Vector, dimension : Vector, graphics : Graphics) {
     graphics.drawRect(
-        centerPosition.x - dimension.x / 2,
-        centerPosition.y - dimension.y / 2,
+        position.x,
+        position.y,
         dimension.x,
         dimension.y
     );
@@ -21,35 +21,35 @@ export function drawRectangle(centerPosition : Vector, dimension : Vector, graph
 
 /**
  * Draw an ellipse centered at the given position
- * @param centerPosition Center of the rectangle.
- * @param xRadius        Radius of the ellipse on the x axis
- * @param yRadius        Radius of the ellipse on the y axis
- * @param graphics       Graphics object used to draw.
+ * @param position Top left corner of the ellipse
+ * @param xRadius  Radius of the ellipse on the x axis
+ * @param yRadius  Radius of the ellipse on the y axis
+ * @param graphics Graphics object used to draw.
  */
-export function drawEllipse(centerPosition : Vector, xRadius : number, yRadius : number, graphics : Graphics) {
+export function drawEllipse(position : Vector, xRadius : number, yRadius : number, graphics : Graphics) {
     graphics.drawEllipse(
-        centerPosition.x,
-        centerPosition.y,
+        position.x + xRadius,
+        position.y + yRadius,
         xRadius,
         yRadius
     );
 }
 
 /**
- * Draw an x centered at the given position.
- * @param centerPosition Center of the x.
- * @param dimension      Dimensions of the x.
- * @param graphics       Graphics object used to draw.
+ * Draw an x at the given position
+ * @param position  Center of the x
+ * @param dimension Dimensions of the x
+ * @param graphics  Graphics object used to draw
  */
-export function drawX(centerPosition : Vector, dimension : Vector, graphics : Graphics) {
+export function drawX(position : Vector, dimension : Vector, graphics : Graphics) {
     let halfX = dimension.x / 2;
     let halfY = dimension.y / 2;
 
-    graphics.moveTo(centerPosition.x - halfX, centerPosition.y - halfY);
-    graphics.lineTo(centerPosition.x + halfX, centerPosition.y + halfY);
-
-    graphics.moveTo(centerPosition.x - halfX, centerPosition.y + halfY);
-    graphics.lineTo(centerPosition.x + halfX, centerPosition.y - halfY);
+    graphics.moveTo(position.x, position.y);
+    graphics.lineTo(position.x + dimension.x, position.y + dimension.y);
+    
+    graphics.moveTo(position.x, position.y + dimension.y);
+    graphics.lineTo(position.x + dimension.x, position.y);
 }
 
 /**
@@ -115,7 +115,5 @@ export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vect
 export function drawMissingAsset(assetService : AssetService) : Sprite {
     let missingTexture = assetService.get("fa-missing-image", "TexturePNG", true);
     let sprite = new Sprite(missingTexture);
-    sprite.x = -sprite.width / 2;
-    sprite.y = -sprite.height / 2;
     return sprite;
 }
