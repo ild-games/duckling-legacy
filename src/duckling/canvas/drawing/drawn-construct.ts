@@ -14,7 +14,8 @@ export type AnimationConstruct = {
     frames: DrawnConstruct[],
     position: Vector,
     rotation: number,
-    scale: Vector
+    scale: Vector,
+    anchor: Vector
 };
 
 /**
@@ -25,7 +26,8 @@ export type ContainerConstruct = {
     childConstructs: DrawnConstruct[],
     position: Vector,
     rotation: number,
-    scale: Vector
+    scale: Vector,
+    anchor: Vector
 };
 
 /**
@@ -162,23 +164,33 @@ function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
     container.addChild(displayObject);
     displayObject.updateTransform();
     let displayObjectBounds = container.getBounds();
-    return boxFromWidthHeight(displayObjectBounds.width, displayObjectBounds.height);
+    return {
+        position: {x: displayObjectBounds.x, y: displayObjectBounds.y},
+        dimension: {x: displayObjectBounds.width, y: displayObjectBounds.height},
+        rotation: 0
+    };
 }
 
 /**
  * Animation bounds are the union of all the frames
  */
 function _animationBounds(animationConstruct : AnimationConstruct) : Box2 {
-    let box : Box2 = immutableAssign(EMPTY_BOX, {});
+    let container = new Container();
     for (let frame of animationConstruct.frames) {
         if (frame) {
-            let frameBox = drawnConstructBounds(frame);
-            if (frameBox) {
-                box = boxUnion(box, frameBox);
-            }
+            container.addChild(displayObjectForDrawnConstruct(frame));
         }
     }
-    return box;
+    _applyDrawnConstructProperties(container, animationConstruct);
+    let outerContainer = new Container();
+    outerContainer.addChild(container);
+    container.updateTransform();
+    let displayObjectBounds = outerContainer.getBounds();
+    return {
+        position: {x: displayObjectBounds.x, y: displayObjectBounds.y},
+        dimension: {x: displayObjectBounds.width, y: displayObjectBounds.height},
+        rotation: 0
+    };
 }
 
 /**
@@ -206,6 +218,11 @@ function _applyDrawnConstructProperties(container : Container, drawnConstruct : 
     container.position = drawnConstruct.position as Point;
     container.rotation = drawnConstruct.rotation;
     container.scale = drawnConstruct.scale as Point;
+    if (isDisplayObject(drawnConstruct)) {
+        container.pivot = drawnConstruct.pivot as Point;
+    } else {
+        container.pivot = drawnConstruct.anchor as Point;
+    }
 }
 
 function _determineAnimationDisplayObject(animation : AnimationConstruct, totalMillis : number) : DisplayObject {

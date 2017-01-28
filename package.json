@@ -30,7 +30,7 @@
     "@types/hammerjs": "^2.0.33",
     "@types/lodash": "^4.14.40",
     "@types/node": "^6.0.51",
-    "@types/pixi.js": "^4.1.0",
+    "@types/pixi.js": "4.1.0",
     "@types/webfontloader": "^1.6.27",
     "es6-shim": "^0.35.1",
     "font-awesome": "^4.7.0",

@@ -6,6 +6,8 @@ import * as PIXI from 'pixi.js';
 import {AssetService} from '../../project';
 import {Entity} from '../../entitysystem/entity';
 import {Vector, degreesToRadians} from '../../math';
+import {Box2} from '../../math/box2';
+import {immutableAssign} from '../../util/model';
 import {drawMissingAsset} from '../../canvas/drawing/util';
 import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 import {
@@ -113,6 +115,7 @@ function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetServ
             type: "CONTAINER",
             childConstructs: [],
             position: {x: 0, y: 0},
+            anchor: {x: 0, y: 0},
             rotation: 0,
             scale: {x: 0, y: 0}
         };
@@ -129,6 +132,7 @@ function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetServ
         type: "CONTAINER",
         childConstructs: childConstructs,
         position: {x: 0, y: 0},
+        anchor: {x: 0, y: 0},
         rotation: 0,
         scale: {x: 0, y: 0}
     };
@@ -141,6 +145,7 @@ function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService
             duration: 0,
             frames: [],
             position: {x: 0, y: 0},
+            anchor: {x: 0, y: 0},
             rotation: 0,
             scale: {x: 0, y: 0}
         }
@@ -159,6 +164,7 @@ function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService
         duration: animatedDrawable.duration,
         frames: framesDisplayObjects,
         position: {x: 0, y: 0},
+        anchor: {x: 0, y: 0},
         rotation: 0,
         scale: {x: 0, y: 0}
     }
@@ -191,8 +197,6 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
     let sprite : any;
     if (imageDrawable.isTiled && imageDrawable.tiledArea) {
         sprite = new (<any>PIXI).TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
-        //sprite.x = -(sprite.width / 2);
-        //sprite.y = -(sprite.height / 2);
     } else {
         sprite = new Sprite(texture);
     }
@@ -211,7 +215,6 @@ function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetServ
             fontSize: textDrawable.text.characterSize,
             fill: colorHex
         } as PIXI.TextStyle);
-    //text.anchor.set(0.5, 0.5);
     return text;
 }
 
@@ -222,18 +225,23 @@ function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture :
     );
 }
 
+function _getBaselineBounds(drawnConstruct : DrawnConstruct) : Box2 {
+    drawnConstruct.scale = {x: 1, y: 1};
+    return drawnConstructBounds(drawnConstruct);
+}
 
 function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
-    function _applyDisplayObjectProperties(displayObject : DrawnConstruct) {
-        displayObject.rotation = degreesToRadians(drawable.rotation);
-        displayObject.position.x = drawable.positionOffset.x;
-        displayObject.position.y = drawable.positionOffset.y;
-        displayObject.scale.x = drawable.scale.x;
-        displayObject.scale.y = drawable.scale.y;
-        if (isDisplayObject(displayObject)) {
-            let bounds = drawnConstructBounds(displayObject);
-            displayObject.pivot.x = displayObject.position.x + (bounds.dimension.x / 2);
-            displayObject.pivot.y = displayObject.position.y + (bounds.dimension.y / 2);
+    function _applyDisplayObjectProperties(drawnConstruct : DrawnConstruct) {
+        let bounds = _getBaselineBounds(drawnConstruct);
+        drawnConstruct.rotation = degreesToRadians(drawable.rotation);
+        drawnConstruct.scale.x = drawable.scale.x;
+        drawnConstruct.scale.y = drawable.scale.y;
+        if (isDisplayObject(drawnConstruct)) {
+            drawnConstruct.pivot.x = bounds.dimension.x * drawable.anchor.x;
+            drawnConstruct.pivot.y = bounds.dimension.y * drawable.anchor.y;
+        } else {
+            drawnConstruct.anchor.x = bounds.dimension.x * drawable.anchor.x;
+            drawnConstruct.anchor.y = bounds.dimension.y * drawable.anchor.y;
         }
     }
     if (!drawableDisplayObject) {

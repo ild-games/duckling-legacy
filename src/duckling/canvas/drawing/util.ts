@@ -54,27 +54,23 @@ export function drawX(position : Vector, dimension : Vector, graphics : Graphics
 
 /**
  * Draws a grid at the given position.
- * @param  centerPosition Center point of the grid
+ * @param  position Top left position of the grid
  * @param  gridDimension  Dimensions of the entire grid
  * @param  cellDimension  Dimensions of a cell
  * @param  graphics       Graphics object used to draw
  */
-export function drawGrid(centerPosition : Vector, gridDimension : Vector, cellDimension : Vector, graphics : Graphics) {
-    let halfX = gridDimension.x / 2;
-    let halfY = gridDimension.y / 2;
-
-    let startY = centerPosition.y - halfY + (halfY % cellDimension.y);
-    let endY = centerPosition.y + halfY - (halfY % cellDimension.y);
-    for (let curY = startY; curY <= endY; curY += cellDimension.y) {
-        graphics.moveTo(centerPosition.x - halfX, curY);
-        graphics.lineTo(centerPosition.x + halfX, curY);
+export function drawGrid(position : Vector, gridDimension : Vector, cellDimension : Vector, graphics : Graphics) {
+    let endX = gridDimension.x;
+    let endY = gridDimension.y;
+    
+    for (let curY = 0; curY <= endY; curY += cellDimension.y) {
+        graphics.moveTo(0, curY);
+        graphics.lineTo(endX, curY);
     }
-
-    let startX = centerPosition.x - halfX + (halfX % cellDimension.x);
-    let endX = centerPosition.x + halfX - (halfX % cellDimension.x);
-    for (let curX = startX; curX <= endX; curX += cellDimension.x) {
-        graphics.moveTo(curX, centerPosition.y - halfY);
-        graphics.lineTo(curX, centerPosition.y + halfY);
+    
+    for (let curX = 0; curX <= endX; curX += cellDimension.x) {
+        graphics.moveTo(curX, 0);
+        graphics.lineTo(curX, endY);
     }
 }
 

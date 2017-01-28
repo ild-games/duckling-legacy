@@ -26,6 +26,8 @@ export function drawCollision(entity : Entity) : DrawnConstruct {
     graphics.lineStyle(1, blue, 1);
     drawRectangle({x: 0, y: 0}, collisionAttribute.dimension.dimension, graphics);
     drawX({x: 0, y: 0}, collisionAttribute.dimension.dimension, graphics);
+    graphics.pivot.x = (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x);
+    graphics.pivot.y = (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y);
 
     return graphics;
 }

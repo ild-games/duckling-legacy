@@ -46,7 +46,7 @@ export interface Drawable {
     scale : Vector;
     rotation : number;
     inactive : boolean;
-    positionOffset : Vector;
+    anchor : Vector;
     priorityOffset : number;
 }
 
@@ -60,7 +60,7 @@ export let defaultDrawable : Drawable = {
         y: 1
     },
     rotation: 0,
-    positionOffset: {
+    anchor: {
         x: 0,
         y: 0
     },

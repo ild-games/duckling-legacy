@@ -36,6 +36,12 @@ import {CollisionTypesService} from './collision-types.service';
             (validInput)="onDimensionInput($event)">
         </dk-vector-input>
         <dk-vector-input
+            xLabel="Relative Anchor X %"
+            yLabel="Relative Anchor Y %"
+            [value]="attribute.anchor"
+            (validInput)="onAnchorInput($event)">
+        </dk-vector-input>
+        <dk-vector-input
             xLabel="One Way Normal X"
             yLabel="One Way Normal Y"
             [value]="attribute.oneWayNormal"
@@ -94,6 +100,10 @@ export class CollisionComponent implements OnDestroy {
     onDimensionInput(dimension : Vector) {
         let newBox = immutableAssign(this.attribute.dimension, {dimension});
         this.attributeChanged.emit(immutableAssign(this.attribute, {dimension: newBox}));
+    }
+
+    onAnchorInput(newAnchor : Vector) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {anchor: newAnchor}));
     }
 
     onBodyTypeInput(bodyType : string) {

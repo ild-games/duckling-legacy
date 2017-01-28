@@ -32,6 +32,10 @@ export interface CollisionAttribute extends Attribute {
      * towards the direction other entities are unable to pass through.
      */
     oneWayNormal : Vector;
+    /**
+     * point on the collision box the anchor/origin point is (%)
+     */
+    anchor : Vector;
 }
 
 export let defaultCollision : CollisionAttribute = {
@@ -51,6 +55,10 @@ export let defaultCollision : CollisionAttribute = {
     oneWayNormal: {
         x: 0,
         y: 0
+    },
+    anchor: {
+        x: 0,
+        y: 0    
     }
 }
 

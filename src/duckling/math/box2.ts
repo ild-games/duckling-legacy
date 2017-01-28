@@ -49,28 +49,28 @@ export function boxUnion(left : Box2, right : Box2) : Box2 {
  * Get the minimum X position that a box touches.
  */
 export function boxMinX(box : Box2) : number {
-    return box.position.x - box.dimension.x / 2;
+    return box.position.x;
 }
 
 /**
  * Get the maximum X position that a box touches.
  */
 export function boxMaxX(box : Box2) : number {
-    return box.position.x + box.dimension.x / 2;
+    return box.position.x + box.dimension.x;
 }
 
 /**
  * Get the minimum Y position that a box touches.
  */
 export function boxMinY(box : Box2) : number {
-    return box.position.y - box.dimension.y / 2;
+    return box.position.y;
 }
 
 /**
  * Get the maximum Y position that a box touches.
  */
 export function boxMaxY(box : Box2) : number {
-    return box.position.y + box.dimension.y / 2;
+    return box.position.y + box.dimension.y;
 }
 
 /**
@@ -79,7 +79,7 @@ export function boxMaxY(box : Box2) : number {
  */
 export function boxFromEdges(minX : number, maxX : number, minY : number, maxY : number) : Box2 {
     let dimension = {x : maxX - minX, y : maxY - minY};
-    let position = {x : (maxX + minX) / 2, y : (maxY + minY) / 2};
+    let position = {x : minX, y : minY};
     return {dimension, position, rotation : 0};
 }
 
