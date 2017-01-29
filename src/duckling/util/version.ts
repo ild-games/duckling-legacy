@@ -80,6 +80,16 @@ export function versionCompareFunction(leftVersion : string, rightVersion : stri
     }
 }
 
+export function incrementMinorVersion(mapVersion : string) : MapVersion {
+    let versionParts = _mapVersionParts(mapVersion);
+    return versionParts.major + "." + (versionParts.minor + 1);
+}
+
+export function incrementMajorVersion(mapVersion : string) : MapVersion {
+    let versionParts = _mapVersionParts(mapVersion);
+    return (versionParts.major + 1) + "." + versionParts.minor;
+}
+
 function _mapVersionParts(mapVersion : string) : ParsedVersion {
     if (mapVersion === "") {
         throw new Error("map version cannot be blank")
