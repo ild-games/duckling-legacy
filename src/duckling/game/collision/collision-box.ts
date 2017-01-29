@@ -14,7 +14,10 @@ export function collisionBoundingBox(entity : Entity) : Box2 {
         return null;
     }
     return {
-        position: {x: 0, y: 0},
+        position: {
+            x: -(collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x),
+            y: -(collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y)
+        },
         dimension: collisionAttribute.dimension.dimension,
         rotation: collisionAttribute.dimension.rotation
     }
