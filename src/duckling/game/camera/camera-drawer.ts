@@ -12,7 +12,5 @@ import {AssetService} from '../../project';
 export function drawCameraAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct {
     let cameraTexture = assetService.get("fa-video-camera", "TexturePNG", true);
     let sprite = new Sprite(cameraTexture);
-    sprite.x = -sprite.width / 2;
-    sprite.y = -sprite.height / 2;
     return sprite;
 }
