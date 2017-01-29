@@ -9,5 +9,30 @@ export interface EditorMigration {
 }
 
 export let editorMigrations : EditorMigration[] = [
+    {
+        updateEditorVersion: "0.2",
+        function: function(tools : any) {
+            return tools.attributeMigration("drawable", function (attribute : any) {
+                delete attribute.topDrawable.positionOffset;
+                return {
+                    topDrawable: {
+                        ...attribute.topDrawable,
+                        anchor: {x: 0.5, y: 0.5}
+                    }
+                }
+            });
+        }
+    },
+    {
+        updateEditorVersion: "0.3",
+        function: function(tools : any) {
+            return tools.attributeMigration("collision", function (attribute : any) {
+                return {
+                    ...attribute,
+                    anchor: {x: 0.5, y: 0.5}
+                }
+            });
+        }
+    }
 ];
 
