@@ -4,10 +4,11 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
+import {Rectangle} from 'pixi.js';
 
 import {DialogService} from '../../util/dialog.service';
 import {immutableAssign} from '../../util/model';
-import {AssetService} from '../../project/asset.service';
+import {AssetService, Asset} from '../../project/asset.service';
 import {ProjectService} from '../../project/project.service';
 import {Vector} from '../../math/vector';
 
@@ -39,13 +40,39 @@ export class TileBlockDrawableComponent {
                 private _project : ProjectService) {
     }
 
-    onImageFilePicked(imageKey : string) {
-        this._assets.add({type: "TexturePNG", key: imageKey});
-        this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {textureKey: imageKey}));
+    async onImageFilePicked(imageKey : string) {
+        let asset = await this._assets.add({type: "TexturePNG", key: imageKey});
+        if (this._validDimension(this._getAssetDimensions(asset))) {
+            this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {textureKey: imageKey}));
+        } else {
+            this._dialog.showErrorDialog(
+                "Unable to load tile block image",
+                "A tile block's image must be the same width and height and the dimensions must be a power of 2 (ex: 64x64)");
+        }
     }
 
     onSizeInput(newSize : Vector) {
         this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {size: newSize}));
+    }
+
+    private _validDimension(dimension : Rectangle) : boolean {
+        if (dimension.width !== dimension.height) {
+            return false;
+        }
+
+        if (!Number.isInteger(Math.sqrt(dimension.width))) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    private _getAssetDimensions(asset : Asset) : Rectangle {
+        let texture = this._assets.get(asset);
+        if (!texture) {
+            return new Rectangle(0, 0, 0, 0);
+        }
+        return texture.frame;
     }
     
     get dialogOptions() {

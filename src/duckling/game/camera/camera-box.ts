@@ -10,7 +10,7 @@ import {CameraAttribute} from './camera-attribute';
  */
 export const cameraBoundingBox : AttributeBoundingBox<any> = {
     getBox(cameraAttribute: CameraAttribute, assetService : AssetService) : Box2 {
-        let cameraTexture = assetService.get("fa-video-camera", "TexturePNG", true);
+        let cameraTexture = assetService.get({key: "fa-video-camera", type: "TexturePNG"}, true);
         return {
             position: {x: 0, y: 0},
             dimension: {
