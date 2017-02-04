@@ -14,7 +14,6 @@ export interface ImageDrawable extends Drawable {
 
 export let defaultImageDrawable : ImageDrawable = immutableAssign(defaultDrawable as ImageDrawable, {
     __cpp_type: "ild::ImageDrawable",
-    type: DrawableType.Image,
     key: "ImageDrawable",
     textureKey: "",
     isWholeImage: true,

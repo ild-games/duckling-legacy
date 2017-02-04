@@ -8,7 +8,6 @@ export interface ContainerDrawable extends Drawable {
 
 export let defaultContainerDrawable : ContainerDrawable = immutableAssign(defaultDrawable as ContainerDrawable, {
     __cpp_type: "ild::ContainerDrawable",
-    type: DrawableType.Container,
     key: "ContainerDrawable",
     drawables: [
     ]
