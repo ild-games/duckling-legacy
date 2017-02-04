@@ -175,7 +175,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
         return null;
     }
 
-    let baseTexture = assetService.get(imageDrawable.textureKey, "TexturePNG");
+    let baseTexture = assetService.get({key: imageDrawable.textureKey, type: "TexturePNG"});
     if (!baseTexture) {
         return null;
     }

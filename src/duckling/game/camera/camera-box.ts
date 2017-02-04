@@ -8,7 +8,7 @@ import {AssetService} from '../../project';
  * @return A Box2 bounding box for the entity's camera attribute.
  */
 export function cameraBoundingBox(entity : Entity, assetService : AssetService) : Box2 {
-    let cameraTexture = assetService.get("fa-video-camera", "TexturePNG", true);
+    let cameraTexture = assetService.get({key: "fa-video-camera", type: "TexturePNG"}, true);
     return {
         position: {x: 0, y: 0},
         dimension: {
