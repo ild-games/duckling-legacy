@@ -43,7 +43,10 @@ export class TileBlockDrawableComponent {
     async onImageFilePicked(imageKey : string) {
         let asset = await this._assets.add({type: "TexturePNG", key: imageKey});
         if (this._validDimension(this._getAssetDimensions(asset))) {
-            this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {textureKey: imageKey}));
+            this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {
+                textureKey: imageKey,
+                size: this._getStartingSize(this._getAssetDimensions(asset))
+            }));
         } else {
             this._dialog.showErrorDialog(
                 "Unable to load tile block image",
@@ -53,6 +56,13 @@ export class TileBlockDrawableComponent {
 
     onSizeInput(newSize : Vector) {
         this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {size: newSize}));
+    }
+
+    private _getStartingSize(assetDimension : Rectangle) : Vector {
+        return {
+            x: (assetDimension.width / 4) * 6,
+            y: (assetDimension.height / 4) * 6
+        }
     }
 
     private _validDimension(dimension : Rectangle) : boolean {
