@@ -15,11 +15,13 @@ import {defaultShapeDrawable} from './shape-drawable';
 import {defaultContainerDrawable} from './container-drawable';
 import {defaultAnimatedDrawable} from './animated-drawable';
 import {defaultImageDrawable} from './image-drawable';
+import {defaultTileBlockDrawable} from './tile-block-drawable';
 import {defaultTextDrawable} from './text-drawable';
 import {ShapeDrawableComponent} from './shape-drawable.component';
 import {ContainerDrawableComponent} from './container-drawable.component';
 import {AnimatedDrawableComponent} from './animated-drawable.component';
 import {ImageDrawableComponent} from './image-drawable.component';
+import {TileBlockDrawableComponent} from './tile-block-drawable.component';
 import {GenericDrawableComponent} from './generic-drawable.component';
 
 /**
@@ -37,6 +39,8 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
             return defaultContainerDrawable;
         case DrawableType.Image:
             return defaultImageDrawable;
+        case DrawableType.TileBlock:
+            return defaultTileBlockDrawable;
         case DrawableType.Animated:
             return defaultAnimatedDrawable;
         case DrawableType.Text:
@@ -81,6 +85,12 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
                 [imageDrawable]="drawable"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-image-drawable>
+
+            <dk-tile-block-drawable
+                *ngSwitchCase="DrawableType.TileBlock"
+                [tileBlockDrawable]="drawable"
+                (drawableChanged)="specificDrawableChanged($event)">
+            </dk-tile-block-drawable>
 
             <dk-animated-drawable
                 *ngSwitchCase="DrawableType.Animated"
