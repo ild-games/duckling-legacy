@@ -1,6 +1,6 @@
 import {ReflectiveInjector} from '@angular/core';
 
-import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container} from 'pixi.js';
+import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture} from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
 import {AssetService} from '../../project';
@@ -28,6 +28,7 @@ import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
+import {TileBlockDrawable, getTileHeight, getTileWidth, drawTileBlockDrawable} from './tile-block-drawable';
 import {AnimatedDrawable} from './animated-drawable';
 import {TextDrawable} from './text-drawable';
 import {ShapeType, Shape, cppTypeToShapeType} from './shape';
@@ -77,6 +78,9 @@ function _drawDrawable(drawable : Drawable, assetService : AssetService) : Drawn
             break;
         case DrawableType.Text:
             drawnObject = _drawTextDrawable(drawable as TextDrawable, assetService);
+            break;
+        case DrawableType.TileBlock:
+            drawnObject = drawTileBlockDrawable(drawable as TileBlockDrawable, assetService);
             break;
         default:
             drawnObject = null;
