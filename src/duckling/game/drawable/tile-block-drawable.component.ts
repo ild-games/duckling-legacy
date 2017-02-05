@@ -7,6 +7,7 @@ import {
 import {Rectangle} from 'pixi.js';
 
 import {DialogService} from '../../util/dialog.service';
+import {Validator} from '../../controls/validated-input.component';
 import {immutableAssign} from '../../util/model';
 import {AssetService, Asset} from '../../project/asset.service';
 import {ProjectService} from '../../project/project.service';
@@ -20,6 +21,10 @@ import {TileBlockDrawable} from './tile-block-drawable';
         <dk-vector-input
             xLabel="Size Width"
             yLabel="Size Height"
+            [xDisabled]="!tileBlockDrawable.textureKey"
+            [yDisabled]="!tileBlockDrawable.textureKey"
+            [xValidator]="sizeXValidator"
+            [yValidator]="sizeYValidator"
             [value]="tileBlockDrawable.size"
             (validInput)="onSizeInput($event)">
         </dk-vector-input>
@@ -95,5 +100,43 @@ export class TileBlockDrawableComponent {
                 {name: 'Images', extensions: ['png']},
             ]
         }
+    }
+
+    get sizeXValidator() : Validator {
+        return (value : string) => {
+            if (!this.tileBlockDrawable.textureKey) {
+                return true;
+            }
+            
+            return parseInt(value) % this._tileWidth === 0;
+        }
+    }
+    
+    get sizeYValidator() : Validator {
+        return (value : string) => {
+            if (!this.tileBlockDrawable.textureKey) {
+                return true;
+            }
+            
+            return parseInt(value) % this._tileHeight === 0;
+        }
+    }
+
+    private get _tileWidth() : number {
+        if (!this.tileBlockDrawable.textureKey) {
+            return 0;
+        }
+        
+        let width = this._getAssetDimensions({key: this.tileBlockDrawable.textureKey, type: "TexturePNG"}).width;
+        return width / 4;
+    }
+
+    private get _tileHeight() : number {
+        if (!this.tileBlockDrawable.textureKey) {
+            return 0;
+        }
+        
+        let height = this._getAssetDimensions({key: this.tileBlockDrawable.textureKey, type: "TexturePNG"}).height;
+        return height / 4;
     }
 }
