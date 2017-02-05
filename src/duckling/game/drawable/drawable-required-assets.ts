@@ -7,6 +7,7 @@ import {ImageDrawable} from './image-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {AnimatedDrawable} from './animated-drawable';
 import {TextDrawable} from './text-drawable';
+import {TileBlockDrawable} from './tile-block-drawable';
 
 /**
  * Gets the required assets for a given entity's DrawableAttribute
@@ -32,6 +33,8 @@ function _drawableRequiredAssets(drawable : Drawable) : AssetMap {
             return _animatedDrawableRequiredAssets(drawable as AnimatedDrawable);
         case DrawableType.Text:
             return _textDrawableRequiredAssets(drawable as TextDrawable);
+        case DrawableType.TileBlock:
+            return _tileBlockDrawableRequiredAssets(drawable as TileBlockDrawable);
     }
     return {};
 }
@@ -45,6 +48,19 @@ function _imageDrawableRequiredAssets(imageDrawable : ImageDrawable) : AssetMap 
     assets[imageDrawable.textureKey] = {
         type: "TexturePNG",
         key: imageDrawable.textureKey
+    };
+    return assets;
+}
+
+function _tileBlockDrawableRequiredAssets(tileBlockDrawable : TileBlockDrawable) : AssetMap {
+    let assets : AssetMap = {};
+    if (!tileBlockDrawable.textureKey) {
+        return assets;
+    }
+
+    assets[tileBlockDrawable.textureKey] = {
+        type: "TexturePNG",
+        key: tileBlockDrawable.textureKey
     };
     return assets;
 }

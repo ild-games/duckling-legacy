@@ -206,7 +206,7 @@ export class AssetService {
             throw new Error("Asset is not a TexturePNG");
         }
         
-        let texture = this.get(asset.key, asset.type);
+        let texture = this.get(asset);
         if (!texture) {
             return {x: 0, y: 0};
         }

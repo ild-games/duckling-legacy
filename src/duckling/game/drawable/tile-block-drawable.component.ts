@@ -13,7 +13,7 @@ import {AssetService, Asset} from '../../project/asset.service';
 import {ProjectService} from '../../project/project.service';
 import {Vector} from '../../math/vector';
 
-import {TileBlockDrawable} from './tile-block-drawable';
+import {TileBlockDrawable, getTileWidth, getTileHeight} from './tile-block-drawable';
 
 @Component({
     selector: "dk-tile-block-drawable",
@@ -23,9 +23,9 @@ import {TileBlockDrawable} from './tile-block-drawable';
             yLabel="Size Height"
             [xDisabled]="!tileBlockDrawable.textureKey"
             [yDisabled]="!tileBlockDrawable.textureKey"
-            [xValidator]="sizeXValidator"
-            [yValidator]="sizeYValidator"
-            [value]="tileBlockDrawable.size"
+            [xValidator]="sizeValidator"
+            [yValidator]="sizeValidator"
+            [value]="getDisplaySize()"
             (validInput)="onSizeInput($event)">
         </dk-vector-input>
         
@@ -47,10 +47,10 @@ export class TileBlockDrawableComponent {
 
     async onImageFilePicked(imageKey : string) {
         let asset = await this._assets.add({type: "TexturePNG", key: imageKey});
-        if (this._validDimension(this._getAssetDimensions(asset))) {
+        if (this._validDimension(this._assets.getImageAssetDimensions(asset))) {
             this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {
                 textureKey: imageKey,
-                size: this._getStartingSize(this._getAssetDimensions(asset))
+                size: this._getStartingSize(this._assets.getImageAssetDimensions(asset))
             }));
         } else {
             this._dialog.showErrorDialog(
@@ -60,7 +60,19 @@ export class TileBlockDrawableComponent {
     }
 
     onSizeInput(newSize : Vector) {
-        this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {size: newSize}));
+        this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {
+            size: {
+                x: newSize.x * getTileWidth(this.tileBlockDrawable, this._assets),
+                y: newSize.y * getTileHeight(this.tileBlockDrawable, this._assets)
+            }
+        }));
+    }
+
+    getDisplaySize() : Vector {
+        return {
+            x: this.tileBlockDrawable.size.x / getTileWidth(this.tileBlockDrawable, this._assets),
+            y: this.tileBlockDrawable.size.y / getTileHeight(this.tileBlockDrawable, this._assets)
+        };
     }
 
     private _getStartingSize(assetDimension : Rectangle) : Vector {
@@ -82,14 +94,6 @@ export class TileBlockDrawableComponent {
         return true;
     }
     
-    private _getAssetDimensions(asset : Asset) : Rectangle {
-        let texture = this._assets.get(asset);
-        if (!texture) {
-            return new Rectangle(0, 0, 0, 0);
-        }
-        return texture.frame;
-    }
-    
     get dialogOptions() {
         return {
             defaultPath: this._project.home,
@@ -102,41 +106,9 @@ export class TileBlockDrawableComponent {
         }
     }
 
-    get sizeXValidator() : Validator {
+    get sizeValidator() : Validator {
         return (value : string) => {
-            if (!this.tileBlockDrawable.textureKey) {
-                return true;
-            }
-            
-            return parseInt(value) % this._tileWidth === 0;
+            return Number.isInteger(parseInt(value)) && parseInt(value) > 0;
         }
-    }
-    
-    get sizeYValidator() : Validator {
-        return (value : string) => {
-            if (!this.tileBlockDrawable.textureKey) {
-                return true;
-            }
-            
-            return parseInt(value) % this._tileHeight === 0;
-        }
-    }
-
-    private get _tileWidth() : number {
-        if (!this.tileBlockDrawable.textureKey) {
-            return 0;
-        }
-        
-        let width = this._getAssetDimensions({key: this.tileBlockDrawable.textureKey, type: "TexturePNG"}).width;
-        return width / 4;
-    }
-
-    private get _tileHeight() : number {
-        if (!this.tileBlockDrawable.textureKey) {
-            return 0;
-        }
-        
-        let height = this._getAssetDimensions({key: this.tileBlockDrawable.textureKey, type: "TexturePNG"}).height;
-        return height / 4;
     }
 }
