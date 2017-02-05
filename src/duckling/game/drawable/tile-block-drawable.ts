@@ -58,153 +58,108 @@ export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, ass
 }
 
 function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, assetService : AssetService) : DisplayObject {
-    let tileWidth = getTileWidth(tileBlockDrawable, assetService);
-    let tileHeight = getTileHeight(tileBlockDrawable, assetService);
-    let numTilesWidth = tileBlockDrawable.size.x / tileWidth;
-    let numTilesHeight = tileBlockDrawable.size.y / tileHeight;
+    let tileSize = getTileWidth(tileBlockDrawable, assetService);
+    let tiles = { x: tileBlockDrawable.size.x / tileSize, y: tileBlockDrawable.size.y / tileSize};
     
-    if (numTilesWidth > 1 && numTilesHeight > 1) {
-        return _constructLargeTileBlockSprite(tileBlockDrawable, baseTexture, tileWidth, tileHeight, numTilesWidth, numTilesHeight);
-    } else if (numTilesWidth === 1 && numTilesHeight > 1) {
-        return _constructColumnTileBlockSprite(tileBlockDrawable, baseTexture, tileWidth, tileHeight, numTilesHeight);
-    } else if (numTilesWidth > 1 && numTilesHeight === 1) {
-        return _constructRowTileBlockSprite(tileBlockDrawable, baseTexture, tileWidth, tileHeight, numTilesWidth);
-    } else if (numTilesWidth === 1 && numTilesHeight === 1) {
-        return _constructSmallTileBlockSprite(tileBlockDrawable, baseTexture, tileWidth, tileHeight);
-    }
+    let positions = _getPositions(tiles);
+    let offsets = _getOffsets(tiles);
     
-    return new Container();
+    return _constructTileBlockContainer(positions, offsets, baseTexture, tileSize, tiles);
 }
 
-function _constructLargeTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, tileWidth : number, tileHeight : number, numTilesWidth : number, numTilesHeight : number) : Container {
-    let container = new Container();
-    let texture : Texture;
-    let sprite : any;
+function _getPositions(tiles: Vector): Vector[] {
+    let positions: Vector[];
     
-    // top left
-    texture = new Texture(baseTexture, new PIXI.Rectangle(0, 0, tileWidth, tileHeight));
-    container.addChild(new Sprite(texture));
+    let xPositions: number[] = _getAxisPositions(tiles.x);
+    let yPositions: number[] = _getAxisPositions(tiles.y);
     
-    // top middle
-    if (numTilesWidth > 2) {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth, 0, tileWidth, tileHeight));
-        sprite = new (<any>PIXI).TilingSprite(texture, tileBlockDrawable.size.x - (tileWidth * 2), tileHeight);
-        sprite.x = tileWidth;
-        container.addChild(sprite);
-    }
-    
-    // top right
-    texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth * 2, 0, tileWidth, tileHeight));
-    sprite = new Sprite(texture);
-    sprite.x = tileBlockDrawable.size.x - tileWidth;
-    container.addChild(sprite);
-    
-    // middle left
-    if (numTilesHeight > 2) {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(0, tileHeight, tileWidth, tileHeight));
-        sprite = new (<any>PIXI).TilingSprite(texture, tileWidth, tileBlockDrawable.size.y - (tileHeight * 2));
-        sprite.y = tileHeight;
-        container.addChild(sprite);
-    }
-    
-    // middle
-    if (numTilesWidth > 2 && numTilesHeight > 2) {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth, tileHeight, tileWidth, tileHeight));
-        sprite = new (<any>PIXI).TilingSprite(texture, tileBlockDrawable.size.x - (tileWidth * 2), tileBlockDrawable.size.y - (tileHeight * 2));
-        sprite.x = tileWidth;
-        sprite.y = tileHeight;
-        container.addChild(sprite);
+    let position: Vector;
+    for (let xPosition of xPositions) {
+        for (let yPosition of yPositions) {
+            position = { x: xPosition, y: yPosition };
+            positions.push(position);
+        }
     }
 
-    // middle right
-    if (numTilesHeight > 2) {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth * 2, tileHeight, tileWidth, tileHeight));
-        sprite = new (<any>PIXI).TilingSprite(texture, tileWidth, tileBlockDrawable.size.y - (tileHeight * 2));
-        sprite.x = tileBlockDrawable.size.x - tileWidth;
-        sprite.y = tileHeight;
+    return positions;
+}
+
+function _getAxisPositions(numTilesOnAxis: number): number[] {
+    if (numTilesOnAxis > 1) {
+        return [0,1,2];
+    } else {
+        return [3];
+    }
+}
+
+function _getOffsets(tiles: Vector): Vector {
+    let offset: Vector;
+    if (tiles.x === 1) {
+        offset.x = 0;
+    }
+    if (tiles.y === 1) {
+        offset.y = 0;
+    }
+    return offset;
+}
+
+
+function _constructTileBlockContainer(positions: Vector[], offsets: Vector, baseTexture: BaseTexture, tileSize: number, tiles: Vector): Container {
+    let texture: Texture;
+    let sprite: DisplayObject;
+    let container = new Container();
+
+    for (let position of positions) {
+        texture = new Texture(baseTexture, new PIXI.Rectangle(position.x * tileSize, position.y * tileSize, tileSize, tileSize));
+        sprite = _getSprite(position, tiles, tileSize, texture, offsets);
+        if (sprite === null) { continue; }
         container.addChild(sprite);
     }
-    
-    // bottom left
-    texture = new Texture(baseTexture, new PIXI.Rectangle(0, tileHeight * 2, tileWidth, tileHeight));
-    sprite = new Sprite(texture);
-    sprite.y = tileBlockDrawable.size.y - tileHeight;
-    container.addChild(sprite);
-    
-    // bottom middle
-    if (numTilesWidth > 2) {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth, tileHeight * 2, tileWidth, tileHeight));
-        sprite = new (<any>PIXI).TilingSprite(texture, tileBlockDrawable.size.x - (tileWidth * 2), tileHeight);
-        sprite.x = tileWidth;
-        sprite.y = tileBlockDrawable.size.y - tileHeight;
-        container.addChild(sprite);
-    }
-    
-    // bottom right
-    texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth * 2, tileHeight * 2, tileWidth, tileHeight));
-    sprite = new Sprite(texture);
-    sprite.x = tileBlockDrawable.size.x - tileWidth;
-    sprite.y = tileBlockDrawable.size.y - tileHeight;
-    container.addChild(sprite);
 
     return container;
 }
 
-function _constructColumnTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, tileWidth : number, tileHeight : number, numTilesHeight : number) : Container {
-    let container = new Container();
-    let texture : Texture;
-    let sprite : any;
-    let startingX = tileWidth * 3;
-    
-    // top
-    texture = new Texture(baseTexture, new PIXI.Rectangle(startingX, 0, tileWidth, tileHeight));
-    container.addChild(new Sprite(texture));
-    
-    // middle
-    if (numTilesHeight > 2) {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(startingX, tileHeight, tileWidth, tileHeight));
-        sprite = new (<any>PIXI).TilingSprite(texture, tileWidth, tileBlockDrawable.size.y - (tileHeight * 2));
-        sprite.y = tileHeight;
-        container.addChild(sprite);
+function _getTexture(baseTexture : BaseTexture, tileSize: number, position: Vector):Texture {
+    let startX: number = _getTexturePosition(position.x, tileSize);
+    let startY: number = _getTexturePosition(position.y, tileSize);
+}
+
+function _getTexturePosition(position: number, tileSize: number): number {
+    return position * tileSize;
+}
+
+function _getSprite(position: Vector, tiles: Vector, tileSize: number, texture: Texture, offsets: Vector): DisplayObject | null {
+    let sprite: DisplayObject;
+ 
+    // Only tiles in row/column 1 (0 indexed) are ever repeated
+    if (position.x === 1 || position.y === 1){
+        let tileAreaWidth = (tiles.x - 2) * tileSize;
+        let tileAreaHeight = (tiles.y - 2) * tileSize;
+        if (tileAreaHeight === 0 || tileAreaWidth === 0) { return null; }
+
+        sprite = new (<any>PIXI).TilingSprite(texture, tileAreaWidth, tileAreaHeight)
+    } else {
+        sprite = new Sprite(texture);
     }
-    
-    // down
-    texture = new Texture(baseTexture, new PIXI.Rectangle(startingX, tileHeight * 2, tileWidth, tileHeight));
-    sprite = new Sprite(texture);
-    sprite.y = tileBlockDrawable.size.y - tileHeight;
-    container.addChild(sprite);
 
-    return container;
-}
-
-function _constructRowTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, tileWidth : number, tileHeight : number, numTilesWidth : number) : Container {
-    let container = new Container();
-    let texture : Texture;
-    let sprite : any;
-    let startingY = tileHeight * 3;
-    
-    // left
-    texture = new Texture(baseTexture, new PIXI.Rectangle(0, startingY, tileWidth, tileHeight));
-    container.addChild(new Sprite(texture));
-    
-    // middle
-    if (numTilesWidth > 2) {
-        texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth, startingY, tileWidth, tileHeight));
-        sprite = new (<any>PIXI).TilingSprite(texture, tileBlockDrawable.size.x - (tileWidth * 2), tileHeight);
-        sprite.x = tileWidth;
-        container.addChild(sprite);
+    // Unless offsets have been overridden, calculate offsets
+    if (offsets.x === undefined || offsets.x === null) {
+        sprite.x = _getSpriteOffset(position.x, tiles.x, tileSize);
     }
-    
-    // right
-    texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth * 2, startingY, tileWidth, tileHeight));
-    sprite = new Sprite(texture);
-    sprite.x = tileBlockDrawable.size.x - tileWidth;
-    container.addChild(sprite);
+    if (offsets.y === undefined || offsets.y === null) {
+        sprite.y = _getSpriteOffset(position.y, tiles.y, tileSize);
+    }
 
-    return container;
+    return sprite;
 }
 
-function _constructSmallTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, tileWidth : number, tileHeight : number) : Sprite {
-    let texture = new Texture(baseTexture, new PIXI.Rectangle(tileWidth * 3, tileHeight * 3, tileWidth, tileHeight));
-    return new Sprite(texture);
+function _getSpriteOffset(position: number, numTiles: number, tileSize: number): number {
+        let numTileOffset = position;
+        if (position === 2) {
+            numTileOffset = numTiles - 1; // Account for middle section
+        }
+        return numTileOffset * tileSize;
+    }
 }
+
+
