@@ -69,6 +69,10 @@ export class TileBlockDrawableComponent {
     }
 
     getDisplaySize() : Vector {
+        if (!this.tileBlockDrawable.textureKey) {
+            return {x: 10, y: 10};
+        }
+        
         return {
             x: this.tileBlockDrawable.size.x / getTileWidth(this.tileBlockDrawable, this._assets),
             y: this.tileBlockDrawable.size.y / getTileHeight(this.tileBlockDrawable, this._assets)
