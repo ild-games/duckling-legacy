@@ -8,7 +8,7 @@ import {versionCompareFunction, MapVersion, EditorVersion, EDITOR_VERSION, incre
 
 import {migrationsToRun, MapMigration} from './map-migration';
 import {MigrationTools} from './migration-tools';
-import {editorMigrations} from './editor-migrations';
+import {EditorMigration, editorMigrations} from './editor-migration';
 
 /**
 * Used for registering migrations and duckling versions during the bootstrap process.
@@ -73,7 +73,7 @@ export class MigrationService {
             throw new Error(`You should update duckling. The project expects editor version ${versionFile.editorVersion}. The current version is  ${EDITOR_VERSION}`);
         }
 
-        await this._addMissingEditorMigrations(versionFile, this._findMissingEditorMigrations(versionFile.mapMigrations), versionFileName);
+        await this._addMissingEditorMigrations(versionFile, this._findMissingEditorMigrations(versionFile), versionFileName);
 
         return {
             mapMigrations : versionFile.mapMigrations,
@@ -81,33 +81,21 @@ export class MigrationService {
         }
     }
 
-    private async _addMissingEditorMigrations(versionFile : VersionFile, missingMigrations : MapMigration[], versionFileName : string) {
-        versionFile.mapMigrations = versionFile.mapMigrations.concat(missingMigrations);
+    private async _addMissingEditorMigrations(versionFile : VersionFile, missingMigrations : EditorMigration[], versionFileName : string) {
         for (let migration of missingMigrations) {
             versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
-            migration.updateTo = versionFile.projectVersion;
+            versionFile.mapMigrations.push({
+                    updateTo: versionFile.projectVersion,
+                    name: `${migration.updateEditorVersion}`,
+                    type: "editor-version"
+                });
         }
         versionFile.editorVersion = EDITOR_VERSION;
         await this._jsonLoader.saveJsonToPath(versionFileName, JSON.stringify(versionFile, null, 4));
     }
 
-    private _findMissingEditorMigrations(currentMapMigrations : MapMigration[]) : MapMigration[] {
-        let missingMigrations : MapMigration[] = [];
-        for (let editorMigration of editorMigrations) {
-            if (!this._isMigrationPresent(editorMigration.name, currentMapMigrations)) {
-                missingMigrations.push(editorMigration);
-            }
-        }
-        return missingMigrations;
-    }
-
-    private _isMigrationPresent(migrationName : string, migrations : MapMigration[]) : boolean {
-        for (let migration of migrations) {
-            if (migration.name === migrationName) {
-                return true;
-            }
-        }
-        return false;
+    private _findMissingEditorMigrations(versionFile : VersionFile) : EditorMigration[] {
+        return editorMigrations.filter(migration => versionFile.editorVersion < migration.updateEditorVersion);
     }
 
     protected _getMigration(migration : MapMigration, migrationRoot : string) : MapMigrationFunction {
@@ -143,8 +131,8 @@ export class MigrationService {
 
     private _loadEditorVersionMigration(migration : MapMigration) : MapMigrationFunction {
         for (let editorMigration of editorMigrations) {
-            if (migration.name === editorMigration.name) {
-                return editorMigration.options.function(new MigrationTools());
+            if (migration.name === editorMigration.updateEditorVersion) {
+                return editorMigration.function(new MigrationTools());
             }
         }
         throw new Error(`Migration "${migration.name}" is not recognized by the editor.`);
@@ -156,7 +144,7 @@ export interface ProjectVersionInfo {
     mapVersion : MapVersion
 }
 
-interface MapMigrationFunction {
+export interface MapMigrationFunction {
     (map : any, options? : any): any;
 }
 
