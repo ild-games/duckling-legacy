@@ -4,10 +4,11 @@ import {Injectable} from "@angular/core";
 import {rethrow} from '../util/rethrow';
 import {JsonLoaderService} from '../util/json-loader.service';
 import {PathService} from '../util/path.service';
-import {versionCompareFunction, MapVersion, EditorVersion, EDITOR_VERSION} from '../util/version';
+import {versionCompareFunction, MapVersion, EditorVersion, EDITOR_VERSION, incrementMajorVersion} from '../util/version';
 
 import {migrationsToRun, MapMigration} from './map-migration';
 import {MigrationTools} from './migration-tools';
+import {EditorMigration, editorMigrations} from './editor-migration';
 
 /**
 * Used for registering migrations and duckling versions during the bootstrap process.
@@ -72,16 +73,38 @@ export class MigrationService {
             throw new Error(`You should update duckling. The project expects editor version ${versionFile.editorVersion}. The current version is  ${EDITOR_VERSION}`);
         }
 
+        await this._addMissingEditorMigrations(versionFile, this._findMissingEditorMigrations(versionFile), versionFileName);
+
         return {
             mapMigrations : versionFile.mapMigrations,
             mapVersion : versionFile.projectVersion
         }
     }
 
+    private async _addMissingEditorMigrations(versionFile : VersionFile, missingMigrations : EditorMigration[], versionFileName : string) {
+        missingMigrations.sort((a, b) => versionCompareFunction(a.updateEditorVersion, b.updateEditorVersion));
+        for (let migration of missingMigrations) {
+            versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
+            versionFile.mapMigrations.push({
+                    updateTo: versionFile.projectVersion,
+                    name: `${migration.updateEditorVersion}`,
+                    type: "editor-version"
+                });
+        }
+        versionFile.editorVersion = EDITOR_VERSION;
+        await this._jsonLoader.saveJsonToPath(versionFileName, JSON.stringify(versionFile, null, 4));
+    }
+
+    private _findMissingEditorMigrations(versionFile : VersionFile) : EditorMigration[] {
+        return editorMigrations.filter(migration => versionFile.editorVersion < migration.updateEditorVersion);
+    }
+
     protected _getMigration(migration : MapMigration, migrationRoot : string) : MapMigrationFunction {
         switch (migration.type) {
             case "code":
                 return this._loadMapMigration(migration, migrationRoot);
+            case "editor-version":
+                return this._loadEditorVersionMigration(migration);
         }
     }
 
@@ -106,6 +129,15 @@ export class MigrationService {
 
         return mapMigration;
     }
+
+    private _loadEditorVersionMigration(migration : MapMigration) : MapMigrationFunction {
+        for (let editorMigration of editorMigrations) {
+            if (migration.name === editorMigration.updateEditorVersion) {
+                return editorMigration.function(new MigrationTools());
+            }
+        }
+        throw new Error(`Migration "${migration.name}" is not recognized by the editor.`);
+    }
 }
 
 export interface ProjectVersionInfo {
@@ -113,7 +145,7 @@ export interface ProjectVersionInfo {
     mapVersion : MapVersion
 }
 
-interface MapMigrationFunction {
+export interface MapMigrationFunction {
     (map : any, options? : any): any;
 }
 
