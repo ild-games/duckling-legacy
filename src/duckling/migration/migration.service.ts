@@ -82,6 +82,7 @@ export class MigrationService {
     }
 
     private async _addMissingEditorMigrations(versionFile : VersionFile, missingMigrations : EditorMigration[], versionFileName : string) {
+        missingMigrations.sort((a, b) => versionCompareFunction(a.updateEditorVersion, b.updateEditorVersion));
         for (let migration of missingMigrations) {
             versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
             versionFile.mapMigrations.push({
