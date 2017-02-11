@@ -2,8 +2,14 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    ViewChild,
+    OnChanges,
+    SimpleChange,
+    AfterViewInit,
+    ChangeDetectorRef
 } from '@angular/core';
+import {MdSelect} from '@angular/material';
 
 /**
  * Select control that accepts an array of options.
@@ -11,8 +17,7 @@ import {
 @Component({
     selector: "dk-array-select",
     template:`
-        <md-select 
-            [(ngModel)]="value" 
+        <md-select #mdSelect
             (onClose)="onSelectionChanged()">
             <md-option 
                 *ngFor="let option of options" 
@@ -22,7 +27,9 @@ import {
         </md-select>
     `
 })
-export class ArraySelectComponent {
+export class ArraySelectComponent implements OnChanges, AfterViewInit {
+    @ViewChild(MdSelect) mdSelect : MdSelect;
+    
     /**
      * The selected value.
      */
@@ -31,15 +38,37 @@ export class ArraySelectComponent {
     /**
      * The available options.
      */
-    @Input() options : SelectOption [];
+    @Input() options : SelectOption[];
 
     /**
      * Event that is published with the new value whenever the user changes it.
      */
     @Output() selection = new EventEmitter<string>();
 
+    constructor(private _changeDetector : ChangeDetectorRef) {
+    }
+
+    ngAfterViewInit() {
+        this.mdSelect.writeValue(this.value);
+        this._changeDetector.detectChanges();
+    }
+
+    ngOnChanges(changes : {value? : SimpleChange, options? : SimpleChange}) {
+        if (!this.mdSelect.options) {
+            return;
+        }
+        
+        if (changes.value) {
+            this.mdSelect.writeValue(changes.value.currentValue);
+        } else if (changes.options) {
+            this.mdSelect.writeValue(this.value);
+        }
+    }
+
     onSelectionChanged() {
-        this.selection.emit(this.value);
+        if (this.mdSelect.selected) {
+            this.selection.emit(this.mdSelect.selected.value);
+        }
     }
 
     indexOfValue(value : string) {
