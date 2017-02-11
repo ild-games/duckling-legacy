@@ -4,8 +4,7 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit,
-    ChangeDetectorRef
+    OnInit
 } from '@angular/core';
 
 import {SelectOption, ArraySelectComponent} from './array-select.component';
@@ -18,14 +17,14 @@ import {isInteger} from '../math/number-utils';
     selector: "dk-enum-select",
     template:`
         <dk-array-select
-            [value]="value"
+            [value]="value+''"
             [options]="options"
             (selection)="onSelectionChanged($event)">
         </dk-array-select>
     `,
     changeDetection : ChangeDetectionStrategy.OnPush,
 })
-export class EnumSelectComponent implements AfterViewInit {
+export class EnumSelectComponent implements OnInit {
     /**
      * The selected enum value.
      */
@@ -40,18 +39,14 @@ export class EnumSelectComponent implements AfterViewInit {
      * Event published with the new enum value when the user changes their selection.
      */
     @Output() selection = new EventEmitter<number>();
-
+    
     public options : SelectOption[] = [];
 
-    constructor(private _changeDetector : ChangeDetectorRef) {
+    ngOnInit() {
+        this.options = this._enumOptions;
     }
 
-    ngAfterViewInit() {
-        this.options = this.enumOptions();
-        setTimeout(() => this._changeDetector.markForCheck(), 100);
-    }
-
-    enumOptions() {
+    private get _enumOptions() : SelectOption[] {
         let options : SelectOption[] = [];
         for(let value in this.enum) {
             if (isInteger(Number(value))) {
