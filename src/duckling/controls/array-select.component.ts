@@ -51,6 +51,12 @@ export class ArraySelectComponent implements OnChanges, AfterViewInit {
     ngAfterViewInit() {
         this.mdSelect.writeValue(this.value);
         this._changeDetector.detectChanges();
+        
+        this.mdSelect.options.changes.startWith(null).subscribe(() => {
+            // Defer setting the value to avoid angular errors. 
+            // TODO (ISSUE #???): This can be removed once the next @angular/material beta is released
+            Promise.resolve(null).then(() => this.mdSelect.writeValue(this.value));
+        });
     }
 
     ngOnChanges(changes : {value? : SimpleChange, options? : SimpleChange}) {
