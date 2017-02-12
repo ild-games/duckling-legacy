@@ -2,10 +2,10 @@
   "name": "Duckling",
   "version": "0.0.1",
   "scripts": {
-    "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
-    "test": "tsc && npm run mocha",
+    "start": "yarn run build && concurrently \"yarn run watch\" \"yarn run duckling\" ",
+    "test": "tsc && yarn run mocha",
     "build": "gulp && tsc",
-    "watch": "concurrently \"npm run gulp:w\" \"npm run tsc:w\"",
+    "watch": "concurrently \"yarn run gulp:w\" \"yarn run tsc:w\"",
     "gulp": "gulp",
     "gulp:w": "gulp watch",
     "tsc": "tsc",

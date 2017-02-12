@@ -2,7 +2,7 @@
 export type MapVersion = string;
 export type EditorVersion = string;
 
-export const EDITOR_VERSION : EditorVersion = "0.3";
+export const EDITOR_VERSION : EditorVersion = "0.4";
 
 export interface ParsedVersion {
     major : number,
