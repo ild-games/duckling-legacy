@@ -9,3 +9,22 @@ html, body, * {
 input {
     background-color: transparent;
 }
+
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #7d7d7d;
+}
