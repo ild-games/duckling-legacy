@@ -329,8 +329,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _stageCoordsFromCanvasCoords(canvasCoords : Vector) : Vector {
         let position = this._stagePosition;
         return {
-            x: (canvasCoords.x - position.x) / this.scale,
-            y: (canvasCoords.y - position.y) / this.scale
+            x: ((canvasCoords.x - position.x) / this.scale) + this.stageDimensions.x / 2,
+            y: ((canvasCoords.y - position.y) / this.scale) + this.stageDimensions.y / 2
         }
     }
 
@@ -348,8 +348,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             let stage = new Container();
 
             stage.addChild(this.canvasDisplayObject);
-            this.canvasDisplayObject.position.x = position.x + 0.5;
-            this.canvasDisplayObject.position.y = position.y + 0.5;
+            this.canvasDisplayObject.position.x = position.x + 0.5 - ((this.stageDimensions.x * this.scale) / 2);
+            this.canvasDisplayObject.position.y = position.y + 0.5 - ((this.stageDimensions.y * this.scale) / 2);
             this.canvasDisplayObject.scale = new Point(this.scale, this.scale);
             this.canvasDisplayObject.updateTransform();
 

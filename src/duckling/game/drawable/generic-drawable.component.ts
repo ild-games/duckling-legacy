@@ -41,10 +41,10 @@ import {Drawable} from './drawable';
         </dk-vector-input>
 
         <dk-vector-input
-            xLabel="Position Offset X"
-            yLabel="Position Offset Y"
-            [value]="drawable.positionOffset"
-            (validInput)="onPositionOffsetInput($event)">
+            xLabel="Relative Anchor X %"
+            yLabel="Relative Anchor Y %"
+            [value]="drawable.anchor"
+            (validInput)="onAnchorInput($event)">
         </dk-vector-input>
 
         <dk-number-input
@@ -66,8 +66,8 @@ export class GenericDrawableComponent {
         this.drawableChanged.emit(immutableAssign(this.drawable, {scale: newScale}));
     }
 
-    onPositionOffsetInput(newPositionOffsetInput : Vector) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {positionOffset: newPositionOffsetInput}));
+    onAnchorInput(newAnchor : Vector) {
+        this.drawableChanged.emit(immutableAssign(this.drawable, {anchor: newAnchor}));
     }
 
     onRotationInput(newRotation : number) {
