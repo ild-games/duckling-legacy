@@ -57,9 +57,7 @@ import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent} fr
                 (mouseup)="onMouseUp($event)"
                 (mousemove)="onMouseDrag($event)"
                 (mouseout)="onMouseOut()"
-                (wheel)="onMouseWheel($event)"
-                [height]="height"
-                [width]="width">
+                (wheel)="onMouseWheel($event)">
             </canvas>
         </div>
     `
@@ -307,8 +305,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     private _resizeCanvasElements() {
-        this.elementDimensions.x = this.canvasContainerDiv.nativeElement.clientWidth;
-        this.elementDimensions.y = this.canvasContainerDiv.nativeElement.clientHeight;
+        this.elementDimensions.x = this.canvasContainerDiv.nativeElement.parentElement.offsetWidth;
+        this.elementDimensions.y = this.canvasContainerDiv.nativeElement.parentElement.offsetHeight;
         this.scrollerDimensions.x = this.elementDimensions.x * 2 + (this.stageDimensions.x * this.scale) - (this._scrollStageOffset * 2);
         this.scrollerDimensions.y = this.elementDimensions.y * 2 + (this.stageDimensions.y * this.scale) - (this._scrollStageOffset * 2);
         if (this._renderer) {
