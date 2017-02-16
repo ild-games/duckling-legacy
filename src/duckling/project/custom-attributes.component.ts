@@ -32,7 +32,7 @@ import {CustomAttribute} from './custom-attribute';
                 </md-list>
             </div>
             
-            <div class="right-section md-elevation-z8">
+            <div class="right-section mat-elevation-z8">
                 <dk-input
                     class="dk-inline"
                     label="Attribute Name"

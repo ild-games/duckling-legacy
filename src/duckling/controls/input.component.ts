@@ -12,14 +12,17 @@ import {
     selector: "dk-input",
     styleUrls: ['./duckling/controls/input.component.css'],
     template:`
-        <md-input
-            [disabled]="disabled"
-            [placeholder]="label"
+        <md-input-container
+            floatPlaceholder="always"
             dividerColor="{{dividerColor}}"
-            value="{{value}}"
             (input)="onUserInput($event.target.value)"
             (focus)="onFocus()">
-        </md-input>
+            <input 
+                mdInput
+                [disabled]="disabled"
+                placeholder={{label}}
+                value="{{value}}">
+        </md-input-container>
     `
 })
 export class InputComponent {

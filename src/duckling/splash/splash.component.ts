@@ -41,7 +41,7 @@ const MAX_SPLASH_ENTRIES : number = 7;
                 </div>
             </div>
             
-            <div class="left-section md-elevation-z8">
+            <div class="left-section mat-elevation-z8">
                 <md-nav-list>
                     <md-list-item
                     md-list-item
