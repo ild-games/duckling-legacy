@@ -9,7 +9,7 @@ import {
     AfterViewInit,
     ChangeDetectorRef
 } from '@angular/core';
-import {MdSelect} from '@angular/material';
+import {MdSelect, MdSelectChange} from '@angular/material';
 
 /**
  * Select control that accepts an array of options.
@@ -18,7 +18,7 @@ import {MdSelect} from '@angular/material';
     selector: "dk-array-select",
     template:`
         <md-select #mdSelect
-            (onClose)="onSelectionChanged()">
+            (change)="onSelectionChanged($event)">
             <md-option 
                 *ngFor="let option of options" 
                 [value]="option.value">
@@ -27,7 +27,7 @@ import {MdSelect} from '@angular/material';
         </md-select>
     `
 })
-export class ArraySelectComponent implements OnChanges, AfterViewInit {
+export class ArraySelectComponent implements AfterViewInit {
     @ViewChild(MdSelect) mdSelect : MdSelect;
     
     /**
@@ -59,22 +59,8 @@ export class ArraySelectComponent implements OnChanges, AfterViewInit {
         });
     }
 
-    ngOnChanges(changes : {value? : SimpleChange, options? : SimpleChange}) {
-        if (!this.mdSelect.options) {
-            return;
-        }
-        
-        if (changes.value) {
-            this.mdSelect.writeValue(changes.value.currentValue);
-        } else if (changes.options) {
-            this.mdSelect.writeValue(this.value);
-        }
-    }
-
-    onSelectionChanged() {
-        if (this.mdSelect.selected) {
-            this.selection.emit(this.mdSelect.selected.value);
-        }
+    onSelectionChanged(selectChanged : MdSelectChange) {
+        this.selection.emit(selectChanged.value);
     }
 
     indexOfValue(value : string) {
