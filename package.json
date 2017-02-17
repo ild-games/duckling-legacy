@@ -29,24 +29,24 @@
     "@types/glob": "^5.0.30",
     "@types/hammerjs": "^2.0.33",
     "@types/lodash": "^4.14.40",
-    "@types/node": "^6.0.51",
-    "@types/pixi.js": "4.1.0",
+    "@types/node": "^7.0.5",
+    "@types/pixi.js": "4.3.1",
     "@types/webfontloader": "^1.6.27",
     "es6-shim": "^0.35.1",
     "font-awesome": "^4.7.0",
     "gulp": "^3.9.1",
-    "gulp-sass": "^2.3.2",
+    "gulp-sass": "^3.1.0",
     "gulp-watch": "^4.3.11",
     "immutable": "^3.8.1",
     "lodash": "^4.17.2",
     "open-iconic": "^1.1.1",
-    "pixi.js": "4.1.0",
+    "pixi.js": "4.3.5",
     "redux": "^3.6.0",
     "reflect-metadata": "^0.1.8",
-    "rxjs": "5.0.0-beta.12",
-    "systemjs": "^0.19.41",
+    "rxjs": "5.1.1",
+    "systemjs": "^0.20.8",
     "webfontloader": "^1.6.26",
-    "zone.js": "^0.6.21"
+    "zone.js": "^0.7.7"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
@@ -59,6 +59,6 @@
     "electron-prebuilt": "^1.4.8",
     "gulp": "^3.9.1",
     "mocha": "^3.2.0",
-    "typescript": "2.1.4"
+    "typescript": "2.1.6"
   }
 }

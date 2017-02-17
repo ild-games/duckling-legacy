@@ -28,6 +28,7 @@ export class AssetService {
 
     private _assets : {[key : string] : Asset} = {};
     private _loadedAssets : {[key : string] : boolean} = {};
+    private _assetsToLoad : Array<{asset: Asset, filePath : string, editorSpecific : boolean}> = [];
     private _preloadedImagesLoaded : {[key : string] : boolean} = {};
     private _fontObjects : {[key : string] : any} = {};
     assetLoaded : BehaviorSubject<Asset> = new BehaviorSubject(null);
@@ -49,8 +50,14 @@ export class AssetService {
             if (asset.type === "FontTTF") {
                 this._loadFont(asset, filePath, editorSpecific)
             } else {
-                loader.once('complete', () => this._onAssetLoaded(asset, editorSpecific));
-                loader.add(asset.key, filePath).load();
+                // resource-loader library can only load one thing at a time so if 
+                // we are already loaded cache off the asset to load once it's done
+                if (!loader.loading) {
+                    loader.add(asset.key, filePath).load();
+                    loader.once('complete', () => this._onLoadedComplete(asset, editorSpecific));
+                } else {
+                    this._assetsToLoad.push({asset, filePath, editorSpecific});
+                }
             }
         }
     }
@@ -155,6 +162,15 @@ export class AssetService {
 
     get assets() : {[key : string] : Asset} {
         return this._assets;
+    }
+
+    private _onLoadedComplete(asset : Asset, editorSpecific : boolean) {
+        this._onAssetLoaded(asset, editorSpecific);
+        if (this._assetsToLoad.length > 0) {
+            let asset = this._assetsToLoad.shift();
+            loader.add(asset.asset.key, asset.filePath).load();
+            loader.once('complete', () => this._onLoadedComplete(asset.asset, asset.editorSpecific));
+        }
     }
 
     private _onAssetLoaded(asset : Asset, editorSpecific : boolean) {

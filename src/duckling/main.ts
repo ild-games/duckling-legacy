@@ -68,4 +68,4 @@ export class DucklingAppModule {
 platformBrowserDynamic().bootstrapModule(DucklingAppModule);
 
 // set pixi.js to use nearest neighbor scaling method as a default
-SCALE_MODES.DEFAULT = SCALE_MODES.NEAREST;
+PIXI.settings.SCALE_MODE = SCALE_MODES.NEAREST;
