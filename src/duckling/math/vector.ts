@@ -64,3 +64,10 @@ export function vectorRound(vector : Vector) : Vector {
         y: Math.round(vector.y)
     }
 }
+
+export function vectorRotate(vector : Vector, radians : number, origin : Vector = {x: 0, y: 0}) : Vector {
+    let result : Vector = {x: 0, y: 0};
+    result.x = Math.cos(radians) * (vector.x - origin.x) - Math.sin(radians) * (vector.y - origin.y) + origin.x;
+    result.y = Math.sin(radians) * (vector.x - origin.x) + Math.cos(radians) * (vector.y - origin.y) + origin.y;
+    return result;
+}

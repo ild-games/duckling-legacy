@@ -28,7 +28,7 @@ import {SnackBarService} from './snackbar.service';
 import {CustomAttribute} from './custom-attribute';
 
 const MAP_DIR = "maps";
-const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
+const MAP_NAME = "springling"; //Note - Eventually this will be a dynamic property
 
 /**
  * The project service provides access to project level state and operations.
