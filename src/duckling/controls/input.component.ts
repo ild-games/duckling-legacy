@@ -13,7 +13,7 @@ import {
     styleUrls: ['./duckling/controls/input.component.css'],
     template:`
         <md-input-container
-            floatPlaceholder="auto"
+            floatPlaceholder="always"
             dividerColor="{{dividerColor}}"
             (input)="onUserInput($event.target.value)"
             (focus)="onFocus()">
