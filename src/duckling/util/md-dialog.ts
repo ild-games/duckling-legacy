@@ -38,5 +38,5 @@ function findDialogContainer(element : HTMLElement) {
 }
 
 function isMdDialogContainer(element : HTMLElement) : boolean {
-    return element.classList.contains('md-dialog-container');
+    return element.classList.contains('mat-dialog-container');
 }
