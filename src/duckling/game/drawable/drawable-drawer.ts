@@ -196,7 +196,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
     
     let sprite : any;
     if (imageDrawable.isTiled && imageDrawable.tiledArea) {
-        sprite = new (<any>PIXI).TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
+        sprite = new PIXI.extras.TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
     } else {
         sprite = new Sprite(texture);
     }
