@@ -11,6 +11,7 @@ import {RotateComponent} from './rotate/rotate.component';
 import {TriggerDeathComponent} from './trigger-death/trigger-death.component';
 import {ButtonComponent} from './button/button.component';
 import {PathComponent} from './path/path.component';
+import {PathFollowerComponent} from './path/path-follower.component';
 
 import {AnimatedDrawableComponent} from './drawable/animated-drawable.component';
 import {AutoCreateAnimationDialogComponent} from './drawable/auto-create-animation-dialog.component';
@@ -53,7 +54,8 @@ const ATTRIBUTE_COMPONENTS = [
     RotateComponent,
     TriggerDeathComponent,
     ButtonComponent,
-    PathComponent
+    PathComponent,
+    PathFollowerComponent
 ]
 
 @NgModule({

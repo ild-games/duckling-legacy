@@ -40,6 +40,9 @@ import {PathComponent} from './path/path.component';
 import {drawPathAttribute} from './path/path-drawer';
 import {pathBox} from './path/path-box';
 
+import {defaultPathFollower, PATH_FOLLOWER_KEY} from './path/path-follower-attribute';
+import {PathFollowerComponent} from './path/path-follower.component';
+
 import {defaultDrawableAttribute, DRAWABLE_KEY} from './drawable/drawable-attribute';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
 import {drawDrawableAttribute} from './drawable/drawable-drawer';
@@ -66,7 +69,8 @@ let _bootstrapFunctions : Function[] = [
     _bootstrapRotateAttribute,
     _bootstrapButtonAttribute,
     _bootstrapTriggerDeathAttribute,
-    _bootstrapPathAttribute
+    _bootstrapPathAttribute,
+    _bootstrapPathFollowerAttribute
 ];
 
 /**
@@ -131,4 +135,9 @@ function _bootstrapPathAttribute(services : Services) {
     services.attributeDefaultService.register(PATH_KEY, {createByDefault: false, default: defaultPath});
     services.entityDrawerService.register(PATH_KEY, drawPathAttribute);
     services.entityBoxService.register(PATH_KEY, pathBox);
+}
+
+function _bootstrapPathFollowerAttribute(services : Services) {
+    services.attributeComponentService.register(PATH_FOLLOWER_KEY, PathFollowerComponent);
+    services.attributeDefaultService.register(PATH_FOLLOWER_KEY, {createByDefault: false, default: defaultPathFollower});
 }
