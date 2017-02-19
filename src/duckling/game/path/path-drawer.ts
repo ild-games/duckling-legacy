@@ -17,18 +17,18 @@ export function drawPathAttribute(entity : Entity) : DrawnConstruct {
     }
 
     let container = new Container();
-    let theta = _pathTheta(pathAttribute.startVertex, pathAttribute.endVertex);
-    let rotatedEnd = vectorRotate(pathAttribute.endVertex, -theta, pathAttribute.startVertex);
+    let theta = _pathTheta(pathAttribute.vertices[0], pathAttribute.vertices[1]);
+    let rotatedEnd = vectorRotate(pathAttribute.vertices[1], -theta, pathAttribute.vertices[0]);
     
-    container.addChild(_drawLeftTriangle(pathAttribute.startVertex.x, pathAttribute.startVertex.y));
-    container.addChild(_drawLine(pathAttribute.startVertex, rotatedEnd));
+    container.addChild(_drawLeftTriangle(pathAttribute.vertices[0].x, pathAttribute.vertices[0].y));
+    container.addChild(_drawLine(pathAttribute.vertices[0], rotatedEnd));
     container.addChild(_drawRightTriangle(rotatedEnd.x - (PATH_HEIGHT / 2), rotatedEnd.y));
     
     container.rotation = theta;
-    container.pivot.x = pathAttribute.startVertex.x;
-    container.pivot.y = pathAttribute.startVertex.y;
-    container.x = pathAttribute.startVertex.x;
-    container.y = pathAttribute.startVertex.y;
+    container.pivot.x = pathAttribute.vertices[0].x;
+    container.pivot.y = pathAttribute.vertices[0].y;
+    container.x = pathAttribute.vertices[0].x;
+    container.y = pathAttribute.vertices[0].y;
     return container;
 }
 

@@ -12,31 +12,40 @@ import {PathAttribute} from './path-attribute';
 
 @Component({
     selector: "dk-path",
+    styleUrls: ['./duckling/game/path/path.component.css'],
     template: `
-        <dk-vector-input
-            xLabel="Starting Vertex X"
-            yLabel="Starting Vertex Y"
-            [value]="attribute.startVertex"
-            (validInput)="onStartVertexInput($event)">
-        </dk-vector-input>
-        
-        <dk-vector-input
-            xLabel="Ending Vertex X"
-            yLabel="Ending Vertex Y"
-            [value]="attribute.endVertex"
-            (validInput)="onEndVertexInput($event)">
-        </dk-vector-input>
+        <div class="form-label">Vertices</div>
+        <md-card class="vertices-card">
+            <dk-accordian
+                [elements]="attribute?.vertices"
+                [clone]="true"
+                (elementDeleted)="onVerticesChanged($event)"
+                (elementMovedDown)="onVerticesChanged($event)"
+                (elementMovedUp)="onVerticesChanged($event)"
+                (elementCloned)="onVerticesChanged($event)">
+                <template let-element="$element" let-index="$index">
+                    <dk-vector-input
+                        xLabel="Vertex X"
+                        yLabel="Vertex Y"
+                        [value]="element"
+                        (validInput)="onVertexChanged(index, $event)">
+                    </dk-vector-input>
+                </template>
+            </dk-accordian>
+        </md-card> 
     `
 })
 export class PathComponent {
     @Input() attribute : PathAttribute;
     @Output() attributeChanged = new EventEmitter<PathAttribute>();
 
-    onStartVertexInput(newStartVertex : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {startVertex: newStartVertex}));
+    onVerticesChanged(newVertices : Vector[]) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {vertices: newVertices}));
     }
-
-    onEndVertexInput(newEndVertex : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {endVertex: newEndVertex}));
+    
+    onVertexChanged(index : number, newVertex : Vector) {
+        let newVertices = this.attribute.vertices.slice(0);
+        newVertices[index] = newVertex;
+        this.attributeChanged.emit(immutableAssign(this.attribute, {vertices: newVertices}));
     }
 }

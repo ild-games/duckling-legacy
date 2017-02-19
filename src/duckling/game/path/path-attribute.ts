@@ -4,13 +4,11 @@ import {Vector} from '../../math/vector';
 export const PATH_KEY = "Path";
 
 export interface PathAttribute extends Attribute {
-    startVertex: Vector,
-    endVertex: Vector
+    vertices: Vector[]
 }
 
 export let defaultPath : PathAttribute = {
-    startVertex: {x: 0, y: 0},
-    endVertex: {x: 250, y: 0},
+    vertices: [{x: 0, y: 0}, {x: 250, y: 0}]
 }
 
 export function getPath(entity : Entity) : PathAttribute {
