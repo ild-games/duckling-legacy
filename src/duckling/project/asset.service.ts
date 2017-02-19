@@ -123,17 +123,18 @@ export class AssetService {
      * @param  editorSpecific Optional boolean that determines if the asset is an editor specific resource, default is false.
      * @return Raw asset
      */
-    get(key : string, type : AssetType, editorSpecific? : boolean) : any {
+    get(asset : Asset, editorSpecific? : boolean) : any {
+        let fullKey = asset.key;
         if (editorSpecific) {
-            key = EDITOR_SPECIFIC_IMAGE_PREFIX + key;
+            fullKey = EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key;
         }
-        switch (type) {
+        switch (asset.type) {
             case "TexturePNG":
-                return this._getTexture(key);
+                return this._getTexture(fullKey);
             case "FontTTF":
                 throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
             default:
-                throw new Error("Unknown asset type: " + type);
+                throw new Error("Unknown asset type: " + asset.type);
         }
     }
 
