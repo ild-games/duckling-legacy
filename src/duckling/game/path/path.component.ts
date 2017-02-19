@@ -14,6 +14,12 @@ import {PathAttribute} from './path-attribute';
     selector: "dk-path",
     styleUrls: ['./duckling/game/path/path.component.css'],
     template: `
+        <md-checkbox
+            [checked]="attribute.isLoop"
+            (change)="onIsLoopChanged($event.checked)">
+            Is a Loop?
+        </md-checkbox>
+            
         <div class="form-label">Vertices</div>
         <md-card class="vertices-card">
             <dk-accordian
@@ -47,5 +53,9 @@ export class PathComponent {
         let newVertices = this.attribute.vertices.slice(0);
         newVertices[index] = newVertex;
         this.attributeChanged.emit(immutableAssign(this.attribute, {vertices: newVertices}));
+    }
+
+    onIsLoopChanged(newIsLoop : boolean) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {isLoop: newIsLoop}));
     }
 }
