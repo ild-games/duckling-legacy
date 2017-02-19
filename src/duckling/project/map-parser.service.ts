@@ -5,7 +5,7 @@ import {MapVersion} from '../util/version';
 import {Vector} from '../math/vector';
 import {ProjectVersionInfo} from '../migration/migration.service';
 
-import {Asset, AssetService} from './asset.service'
+import {Asset, AssetService, LoadingAsset} from './asset.service'
 import {RequiredAssetService} from './required-asset.service'
 import {ProjectLifecycleService} from './project-lifecycle.service';
 
@@ -88,9 +88,11 @@ export class MapParserService {
             }
         }
 
+        let assetsToLoad : LoadingAsset[] = [];
         for (let asset of map.assets) {
-            this._assets.add(asset);
+            assetsToLoad.push({asset});
         }
+        this._assets.add(assetsToLoad);
 
         let entitySystem = createEntitySystem().withMutations(system => {
             for (let key in entities) {

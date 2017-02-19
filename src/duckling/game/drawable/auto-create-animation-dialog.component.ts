@@ -98,7 +98,7 @@ export class AutoCreateAnimationDialogComponent {
     }
 
     onImageFilePicked(newImageKey : string) {
-        this._assets.add({type: "TexturePNG", key: newImageKey});
+        this._assets.add([{asset: {type: "TexturePNG", key: newImageKey}}]);
         this.imageKey = newImageKey;
     }
 
