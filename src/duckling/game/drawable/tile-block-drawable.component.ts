@@ -69,6 +69,7 @@ export class TileBlockDrawableComponent implements OnInit, OnDestroy {
             return;
         }
         
+        this._pickedAssetKey = "";
         if (this._validDimension(this._assets.getImageAssetDimensions(asset))) {
             this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {
                 textureKey: asset.key,
