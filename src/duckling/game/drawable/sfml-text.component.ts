@@ -51,7 +51,7 @@ export class SFMLTextComponent {
     }
 
     onFontFilePicked(newFontKey : string) {
-        this._assets.add({type: "FontTTF", key: newFontKey});
+        this._assets.add([{asset: {type: "FontTTF", key: newFontKey}}]);
         this.sfmlTextChanged.emit(immutableAssign(this.sfmlText, {fontKey: newFontKey}));
     }
 

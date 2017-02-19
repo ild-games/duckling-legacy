@@ -46,7 +46,7 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
         <md-card>
             <md-card-content>
                 <dk-top-toolbar
-                    class="canvas-top-toolbar md-elevation-z4"
+                    class="canvas-top-toolbar mat-elevation-z4"
                     [selectedToolKey]="tool.key"
                     [mapName]="projectService.project.getValue().currentMap.key"
                     (toolSelection)="onToolSelected($event)"
@@ -67,7 +67,7 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
                 </dk-canvas>
 
                 <dk-bottom-toolbar
-                    class="canvas-bottom-toolbar md-elevation-z4"
+                    class="canvas-bottom-toolbar mat-elevation-z4"
                     [stageDimensions]="projectService.project.getValue().currentMap.dimension"
                     [gridSize]="projectService.project.getValue().currentMap.gridSize"
                     [scale]="scale"

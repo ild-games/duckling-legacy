@@ -69,7 +69,7 @@ export class ImageDrawableComponent {
     }
 
     onImageFilePicked(imageKey : string) {
-        this._assets.add({type: "TexturePNG", key: imageKey});
+        this._assets.add([{asset: {type: "TexturePNG", key: imageKey}}]);
         this.drawableChanged.emit(immutableAssign(this.imageDrawable, {textureKey: imageKey}));
     }
 

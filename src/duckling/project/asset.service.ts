@@ -15,6 +15,11 @@ export interface Asset {
     type : AssetType,
     key : string
 };
+export interface LoadingAsset {
+    asset: Asset;
+    filePath?: string;
+    editorSpecific?: boolean;
+}
 export type AssetMap = {[key: string] : Asset};
 
 const EDITOR_SPECIFIC_IMAGE_PREFIX = "DUCKLING_PRELOADED_IMAGE__";
@@ -24,10 +29,13 @@ export class AssetService {
     constructor(private _store : StoreService,
                 private _path : PathService,
                 private _requiredAssets : RequiredAssetService) {
+        loader.on('progress', (loader : any, resource : any) => this._onAssetLoaded(resource.name));
+        loader.once('complete', () => this._onLoaderComplete());
     }
 
     private _assets : {[key : string] : Asset} = {};
     private _loadedAssets : {[key : string] : boolean} = {};
+    private _assetsToLoad : {[key: string] : LoadingAsset} = {};
     private _preloadedImagesLoaded : {[key : string] : boolean} = {};
     private _fontObjects : {[key : string] : any} = {};
     assetLoaded : BehaviorSubject<Asset> = new BehaviorSubject(null);
@@ -39,33 +47,72 @@ export class AssetService {
      * @param  filePath Optional filepath the asset is located. The default is /resources/<asset_key>.png
      * @param  editorSpecific Optional boolean that says if the resource is an editor specific resource, default is false.
      */
-    add(asset : Asset, filePath? : string, editorSpecific? : boolean) {
-        filePath = filePath || this._store.getState().project.home + "/resources/" + asset.key + "." + this._fileExtensionFromType(asset.type);
-        if (editorSpecific) {
-            asset.key = EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key;
+    add(assets : LoadingAsset[]) {
+        if (loader.loading) {
+            this._cacheOffAssetsToLoad(assets);
+            return;
         }
-        if (!this._assets[asset.key]) {
-            this._assets[asset.key] = asset;
-            if (asset.type === "FontTTF") {
-                this._loadFont(asset, filePath, editorSpecific)
-            } else {
-                loader.once('complete', () => this._onAssetLoaded(asset, editorSpecific));
-                loader.add(asset.key, filePath).load();
+        
+        let nonFontAssetsToLoad = 0;
+        for (let assetToLoad of assets) {
+            let loaded = this._loadAsset(assetToLoad);
+            if (loaded && !this._assetTypeIsFont(assetToLoad.asset.type)) {
+                nonFontAssetsToLoad++;
             }
         }
+        
+        if (nonFontAssetsToLoad > 0) {
+            loader.load();
+        }
+    }
+
+    private _loadAsset(assetToLoad : LoadingAsset) : boolean {
+        if (this._assets[this._getFullKey(assetToLoad)]) {
+            return false;;
+        }
+        
+        this._assets[this._getFullKey(assetToLoad)] = assetToLoad.asset;
+        if (this._assetTypeIsFont(assetToLoad.asset.type)) {
+            this._loadFont(assetToLoad);
+        } else {
+            loader.add(this._getFullKey(assetToLoad), this._getFilePath(assetToLoad));
+        }
+        return true;
+    }
+    
+    private _getFilePath(assetToLoad : LoadingAsset) : string {
+        let filePath = assetToLoad.filePath || this._store.getState().project.home + "/resources/" + assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type);
+        return filePath;
+    }
+
+    private _getFullKey(assetToLoad : LoadingAsset) : string {
+        if (assetToLoad.editorSpecific) {
+            return EDITOR_SPECIFIC_IMAGE_PREFIX + assetToLoad.asset.key;
+        }
+        return assetToLoad.asset.key;
+    }
+
+    private _cacheOffAssetsToLoad(assets : LoadingAsset[]) {
+        for (let assetToLoad of assets) {
+            this._assetsToLoad[assetToLoad.asset.key] = assetToLoad;
+        }
+    }
+
+    private _assetTypeIsFont(type : AssetType) {
+        return type === "FontTTF";
     }
 
     /**
      * Fonts are loaded using the webkit WebFontLoader and not the pixi loader
      */
-    private _loadFont(asset : Asset, filePath : string, editorSpecific? : boolean) {
-        let fontFamily = this.fontFamilyFromAssetKey(asset.key);
-        this._createFontFace(fontFamily, filePath);
+    private _loadFont(assetToLoad : LoadingAsset) {
+        let fontFamily = this.fontFamilyFromAssetKey(assetToLoad.asset.key);
+        this._createFontFace(fontFamily, assetToLoad.filePath);
         webFontLoader({
             custom: {
                 families: [fontFamily]
             },
-            fontactive: () => this._onAssetLoaded(asset, editorSpecific)
+            fontactive: () => this._onAssetLoaded(assetToLoad.asset.key)
         });
     }
 
@@ -157,10 +204,19 @@ export class AssetService {
         return this._assets;
     }
 
-    private _onAssetLoaded(asset : Asset, editorSpecific : boolean) {
-        this._loadedAssets[asset.key] = true;
-        this._preloadedImagesLoaded[asset.key] = true;
-        this.assetLoaded.next(asset);
+    private _onLoaderComplete() {
+        let arrayOfAssetsToLoad : LoadingAsset[] = [];
+        for (let assetKey in this._assetsToLoad) {
+            arrayOfAssetsToLoad.push(this._assetsToLoad[assetKey]);
+        }
+        this.add(arrayOfAssetsToLoad);
+        this._assetsToLoad = {};
+    }
+
+    private _onAssetLoaded(assetKey : string) {
+        this._loadedAssets[assetKey] = true;
+        this._preloadedImagesLoaded[assetKey] = true;
+        this.assetLoaded.next(this._assets[assetKey]);
         if (this._allPreloadedImagesLoaded()) {
             this.preloadImagesLoaded.next(true);
         }
@@ -175,11 +231,17 @@ export class AssetService {
     }
 
     private _preloadEditorImages(imageFiles : string[]) {
+        let assetsToLoad : LoadingAsset[] = [];
         for (let imageFile of imageFiles) {
             let asset = this._textureFromImageFile(imageFile);
+            assetsToLoad.push({
+                asset,
+                filePath: imageFile,
+                editorSpecific: true
+            });
             this._preloadedImagesLoaded[EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key] = false;
-            this.add(asset, imageFile, true);
         }
+        this.add(assetsToLoad);
     }
 
     private _textureFromImageFile(imageFile : string) : Asset {

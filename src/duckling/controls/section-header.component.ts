@@ -60,8 +60,8 @@ export class SectionHeaderComponent {
 
     get headerCssClasses() : string {
         if (this.collapsible) {
-            return "header md-elevation-z3 pointer";
+            return "header mat-elevation-z3 pointer";
         }
-        return "header md-elevation-z3";
+        return "header mat-elevation-z3";
     }
 }
