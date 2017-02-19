@@ -2,8 +2,11 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    OnInit,
+    OnDestroy
 } from '@angular/core';
+import {Subscriber} from 'rxjs';
 import {Rectangle} from 'pixi.js';
 
 import {DialogService} from '../../util/dialog.service';
@@ -36,20 +39,39 @@ import {TileBlockDrawable, getTileWidth, getTileHeight} from './tile-block-drawa
         </dk-browse-asset>
     `
 })
-export class TileBlockDrawableComponent {
+export class TileBlockDrawableComponent implements OnInit, OnDestroy {
     @Input() tileBlockDrawable : TileBlockDrawable;
     @Output() drawableChanged = new EventEmitter<TileBlockDrawable>();
+
+    private _assetServiceSubscription : Subscriber<any>;
+    private _pickedAssetKey : string = "";
 
     constructor(private _dialog : DialogService,
                 private _assets : AssetService,
                 private _project : ProjectService) {
     }
 
-    async onImageFilePicked(imageKey : string) {
-        let asset = await this._assets.add({type: "TexturePNG", key: imageKey});
+    ngOnInit() {
+        this._assetServiceSubscription = this._assets.assetLoaded.subscribe(asset => this._onAssetLoaded(asset)) as Subscriber<any>;
+    }
+
+    ngOnDestroy() {
+        this._assetServiceSubscription.unsubscribe();
+    }
+
+    onImageFilePicked(imageKey : string) {
+        this._pickedAssetKey = imageKey;
+        this._assets.add([{asset: {type: "TexturePNG", key: imageKey}}]);
+    }
+
+    private _onAssetLoaded(asset : Asset) {
+        if (!this._pickedAssetKey || this._pickedAssetKey === "" || asset.key !== this._pickedAssetKey) {
+            return;
+        }
+        
         if (this._validDimension(this._assets.getImageAssetDimensions(asset))) {
             this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {
-                textureKey: imageKey,
+                textureKey: asset.key,
                 size: this._getStartingSize(this._assets.getImageAssetDimensions(asset))
             }));
         } else {
