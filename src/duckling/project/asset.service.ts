@@ -49,31 +49,57 @@ export class AssetService {
      */
     add(assets : LoadingAsset[]) {
         if (loader.loading) {
-            for (let assetToLoad of assets) {
-                if (!this._assetsToLoad[assetToLoad.asset.key]) {
-                    this._assetsToLoad[assetToLoad.asset.key] = assetToLoad;
-                }
-            }
+            this._cacheOffAssetsToLoad(assets);
+            return;
         }
         
+        let nonFontAssetsToLoad = 0;
         for (let assetToLoad of assets) {
-            assetToLoad.filePath = assetToLoad.filePath || this._store.getState().project.home + "/resources/" + assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type);
-            if (assetToLoad.editorSpecific) {
-                assetToLoad.asset.key = EDITOR_SPECIFIC_IMAGE_PREFIX + assetToLoad.asset.key;
-            }
-            if (!this._assets[assetToLoad.asset.key]) {
-                this._assets[assetToLoad.asset.key] = assetToLoad.asset;
-                if (assetToLoad.asset.type === "FontTTF") {
-                    this._loadFont(assetToLoad);
-                } else {
-                    loader.add(assetToLoad.asset.key, assetToLoad.filePath);
-                }
+            let loaded = this._loadAsset(assetToLoad);
+            if (loaded && !this._assetTypeIsFont(assetToLoad.asset.type)) {
+                nonFontAssetsToLoad++;
             }
         }
         
-        if (assets.length > 0) {
+        if (nonFontAssetsToLoad > 0) {
             loader.load();
         }
+    }
+
+    private _loadAsset(assetToLoad : LoadingAsset) : boolean {
+        if (this._assets[this._getFullKey(assetToLoad)]) {
+            return false;;
+        }
+        
+        this._assets[this._getFullKey(assetToLoad)] = assetToLoad.asset;
+        if (this._assetTypeIsFont(assetToLoad.asset.type)) {
+            this._loadFont(assetToLoad);
+        } else {
+            loader.add(this._getFullKey(assetToLoad), this._getFilePath(assetToLoad));
+        }
+        return true;
+    }
+    
+    private _getFilePath(assetToLoad : LoadingAsset) : string {
+        let filePath = assetToLoad.filePath || this._store.getState().project.home + "/resources/" + assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type);
+        return filePath;
+    }
+
+    private _getFullKey(assetToLoad : LoadingAsset) : string {
+        if (assetToLoad.editorSpecific) {
+            return EDITOR_SPECIFIC_IMAGE_PREFIX + assetToLoad.asset.key;
+        }
+        return assetToLoad.asset.key;
+    }
+
+    private _cacheOffAssetsToLoad(assets : LoadingAsset[]) {
+        for (let assetToLoad of assets) {
+            this._assetsToLoad[assetToLoad.asset.key] = assetToLoad;
+        }
+    }
+
+    private _assetTypeIsFont(type : AssetType) {
+        return type === "FontTTF";
     }
 
     /**
