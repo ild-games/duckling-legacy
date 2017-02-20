@@ -7,9 +7,13 @@ import {Vector, vectorRotate} from '../../math/vector';
 
 import {getPath} from './path-attribute';
 
-export const PATH_HEIGHT = 20;
+export const PATH_HEIGHT = 4;
+const VERTEX_MARKER_HEIGHT = 2 * PATH_HEIGHT;
+const TRIANGLE_HEIGHT = 2 * VERTEX_MARKER_HEIGHT;
+const DIRECTION_INDICATOR_OFFSET = VERTEX_MARKER_HEIGHT / 2;
+const JOINT_HEIGHT = VERTEX_MARKER_HEIGHT;
 const PATH_COLOR = 0x607d8b;
-const STARTING_SQUARE_COLOR = 0x00e676;
+const STARTING_SQUARE_COLOR = 0x00a626;
 const ENDING_SQUARE_COLOR = 0xf44336;
 
 export function drawPathAttribute(entity : Entity) : DrawnConstruct {
@@ -53,9 +57,13 @@ function _drawFirstLoopSegment(startVertex : Vector, endVertex : Vector) : Displ
     let rotatedEndVertex = vectorRotate(endVertex, -_pathTheta(startVertex, endVertex), startVertex);
     
     container.addChild(_drawLine(startVertex, rotatedEndVertex));
-    container.addChild(_drawFirstLoopJoint(startVertex.x, startVertex.y));
     container.addChild(_drawJoint(rotatedEndVertex.x, rotatedEndVertex.y));
+    container.addChild(_drawSquare(startVertex.x, startVertex.y, STARTING_SQUARE_COLOR));
     
+    let loopDirectionPosition = { x: startVertex.x + DIRECTION_INDICATOR_OFFSET, 
+                                  y: startVertex.y };
+    container.addChild(_drawRightTriangle(loopDirectionPosition, STARTING_SQUARE_COLOR));
+
     return _rotateSegemnt(container, _pathTheta(startVertex, endVertex), startVertex);
 }
 
@@ -89,13 +97,15 @@ function _drawSegmentWithSquares(startVertex : Vector, endVertex : Vector, leftS
     let container = new Container();
     let rotatedEndVertex = vectorRotate(endVertex, -_pathTheta(startVertex, endVertex), startVertex);
     
+    container.addChild(_drawLine(
+        {x: startVertex.x, y: startVertex.y}, 
+        {x: rotatedEndVertex.x , y: rotatedEndVertex.y}
+    ));
+
     if (leftSquare) {
         container.addChild(_drawSquare(startVertex.x, startVertex.y, STARTING_SQUARE_COLOR));
     }
-    container.addChild(_drawLine(
-        {x: startVertex.x + (leftSquare ? PATH_HEIGHT / 2 : 0), y: startVertex.y}, 
-        {x: rotatedEndVertex.x - (rightSquare ? PATH_HEIGHT / 2 : 0), y: rotatedEndVertex.y}
-    ));
+    
     if (rightSquare) {
         container.addChild(_drawSquare(rotatedEndVertex.x, rotatedEndVertex.y, ENDING_SQUARE_COLOR));
     }
@@ -118,7 +128,7 @@ function _pathTheta(startVertex : Vector, endVertex : Vector) : number {
 
 function _drawLine(startVertex : Vector, endVertex : Vector) : DisplayObject {
     let graphics = new Graphics();
-    graphics.lineStyle(4, PATH_COLOR);
+    graphics.lineStyle(PATH_HEIGHT, PATH_COLOR);
     graphics.moveTo(startVertex.x, startVertex.y);
     graphics.lineTo(endVertex.x, endVertex.y);
     return graphics;
@@ -127,18 +137,18 @@ function _drawLine(startVertex : Vector, endVertex : Vector) : DisplayObject {
 function _drawSquare(x : number, y : number, color : number = PATH_COLOR) : DisplayObject {
     let graphics = new Graphics();
     graphics.beginFill(color);
-    graphics.drawRect(x - PATH_HEIGHT / 2, y - PATH_HEIGHT / 2, PATH_HEIGHT, PATH_HEIGHT);
+    graphics.drawRect(x - (VERTEX_MARKER_HEIGHT / 2), y - (VERTEX_MARKER_HEIGHT / 2), VERTEX_MARKER_HEIGHT, VERTEX_MARKER_HEIGHT);
     graphics.endFill();
     return graphics;
 }
 
-function _drawRightTriangle(x : number, y : number, color : number = PATH_COLOR) : DisplayObject {
+function _drawRightTriangle(position: Vector, color : number = PATH_COLOR) : DisplayObject {
     let graphics = new Graphics();
     graphics.beginFill(color);
-    graphics.moveTo(x, y - (PATH_HEIGHT / 2));
-    graphics.lineTo(x + (PATH_HEIGHT / 2), y);
-    graphics.lineTo(x, y + (PATH_HEIGHT / 2));
-    graphics.lineTo(x, y - (PATH_HEIGHT / 2));
+    graphics.moveTo(position.x, position.y - (TRIANGLE_HEIGHT / 2));
+    graphics.lineTo(position.x + (TRIANGLE_HEIGHT / 2), position.y);
+    graphics.lineTo(position.x, position.y + (TRIANGLE_HEIGHT / 2));
+    graphics.lineTo(position.x, position.y - (TRIANGLE_HEIGHT / 2));
     graphics.endFill();
     return graphics;
 }
@@ -146,14 +156,14 @@ function _drawRightTriangle(x : number, y : number, color : number = PATH_COLOR)
 function _drawJoint(x : number, y: number) : DisplayObject {
     let graphics = new Graphics();
     graphics.beginFill(PATH_COLOR);
-    graphics.drawCircle(x, y, PATH_HEIGHT / 4);
+    graphics.drawCircle(x, y, JOINT_HEIGHT / 2);
     graphics.endFill();
     return graphics;
 }
 
-function _drawFirstLoopJoint(x : number, y: number) : DisplayObject {
+function _drawFirstLoopJoint(position: Vector) : DisplayObject {
     let container = new Container();
-    container.addChild(_drawSquare(x, y, STARTING_SQUARE_COLOR));
-    container.addChild(_drawRightTriangle(x, y, PATH_COLOR));
+    //container.addChild(_drawSquare(x, y, STARTING_SQUARE_COLOR));
+    container.addChild(_drawRightTriangle(position, STARTING_SQUARE_COLOR));
     return container;
 }
