@@ -7,6 +7,7 @@ import {
 
 import {immutableAssign} from '../../util/model';
 import {Vector} from '../../math/vector';
+import {Validator} from '../../controls/validated-input.component';
 
 import {PathAttribute} from './path-attribute';
 
@@ -14,6 +15,13 @@ import {PathAttribute} from './path-attribute';
     selector: "dk-path",
     styleUrls: ['./duckling/game/path/path.component.css'],
     template: `
+        <dk-number-input
+            label="Time To Complete Path"
+            [value]="attribute.time"
+            [validator]="timeValidator"
+            (validInput)="onTimeChanged($event)">
+        </dk-number-input>
+        
         <md-checkbox
             [checked]="attribute.isLoop"
             (change)="onIsLoopChanged($event.checked)">
@@ -67,10 +75,20 @@ export class PathComponent {
     onIsLoopChanged(newIsLoop : boolean) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {isLoop: newIsLoop}));
     }
+    
+    onTimeChanged(newTime : number) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {time: newTime}));
+    }
 
     onNewVertexClicked() {
         this.attributeChanged.emit(immutableAssign(this.attribute, {
             vertices: this.attribute.vertices.concat([{x: 0, y: 0}])
         }));
+    }
+
+    get timeValidator() : Validator {
+        return (value : string) => {
+            return Number.isInteger(parseInt(value)) && parseInt(value) > 0;
+        }
     }
 }

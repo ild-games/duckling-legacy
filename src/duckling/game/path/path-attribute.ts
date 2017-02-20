@@ -5,12 +5,14 @@ export const PATH_KEY = "path";
 
 export interface PathAttribute extends Attribute {
     vertices: Vector[],
-    isLoop: boolean
+    isLoop: boolean,
+    time: number
 }
 
 export let defaultPath : PathAttribute = {
     vertices: [{x: 0, y: 0}, {x: 250, y: 0}],
-    isLoop: false
+    isLoop: false,
+    time: 5
 }
 
 export function getPath(entity : Entity) : PathAttribute {
