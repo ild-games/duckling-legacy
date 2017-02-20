@@ -20,6 +20,15 @@ import {PathAttribute} from './path-attribute';
             Is a Loop?
         </md-checkbox>
             
+        <button
+            md-raised-button
+            class="add-vertex-button"
+            [disableRipple]="true"
+            (click)="onNewVertexClicked()">
+            <dk-icon iconClass="plus"></dk-icon>
+            <span>Add Vertex</span>
+        </button>
+        
         <div class="form-label">Vertices</div>
         <md-card class="vertices-card">
             <dk-accordian
@@ -57,5 +66,11 @@ export class PathComponent {
 
     onIsLoopChanged(newIsLoop : boolean) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {isLoop: newIsLoop}));
+    }
+
+    onNewVertexClicked() {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {
+            vertices: this.attribute.vertices.concat([{x: 0, y: 0}])
+        }));
     }
 }
