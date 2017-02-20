@@ -1,7 +1,7 @@
 import {Attribute, Entity} from '../../entitysystem/entity';
 import {Vector} from '../../math/vector';
 
-export const PATH_KEY = "Path";
+export const PATH_KEY = "path";
 
 export interface PathAttribute extends Attribute {
     vertices: Vector[],
