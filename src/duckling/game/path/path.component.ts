@@ -88,7 +88,7 @@ export class PathComponent {
 
     get timeValidator() : Validator {
         return (value : string) => {
-            return Number.isInteger(parseInt(value)) && parseInt(value) > 0;
+            return Number.isInteger(parseInt(value)) && parseFloat(value) > 0;
         }
     }
 }
