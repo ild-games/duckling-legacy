@@ -163,7 +163,6 @@ function _drawJoint(x : number, y: number) : DisplayObject {
 
 function _drawFirstLoopJoint(position: Vector) : DisplayObject {
     let container = new Container();
-    //container.addChild(_drawSquare(x, y, STARTING_SQUARE_COLOR));
     container.addChild(_drawRightTriangle(position, STARTING_SQUARE_COLOR));
     return container;
 }
