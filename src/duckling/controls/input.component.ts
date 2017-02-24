@@ -2,7 +2,9 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    ViewChild,
+    ElementRef
 } from '@angular/core';
 
 /**
@@ -17,7 +19,7 @@ import {
             dividerColor="{{dividerColor}}"
             (input)="onUserInput($event.target.value)"
             (focus)="onFocus()">
-            <input 
+            <input #rawInputElement
                 mdInput
                 [disabled]="disabled"
                 placeholder={{label}}
@@ -26,6 +28,11 @@ import {
     `
 })
 export class InputComponent {
+    /**
+     * HTMLElement of the input element
+     */
+    @ViewChild('rawInputElement') rawInputElement : ElementRef;
+    
     /**
      * Text label displayed to the user.
      */
@@ -57,5 +64,9 @@ export class InputComponent {
 
     onFocus() {
         this.focus.emit(true);
+    }
+
+    get rawValue() : string {
+        return this.rawInputElement.nativeElement.value;
     }
 }

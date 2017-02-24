@@ -2,8 +2,10 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    ViewChild
 } from '@angular/core';
+import * as math from 'mathjs';
 
 import {ValidatedInputComponent, Validator} from './validated-input.component';
 
@@ -16,16 +18,22 @@ let numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
     selector: "dk-number-input",
     styleUrls: ['./duckling/controls/number-input.component.css'],
     template:`
-        <dk-validated-input
+        <dk-validated-input #validatedInputComponent
             [disabled]="disabled"
             [label]="label"
             [value]="value"
             [validator]="combinedValidators"
+            (keyup.enter)="onHitEnter()"
             (validInput)="onInput($event)">
         </dk-validated-input>
     `
 })
 export class NumberInputComponent {
+    /**
+     * Reference of the input component used to get the raw value for special calculations
+     */
+    @ViewChild('validatedInputComponent') validatedInputComponent : ValidatedInputComponent;
+    
     /**
      * Text label displayed to the user.
      */
@@ -50,6 +58,14 @@ export class NumberInputComponent {
 
     onInput(value : string) {
         this.validInput.emit(parseFloat(value));
+    }
+
+    onHitEnter() {
+        let rawValue = this.validatedInputComponent.rawValue;
+        try {
+            this.validInput.emit(math.eval(rawValue));
+        } catch (e) {
+        }
     }
 
     isNumber(value : string) {
