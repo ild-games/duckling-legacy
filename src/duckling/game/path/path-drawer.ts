@@ -23,18 +23,17 @@ export function drawPathAttribute(entity : Entity) : DrawnConstruct {
     }
 
     if (pathAttribute.vertices.length === 1) {
-        return _drawJoint(0, 0);
+        return _drawJoint({x: 0, y: 0});
     }
     
     if (pathAttribute.vertices.length === 2 && !pathAttribute.isLoop) {
         return _drawSegmentWithBothSquares(pathAttribute.vertices[0], pathAttribute.vertices[1]);
     }
     
-    if (!pathAttribute.isLoop) {
-        return _drawPath(pathAttribute.vertices);
-    } else {
+    if (pathAttribute.isLoop) {
         return _drawLoopPath(pathAttribute.vertices);
-    }
+    } 
+    return _drawPath(pathAttribute.vertices);
 }
 
 function _drawLoopPath(vertices : Vector[]) : DisplayObject {
@@ -43,7 +42,7 @@ function _drawLoopPath(vertices : Vector[]) : DisplayObject {
         let startVertex = vertices[i];
         let endVertex = vertices[i + 1];
         container.addChild(_drawLine(startVertex, endVertex));
-        container.addChild(_drawJoint(endVertex.x, endVertex.y));
+        container.addChild(_drawJoint(endVertex));
     }
     container.addChild(_drawLine(vertices[vertices.length - 1], vertices[0]));
     
@@ -57,8 +56,8 @@ function _drawFirstLoopSegment(startVertex : Vector, endVertex : Vector) : Displ
     let rotatedEndVertex = vectorRotate(endVertex, -_pathTheta(startVertex, endVertex), startVertex);
     
     container.addChild(_drawLine(startVertex, rotatedEndVertex));
-    container.addChild(_drawJoint(rotatedEndVertex.x, rotatedEndVertex.y));
-    container.addChild(_drawSquare(startVertex.x, startVertex.y, STARTING_SQUARE_COLOR));
+    container.addChild(_drawJoint(rotatedEndVertex));
+    container.addChild(_drawSquare(startVertex, STARTING_SQUARE_COLOR));
     
     let loopDirectionPosition = { x: startVertex.x + DIRECTION_INDICATOR_OFFSET, 
                                   y: startVertex.y };
@@ -70,12 +69,12 @@ function _drawFirstLoopSegment(startVertex : Vector, endVertex : Vector) : Displ
 function _drawPath(vertices : Vector[]) : DisplayObject {
     let container = new Container();
     container.addChild(_drawSegmentWithLeftSquare(vertices[0], vertices[1]));
-    container.addChild(_drawJoint(vertices[1].x, vertices[1].y));
+    container.addChild(_drawJoint(vertices[1]));
     for (let i = 1; i < vertices.length - 2; i++) {
         let startVertex = vertices[i];
         let endVertex = vertices[i + 1];
         container.addChild(_drawLine(startVertex, endVertex));
-        container.addChild(_drawJoint(endVertex.x, endVertex.y));
+        container.addChild(_drawJoint(endVertex));
     }
     container.addChild(_drawSegmentWithRightSquare(vertices[vertices.length - 2], vertices[vertices.length - 1]));
     return container;
@@ -103,11 +102,11 @@ function _drawSegmentWithSquares(startVertex : Vector, endVertex : Vector, leftS
     ));
 
     if (leftSquare) {
-        container.addChild(_drawSquare(startVertex.x, startVertex.y, STARTING_SQUARE_COLOR));
+        container.addChild(_drawSquare(startVertex, STARTING_SQUARE_COLOR));
     }
     
     if (rightSquare) {
-        container.addChild(_drawSquare(rotatedEndVertex.x, rotatedEndVertex.y, ENDING_SQUARE_COLOR));
+        container.addChild(_drawSquare(rotatedEndVertex, ENDING_SQUARE_COLOR));
     }
     
     return _rotateSegemnt(container, _pathTheta(startVertex, endVertex), startVertex);
@@ -134,15 +133,15 @@ function _drawLine(startVertex : Vector, endVertex : Vector) : DisplayObject {
     return graphics;
 }
 
-function _drawSquare(x : number, y : number, color : number = PATH_COLOR) : DisplayObject {
+function _drawSquare(position : Vector, color : number = PATH_COLOR) : DisplayObject {
     let graphics = new Graphics();
     graphics.beginFill(color);
-    graphics.drawRect(x - (VERTEX_MARKER_HEIGHT / 2), y - (VERTEX_MARKER_HEIGHT / 2), VERTEX_MARKER_HEIGHT, VERTEX_MARKER_HEIGHT);
+    graphics.drawRect(position.x - (VERTEX_MARKER_HEIGHT / 2), position.y - (VERTEX_MARKER_HEIGHT / 2), VERTEX_MARKER_HEIGHT, VERTEX_MARKER_HEIGHT);
     graphics.endFill();
     return graphics;
 }
 
-function _drawRightTriangle(position: Vector, color : number = PATH_COLOR) : DisplayObject {
+function _drawRightTriangle(position : Vector, color : number = PATH_COLOR) : DisplayObject {
     let graphics = new Graphics();
     graphics.beginFill(color);
     graphics.moveTo(position.x, position.y - (TRIANGLE_HEIGHT / 2));
@@ -153,10 +152,10 @@ function _drawRightTriangle(position: Vector, color : number = PATH_COLOR) : Dis
     return graphics;
 }
 
-function _drawJoint(x : number, y: number) : DisplayObject {
+function _drawJoint(position : Vector) : DisplayObject {
     let graphics = new Graphics();
     graphics.beginFill(PATH_COLOR);
-    graphics.drawCircle(x, y, JOINT_HEIGHT / 2);
+    graphics.drawCircle(position.x, position.y, JOINT_HEIGHT / 2);
     graphics.endFill();
     return graphics;
 }
