@@ -63,7 +63,10 @@ export class NumberInputComponent {
     onHitEnter() {
         let rawValue = this.validatedInputComponent.rawValue;
         try {
-            this.validInput.emit(math.eval(rawValue));
+            let evaluatedValue = math.eval(rawValue);
+            if (this.combinedValidators(evaluatedValue+"")) {
+                this.validInput.emit(evaluatedValue);
+            }
         } catch (e) {
         }
     }
@@ -72,9 +75,17 @@ export class NumberInputComponent {
         return (value+"").match(numberRegex) !== null;
     }
 
+    isFinite(value : string) {
+        return Number.isFinite(Number.parseFloat(value));
+    }
+
     get combinedValidators() : Validator {
         return (value : string) => {
-            return this.isNumber(value) && (!this.validator || this.validator(value));
+            return (
+                this.isNumber(value) && 
+                this.isFinite(value) &&
+                (!this.validator || this.validator(value))
+            );
         };
     }
 }
