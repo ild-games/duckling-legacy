@@ -4,7 +4,8 @@ import {
     Output,
     EventEmitter,
     OnChanges,
-    SimpleChange
+    SimpleChange,
+    ViewChild
 } from '@angular/core';
 
 import {InputComponent} from './input.component';
@@ -21,7 +22,7 @@ export type Validator = (value : string) => boolean;
     selector: "dk-validated-input",
     styleUrls: ['./duckling/controls/validated-input.component.css'],
     template:`
-        <dk-input
+        <dk-input #inputComponent
             [disabled]="disabled"
             [label]="label"
             [value]="value"
@@ -31,6 +32,11 @@ export type Validator = (value : string) => boolean;
     `
 })
 export class ValidatedInputComponent implements OnChanges {
+    /**
+     * Reference of the input component used to get the raw value for special calculations
+     */
+    @ViewChild('inputComponent') inputComponent : InputComponent;
+    
     /**
      * Text label displayed to the user.
      */
@@ -77,5 +83,9 @@ export class ValidatedInputComponent implements OnChanges {
             this.color = 'warn';
             return false;
         }
+    }
+
+    get rawValue() : string {
+        return this.inputComponent.rawValue;
     }
 }
