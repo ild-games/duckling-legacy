@@ -6,13 +6,13 @@ export const PATH_KEY = "path";
 export interface PathAttribute extends Attribute {
     vertices: Vector[],
     isLoop: boolean,
-    time: number
+    cycleTime: number
 }
 
 export let defaultPath : PathAttribute = {
     vertices: [{x: 0, y: 0}, {x: 250, y: 0}],
     isLoop: false,
-    time: 5
+    cycleTime: 5
 }
 
 export function getPath(entity : Entity) : PathAttribute {

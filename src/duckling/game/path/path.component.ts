@@ -17,7 +17,7 @@ import {PathAttribute} from './path-attribute';
     template: `
         <dk-number-input
             label="Time To Complete Path"
-            [value]="attribute.time"
+            [value]="attribute.cycleTime"
             [validator]="timeValidator"
             (validInput)="onTimeChanged($event)">
         </dk-number-input>
@@ -76,8 +76,8 @@ export class PathComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {isLoop: newIsLoop}));
     }
     
-    onTimeChanged(newTime : number) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {time: newTime}));
+    onTimeChanged(newCycleTime : number) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {time: newCycleTime}));
     }
 
     onNewVertexClicked() {
