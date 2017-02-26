@@ -21,24 +21,37 @@ export function drawPathAttribute(entity : Entity) : DrawnConstruct {
     if (!pathAttribute || pathAttribute.vertices.length === 0) {
         return null;
     }
+    
+    if (pathAttribute.isLoop) {
+        return _drawLoop(pathAttribute.vertices);
+    } else {
+        return _drawNonLoopPath(pathAttribute.vertices);
+    }
+}
 
-    if (pathAttribute.vertices.length === 1) {
-        return _drawJoint({x: 0, y: 0});
+function _drawLoop(vertices : Vector[]) : DisplayObject {
+    if (vertices.length === 1) {
+        return _drawJoint(vertices[0]);
+    }
+
+    return _drawLoopPath(vertices);
+}
+
+function _drawNonLoopPath(vertices : Vector[]) : DisplayObject {
+    if (vertices.length === 1) {
+        return _drawJoint(vertices[0]);
     }
     
-    if (pathAttribute.vertices.length === 2 && !pathAttribute.isLoop) {
+    if (vertices.length === 2) {
         let container = new Container();
-        let theta = _pathTheta(pathAttribute.vertices[0], pathAttribute.vertices[1]);
-        container.addChild(_drawLine(pathAttribute.vertices[0], pathAttribute.vertices[1]));
-        container.addChild(_drawSquare(pathAttribute.vertices[0], theta, STARTING_SQUARE_COLOR));
-        container.addChild(_drawSquare(pathAttribute.vertices[1], theta, ENDING_SQUARE_COLOR));
+        let theta = _pathTheta(vertices[0], vertices[1]);
+        container.addChild(_drawLine(vertices[0], vertices[1]));
+        container.addChild(_drawSquare(vertices[0], theta, STARTING_SQUARE_COLOR));
+        container.addChild(_drawSquare(vertices[1], theta, ENDING_SQUARE_COLOR));
         return container;
     }
     
-    if (pathAttribute.isLoop) {
-        return _drawLoopPath(pathAttribute.vertices);
-    } 
-    return _drawPath(pathAttribute.vertices);
+    return _drawPath(vertices);
 }
 
 function _drawLoopPath(vertices : Vector[]) : DisplayObject {
@@ -116,12 +129,6 @@ function _drawJoint(position : Vector) : DisplayObject {
     graphics.drawCircle(position.x, position.y, JOINT_HEIGHT / 2);
     graphics.endFill();
     return graphics;
-}
-
-function _drawFirstLoopJoint(position: Vector) : DisplayObject {
-    let container = new Container();
-    container.addChild(_drawTriangle(position, STARTING_SQUARE_COLOR));
-    return container;
 }
 
 function _rotateDisplayObject(drawnObject : DisplayObject, theta : number, rotateAround : Vector) : DisplayObject {
