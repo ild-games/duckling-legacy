@@ -19,7 +19,7 @@ import {PathAttribute} from './path-attribute';
             label="Time To Complete Path"
             [value]="attribute.cycleTime"
             [validator]="timeValidator"
-            (validInput)="onTimeChanged($event)">
+            (validInput)="onCycleTimeChanged($event)">
         </dk-number-input>
         
         <md-checkbox
@@ -76,8 +76,8 @@ export class PathComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {isLoop: newIsLoop}));
     }
     
-    onTimeChanged(newCycleTime : number) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {time: newCycleTime}));
+    onCycleTimeChanged(newCycleTime : number) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {cycleTime: newCycleTime}));
     }
 
     onNewVertexClicked() {
