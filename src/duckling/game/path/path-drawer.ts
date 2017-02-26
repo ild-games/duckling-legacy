@@ -60,7 +60,7 @@ function _drawLoopIndicator(vertex : Vector, theta : number) : DisplayObject {
     let container = new Container();
     
     container.addChild(_drawSquare(vertex, 0, STARTING_SQUARE_COLOR));
-    container.addChild(_drawTriangle({x: vertex.x + DIRECTION_INDICATOR_OFFSET, y: vertex.y}, STARTING_SQUARE_COLOR);
+    container.addChild(_drawTriangle({x: vertex.x + DIRECTION_INDICATOR_OFFSET, y: vertex.y}, STARTING_SQUARE_COLOR));
 
     return _rotateDisplayObject(container, theta, vertex);
 }
