@@ -18,7 +18,7 @@ export function pathBox(entity : Entity) : Box2 {
 
     if (path.vertices.length === 1) {
         return {
-            position: {x: path.vertices[0].x - PADDING, y: path.vertices[1].y - PADDING},
+            position: {x: path.vertices[0].x - PADDING, y: path.vertices[0].y - PADDING},
             dimension: {x: PADDING * 2, y: PADDING * 2},
             rotation: 0
         };
