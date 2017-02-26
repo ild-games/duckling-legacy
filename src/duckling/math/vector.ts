@@ -65,6 +65,13 @@ export function vectorRound(vector : Vector) : Vector {
     }
 }
 
+/**
+ * Rotate a vector around a given origin
+ * @param vector Vector to rotate
+ * @param radians Amount to rotate by
+ * @param origin Point to rotate around
+ * @return Resulting vector from the rotation
+ */
 export function vectorRotate(vector : Vector, radians : number, origin : Vector = {x: 0, y: 0}) : Vector {
     let result : Vector = {x: 0, y: 0};
     result.x = Math.cos(radians) * (vector.x - origin.x) - Math.sin(radians) * (vector.y - origin.y) + origin.x;

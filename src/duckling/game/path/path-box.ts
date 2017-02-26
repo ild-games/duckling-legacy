@@ -18,7 +18,7 @@ export function pathBox(entity : Entity) : Box2 {
 
     if (path.vertices.length === 1) {
         return {
-            position: {x: -PADDING, y: -PADDING},
+            position: {x: path.vertices[0].x - PADDING, y: path.vertices[1].y - PADDING},
             dimension: {x: PADDING * 2, y: PADDING * 2},
             rotation: 0
         };
@@ -26,7 +26,7 @@ export function pathBox(entity : Entity) : Box2 {
     
     let {min, max} = getMinAndMaxVertices(path.vertices);
     return {
-        position: {x: -PADDING, y: -PADDING},
+        position: {x: min.x - PADDING, y: min.y - PADDING},
         dimension: {x: max.x - min.x + PADDING * 2, y: max.y - min.y + PADDING * 2},
         rotation: 0
     };

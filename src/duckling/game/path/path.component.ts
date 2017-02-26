@@ -67,7 +67,7 @@ export class PathComponent {
     }
     
     onVertexChanged(index : number, newVertex : Vector) {
-        let newVertices = this.attribute.vertices.slice(0);
+        let newVertices = [...this.attribute.vertices];
         newVertices[index] = newVertex;
         this.attributeChanged.emit(immutableAssign(this.attribute, {vertices: newVertices}));
     }

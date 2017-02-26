@@ -59,3 +59,6 @@ describe("vectorRound", function() {
         expect(vectorRound({x: 1, y: 1})).to.eql({x: 1, y: 1});
     });
 });
+
+describe("vectorRotate", function() {
+});
