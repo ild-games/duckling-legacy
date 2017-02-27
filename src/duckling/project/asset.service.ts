@@ -107,7 +107,7 @@ export class AssetService {
      */
     private _loadFont(assetToLoad : LoadingAsset) {
         let fontFamily = this.fontFamilyFromAssetKey(assetToLoad.asset.key);
-        this._createFontFace(fontFamily, assetToLoad.filePath);
+        this._createFontFace(fontFamily, this._getFilePath(assetToLoad));
         webFontLoader({
             custom: {
                 families: [fontFamily]

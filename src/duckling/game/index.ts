@@ -35,6 +35,14 @@ import {RotateComponent} from './rotate/rotate.component';
 import {defaultTriggerDeath, TRIGGER_DEATH_KEY} from './trigger-death/trigger-death-attribute';
 import {TriggerDeathComponent} from './trigger-death/trigger-death.component';
 
+import {defaultPath, PATH_KEY} from './path/path-attribute';
+import {PathComponent} from './path/path.component';
+import {drawPathAttribute} from './path/path-drawer';
+import {pathBox} from './path/path-box';
+
+import {defaultPathFollower, PATH_FOLLOWER_KEY} from './path/path-follower-attribute';
+import {PathFollowerComponent} from './path/path-follower.component';
+
 import {defaultDrawableAttribute, DRAWABLE_KEY} from './drawable/drawable-attribute';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
 import {drawDrawableAttribute} from './drawable/drawable-drawer';
@@ -60,7 +68,9 @@ let _bootstrapFunctions : Function[] = [
     _bootstrapActionAttribute,
     _bootstrapRotateAttribute,
     _bootstrapButtonAttribute,
-    _bootstrapTriggerDeathAttribute
+    _bootstrapTriggerDeathAttribute,
+    _bootstrapPathAttribute,
+    _bootstrapPathFollowerAttribute
 ];
 
 /**
@@ -118,4 +128,16 @@ function _bootstrapRotateAttribute(services : Services) {
 function _bootstrapTriggerDeathAttribute(services : Services) {
     services.attributeComponentService.register(TRIGGER_DEATH_KEY, TriggerDeathComponent);
     services.attributeDefaultService.register(TRIGGER_DEATH_KEY, {createByDefault: false, default: defaultTriggerDeath});
+}
+
+function _bootstrapPathAttribute(services : Services) {
+    services.attributeComponentService.register(PATH_KEY, PathComponent);
+    services.attributeDefaultService.register(PATH_KEY, {createByDefault: false, default: defaultPath});
+    services.entityDrawerService.register(PATH_KEY, drawPathAttribute);
+    services.entityBoxService.register(PATH_KEY, pathBox);
+}
+
+function _bootstrapPathFollowerAttribute(services : Services) {
+    services.attributeComponentService.register(PATH_FOLLOWER_KEY, PathFollowerComponent);
+    services.attributeDefaultService.register(PATH_FOLLOWER_KEY, {createByDefault: false, default: defaultPathFollower});
 }

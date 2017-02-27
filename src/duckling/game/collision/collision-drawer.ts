@@ -7,7 +7,6 @@ import {AssetService} from '../../project';
 
 import {getCollision} from './collision-attribute';
 
-
 const blue = 0x00ccff;
 
 /**
