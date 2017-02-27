@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {loader, Texture} from 'pixi.js';
+import {loader, Texture, Rectangle} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
 import {load as webFontLoader} from 'webfontloader';
 
@@ -122,17 +122,18 @@ export class AssetService {
      * @param  editorSpecific Optional boolean that determines if the asset is an editor specific resource, default is false.
      * @return Raw asset
      */
-    get(key : string, type : AssetType, editorSpecific? : boolean) : any {
+    get(asset : Asset, editorSpecific? : boolean) : any {
+        let fullKey = asset.key;
         if (editorSpecific) {
-            key = EDITOR_SPECIFIC_IMAGE_PREFIX + key;
+            fullKey = EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key;
         }
-        switch (type) {
+        switch (asset.type) {
             case "TexturePNG":
-                return this._getTexture(key);
+                return this._getTexture(fullKey);
             case "FontTTF":
                 throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
             default:
-                throw new Error("Unknown asset type: " + type);
+                throw new Error("Unknown asset type: " + asset.type);
         }
     }
 
@@ -198,6 +199,18 @@ export class AssetService {
      */
     fontFamilyFromAssetKey(assetKey : string) : string {
         return assetKey.replace(/\//g, '-');
+    }
+
+    getImageAssetDimensions(asset : Asset) : Rectangle {
+        if (asset.type !== "TexturePNG") {
+            throw new Error("Asset is not a TexturePNG");
+        }
+        
+        let texture = this.get(asset);
+        if (!texture) {
+            return new Rectangle(0, 0, 0, 0);
+        }
+        return texture.frame;
     }
 
     get assets() : {[key : string] : Asset} {

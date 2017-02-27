@@ -21,12 +21,14 @@ import {Validator} from './validated-input.component';
         <dk-number-input
             [label]="xLabel"
             [value]="value?.x"
+            [disabled]="xDisabled"
             [validator]="xValidator"
             (validInput)="onXInput($event)">
         </dk-number-input>
         <dk-number-input
             [label]="yLabel"
             [value]="value?.y"
+            [disabled]="yDisabled"
             [validator]="yValidator"
             (validInput)="onYInput($event)">
         </dk-number-input>
@@ -38,6 +40,8 @@ export class VectorInputComponent {
     @Input() value : Vector;
     @Input() xValidator : Validator;
     @Input() yValidator : Validator;
+    @Input() xDisabled : boolean = false;
+    @Input() yDisabled : boolean = false;
 
     /**
      * Event published when the user enters a valid input.

@@ -10,7 +10,7 @@ import {AssetService} from '../../project';
  * @return Camera drawable
  */
 export function drawCameraAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct {
-    let cameraTexture = assetService.get("fa-video-camera", "TexturePNG", true);
+    let cameraTexture = assetService.get({key: "fa-video-camera", type: "TexturePNG"}, true);
     let sprite = new Sprite(cameraTexture);
     return sprite;
 }
