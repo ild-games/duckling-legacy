@@ -55,6 +55,7 @@ export class ProjectService {
      * Open the project found at the given path.
      */
     async open(projectPath : string) {
+        projectPath = this._pathService.normalize(projectPath);
         this._storeService.dispatch(switchProjectAction(projectPath));
         try {
             let versionInfo = await this._migrationService.openProject(projectPath);
@@ -122,7 +123,7 @@ export class ProjectService {
 
         for (let customAttribute of this._project.customAttributes) {
             await this._jsonLoader.saveJsonToPath(
-                `${this._customAttributesRoot}/${customAttribute.key}.json`,
+                this._pathService.join(this._customAttributesRoot, customAttribute.key + '.json'),
                 JSON.stringify(customAttribute.content, null, 4));
         }
     }
@@ -187,7 +188,7 @@ export class ProjectService {
      * @return A promise for an array of map names.
      */
     getMaps() : Promise<string []> {
-        let mapsRoot = `${this._project.home}/maps`;
+        let mapsRoot = this._mapRoot;
         let mapsPromise = glob(`${mapsRoot}/**/*.map`);
         return mapsPromise.then(maps => maps.map(map => this._mapPathToRoot(mapsRoot, map)));
     }
@@ -248,11 +249,11 @@ export class ProjectService {
     }
 
     private get _mapRoot() {
-        return `${this._project.home}/maps`
+        return this._pathService.join(this._project.home, 'maps');
     }
 
     private get _customAttributesRoot() {
-        return `${this._project.home}/project/custom-attributes`;
+        return this._pathService.join(this._project.home, 'project', 'custom-attributes');
     }
 
     private get _project() : Project {

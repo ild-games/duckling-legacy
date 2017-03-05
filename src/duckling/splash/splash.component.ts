@@ -40,7 +40,7 @@ const MAX_SPLASH_ENTRIES : number = 7;
                     </div>
                 </div>
             </div>
-            
+
             <div class="left-section mat-elevation-z8">
                 <md-nav-list>
                     <md-list-item
@@ -60,7 +60,7 @@ const MAX_SPLASH_ENTRIES : number = 7;
                     </a>
                 </div>
             </div>
-            
+
             <div class="the-duck"></div>
         </div>
     `
@@ -126,7 +126,7 @@ export class SplashComponent implements OnInit {
                 if (dirNames) {
                     this.openProject({
                         path: dirNames[0],
-                        title: this._path.basename(dirNames[0])
+                        title: this._path.basename(this._path.normalize(dirNames[0]))
                     });
                 }
             });

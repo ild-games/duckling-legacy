@@ -64,19 +64,17 @@ export class BrowseAssetComponent {
         if (!file) {
             return;
         }
+        file = this._path.normalize(file);
 
-        let homeResourceString = this._path.join(this._project.home, 'resources');
-        if (file.indexOf(homeResourceString) === -1) {
+        let resourceDirectory = this._path.join(this._project.home, 'resources');
+        if (!this._path.isSubOfDir(file, resourceDirectory)) {
             this._dialog.showErrorDialog(
                 "Unable to load asset",
                 "You must select assets from the resources/ folder in the root of your project");
             return;
         }
-        let splitAssetKey = file.split(homeResourceString + this._path.folderSeparator)[1].replace(/\.[^/.]+$/, "");
-        if (this._path.folderSeparator === "\\") {
-            splitAssetKey = splitAssetKey.replace(/\\/g, "/");
-        }
-        this.filePicked.emit(splitAssetKey);
+
+        this.filePicked.emit(this._path.toKey(resourceDirectory, file));
     }
 
     get fileName() : string {
