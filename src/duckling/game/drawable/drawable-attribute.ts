@@ -13,9 +13,14 @@ export interface DrawableAttribute extends Attribute {
      * Determines which type of drawable is being used
      */
     topDrawable : Drawable;
+    
+    camEntity: string;
 }
 
-export let defaultDrawableAttribute : DrawableAttribute = immutableAssign({}, {topDrawable: defaultDrawable}) as DrawableAttribute;
+export let defaultDrawableAttribute : DrawableAttribute = immutableAssign({}, {
+    topDrawable: defaultDrawable,
+    camEntity: ""
+}) as DrawableAttribute;
 
 /**
  * Retrieve the drawable attribute from the entity.
