@@ -52,7 +52,7 @@ export interface Drawable {
 
 export let defaultDrawable : Drawable = {
     __cpp_type: null,
-    key: "TopDrawable",
+    key: "topDrawable",
     inactive: false,
     renderPriority: 0,
     scale: {

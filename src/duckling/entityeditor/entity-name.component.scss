@@ -1,4 +1,5 @@
 @import '../forms';
+@import '../fonts';
 
 .entity-name-row {
     display: flex;
@@ -6,4 +7,5 @@
     align-items: center;
     margin-bottom: $spacer-unit;
     height: 50px;
+    font-size: $font-size-heading;
 }
