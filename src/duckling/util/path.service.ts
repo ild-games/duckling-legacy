@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as fs from 'fs';
-import {posix as npath} from 'path';
+import {posix as npath, sep as osSep} from 'path';
 
 import {glob} from './glob';
 
@@ -62,6 +62,46 @@ export class PathService {
      */
     walk(path : string) : Promise<any> {
         return glob(`${path}/**/*.*`);
+    }
+
+    /**
+     * In duckling we frequently store keys that are essentially a relative path to a
+     * resource without the extension. This function takes in a path from a directory
+     * and returns the key.
+     * @param  directory Directory the object (asset or map) is stored in.
+     * @param  objectPath Path to the file.
+     * @return The key to be stored.
+     */
+    toKey(directory : string, objectPath : string) : string {
+        let relativePath = this.relative(directory, objectPath);
+        let extension = npath.extname(objectPath);
+        if (extension.length !== 0) {
+            return relativePath.slice(0, -extension.length)
+        } else {
+            return relativePath;
+        }
+    }
+
+    /**
+     * Get the relative path from the first location to the second location.
+     * @param  from Directory to look from
+     * @param  to   Location to get the path to.
+     * @return The relative path.
+     */
+    relative(from : string, to : string) {
+        return npath.relative(from, to);
+    }
+
+    /**
+     * Normalize the path. Transforms all paths into unix format and simplifies things like dir/../otherdir/file.txt => otherdir/file.txt
+     * @param  path Path to normalize.
+     * @return Return the normalized path.
+     */
+    normalize(path : string) : string {
+        if (osSep === '\\') {
+            path = path.replace(/\\/g, "/");
+        }
+        return npath.normalize(path);
     }
 
     /**
