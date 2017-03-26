@@ -49,6 +49,12 @@ import {CameraAttribute} from './camera-attribute';
             (validInput)="onScaleChanged($event)">
         </dk-number-input>
 
+        <dk-number-input
+            label="Render Priority"
+            [value]="attribute.renderPriority"
+            (validInput)="onRenderPriorityChanged($event)">
+        </dk-number-input>
+
         <dk-input
             label="Follows Entity"
             [value]="attribute.follows"
@@ -96,8 +102,12 @@ export class CameraComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {lowerBounds: newLowerBounds}));
     }
 
-    onScaleChanged(newScale : Vector) {
+    onScaleChanged(newScale : number) {
         this.attributeChanged.emit(immutableAssign(this.attribute, {scale: newScale}));
+    }
+
+    onRenderPriorityChanged(newRenderPriority : number) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {renderPriority: newRenderPriority}));
     }
 
     onFollowsChanged(newFollows : EntityKey) {
