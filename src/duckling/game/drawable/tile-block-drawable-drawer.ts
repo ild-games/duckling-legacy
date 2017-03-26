@@ -1,5 +1,6 @@
 import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture} from 'pixi.js';
 
+import {drawMissingAsset} from '../../canvas/drawing/util';
 import {Vector} from '../../math/vector';
 import {AssetService} from '../../project/asset.service';
 
@@ -12,17 +13,17 @@ export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, ass
 
     let baseTexture = assetService.get({key: tileBlockDrawable.textureKey, type: "TexturePNG"});
     if (!baseTexture) {
-        return null;
+        return drawMissingAsset(assetService);
     }
     
-    // let container = new Container();
     return _constructTileBlockSprite(tileBlockDrawable, baseTexture, assetService);
-    // return container;
 }
 
 function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, assetService : AssetService) : DisplayObject {
     let tileSize = getTileWidth(tileBlockDrawable, assetService);
-    if (tileSize <= 0) throw new Error("Invalid tile size specified");
+    if (tileSize <= 0) {
+        return drawMissingAsset(assetService);
+    }
     let numberOfTiles = { x: tileBlockDrawable.size.x / tileSize, y: tileBlockDrawable.size.y / tileSize};
     
     let positions = _getPositions(numberOfTiles);
@@ -34,11 +35,9 @@ function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTe
 function _getPositions(numberOfTiles: Vector): Vector[] {
     let positions: Vector[] = [];
     
-    let position: Vector;
-    for (let xPosition of _getAxisPositions(numberOfTiles.x)) {
-        for (let yPosition of _getAxisPositions(numberOfTiles.y)) {
-            position = { x: xPosition, y: yPosition };
-            positions.push(position);
+    for (let x of _getAxisPositions(numberOfTiles.x)) {
+        for (let y of _getAxisPositions(numberOfTiles.y)) {
+            positions.push({x, y});
         }
     }
 
@@ -71,8 +70,6 @@ function _constructTileBlockContainer(positions: Vector[], calculateOffset: { x:
 }
 
 function _getSprite(position: Vector, numberOfTiles: Vector, tileSize: number, texture: Texture, calculateOffset: { x : boolean, y : boolean}): DisplayObject | null {
-    let sprite: DisplayObject;
- 
     // Only tiles in row/column 1 (0 indexed) are ever repeated
     if (position.x === 1 || position.y === 1){
         return _getTiledSprite(position, numberOfTiles, tileSize, texture, calculateOffset);

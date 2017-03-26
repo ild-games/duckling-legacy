@@ -61,7 +61,12 @@ export class TileBlockDrawableComponent implements OnInit, OnDestroy {
 
     onImageFilePicked(imageKey : string) {
         this._pickedAssetKey = imageKey;
-        this._assets.add([{asset: {type: "TexturePNG", key: imageKey}}]);
+        let asset : Asset = {type: "TexturePNG", key: imageKey};
+        if (this._assets.get(asset)) {
+            this._onAssetLoaded(asset);
+        } else {
+            this._assets.add([{asset: {type: "TexturePNG", key: imageKey}}]);
+        }
     }
 
     private _onAssetLoaded(asset : Asset) {
