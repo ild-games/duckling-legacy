@@ -5,6 +5,7 @@ import {
     EventEmitter,
 } from '@angular/core';
 
+import {Validator} from '../../controls/validated-input.component';
 import {AccordianComponent, FormLabelComponent, EnumChoiceComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 
@@ -40,6 +41,7 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
                 <template let-element="$element" let-index="$index">
                     <dk-drawable
                         [drawable]="element"
+                        [keyValidator]="keyValidator"
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable>
                 </template>
@@ -51,6 +53,7 @@ export class ContainerDrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
 
+    @Input() keyValidator : Validator;
     @Input() containerDrawable : ContainerDrawable;
     @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
 

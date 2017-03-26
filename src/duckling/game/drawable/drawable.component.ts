@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
+import {Validator} from '../../controls/validated-input.component';
 import {EnumChoiceComponent, VectorInputComponent, FormLabelComponent} from '../../controls';
 import {immutableAssign} from '../../util';
 
@@ -53,6 +54,7 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
         <dk-generic-drawable
             *ngIf="drawable?.__cpp_type !== null"
             [drawable]="drawable"
+            [keyValidator]="keyValidator"
             (drawableChanged)="specificDrawableChanged($event)">
         </dk-generic-drawable>
 
@@ -73,6 +75,7 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
             <dk-container-drawable
                 *ngSwitchCase="DrawableType.Container"
                 [containerDrawable]="drawable"
+                [keyValidator]="keyValidator"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-container-drawable>
 
@@ -85,6 +88,7 @@ export function getDefaultDrawable(type : DrawableType) : Drawable {
             <dk-animated-drawable
                 *ngSwitchCase="DrawableType.Animated"
                 [animatedDrawable]="drawable"
+                [keyValidator]="keyValidator"
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-animated-drawable>
 
@@ -101,6 +105,7 @@ export class DrawableComponent {
     DrawableType = DrawableType;
     cppTypeToDrawableType = cppTypeToDrawableType;
 
+    @Input() keyValidator : Validator;
     @Input() drawable : Drawable;
     @Output() drawableChanged = new EventEmitter<Drawable>();
 

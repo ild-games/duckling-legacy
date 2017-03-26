@@ -20,7 +20,7 @@ import {Drawable} from './drawable';
     template: `
         <dk-delayed-save-input
             [value]="drawable.key"
-            [validator]="keyValidator"
+            [validator]="combinedValidators"
             label="Key"
             editTooltip="Edit drawable key"
             validTooltip="Save drawable key"
@@ -65,6 +65,7 @@ import {Drawable} from './drawable';
     `
 })
 export class GenericDrawableComponent {
+    @Input() keyValidator : Validator;
     @Input() drawable : Drawable;
     @Output() drawableChanged = new EventEmitter<Drawable>();
     
@@ -92,13 +93,13 @@ export class GenericDrawableComponent {
         this.drawableChanged.emit(immutableAssign(this.drawable, {inactive: inactive}));
     }
 
-    get keyValidator() : Validator {
+    get combinedValidators() : Validator {
         return (value : string) => {
-            if (!value || value === "") {
-                return false;
+            if (value === this.drawable.key) {
+                return true;
             }
-            
-            return true;
+
+            return this.keyValidator(value);
         }
     }
 }

@@ -1,5 +1,8 @@
 import {Vector} from '../../math';
 
+import {ContainerDrawable} from './container-drawable';
+import {AnimatedDrawable} from './animated-drawable';
+
 export enum DrawableType {
     Shape,
     Container,
@@ -38,7 +41,6 @@ export function drawableTypeToCppType(type : DrawableType) : string {
     }
 }
 
-
 export interface Drawable {
     __cpp_type: string;
     key : string
@@ -66,3 +68,32 @@ export let defaultDrawable : Drawable = {
     },
     priorityOffset: 0
 };
+
+export function getDrawableByKey(parentDrawable : Drawable, key : string) : Drawable {
+    if (key === parentDrawable.key) {
+        return parentDrawable;
+    }
+
+    switch (cppTypeToDrawableType(parentDrawable.__cpp_type)) {
+        case DrawableType.Container:
+            for (let drawable of (parentDrawable as ContainerDrawable).drawables) {
+                let childByKey = getDrawableByKey(drawable, key);
+                if (childByKey) {
+                    return childByKey;
+                }
+            }
+            return null;
+        case DrawableType.Animated:
+            for (let drawable of (parentDrawable as AnimatedDrawable).frames) {
+                let childByKey = getDrawableByKey(drawable, key);
+                if (childByKey) {
+                    return childByKey;
+                }
+            }
+            return null;
+        case DrawableType.Shape:
+        case DrawableType.Image:
+        case DrawableType.Text:
+            return null;
+    }
+}

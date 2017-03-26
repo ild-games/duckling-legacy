@@ -27,12 +27,12 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
             
             <div *ngIf="isEditingValue" class="edit-label">
                 <span class="edit-label-text">{{label}}:</span>
-                <dk-validated-input
+                <dk-input
                     [value]="editValue"
-                    [validator]="validator"
+                    [dividerColor]="isValid ? 'primary' : 'warn'"
                     (keyup.enter)="onSave()"
-                    (validInput)="onInput($event)">
-                </dk-validated-input>
+                    (inputChanged)="onInput($event)">
+                </dk-input>
                 <dk-icon-button
                     icon="save"
                     [tooltip]="getSaveTooltip()"
