@@ -6,18 +6,18 @@ import {anchorToPosition, positionToAnchor} from '../../duckling/math/anchor';
 describe("anchorToPosition", function() {
     let vec = {x: 10, y: 5}
     it("Can return a zero anchor", function() {
-        expect(anchorToPosition({x: 0, y: 0}, vec)).to.eql({x: 0, y: 0});
+        expect(anchorToPosition({x: 0, y: 0}, vec)).to.eql({x: (-0), y: (-0)});
     });
 
     it("Can calculate a positive anchor", function() {
-        expect(anchorToPosition({x: 0.5, y: -2}, vec)).to.eql({x: 5, y: -10});
+        expect(anchorToPosition({x: 0.5, y: -2}, vec)).to.eql({x: -5, y: 10});
     });
 });
 
 describe("positionToAnchor", function() {
     let vec = {x: 10, y: 5};
     it("Can calculate a zero position", function() {
-        expect(positionToAnchor({x: 0, y: 0}, vec)).to.eql({x: 0, y: 0});
+        expect(positionToAnchor({x: 0, y: 0}, vec)).to.eql({x: (-0), y: (-0)});
     });
 
     it("Can calculate a positive position", function() {

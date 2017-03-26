@@ -65,12 +65,4 @@ describe("resize", function() {
         let result = {dimension : {y: 4, x: 2}, position : {y: 12, x: 5}, rotation : 0};
         expect(resize(BOX10, afterDrag, box)).to.eql(result);
     });
-
-    it("Handlings shrinking from the right", function() {
-        expect(true).to.eql(false);
-    });
-
-    it("Handles shrinking from the left", function() {
-        expect(true).to.eql(false);
-    });
 });
