@@ -7,15 +7,5 @@
     align-items: center;
     margin-bottom: $spacer-unit;
     height: 50px;
-
-    .entity-name {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .entity-name-text {
-        font-size: $font-size-heading;
-        margin-right: $spacer-unit / 2;
-    }
+    font-size: $font-size-heading;
 }

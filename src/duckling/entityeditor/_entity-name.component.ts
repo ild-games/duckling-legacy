@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 
 import {EntitySystemService, EntityKey} from '../entitysystem';
-import {DeleteButtonComponent, InputComponent} from '../controls';
+import {DeleteButtonComponent} from '../controls/delete-button.component';
+import {InputComponent} from '../controls/input.component';
+import {Validator} from '../controls/validated-input.component';
 
 /**
  * Component that allows the user to modify an entity.
@@ -17,98 +19,51 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
     selector: "dk-entity-name",
     styleUrls: ['./duckling/entityeditor/entity-name.component.css'],
     template: `
-        <span class="entity-name-row">
-            <div *ngIf="!isEditingName" class="entity-name">
-                <dk-inline-edit-label
-                    class="entity-name"
-                    label="Entity: {{currentSelectedEntity}}"
-                    tooltip="Edit entity name"
-                    (startEdit)="onEditEntityName()">
-                </dk-inline-edit-label>
-            </div>
-            <div *ngIf="isEditingName" class="entity-name">
-                <span class="entity-name-text">Entity:</span>
-                <dk-input
-                    [value]="editEntityName"
-                    [dividerColor]="isValidEntityName(editEntityName) ? 'primary' : 'warn'"
-                    (keyup.enter)="onSaveEntityName()"
-                    (inputChanged)="onEntityNameInput($event)">
-                </dk-input>
-                <dk-icon-button
-                    icon="save"
-                    [tooltip]="getSaveNameTooltip()"
-                    [disabled]="!isValidEntityName(editEntityName)"
-                    (iconClick)="onSaveEntityName()">
-                </dk-icon-button>
-            </div>
+        <div class="entity-name-row">
+            <dk-edit-input
+                [value]="currentSelectedEntity"
+                [validator]="nameValidator"
+                label="Entity"
+                editTooltip="Edit entity name"
+                validTooltip="Save entity name"
+                invalidTooltip="Entity name cannot be a duplicate or blank"
+                (onValueSaved)="onSaveEntityName($event)">
+            </dk-edit-input>
             <dk-delete-button (deleteClick)="onDeleteClicked()"></dk-delete-button>
-        </span>
+        </div>
     `
 })
-export class EntityNameComponent implements OnChanges {
+export class EntityNameComponent {
     @Input() currentSelectedEntity : EntityKey;
     @Output() deleteEntity = new EventEmitter<any>();
     @Output() renameEntity = new EventEmitter<any>();
 
-    editEntityName : string;
-    isEditingName : boolean = false;
-
     constructor(private _entitySystem : EntitySystemService) {
     }
 
-    ngOnChanges(changes : {currentSelectedEntity? : SimpleChange}) {
-        if (changes.currentSelectedEntity) {
-            this.editEntityName = this.currentSelectedEntity;
-            this.isEditingName = false;
-        }
-    }
-
-    onEditEntityName() {
-        this.isEditingName = true;
-    }
-
-    onSaveEntityName() {
-        if (!this.isValidEntityName(this.editEntityName)) {
-            return;
-        }
-
-        // if the name is the same don't do the replace or else undo/redo will have
-        // a state that appears to do nothing
-        if (this.editEntityName !== this.currentSelectedEntity) {
-            this.renameEntity.emit(this.editEntityName);
-        }
-        this.isEditingName = false;
-    }
-
-    onEntityNameInput(newEntityName : string) {
-        this.editEntityName = newEntityName;
+    onSaveEntityName(newEntityName : string) {
+        this.renameEntity.emit(newEntityName);
     }
 
     onDeleteClicked() {
         this.deleteEntity.emit(true);
     }
 
-    isValidEntityName(newEntityName : string) : boolean {
-        if (!newEntityName || newEntityName === "") {
-            return false;
-        }
-        if (newEntityName === this.currentSelectedEntity) {
+    get nameValidator() : Validator {
+        return (value : string) => {
+            if (!value || value === "") {
+                return false;
+            }
+            if (value === this.currentSelectedEntity) {
+                return true;
+            }
+            
+            let currentEntity = this._entitySystem.getEntity(value);
+            if (currentEntity) {
+                return false;
+            }
+
             return true;
-        }
-
-        let currentEntity = this._entitySystem.getEntity(newEntityName);
-        if (currentEntity) {
-            return false;
-        }
-
-        return true;
-    }
-
-    getSaveNameTooltip() {
-        if (this.isValidEntityName(this.editEntityName)) {
-            return "Save entity name";
-        } else {
-            return "Entity name cannot be a duplicate or blank";
         }
     }
 }

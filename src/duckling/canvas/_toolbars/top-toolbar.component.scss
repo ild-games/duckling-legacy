@@ -1,4 +1,5 @@
 @import "../../colors";
+@import '../../fonts';
 
 :host {
     display: block;
@@ -6,6 +7,7 @@
 
 .map-name {
     float: right;
+    font-size: $font-size-heading;
 }
 
 .separator {

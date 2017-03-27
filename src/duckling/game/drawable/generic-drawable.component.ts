@@ -5,9 +5,9 @@ import {
     EventEmitter
 } from '@angular/core';
 
-import {VectorInputComponent, NumberInputComponent, FormLabelComponent} from '../../controls';
-import {Vector} from '../../math';
-import {immutableAssign} from '../../util';
+import {Validator} from '../../controls/validated-input.component';
+import {Vector} from '../../math/vector';
+import {immutableAssign} from '../../util/model';
 
 import {Drawable} from './drawable';
 
@@ -18,6 +18,16 @@ import {Drawable} from './drawable';
     selector: "dk-generic-drawable",
     styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
     template: `
+        <dk-edit-input
+            [value]="drawable.key"
+            [validator]="combinedValidators"
+            label="Key"
+            editTooltip="Edit drawable key"
+            validTooltip="Save drawable key"
+            invalidTooltip="Entity name cannot be a duplicate or blank"
+            (onValueSaved)="onSaveDrawableKey($event)">
+        </dk-edit-input>
+        
         <div class="inactive-checkbox">
             <md-checkbox
                 class="inactive-checkbox"
@@ -55,8 +65,13 @@ import {Drawable} from './drawable';
     `
 })
 export class GenericDrawableComponent {
+    @Input() keyValidator : Validator;
     @Input() drawable : Drawable;
     @Output() drawableChanged = new EventEmitter<Drawable>();
+    
+    onSaveDrawableKey(newKey : string) {
+        this.drawableChanged.emit(immutableAssign(this.drawable, {key: newKey}));
+    }
 
     onRenderPriorityInput(newRenderPriority : number) {
         this.drawableChanged.emit(immutableAssign(this.drawable, {renderPriority: newRenderPriority}));
@@ -76,5 +91,15 @@ export class GenericDrawableComponent {
 
     onInactivePressed(inactive : boolean) {
         this.drawableChanged.emit(immutableAssign(this.drawable, {inactive: inactive}));
+    }
+
+    get combinedValidators() : Validator {
+        return (value : string) => {
+            if (value === this.drawable.key) {
+                return true;
+            }
+
+            return this.keyValidator(value);
+        }
     }
 }

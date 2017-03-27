@@ -10,6 +10,7 @@ import {
 import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 import {Vector} from '../../math';
+import {Validator} from '../../controls/validated-input.component';
 
 import {AnimatedDrawable} from './animated-drawable';
 import {ImageDrawable, defaultImageDrawable} from './image-drawable';
@@ -64,6 +65,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
                 <template let-element="$element" let-index="$index">
                     <dk-drawable
                         [drawable]="element"
+                        [keyValidator]="keyValidator"
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable>
                 </template>
@@ -75,6 +77,7 @@ export class AnimatedDrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
 
+    @Input() keyValidator : Validator;
     @Input() animatedDrawable : AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
