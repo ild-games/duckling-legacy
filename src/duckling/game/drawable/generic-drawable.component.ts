@@ -18,7 +18,7 @@ import {Drawable} from './drawable';
     selector: "dk-generic-drawable",
     styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
     template: `
-        <dk-delayed-save-input
+        <dk-edit-input
             [value]="drawable.key"
             [validator]="combinedValidators"
             label="Key"
@@ -26,7 +26,7 @@ import {Drawable} from './drawable';
             validTooltip="Save drawable key"
             invalidTooltip="Entity name cannot be a duplicate or blank"
             (onValueSaved)="onSaveDrawableKey($event)">
-        </dk-delayed-save-input>
+        </dk-edit-input>
         
         <div class="inactive-checkbox">
             <md-checkbox

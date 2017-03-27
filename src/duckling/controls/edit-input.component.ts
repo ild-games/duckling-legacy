@@ -13,8 +13,8 @@ import {Validator} from './validated-input.component';
 import {DeleteButtonComponent, InputComponent} from '../controls';
 
 @Component({
-    selector: "dk-delayed-save-input",
-    styleUrls: ['./duckling/controls/delayed-save-input.component.css'],
+    selector: "dk-edit-input",
+    styleUrls: ['./duckling/controls/edit-input.component.css'],
     template: `
         <div class="container">
             <div *ngIf="!isEditingValue" class="edit-label">
@@ -43,7 +43,7 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
         </div>
     `
 })
-export class DelayedSaveInputComponent implements OnChanges, OnInit {
+export class EditInputComponent implements OnChanges, OnInit {
     @Input() label : string;
     @Input() value : string;
     @Input() validator : Validator;

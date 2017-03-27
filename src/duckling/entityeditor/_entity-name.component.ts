@@ -20,7 +20,7 @@ import {Validator} from '../controls/validated-input.component';
     styleUrls: ['./duckling/entityeditor/entity-name.component.css'],
     template: `
         <div class="entity-name-row">
-            <dk-delayed-save-input
+            <dk-edit-input
                 [value]="currentSelectedEntity"
                 [validator]="nameValidator"
                 label="Entity"
@@ -28,7 +28,7 @@ import {Validator} from '../controls/validated-input.component';
                 validTooltip="Save entity name"
                 invalidTooltip="Entity name cannot be a duplicate or blank"
                 (onValueSaved)="onSaveEntityName($event)">
-            </dk-delayed-save-input>
+            </dk-edit-input>
             <dk-delete-button (deleteClick)="onDeleteClicked()"></dk-delete-button>
         </div>
     `

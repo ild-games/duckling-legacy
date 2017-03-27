@@ -35,7 +35,7 @@ export class DrawableAttributeComponent {
 
     get drawableKeyValidator() : Validator {
         return (value : string) => {
-            if (!value || value === "") {
+            if (!value) {
                 return false;
             }
 

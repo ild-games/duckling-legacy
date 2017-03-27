@@ -76,24 +76,20 @@ export function getDrawableByKey(parentDrawable : Drawable, key : string) : Draw
 
     switch (cppTypeToDrawableType(parentDrawable.__cpp_type)) {
         case DrawableType.Container:
-            for (let drawable of (parentDrawable as ContainerDrawable).drawables) {
-                let childByKey = getDrawableByKey(drawable, key);
-                if (childByKey) {
-                    return childByKey;
-                }
-            }
-            return null;
+            return findDrawableInArray(key, (parentDrawable as ContainerDrawable).drawables);
         case DrawableType.Animated:
-            for (let drawable of (parentDrawable as AnimatedDrawable).frames) {
-                let childByKey = getDrawableByKey(drawable, key);
-                if (childByKey) {
-                    return childByKey;
-                }
-            }
-            return null;
-        case DrawableType.Shape:
-        case DrawableType.Image:
-        case DrawableType.Text:
+            return findDrawableInArray(key, (parentDrawable as AnimatedDrawable).frames);
+        default:
             return null;
     }
+}
+
+function findDrawableInArray(key : string, drawables : Drawable[]) : Drawable {
+    for (let drawable of drawables) {
+        let childByKey = getDrawableByKey(drawable, key);
+        if (childByKey) {
+            return childByKey;
+        }
+    }
+    return null;
 }

@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
 import {JsonSchemaEditComponent} from './json-schema-edit.component';
-import {DelayedSaveInputComponent} from './delayed-save-input.component';
+import {EditInputComponent} from './edit-input.component';
 
 import {
     AccordianComponent,
@@ -58,7 +58,7 @@ const CONTROL_DECLARATIONS : Array<any> = [
     SectionHeaderComponent,
     InlineEditLabelComponent,
     JsonSchemaEditComponent,
-    DelayedSaveInputComponent
+    EditInputComponent
 ];
 
 @NgModule({
