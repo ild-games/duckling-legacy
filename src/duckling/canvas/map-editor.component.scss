@@ -5,36 +5,40 @@
 
 :host {
     height: 100%;
-    display: block;
+    display: flex;
 }
 
 $canvas-top-bar-height: 35px;
 $canvas-bottom-bar-height: 50px;
 $canvas-left-right-border-width: $canvas-top-bar-height / 2;
 
+
 .canvas-toolbar {
     background-color: $header-color;
 }
 
 md-card {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
     padding: 0;
-    height: 100%;
     z-index: 1;
-    min-width: 650px;
+    min-width: 700px;
+    
+    .tab-container {
+        flex: 0 0 auto;
+        overflow-x: auto;
+    }
 
     .canvas-top-toolbar {
         @extend .canvas-toolbar;
         width: 100%;
-        height: $canvas-top-bar-height;
+        flex: 0 0 $canvas-top-bar-height;
     }
 
     dk-canvas {
+        flex: 1 0 auto;
         overflow: auto;
-        position: absolute;
-        top: $canvas-top-bar-height;
-        right: 0;
-        bottom: $canvas-bottom-bar-height;
-        left: 0;
     }
 
     dk-canvas::selection {
@@ -48,10 +52,8 @@ md-card {
     .canvas-bottom-toolbar {
         @extend .canvas-toolbar;
         width: 100%;
-        height: $canvas-bottom-bar-height;
+        flex: 0 0 $canvas-bottom-bar-height;
         padding: 5px 5px 5px 5px;
         box-sizing: border-box;
-        position: absolute;
-        bottom: 0;
     }
 }

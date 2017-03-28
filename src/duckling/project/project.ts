@@ -20,6 +20,7 @@ interface ProjectMap {
 export interface Project {
     home? : string,
     loaded? : boolean,
+    openMaps? : string[],
     currentMap? : ProjectMap,
     versionInfo? : ProjectVersionInfo,
     customAttributes : CustomAttribute[]

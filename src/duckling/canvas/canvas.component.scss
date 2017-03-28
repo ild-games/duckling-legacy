@@ -7,8 +7,8 @@
 }
 
 .canvas-container {
-    height: 100%;
     cursor: default;
+    height: 0;
 }
 
 .canvas-container canvas {
@@ -16,12 +16,9 @@
 }
 
 .canvas {
-    position: fixed;
+    position: absolute;
     z-index: -1;
 }
 
 .canvas-scroll {
-    position: absolute;
-    top: 0;
-    left: 0;
 }

@@ -15,7 +15,6 @@ import {Vector} from '../../math/vector';
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
         <dk-vector-input
-            class="inline-entry-field"
             title="Dimension"
             xLabel="Stage Width"
             yLabel="Stage Height"
@@ -24,7 +23,7 @@ import {Vector} from '../../math/vector';
         </dk-vector-input>
 
         <dk-number-input
-            class="inline-entry-field"
+            class="grid-size"
             label="Grid Size"
             [value]="gridSize"
             (validInput)="onGridSizeInput($event)">
