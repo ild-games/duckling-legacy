@@ -81,12 +81,12 @@ export class CollisionComponent implements OnDestroy {
 
     constructor(private _viewContainer: ViewContainerRef,
                 private _collisionTypes : CollisionTypesService,
-                private _changeDectector : ChangeDetectorRef) {
+                private _changeDetector : ChangeDetectorRef) {
         this.collisionTypeOptions = this._buildCollisionTypeOptions();
 
         this._collisionTypeSubscription = this._collisionTypes.collisionTypes.subscribe(() => {
             this.collisionTypeOptions = this._buildCollisionTypeOptions();
-            this._changeDectector.markForCheck();
+            this._changeDetector.markForCheck();
         }) as Subscriber<any>;
     }
 

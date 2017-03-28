@@ -56,8 +56,7 @@ import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent} fr
             </canvas>
             <div
                 class="canvas-scroll"
-                [style.width]="scrollerDimensions.x"
-                [style.height]="scrollerDimensions.y">
+                [ngStyle]="scrollerCSS">
             </div>
         </div>
     `
@@ -401,5 +400,12 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             keyCode === KeyboardCode.DOWN ||
             keyCode === KeyboardCode.LEFT
         );
+    }
+
+    get scrollerCSS() : any {
+        return {
+            'width': `${this.scrollerDimensions.x}px`,
+            'height': `${this.scrollerDimensions.y}px`
+        };
     }
 }
