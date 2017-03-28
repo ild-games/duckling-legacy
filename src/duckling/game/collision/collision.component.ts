@@ -63,7 +63,6 @@ import {CollisionTypesService} from './collision-types.service';
         </dk-array-select>
         <button
             md-icon-button
-            class="collision-type-edit-button"
             [disableRipple]="true"
             (click)="onEditCollisionTypesClicked()">
             <dk-icon iconClass="pencil"></dk-icon>

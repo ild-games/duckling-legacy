@@ -44,26 +44,6 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
     styleUrls: ['./duckling/canvas/map-editor.component.css'],
     template: `
         <md-card>
-            <md-tab-group>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-                <md-tab [label]="projectService.project.getValue().currentMap.key"></md-tab>
-            </md-tab-group>
-                
             <dk-top-toolbar
                 class="canvas-top-toolbar mat-elevation-z4"
                 [selectedToolKey]="tool.key"
