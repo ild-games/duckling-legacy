@@ -12,7 +12,7 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 
 import {ContainerDrawable} from './container-drawable';
 import {getDefaultDrawable, DrawableComponent} from './drawable.component';
-import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
+import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} from './drawable';
 
 /**
  * Component used to edit a Container Drawable including all its children drawables
@@ -35,9 +35,11 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
                 [elements]="containerDrawable?.drawables"
                 titleProperty="key"
                 keyProperty="key"
+                [clone]="true"
                 (elementDeleted)="onChildDrawablesChanged($event)"
                 (elementMovedDown)="onChildDrawablesChanged($event)"
-                (elementMovedUp)="onChildDrawablesChanged($event)">
+                (elementMovedUp)="onChildDrawablesChanged($event)"
+                (elementCloned)="onChildDrawableCloned($event)">
                 <ng-template let-element="$element" let-index="$index">
                     <dk-drawable
                         [drawable]="element"
@@ -56,6 +58,17 @@ export class ContainerDrawableComponent {
     @Input() keyValidator : Validator;
     @Input() containerDrawable : ContainerDrawable;
     @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
+
+    onChildDrawableCloned(newDrawables : Drawable[]) {
+        let newDrawable = newDrawables[newDrawables.length - 1];
+        let newDrawableType = cppTypeToDrawableType(newDrawable.__cpp_type);
+        let defaultKey = getDefaultDrawable(newDrawableType).key;
+        newDrawable = immutableAssign(
+            newDrawables[newDrawables.length - 1],
+            {key: defaultKey + this.findNextUniqueKey(newDrawableType, defaultKey)});
+
+        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newDrawables.slice(0, newDrawables.length - 1).concat([newDrawable])}));
+    }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let newChildren = this.containerDrawable.drawables.slice(0);
