@@ -1,13 +1,13 @@
 import {DisplayObject, Container} from 'pixi.js';
 
 import {Entity} from '../../entitysystem/entity';
-import {Box2} from '../../math';
-import {positionToAnchor} from '../../math/anchor';
+import {Box2, vectorSubtract} from '../../math';
+import {positionToAnchor, anchorToPosition} from '../../math/anchor';
 import {AssetService} from '../../project';
 import {immutableAssign} from '../../util';
 import {DrawnConstruct, drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 import {AttributeBoundingBox} from '../../entitysystem/services/entity-box.service';
-import {resize} from '../../entitysystem/services/resize'
+import {resize, resizePoint} from '../../entitysystem/services/resize';
 
 import {drawDrawable} from './drawable-drawer';
 import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
@@ -54,46 +54,43 @@ function setDrawableBox(drawable : Drawable, resizeToBox: Box2, assetService : A
     let updatedDrawable = drawable;
     switch (cppTypeToDrawableType(drawable.__cpp_type)) {
         case DrawableType.Shape:
-            updatedDrawable = setShapeBox(drawable as ShapeDrawable, resizeToBox, assetService);
-            break;
+            return setShapeBox(drawable as ShapeDrawable, resizeToBox, assetService);
         case DrawableType.Container:
-            updatedDrawable = setContainerBox(drawable as ContainerDrawable, resizeToBox, assetService);
-            break;
+            return setContainerBox(drawable as ContainerDrawable, resizeToBox, assetService);
         case DrawableType.Image:
-            updatedDrawable = setImageBox(drawable as ImageDrawable, resizeToBox, assetService);
-            break;
+            return setImageBox(drawable as ImageDrawable, resizeToBox, assetService);
         case DrawableType.Animated:
-            updatedDrawable = setAnimatedBox(drawable as AnimatedDrawable, resizeToBox, assetService);
-            break;
+            return setAnimatedBox(drawable as AnimatedDrawable, resizeToBox, assetService);
         case DrawableType.Text:
-            updatedDrawable = setBoxViaScale(drawable, resizeToBox, assetService);
-            break;
+            return setBoxViaScale(drawable, resizeToBox, assetService);
     }
-
-    return {
-        ...updatedDrawable,
-        anchor : positionToAnchor(resizeToBox.position, resizeToBox.dimension)
-    }
+    return drawable;
 }
 
 function setContainerBox(drawable : ContainerDrawable, resizeToBox: Box2, assetService : AssetService) : ContainerDrawable {
     let currentBox = getDrawableBox(drawable, assetService);
+    let currentPosition = anchorToPosition(drawable.anchor, currentBox.dimension);
+    let newPosition = resizePoint(currentBox, resizeToBox, currentPosition);
+
     return {
         ...drawable,
+        position : positionToAnchor(newPosition, resizeToBox.dimension),
         drawables : drawable.drawables.map((childDrawable) => {
             let childBox = getDrawableBox(childDrawable, assetService);
-            return setDrawableBox(childDrawable, resize(currentBox, resizeToBox, childBox), assetService);
+            return setDrawableBox(childDrawable, resize(currentBox, resizeToBox, childBox, newPosition), assetService);
         })
     }
 }
 
 function setAnimatedBox(drawable : AnimatedDrawable, resizeToBox : Box2, assetService : AssetService) : AnimatedDrawable {
     let currentBox = getDrawableBox(drawable, assetService);
+    let currentPosition = anchorToPosition(drawable.anchor, currentBox.dimension);
+    let newPosition = resizePoint(currentBox, resizeToBox, currentPosition);
     return {
         ...drawable,
         frames : drawable.frames.map((childDrawable) => {
             let childBox = getDrawableBox(childDrawable, assetService);
-            return setDrawableBox(childDrawable, resize(currentBox, resizeToBox, childBox), assetService);
+            return setDrawableBox(childDrawable, resize(currentBox, resizeToBox, childBox, newPosition), assetService);
         })
     }
 }
@@ -131,7 +128,7 @@ function setShapeBox(drawable : ShapeDrawable, resizeToBox: Box2, assetService :
                 ... (shape as Rectangle),
                 dimension : resizeToBox.dimension
             }
-            return {...drawable, shape : rectangle};
+            return {...drawable, shape : rectangle, anchor : positionToAnchor(resizeToBox.position, resizeToBox.dimension)};
     }
     return drawable;
 }

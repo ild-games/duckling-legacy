@@ -1,17 +1,15 @@
 import {Vector, vectorSubtract, vectorAdd} from '../../math/vector';
 import {Box2} from '../../math/box2';
 
-export function resize(beforeDrag : Box2, afterDrag : Box2, boxToResize : Box2) : Box2 {
+export function resize(beforeDrag : Box2, afterDrag : Box2, boxToResize : Box2, positionOffset : Vector) : Box2 {
     let nextSize = {
         x: _calculateSize(boxToResize.dimension.x, beforeDrag.dimension.x, afterDrag.dimension.x),
         y: _calculateSize(boxToResize.dimension.y, beforeDrag.dimension.y, afterDrag.dimension.y)
     }
 
-    let positionDiff = vectorSubtract(boxToResize.position, beforeDrag.position);
-
     return {
         dimension : nextSize,
-        position : resizePoint(beforeDrag, afterDrag, boxToResize.position),
+        position : vectorSubtract(resizePoint(beforeDrag, afterDrag, boxToResize.position),  positionOffset),
         rotation : boxToResize.rotation
     }
 }

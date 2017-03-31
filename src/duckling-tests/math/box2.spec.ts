@@ -37,38 +37,38 @@ describe("Box2", function() {
 
         it("a box centered on origin behaves correctly in all directions", function() {
             let box = squareBox(10);
-            
+
             // top left
             expect(boxContainsPoint(box, {x : 0.1, y : 0.1})).to.eql(true);
             expect(boxContainsPoint(box, {x : -0.1, y : -0.1})).to.eql(false);
-            
+
             // top middle
             expect(boxContainsPoint(box, {x : 5, y : 0.1})).to.eql(true);
             expect(boxContainsPoint(box, {x : 5, y : -0.1})).to.eql(false);
-            
+
             // top right
             expect(boxContainsPoint(box, {x : 9.9, y : 0.1})).to.eql(true);
             expect(boxContainsPoint(box, {x : 10.1, y : -0.1})).to.eql(false);
-            
+
             // middle left
             expect(boxContainsPoint(box, {x : 0.1, y : 5})).to.eql(true);
             expect(boxContainsPoint(box, {x : -0.1, y : 5})).to.eql(false);
-            
+
             // middle
             expect(boxContainsPoint(box, {x : 5, y : 5})).to.eql(true);
-            
+
             // middle right
             expect(boxContainsPoint(box, {x : 9.9, y : 5})).to.eql(true);
             expect(boxContainsPoint(box, {x : 10.1, y : 5})).to.eql(false);
-            
+
             // bottom left
             expect(boxContainsPoint(box, {x : 0.1, y : 9.9})).to.eql(true);
             expect(boxContainsPoint(box, {x : -0.1, y : 10.1})).to.eql(false);
-            
+
             // bottom middle
             expect(boxContainsPoint(box, {x : 5, y : 9.9})).to.eql(true);
             expect(boxContainsPoint(box, {x : 5, y : 10.1})).to.eql(false);
-            
+
             // bottom right
             expect(boxContainsPoint(box, {x : 9.9, y : 9.9})).to.eql(true);
             expect(boxContainsPoint(box, {x : 10.1, y : 10.1})).to.eql(false);

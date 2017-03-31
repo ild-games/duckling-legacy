@@ -74,11 +74,8 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
             let implementation = this.getImplementation(attributeKey);
             let attributeBox = this.getAttributeBox(attributeKey, entity);
             if (attributeBox && implementation.setBox) {
-                let newAttributeBox = resize(currentBox, box, attributeBox);
-                patch[attributeKey] = implementation.setBox(
-                    entity[attributeKey],
-                    {...newAttributeBox, position: vectorSubtract(newAttributeBox.position, newPosition)},
-                    this._asset);
+                let newAttributeBox = resize(currentBox, box, attributeBox, newPosition);
+                patch[attributeKey] = implementation.setBox(entity[attributeKey], newAttributeBox, this._asset);
             }
         }
 
