@@ -25,17 +25,13 @@ export type PositionServiceOperations = {
  */
 @Injectable()
 export class EntityPositionService extends BaseAttributeService<PositionServiceOperations> {
-    constructor(private _entitySystemService : EntitySystemService) {
-        super();
-    }
-
     /**
      * Update the position on the entity.  The update is immutable.
      * @param entityKey The key of the entity that needs to be updated.
      * @param newPosition The position the entity should be moved to.
+     * @return The updated entity.
      */
-    setPosition(entityKey : EntityKey, newPosition : Vector, mergeKey? : any) {
-        let entity = this._entitySystemService.getEntity(entityKey);
+    setPosition(entity : Entity, newPosition : Vector) : Entity {
         let patch : Entity = {};
 
         for (let key in entity) {
@@ -45,7 +41,7 @@ export class EntityPositionService extends BaseAttributeService<PositionServiceO
             }
         }
 
-        this._entitySystemService.updateEntity(entityKey, immutableAssign(entity, patch), mergeKey);
+        return immutableAssign(entity, patch);
     }
 
     /**
@@ -56,7 +52,7 @@ export class EntityPositionService extends BaseAttributeService<PositionServiceO
      *
      * @param entityKey The key of the entity to get the position of.
      */
-    getPosition(entity : Entity) {
+    getPosition(entity : Entity) : Vector {
         for (let key in entity) {
             let getPosition = this.getImplementation(key);
             if (getPosition && getPosition.get) {

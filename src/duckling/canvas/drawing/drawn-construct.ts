@@ -159,7 +159,7 @@ function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
     if (!displayObject) {
         return null;
     }
-    
+
     let container = new Container();
     container.addChild(displayObject);
     displayObject.updateTransform();

@@ -36,17 +36,17 @@ import {Rectangle} from './rectangle';
 
 /**
  * Draws the drawable and bounds of the drawable for a DrawableAttribute
- * @param  entity The entity with the drawable attribute
+ * @param  attribute The drawable attribute
+ * @param  assetService Service containing the assets needed to render the drawable attribute.
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawableAttribute(entity : Entity, assetService : AssetService) : DrawnConstruct {
-    let drawableAttribute = getDrawableAttribute(entity);
+export function drawDrawableAttribute(drawableAttribute : DrawableAttribute, assetService : AssetService) : DrawnConstruct {
     if (!drawableAttribute.topDrawable) {
         return null;
     }
 
     let drawable : DrawnConstruct;
-    drawable = _drawDrawable(drawableAttribute.topDrawable, assetService);
+    drawable = drawDrawable(drawableAttribute.topDrawable, assetService);
     if (!drawable) {
         return null;
     }
@@ -55,7 +55,13 @@ export function drawDrawableAttribute(entity : Entity, assetService : AssetServi
     return drawable;
 }
 
-function _drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
+/**
+ * Draws the drawable and bounds of the drawable for a Drawable.
+ * @param  entity The entity with the drawable attribute
+ * @param  assetService Service containing the assets needed to render the drawable attribute.
+ * @return DisplayObject that contains the drawn DrawableAttribute
+ */
+export function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
     if (drawable.inactive) {
         return null;
     }
@@ -123,9 +129,9 @@ function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetServ
 
     let childConstructs : DrawnConstruct[] = []
     for (let drawable of containerDrawable.drawables) {
-        let childDrawable = _drawDrawable(drawable, assetService);
+        let childDrawable = drawDrawable(drawable, assetService);
         if (childDrawable) {
-            childConstructs = childConstructs.concat(_drawDrawable(drawable, assetService));
+            childConstructs = childConstructs.concat(drawDrawable(drawable, assetService));
         }
     }
     return {
@@ -153,9 +159,9 @@ function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService
 
     let framesDisplayObjects : DrawnConstruct[] = [];
     for (let frame of animatedDrawable.frames) {
-        let frameDrawable = _drawDrawable(frame, assetService);
+        let frameDrawable = drawDrawable(frame, assetService);
         if (frameDrawable) {
-            framesDisplayObjects.push(_drawDrawable(frame, assetService));
+            framesDisplayObjects.push(drawDrawable(frame, assetService));
         }
     }
 
@@ -193,7 +199,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
             return drawMissingAsset(assetService);
         }
     }
-    
+
     let sprite : any;
     if (imageDrawable.isTiled && imageDrawable.tiledArea) {
         sprite = new PIXI.extras.TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);

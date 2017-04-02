@@ -1,11 +1,6 @@
 import 'mocha';
 import {expect} from 'chai';
-import {
-    vectorAdd, 
-    vectorSubtract, 
-    vectorRound, 
-    vectorRotate
-} from '../../duckling/math';
+import {vectorAdd, vectorSubtract, vectorRound, vectorRotate} from '../../duckling/math';
 
 describe("vectorAdd", function() {
     it("{1, 1} + {1, 1} = {2, 2}", function() {
@@ -71,34 +66,40 @@ describe("vectorRotate", function() {
         expect(rotatedVector.x).to.be.closeTo(0, 0.001);
         expect(rotatedVector.y).to.be.closeTo(1, 0.001);
     });
-    
+
     it("{0, 1} rotated 90 degrees = {-1, 0}", function() {
         let rotatedVector = vectorRotate({x: 0, y: 1}, Math.PI / 2);
         expect(rotatedVector.x).to.be.closeTo(-1.0, 0.001);
         expect(rotatedVector.y).to.be.closeTo(0, 0.001);
     });
-    
+
     it("{0, 1} rotated 180 degrees = {0, -1}", function() {
         let rotatedVector = vectorRotate({x: 0, y: 1}, Math.PI);
         expect(rotatedVector.x).to.be.closeTo(0, 0.001);
         expect(rotatedVector.y).to.be.closeTo(-1, 0.001);
     });
-    
+
     it("{0, 1} rotated 270 degrees = {1, 0}", function() {
         let rotatedVector = vectorRotate({x: 0, y: 1}, Math.PI + (Math.PI / 2));
         expect(rotatedVector.x).to.be.closeTo(1, 0.001);
         expect(rotatedVector.y).to.be.closeTo(0, 0.001);
     });
-    
+
     it("{0, 1} rotated 360 degrees = {0, 1}", function() {
         let rotatedVector = vectorRotate({x: 0, y: 1}, Math.PI * 2);
         expect(rotatedVector.x).to.be.closeTo(0, 0.001);
         expect(rotatedVector.y).to.be.closeTo(1, 0.001);
     });
-    
+
     it("{0, 1} rotated 90 degrees around point {0, 0.5} = {-0.5, 0.5}", function() {
         let rotatedVector = vectorRotate({x: 0, y: 1}, Math.PI / 2, {x: 0, y: 0.5});
         expect(rotatedVector.x).to.be.closeTo(-0.5, 0.001);
         expect(rotatedVector.y).to.be.closeTo(0.5, 0.001);
+    });
+
+    it("takes radians and rotates clockwise", function() {
+        let result = vectorRotate({x: 2, y: 3}, 0.333);
+        expect(result.x).to.be.within(0.909, 0.910);
+        expect(result.y).to.be.within(3.488, 3.489)
     });
 });

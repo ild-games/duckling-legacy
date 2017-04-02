@@ -31,9 +31,10 @@ export class EntityCreatorTool extends BaseTool {
     onStageDown(event : CanvasMouseEvent) {
         let mergeKey = newMergeKey();
         let entity = this._attributeDefaultService.createEntity();
+        entity = this._entityPositionService.setPosition(entity, event.stageCoords);
         let key = this._entitySystemService.addNewEntity(entity, mergeKey);
-        this._entityPositionService.setPosition(key, event.stageCoords, mergeKey);
         this._selection.select(key, mergeKey);
+        return true;
     }
 
     get key() {

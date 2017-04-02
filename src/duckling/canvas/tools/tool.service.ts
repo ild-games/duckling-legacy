@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 
 import {ToolbarOption} from '../../controls';
-import {EntityCreatorTool, BaseTool, EntityMoveTool, MapMoveTool} from '../tools';
+import {EntityCreatorTool, BaseTool, MapMoveTool} from '../tools';
+import {SelectedEntityTool} from './selected-entity-tool'
 
 /**
  * Provide access to tools for the canvas.
@@ -13,11 +14,11 @@ export class ToolService {
     private _default : BaseTool;
 
     constructor(entityCreator : EntityCreatorTool,
-                entityMoveTool : EntityMoveTool,
+                selectedEntityTool: SelectedEntityTool,
                 mapMoveTool : MapMoveTool) {
-        this._default = entityMoveTool;
+        this._default = selectedEntityTool;
         this.addTool(entityCreator);
-        this.addTool(entityMoveTool);
+        this.addTool(selectedEntityTool);
         this.addTool(mapMoveTool);
     }
 

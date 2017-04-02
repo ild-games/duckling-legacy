@@ -23,7 +23,7 @@ export class BimodalTool extends BaseTool {
     }
 
     onStageDown(event : CanvasMouseEvent) {
-        this._selectedTool.onStageDown(event);
+        return this._selectedTool.onStageDown(event);
     }
 
     onStageMove(event : CanvasMouseEvent) {

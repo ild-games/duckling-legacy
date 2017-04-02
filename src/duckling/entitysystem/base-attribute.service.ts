@@ -18,7 +18,7 @@ export class BaseAttributeService<ImplementationType> {
      * @param key Key for the attribute the implementation belongs to.
      * @param implementation The implementation that will be used for the attribute.
      */
-    register(key : AttributeKey, componentClass : any) : void {
+    register(key : AttributeKey, componentClass : ImplementationType) : void {
         this._attributeComponentType[key] = componentClass;
     }
 

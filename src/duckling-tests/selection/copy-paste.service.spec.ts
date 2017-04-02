@@ -3,21 +3,19 @@ import 'mocha';
 import {expect} from 'chai';
 
 import {createStoreService, createEntityService} from '../helper/state';
-import {EntitySystemService, EntityPositionService, EntityKey} from '../../duckling/entitysystem';
+import {EntitySystemService, EntityPositionService, EntityKey, Entity} from '../../duckling/entitysystem';
 import {EntityLayerService} from '../../duckling/entitysystem/services/entity-layer.service';
 import {SelectionService, CopyPasteService} from '../../duckling/selection';
 import {Vector} from '../../duckling/math';
 import {immutableAssign} from '../../duckling/util';
 
 class MockPositionService extends EntityPositionService {
-    constructor(public entitySystemService : EntitySystemService) {
-        super(entitySystemService);
+    constructor() {
+        super();
     }
 
-    setPosition(entityKey : EntityKey, newPosition : Vector, mergeKey? : any) {
-        let entity = this.entitySystemService.getEntity(entityKey);
-        let newEntity = immutableAssign(entity, {position : newPosition});
-        this.entitySystemService.updateEntity(entityKey, newEntity, mergeKey);
+    setPosition(entity : Entity, newPosition : Vector) {
+        return immutableAssign(entity, {position : newPosition});
     }
 }
 
@@ -39,7 +37,7 @@ describe("CopyPasteService", function() {
         this.entitySystem = createEntityService(this.store);
         this.layerService = new EntityLayerService(this.entitySytem, this.store);
         this.selection = new SelectionService(this.store, this.entitySystem, this.layerService);
-        this.positionService = new MockPositionService(this.entitySystem);
+        this.positionService = new MockPositionService();
         this.copyPaste = new CopyPasteService(this.store, this.entitySystem, this.selection, this.positionService);
     });
 
