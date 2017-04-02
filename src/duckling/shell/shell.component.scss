@@ -12,16 +12,16 @@ $shell-padding: 16px;
     background-color: $ultra-light-primary-color;
 
     .canvas-container {
-        width: 750px;
+        width: 800px;
         flex: 1 1 auto;
+        min-width: 800px;
         margin-right: $shell-padding / 2;
         padding: 0;
     }
 
     .entity-editor-container {
-        flex: 0 0 30%;
+        flex: 0 1 450px;
         margin-left: $shell-padding / 2;
-        min-width: 500px;
         overflow-y: auto;
     }
 
