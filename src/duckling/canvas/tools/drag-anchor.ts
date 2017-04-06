@@ -33,7 +33,7 @@ export function drawAnchor(box : Box2, anchor : DragAnchor, canvasZoom : number,
     sprite.scale.y = 0.5 / canvasZoom;
     sprite.position.x = position.x;
     sprite.position.y = position.y;
-    sprite.pivot.y = 5;
+    sprite.pivot.y = 10;
     return sprite;
 }
 
