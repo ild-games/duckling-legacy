@@ -61,8 +61,8 @@ export function drawDrawableAttribute(drawableAttribute : DrawableAttribute, ass
  * @param  assetService Service containing the assets needed to render the drawable attribute.
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawable(drawable : Drawable, assetService : AssetService) : DrawnConstruct {
-    if (drawable.inactive) {
+export function drawDrawable(drawable : Drawable, assetService : AssetService, ignoreInactive : boolean = false) : DrawnConstruct {
+    if (drawable.inactive && !ignoreInactive) {
         return null;
     }
 
@@ -73,13 +73,13 @@ export function drawDrawable(drawable : Drawable, assetService : AssetService) :
             drawnObject = _drawShapeDrawable(drawable as ShapeDrawable);
             break;
         case DrawableType.Container:
-            drawnObject = _drawContainerDrawable(drawable as ContainerDrawable, assetService);
+            drawnObject = _drawContainerDrawable(drawable as ContainerDrawable, assetService, ignoreInactive);
             break;
         case DrawableType.Image:
             drawnObject = _drawImageDrawable(drawable as ImageDrawable, assetService);
             break;
         case DrawableType.Animated:
-            drawnObject = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService);
+            drawnObject = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService, ignoreInactive);
             break;
         case DrawableType.Text:
             drawnObject = _drawTextDrawable(drawable as TextDrawable, assetService);
@@ -115,7 +115,7 @@ function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : Graphics {
     return graphics;
 }
 
-function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService) : ContainerConstruct {
+function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService, ignoreInactive : boolean) : ContainerConstruct {
     if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
         return {
             type: "CONTAINER",
@@ -129,9 +129,9 @@ function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetServ
 
     let childConstructs : DrawnConstruct[] = []
     for (let drawable of containerDrawable.drawables) {
-        let childDrawable = drawDrawable(drawable, assetService);
+        let childDrawable = drawDrawable(drawable, assetService, ignoreInactive);
         if (childDrawable) {
-            childConstructs = childConstructs.concat(drawDrawable(drawable, assetService));
+            childConstructs.push(childDrawable);
         }
     }
     return {
@@ -144,7 +144,7 @@ function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetServ
     };
 }
 
-function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService) : AnimationConstruct {
+function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService, ignoreInactive : boolean) : AnimationConstruct {
     if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
         return {
             type: "ANIMATION",
@@ -159,9 +159,9 @@ function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService
 
     let framesDisplayObjects : DrawnConstruct[] = [];
     for (let frame of animatedDrawable.frames) {
-        let frameDrawable = drawDrawable(frame, assetService);
+        let frameDrawable = drawDrawable(frame, assetService, ignoreInactive);
         if (frameDrawable) {
-            framesDisplayObjects.push(drawDrawable(frame, assetService));
+            framesDisplayObjects.push(frameDrawable);
         }
     }
 
