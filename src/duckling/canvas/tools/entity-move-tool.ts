@@ -59,8 +59,6 @@ export class EntityMoveTool extends BaseTool {
             this._initalEntity = this._entitySystemService.getEntity(this._selectedEntityKey);
             this._initialMouseLocation = event.stageCoords;
         }
-
-        return !!this._selectedEntityKey;
     }
 
     onStageMove(event : CanvasMouseEvent) {
@@ -117,10 +115,10 @@ export class EntityMoveTool extends BaseTool {
     }
 
     private _adjustEntityPosition(adjustment : Vector) {
-        let entity = this._entitySystemService.getEntity(this._selectedEntityKey);
-        let oldPosition = this._entityPositionService.getPosition(entity);
-        let updatedEntity = this._entityPositionService.setPosition(entity, vectorAdd(oldPosition, adjustment));
-        this._entitySystemService.updateEntity(this._selectedEntityKey, updatedEntity);
+        let selection = this._selectionService.selection.value;
+        let oldPosition = this._entityPositionService.getPosition(selection.entity);
+        let updatedEntity = this._entityPositionService.setPosition(selection.entity, vectorAdd(oldPosition, adjustment));
+        this._entitySystemService.updateEntity(selection.selectedEntity, updatedEntity);
     }
 
     private _deleteSelectedEntity() {

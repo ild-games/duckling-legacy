@@ -32,13 +32,21 @@ export class EntityResizeTool extends BaseTool {
         super();
     }
 
-    onStageDown(event : CanvasMouseEvent) : boolean {
+    clickedInAnchor(event : CanvasMouseEvent) : DragAnchor {
+        let box = this.selectedBox;
+        if (box) {
+            return DRAG_ANCHORS.find(anchor => anchorContainsPoint(box, anchor, event.stageCoords));
+        }
+        return null;
+    }
+
+    onStageDown(event : CanvasMouseEvent) {
         this._initialEntityValue = this.selectedEntity;
         this._initialEntityBox = this.selectedBox;
         this._mergeKey = newMergeKey();
 
         if (this._initialEntityBox) {
-            this._selectedAnchor = DRAG_ANCHORS.find(anchor => anchorContainsPoint(this._initialEntityBox, anchor, event.stageCoords));
+            this._selectedAnchor = this.clickedInAnchor(event);
         } else {
             this._selectedAnchor = null;
         }
@@ -47,8 +55,6 @@ export class EntityResizeTool extends BaseTool {
             this._positionOffset = vectorSubtract(getAnchorPosition(this._initialEntityBox, this._selectedAnchor), event.stageCoords);
             this._mouseDownLocation = vectorAdd(event.stageCoords, this._positionOffset);
         }
-
-        return !!this._selectedAnchor;
     }
 
     getDisplayObject(canvasZoom : number) : DisplayObject {

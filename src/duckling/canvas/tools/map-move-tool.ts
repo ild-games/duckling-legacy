@@ -13,7 +13,6 @@ export class MapMoveTool extends BaseTool {
         this._isDown = true;
         this._curPos = event.canvasCoords;
         this._offset = event.canvas.scrollPosition;
-        return true;
     }
 
     onStageUp(event : CanvasMouseEvent) {

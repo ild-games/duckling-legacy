@@ -9,8 +9,7 @@ export class BaseTool {
         return null;
     }
 
-    onStageDown(event : CanvasMouseEvent) : boolean {
-        return false;
+    onStageDown(event : CanvasMouseEvent) {
     }
 
     onStageUp(event : CanvasMouseEvent) {
