@@ -20,7 +20,7 @@ export class SnapToGridService {
         return vectorAdd(position, minCornerSnapDistance(position, box, this._grid));
     }
 
-    isSnapToGrid(event : CanvasMouseEvent) {
+    shouldSnapToGrid(event : CanvasMouseEvent) {
         return !event.shiftKey;
     }
 

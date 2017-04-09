@@ -62,20 +62,22 @@ export class EntityMoveTool extends BaseTool {
     }
 
     onStageMove(event : CanvasMouseEvent) {
-        if (this._selectedEntityKey) {
-            let dragDistance = vectorSubtract(event.stageCoords, this._initialMouseLocation);
-
-            if (this._snapToGridService.isSnapToGrid(event)) {
-                let initialBox = this._entityBoxService.getEntityBox(this._initalEntity);
-                let destination = vectorAdd(initialBox.position, dragDistance);
-                let snappedDestination = this._snapToGridService.snapBox(destination, initialBox);
-                dragDistance = vectorSubtract(snappedDestination, initialBox.position);
-            }
-
-            let initialPosition = this._entityPositionService.getPosition(this._initalEntity);
-            let updatedEntity = this._entityPositionService.setPosition(this._initalEntity, vectorAdd(dragDistance, initialPosition));
-            this._entitySystemService.updateEntity(this._selectedEntityKey, updatedEntity, this._mergeKey);
+        if (!this._selectedEntityKey) {
+            return;
         }
+
+        let dragDistance = vectorSubtract(event.stageCoords, this._initialMouseLocation);
+
+        if (this._snapToGridService.shouldSnapToGrid(event)) {
+            let initialBox = this._entityBoxService.getEntityBox(this._initalEntity);
+            let destination = vectorAdd(initialBox.position, dragDistance);
+            let snappedDestination = this._snapToGridService.snapBox(destination, initialBox);
+            dragDistance = vectorSubtract(snappedDestination, initialBox.position);
+        }
+
+        let initialPosition = this._entityPositionService.getPosition(this._initalEntity);
+        let updatedEntity = this._entityPositionService.setPosition(this._initalEntity, vectorAdd(dragDistance, initialPosition));
+        this._entitySystemService.updateEntity(this._selectedEntityKey, updatedEntity, this._mergeKey);
     }
 
     onStageUp(event : CanvasMouseEvent) {
@@ -108,10 +110,6 @@ export class EntityMoveTool extends BaseTool {
 
     get icon() {
         return "arrows";
-    }
-
-    private _isSnapToGrid(event : CanvasMouseEvent) {
-        return !event.shiftKey;
     }
 
     private _adjustEntityPosition(adjustment : Vector) {

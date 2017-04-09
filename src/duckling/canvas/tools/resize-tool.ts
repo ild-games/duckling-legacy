@@ -71,7 +71,7 @@ export class EntityResizeTool extends BaseTool {
     onStageMove(event : CanvasMouseEvent) {
         if (this._selectedAnchor) {
             let mouseLocation = vectorAdd(event.stageCoords, this._positionOffset);
-            if (this._snapToGrid.isSnapToGrid(event)) {
+            if (this._snapToGrid.shouldSnapToGrid(event)) {
                 mouseLocation = this._snapToGrid.snapPosition(mouseLocation);
             }
 
@@ -92,7 +92,7 @@ export class EntityResizeTool extends BaseTool {
         this._cancel();
     }
 
-    private _isSnapToGrid(event : CanvasMouseEvent) {
+    private _shouldSnapToGrid(event : CanvasMouseEvent) {
         return !event.shiftKey;
     }
 
