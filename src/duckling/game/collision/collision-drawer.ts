@@ -5,7 +5,7 @@ import {DrawnConstruct} from '../../canvas/drawing';
 import {Entity} from '../../entitysystem/entity';
 import {AssetService} from '../../project';
 
-import {getCollision} from './collision-attribute';
+import {CollisionAttribute} from './collision-attribute';
 
 const blue = 0x00ccff;
 
@@ -14,13 +14,7 @@ const blue = 0x00ccff;
  * @param  entity The entity the component belongs to.
  * @return A DisplayObject representing the collision component.
  */
-export function drawCollision(entity : Entity) : DrawnConstruct {
-    let collisionAttribute = getCollision(entity);
-
-    if (!collisionAttribute) {
-        return null;
-    }
-
+export function drawCollision(collisionAttribute : CollisionAttribute) : DrawnConstruct {
     let graphics = new Graphics();
     graphics.lineStyle(1, blue, 1);
     drawRectangle({x: 0, y: 0}, collisionAttribute.dimension.dimension, graphics);

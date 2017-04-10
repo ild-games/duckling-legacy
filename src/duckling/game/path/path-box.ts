@@ -6,30 +6,31 @@ import {immutableAssign} from '../../util/model';
 import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 
 import {PATH_HEIGHT, drawPathAttribute} from './path-drawer';
-import {getPath} from './path-attribute';
+import {PathAttribute} from './path-attribute';
 
 const PADDING = 5;
 
-export function pathBox(entity : Entity) : Box2 {
-    let path = getPath(entity);
-    if (!path.vertices || path.vertices.length === 0) {
-        return null;
-    }
+export const pathBox = {
+    getBox(path: PathAttribute) : Box2 {
+        if (!path.vertices || path.vertices.length === 0) {
+            return null;
+        }
 
-    if (path.vertices.length === 1) {
+        if (path.vertices.length === 1) {
+            return {
+                position: {x: path.vertices[0].x - PADDING, y: path.vertices[0].y - PADDING},
+                dimension: {x: PADDING * 2, y: PADDING * 2},
+                rotation: 0
+            };
+        }
+
+        let {min, max} = getMinAndMaxVertices(path.vertices);
         return {
-            position: {x: path.vertices[0].x - PADDING, y: path.vertices[0].y - PADDING},
-            dimension: {x: PADDING * 2, y: PADDING * 2},
+            position: {x: min.x - PADDING, y: min.y - PADDING},
+            dimension: {x: max.x - min.x + PADDING * 2, y: max.y - min.y + PADDING * 2},
             rotation: 0
         };
     }
-    
-    let {min, max} = getMinAndMaxVertices(path.vertices);
-    return {
-        position: {x: min.x - PADDING, y: min.y - PADDING},
-        dimension: {x: max.x - min.x + PADDING * 2, y: max.y - min.y + PADDING * 2},
-        rotation: 0
-    };
 }
 
 function getMinAndMaxVertices(vertices : Vector[]) : {min: Vector, max: Vector} {

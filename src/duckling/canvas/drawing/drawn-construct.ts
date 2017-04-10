@@ -159,7 +159,7 @@ function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
     if (!displayObject) {
         return null;
     }
-    
+
     let container = new Container();
     container.addChild(displayObject);
     displayObject.updateTransform();
@@ -182,15 +182,7 @@ function _animationBounds(animationConstruct : AnimationConstruct) : Box2 {
         }
     }
     _applyDrawnConstructProperties(container, animationConstruct);
-    let outerContainer = new Container();
-    outerContainer.addChild(container);
-    container.updateTransform();
-    let displayObjectBounds = outerContainer.getBounds();
-    return {
-        position: {x: displayObjectBounds.x, y: displayObjectBounds.y},
-        dimension: {x: displayObjectBounds.width, y: displayObjectBounds.height},
-        rotation: 0
-    };
+    return _displayObjectBounds(container);
 }
 
 /**

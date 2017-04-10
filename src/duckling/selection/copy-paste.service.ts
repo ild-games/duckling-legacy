@@ -30,10 +30,7 @@ export class CopyPasteService {
     paste(position : Vector) : EntityKey {
         let clipboardEntity = this.clipboard.value.copiedEntity;
         if (clipboardEntity) {
-            let mergeKey = newMergeKey();
-            let entityKey = this._entitySystem.addNewEntity(clipboardEntity, mergeKey);
-            this._position.setPosition(entityKey, vectorRound(position), mergeKey);
-            return entityKey;
+            return this._entitySystem.addNewEntity(this._position.setPosition(clipboardEntity, vectorRound(position)));
         } else {
             return null;
         }

@@ -13,7 +13,7 @@ import {DrawnConstruct, setConstructPosition} from './drawn-construct';
 /**
  * Function type used to draw attributes.
  */
-export type AttributeDrawer = (entity : Entity, assetService? : any) => DrawnConstruct;
+export type AttributeDrawer<T> = (attribute : T, assetService? : any) => DrawnConstruct;
 
 type EntityCache = {[key:string]:EntityCacheEntry};
 
@@ -28,7 +28,7 @@ interface EntityCacheEntry {
  * for an attribute.
  */
 @Injectable()
-export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
+export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<Attribute>> {
     private _cache : EntityCache = {};
 
     constructor(private _assets : AssetService,
@@ -55,7 +55,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer> {
         if (drawer) {
             let drawnConstruct : DrawnConstruct;
             if (this._assets.areAssetsLoaded(entity, key)) {
-                drawnConstruct = drawer(entity, this._assets);
+                drawnConstruct = drawer(entity[key], this._assets);
             } else {
                 drawnConstruct = drawMissingAsset(this._assets);
             }

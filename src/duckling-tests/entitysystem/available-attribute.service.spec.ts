@@ -23,7 +23,7 @@ class MockProjectService {
     project = new BehaviorSubject<Project>({
         customAttributes: []
     });
-    
+
     addCustomAttribute(key : string, content : JsonSchema) {
         this.project.getValue().customAttributes.push({key, content});
     }
@@ -32,9 +32,9 @@ class MockProjectService {
 describe("AvailableAttributeService", function() {
     beforeEach(function() {
         let attributeDefault = new AttributeDefaultService();
-        attributeDefault.register(POS, {});
-        attributeDefault.register(COL, {});
-        attributeDefault.register(DRAW, {});
+        attributeDefault.register(POS, {default : null});
+        attributeDefault.register(COL, {default : null});
+        attributeDefault.register(DRAW, {default : null});
         let projectService = new MockProjectService() as ProjectService;
         projectService.addCustomAttribute(CUSTOM_ONE, {});
         projectService.addCustomAttribute(CUSTOM_TWO, {});

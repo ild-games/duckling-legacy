@@ -6,6 +6,9 @@ import {CanvasComponent} from './canvas.component';
 import {MapEditorComponent} from './map-editor.component';
 import {EntityDrawerService, RenderPriorityService} from './drawing';
 import {ToolService, EntityCreatorTool, EntityMoveTool, MapMoveTool} from './tools';
+import {SelectedEntityTool} from './tools/selected-entity-tool'
+import {EntityResizeTool} from './tools/resize-tool';
+import {SnapToGridService} from './tools/grid-snap.service';
 
 @NgModule({
     imports: [
@@ -27,7 +30,10 @@ import {ToolService, EntityCreatorTool, EntityMoveTool, MapMoveTool} from './too
         ToolService,
         EntityCreatorTool,
         EntityMoveTool,
-        MapMoveTool
+        MapMoveTool,
+        SelectedEntityTool,
+        EntityResizeTool,
+        SnapToGridService
     ]
 })
 export class CanvasModule {

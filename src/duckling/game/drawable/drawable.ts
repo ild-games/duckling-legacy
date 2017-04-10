@@ -43,7 +43,7 @@ export function drawableTypeToCppType(type : DrawableType) : string {
 
 export interface Drawable {
     __cpp_type: string;
-    key : string
+    key : string;
     renderPriority : number;
     scale : Vector;
     rotation : number;
