@@ -44,11 +44,12 @@ export function getAnchorPosition(box : Box2, anchor : DragAnchor) {
     };
 }
 
-export function anchorContainsPoint(box : Box2, anchor : DragAnchor, point : Vector) {
+export function anchorContainsPoint(box : Box2, anchor : DragAnchor, point : Vector, canvasScale : number) {
     let position = getAnchorPosition(box, anchor);
     let relativeLocation = vectorRotate(vectorSubtract(point, position), -anchor.rotation);
-    let ySize = anchor.dimension.y / 2;
-    return 0 <= relativeLocation.x && relativeLocation.x <= anchor.dimension.x
+    let xSize = anchor.dimension.x / canvasScale;
+    let ySize = anchor.dimension.y / 2 / canvasScale;
+    return 0 <= relativeLocation.x && relativeLocation.x <= xSize
             && -ySize <= relativeLocation.y && relativeLocation.y <= ySize;
 }
 

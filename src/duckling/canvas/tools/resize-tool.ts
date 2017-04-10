@@ -35,7 +35,7 @@ export class EntityResizeTool extends BaseTool {
     clickedInAnchor(event : CanvasMouseEvent) : DragAnchor {
         let box = this.selectedBox;
         if (box) {
-            return DRAG_ANCHORS.find(anchor => anchorContainsPoint(box, anchor, event.stageCoords));
+            return DRAG_ANCHORS.find(anchor => anchorContainsPoint(box, anchor, event.stageCoords, event.canvas.scale));
         }
         return null;
     }

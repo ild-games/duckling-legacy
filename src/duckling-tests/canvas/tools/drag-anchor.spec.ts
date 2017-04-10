@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import {Box2} from '../../../duckling/math/box2';
+import {vectorMultiply} from '../../../duckling/math/vector';
 import {DRAG_ANCHORS, DragAnchor, anchorContainsPoint, getAnchorPosition, getResizeFromDrag} from '../../../duckling/canvas/tools/drag-anchor';
 
 let BOTTOM_RIGHT_ANCHOR : DragAnchor = {
@@ -24,30 +25,35 @@ describe("anchorContainsPoint", function() {
     describe("when called on unrotated anchors", function() {
         let position = getAnchorPosition(RECTANGLE, BOTTOM_RIGHT_ANCHOR);
         it("handles points that are outside of it", function() {
-            expect(anchorContainsPoint(RECTANGLE, BOTTOM_RIGHT_ANCHOR, {x: 14, y: 30})).to.eql(false);
+            expect(anchorContainsPoint(RECTANGLE, BOTTOM_RIGHT_ANCHOR, {x: 14, y: 30}, 1)).to.eql(false);
         });
 
         it("handles points that are inside of it", function() {
-            expect(anchorContainsPoint(RECTANGLE, BOTTOM_RIGHT_ANCHOR, {x: 16, y: 31})).to.eql(true);
+            expect(anchorContainsPoint(RECTANGLE, BOTTOM_RIGHT_ANCHOR, {x: 16, y: 31}, 1)).to.eql(true);
         });
 
         it("the position of the anchor is inside the anchor", function() {
-            expect(anchorContainsPoint(RECTANGLE, BOTTOM_RIGHT_ANCHOR, getAnchorPosition(RECTANGLE, BOTTOM_RIGHT_ANCHOR))).to.eql(true);
+            expect(anchorContainsPoint(RECTANGLE, BOTTOM_RIGHT_ANCHOR, getAnchorPosition(RECTANGLE, BOTTOM_RIGHT_ANCHOR), 1)).to.eql(true);
         });
     });
 
     describe("when called on rotated anchors", function() {
         let ROTATED_ANCHOR = {...BOTTOM_RIGHT_ANCHOR, rotation: Math.PI * 0.25};
         it("handles points that are outside of it", function() {
-            expect(anchorContainsPoint(RECTANGLE, ROTATED_ANCHOR, {x: 15 + 2, y: 30 + 1.5})).to.eql(false);
+            expect(anchorContainsPoint(RECTANGLE, ROTATED_ANCHOR, {x: 15 + 2, y: 30 + 1.5}, 1)).to.eql(false);
         });
 
         it("handles points that are inside of it", function() {
-            expect(anchorContainsPoint(RECTANGLE, ROTATED_ANCHOR, {x: 15 - 0.205, y: 30 + 1.7})).to.eql(true);
+            expect(anchorContainsPoint(RECTANGLE, ROTATED_ANCHOR, {x: 15 - 0.205, y: 30 + 1.7}, 1)).to.eql(true);
+        });
+
+        it("handles points that are inside of it with scale", function() {
+            let anchor : DragAnchor = { ...ROTATED_ANCHOR, dimension : vectorMultiply(ROTATED_ANCHOR.dimension, {x: 2, y: 2})};
+            expect(anchorContainsPoint(RECTANGLE, anchor, {x: 15 - 0.205, y: 30 + 1.7}, 0.5)).to.eql(true);
         });
 
         it("the position of the anchor is inside the anchor", function() {
-            expect(anchorContainsPoint(RECTANGLE, ROTATED_ANCHOR, getAnchorPosition(RECTANGLE, BOTTOM_RIGHT_ANCHOR))).to.eql(true);
+            expect(anchorContainsPoint(RECTANGLE, ROTATED_ANCHOR, getAnchorPosition(RECTANGLE, BOTTOM_RIGHT_ANCHOR), 1)).to.eql(true);
         });
     });
 });
@@ -62,7 +68,6 @@ function anchor(x : number, y : number) : DragAnchor {
 
 describe("getResizeFromDrag", function() {
     it("Drag to the right", function() {
-        debugger;
         expect(getResizeFromDrag(
             RECTANGLE,
             anchor(1, 0.5),
