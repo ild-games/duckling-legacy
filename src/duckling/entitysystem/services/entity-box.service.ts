@@ -64,7 +64,7 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
      * @param  box Box the entity should be resized to.
      * @param  mergeKey Pass to merge updates on the undo/redo stack.
      */
-    setEntityBox(entity : Entity, box : Box2, mergeKey? : string) {
+    setEntityBox(entity : Entity, box : Box2, mergeKey? : string) : Entity {
         let patch : Entity = {};
 
         let currentBox = this.getEntityBox(entity);

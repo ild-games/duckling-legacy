@@ -59,6 +59,7 @@ export function drawDrawableAttribute(drawableAttribute : DrawableAttribute, ass
  * Draws the drawable and bounds of the drawable for a Drawable.
  * @param  entity The entity with the drawable attribute
  * @param  assetService Service containing the assets needed to render the drawable attribute.
+ * @param ignoreInactive Optional parameter. Set to true to ignore the inactive drawable field. Useful if you need to measure the drawn construct
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
 export function drawDrawable(drawable : Drawable, assetService : AssetService, ignoreInactive : boolean = false) : DrawnConstruct {

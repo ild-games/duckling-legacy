@@ -25,4 +25,3 @@ export function resizePoint(beforeDrag : Box2, afterDrag : Box2, point : Vector)
 function _calculateSize(valueToResize : number, boxBefore : number, boxAfter : number) {
     return valueToResize * boxAfter / boxBefore;
 }
-// position = oldPosition - sizeChange / 2 + move

@@ -6,8 +6,8 @@ import {KeyboardService} from '../../util';
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 
 /**
- * A bimodal tool manages a primary tool and a secondary tool that is activated whenever
- * the spacebar is held.
+ * A multi-mode-tool is a base class used for tools that are a composite of other
+ * tools. see bimodal tool as an example.
  */
 @Injectable()
 export abstract class MultiModeTool extends BaseTool {
