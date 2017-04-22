@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {loader, Texture} from 'pixi.js';
+import {loader, Texture, Rectangle} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
 import {load as webFontLoader} from 'webfontloader';
 
@@ -198,6 +198,18 @@ export class AssetService {
      */
     fontFamilyFromAssetKey(assetKey : string) : string {
         return assetKey.replace(/\//g, '-');
+    }
+
+    getImageAssetDimensions(asset : Asset) : Rectangle {
+        if (asset.type !== "TexturePNG") {
+            throw new Error("Asset is not a TexturePNG");
+        }
+        
+        let texture = this.get(asset.key, asset.type);
+        if (!texture) {
+            return new Rectangle(0, 0, 0, 0);
+        }
+        return texture.frame;
     }
 
     get assets() : {[key : string] : Asset} {

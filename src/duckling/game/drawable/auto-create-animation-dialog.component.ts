@@ -4,20 +4,24 @@ import {
     Output,
     EventEmitter,
     AfterViewInit,
-    ViewContainerRef
+    ViewContainerRef,
+    OnInit,
+    OnDestroy
 } from '@angular/core';
 import {MdDialogConfig, MdDialogRef} from '@angular/material';
-import {Observable} from 'rxjs';
+import {Observable, Subscriber} from 'rxjs';
+import {Rectangle} from 'pixi.js';
 
 import {Vector} from '../../math';
-import {ProjectService, AssetService} from '../../project';
+import {ProjectService} from '../../project';
+import {AssetService, Asset} from '../../project/asset.service';
 import {DialogService} from '../../util';
 import {openDialog} from '../../util/md-dialog';
 
 export type AutoCreateDialogResult = {
     numFrames : number,
     frameDimensions : Vector,
-    imageKey : string,
+    imageKey : string
 }
 
 @Component({
@@ -66,6 +70,8 @@ export class AutoCreateAnimationDialogComponent {
     frameDimensions : Vector = {x: 0, y: 0};
     imageKey : string;
 
+    private _assetServiceSubscription : Subscriber<any>;
+
     static open(viewContainer : ViewContainerRef) : Observable<AutoCreateDialogResult> {
         return openDialog<AutoCreateDialogResult>(viewContainer, AutoCreateAnimationDialogComponent);
     }
@@ -76,13 +82,21 @@ export class AutoCreateAnimationDialogComponent {
                 private _project : ProjectService) {
     }
 
+    ngOnInit() {
+        this._assetServiceSubscription = this._assets.assetLoaded.subscribe(asset => this._onAssetLoaded(asset)) as Subscriber<any>;
+    }
+
+    ngOnDestroy() {
+        this._assetServiceSubscription.unsubscribe();
+    }
+
     onAcceptClicked() {
-        let result : AutoCreateDialogResult = {
-            numFrames: this.numFrames,
-            frameDimensions: this.frameDimensions,
-            imageKey: this.imageKey
-        };
-        this._dialogRef.close(result);
+        let asset : Asset = {type: "TexturePNG", key: this.imageKey};
+        if (this._assets.get(asset.key, asset.type)) {
+            this._onAssetLoaded(asset);
+        } else {
+            this._assets.add([{asset}]);
+        }
     }
 
     onCancelClicked() {
@@ -97,9 +111,21 @@ export class AutoCreateAnimationDialogComponent {
         this.numFrames = newNumFrames;
     }
 
-    onImageFilePicked(newImageKey : string) {
-        this._assets.add([{asset: {type: "TexturePNG", key: newImageKey}}]);
-        this.imageKey = newImageKey;
+    onImageFilePicked(imageKey : string) {
+        this.imageKey = imageKey;
+    }
+
+    private _onAssetLoaded(asset : Asset) {
+        if (!this.imageKey || this.imageKey === "" || asset.key !== this.imageKey) {
+            return;
+        }
+        
+        let result : AutoCreateDialogResult = {
+            numFrames: this.numFrames,
+            frameDimensions: this.frameDimensions,
+            imageKey: this.imageKey
+        };
+        this._dialogRef.close(result);
     }
 
     get dialogOptions() {
