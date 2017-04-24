@@ -37,7 +37,7 @@ export class BrowseAssetComponent {
     buttonText : string = "Browse";
 
     @Input()
-    dialogOptions : {} = {};
+    dialogOptions : any = {};
 
     @Input()
     selectedFile = "";
@@ -51,6 +51,7 @@ export class BrowseAssetComponent {
     }
 
     onBrowseClicked() {
+        this.dialogOptions.properties.push('noResolveAliases');
         this._dialog.showOpenDialog(
             this.dialogOptions,
             (fileNames : string[]) => {

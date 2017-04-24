@@ -48,9 +48,9 @@
   version "3.4.34"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-3.4.34.tgz#d5335792823bb09cddd5e38c3d211b709183854d"
 
-"@types/electron@1.4.27":
-  version "1.4.27"
-  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.4.27.tgz#64345642085026306b000a963e50cd71b60b6f82"
+"@types/electron@^1.4.37":
+  version "1.4.37"
+  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.4.37.tgz#cfff6958f224842c1742a6e4873ed7135e5f2ff3"
   dependencies:
     "@types/node" "*"
 
@@ -534,18 +534,18 @@ electron-mocha@3.2.1:
     mocha "^3.0.0"
     which "^1.1.1"
 
-electron-prebuilt@1.4.8:
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/electron-prebuilt/-/electron-prebuilt-1.4.8.tgz#612e7c33a03a9f6a582e6037adc29d426e7e1ed4"
-  dependencies:
-    electron-download "^3.0.1"
-    extract-zip "^1.0.3"
-
 electron-window@^0.8.0:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/electron-window/-/electron-window-0.8.1.tgz#16ca187eb4870b0679274fc8299c5960e6ab2c5e"
   dependencies:
     is-electron-renderer "^2.0.0"
+
+electron@1.6.7:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-1.6.7.tgz#08b90812912a66f80cfb47bdaef6edfd6b78aa81"
+  dependencies:
+    electron-download "^3.0.1"
+    extract-zip "^1.0.3"
 
 end-of-stream@~0.1.5:
   version "0.1.5"
@@ -2220,13 +2220,13 @@ sass-graph@^2.1.1:
     lodash "^4.0.0"
     yargs "^4.7.1"
 
-"semver@2 || 3 || 4 || 5", "semver@2.x || 3.x || 4 || 5", semver@^5.3.0, semver@~5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
-
-semver@^4.1.0:
+"semver@2 || 3 || 4 || 5", "semver@2.x || 3.x || 4 || 5", semver@^4.1.0:
   version "4.3.6"
   resolved "https://registry.yarnpkg.com/semver/-/semver-4.3.6.tgz#300bc6e0e86374f7ba61068b5b1ecd57fc6532da"
+
+semver@^5.3.0, semver@~5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
 
 sequencify@~0.0.7:
   version "0.0.7"

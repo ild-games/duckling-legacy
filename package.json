@@ -25,7 +25,7 @@
     "@angular/platform-browser": "2.2.3",
     "@angular/platform-browser-dynamic": "2.2.3",
     "@angular/upgrade": "2.2.3",
-    "@types/electron": "1.4.27",
+    "@types/electron": "1.4.37",
     "@types/glob": "5.0.30",
     "@types/hammerjs": "2.0.33",
     "@types/lodash": "4.14.40",
@@ -57,8 +57,8 @@
     "chai": "3.5.0",
     "chai-spies": "0.7.1",
     "concurrently": "3.1.0",
+    "electron": "1.6.7",
     "electron-mocha": "3.2.1",
-    "electron-prebuilt": "1.4.8",
     "gulp": "3.9.1",
     "mocha": "3.2.0",
     "typescript": "2.1.6"
