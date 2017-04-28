@@ -18,8 +18,7 @@ import {openDialog} from '../util/md-dialog';
         </div>
         <div *ngIf="listLoaded">
             <dk-section headerText="Select an Existing Map">
-                <md-nav-list
-                    class="existing-map-list">
+                <md-nav-list>
                     <md-list-item
                         *ngFor="let map of maps"
                         (click)="selectMap(map)">
