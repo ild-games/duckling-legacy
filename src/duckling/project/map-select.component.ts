@@ -11,7 +11,7 @@ import {openDialog} from '../util/md-dialog';
  */
 @Component({
     selector: "dk-map-select",
-    styleUrls: ["./duckling/layout.css"],
+    styleUrls: ["./duckling/layout.css", "./duckling/project/map-select.component.css"],
     template: `
         <div *ngIf="!listLoaded">
             <md-spinner></md-spinner>
