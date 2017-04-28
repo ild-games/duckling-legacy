@@ -11,14 +11,15 @@ import {openDialog} from '../util/md-dialog';
  */
 @Component({
     selector: "dk-map-select",
-    styleUrls: ["./duckling/layout.css"],
+    styleUrls: ["./duckling/layout.css", "./duckling/project/map-select.component.css"],
     template: `
         <div *ngIf="!listLoaded">
             <md-spinner></md-spinner>
         </div>
         <div *ngIf="listLoaded">
             <dk-section headerText="Select an Existing Map">
-                <md-nav-list>
+                <md-nav-list
+                    class="existing-map-list">
                     <md-list-item
                         *ngFor="let map of maps"
                         (click)="selectMap(map)">
