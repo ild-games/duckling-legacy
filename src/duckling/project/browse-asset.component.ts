@@ -51,7 +51,16 @@ export class BrowseAssetComponent {
     }
 
     onBrowseClicked() {
+        // This option forces macOS to not resolve an symlink in the path from the file 
+        // picked in the dialog. This is necessary because we typically have the resources/
+        // folder setup as a symlink and if the path is resolved then it fails validation
+        // of making sure the resource chosen is within the project folder. See this issue
+        // for more information: https://github.com/electron/electron/issues/8601
+        // 
+        // NOTE: This currently does not work unless the symlink is the leaf of the path, 
+        // this is because of a macOS bug: http://www.openradar.me/11398659
         this.dialogOptions.properties.push('noResolveAliases');
+        
         this._dialog.showOpenDialog(
             this.dialogOptions,
             (fileNames : string[]) => {
