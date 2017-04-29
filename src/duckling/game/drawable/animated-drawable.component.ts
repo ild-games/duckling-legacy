@@ -130,7 +130,7 @@ export class AnimatedDrawableComponent {
         }
 
         let frames : ImageDrawable[] = [];
-        let textureWidth = this._assets.getImageAssetDimensions({key: dialogResult.imageKey, type: "TexturePNG"}).width;
+        let textureWidth = this._assets.getImageAssetDimensions({key: dialogResult.imageKey, type: "TexturePNG"}).x;
         for (let curY = 0, i = 0; frames.length < dialogResult.numFrames; curY += dialogResult.frameDimensions.y) {
             for (let curX = 0; frames.length < dialogResult.numFrames && curX < textureWidth; curX += dialogResult.frameDimensions.x) {
                 frames.push(immutableAssign(defaultImageDrawable, {

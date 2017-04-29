@@ -6,6 +6,7 @@ import {load as webFontLoader} from 'webfontloader';
 import {AttributeKey, Entity} from '../entitysystem';
 import {StoreService} from '../state/store.service';
 import {PathService} from '../util/path.service';
+import {Vector} from '../math/vector';
 
 import {RequiredAssetService} from './required-asset.service';
 
@@ -200,16 +201,16 @@ export class AssetService {
         return assetKey.replace(/\//g, '-');
     }
 
-    getImageAssetDimensions(asset : Asset) : Rectangle {
+    getImageAssetDimensions(asset : Asset) : Vector {
         if (asset.type !== "TexturePNG") {
             throw new Error("Asset is not a TexturePNG");
         }
         
         let texture = this.get(asset.key, asset.type);
         if (!texture) {
-            return new Rectangle(0, 0, 0, 0);
+            return {x: 0, y: 0};
         }
-        return texture.frame;
+        return {x: texture.frame.width, y: texture.frame.height};
     }
 
     get assets() : {[key : string] : Asset} {
