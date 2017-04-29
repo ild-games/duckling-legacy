@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
-import {loader, Texture} from 'pixi.js';
+import {loader, Texture, Rectangle} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
 import {load as webFontLoader} from 'webfontloader';
 
 import {AttributeKey, Entity} from '../entitysystem';
 import {StoreService} from '../state/store.service';
 import {PathService} from '../util/path.service';
+import {Vector} from '../math/vector';
 
 import {RequiredAssetService} from './required-asset.service';
 
@@ -198,6 +199,18 @@ export class AssetService {
      */
     fontFamilyFromAssetKey(assetKey : string) : string {
         return assetKey.replace(/\//g, '-');
+    }
+
+    getImageAssetDimensions(asset : Asset) : Vector {
+        if (asset.type !== "TexturePNG") {
+            throw new Error("Asset is not a TexturePNG");
+        }
+        
+        let texture = this.get(asset.key, asset.type);
+        if (!texture) {
+            return {x: 0, y: 0};
+        }
+        return {x: texture.frame.width, y: texture.frame.height};
     }
 
     get assets() : {[key : string] : Asset} {

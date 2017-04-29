@@ -9,6 +9,7 @@ import {
 
 import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
+import {AssetService} from '../../project/asset.service';
 import {Vector} from '../../math';
 import {Validator} from '../../controls/validated-input.component';
 
@@ -81,7 +82,9 @@ export class AnimatedDrawableComponent {
     @Input() animatedDrawable : AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
-    constructor(private _viewContainerRef : ViewContainerRef) { }
+    constructor(private _viewContainerRef : ViewContainerRef,
+                private _assets : AssetService) {
+    }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
         let newFrames = this.animatedDrawable.frames.slice(0);
@@ -120,29 +123,34 @@ export class AnimatedDrawableComponent {
         AutoCreateAnimationDialogComponent.open(this._viewContainerRef).subscribe(result => this._autoCreateAnimationFromTilesheet(result));
     }
 
+
     private _autoCreateAnimationFromTilesheet(dialogResult : AutoCreateDialogResult) {
         if (!dialogResult || !dialogResult.imageKey) {
             return;
         }
 
         let frames : ImageDrawable[] = [];
-        for (let i = 0; i < dialogResult.numFrames; i++) {
-            frames.push(immutableAssign(defaultImageDrawable, {
-                key: defaultImageDrawable.key + (i + 1),
-                isWholeImage: false,
-                textureRect: {
-                    position: {
-                        x: i * dialogResult.frameDimensions.x,
-                        y: 0
+        let textureWidth = this._assets.getImageAssetDimensions({key: dialogResult.imageKey, type: "TexturePNG"}).x;
+        for (let curY = 0, i = 0; frames.length < dialogResult.numFrames; curY += dialogResult.frameDimensions.y) {
+            for (let curX = 0; frames.length < dialogResult.numFrames && curX < textureWidth; curX += dialogResult.frameDimensions.x) {
+                frames.push(immutableAssign(defaultImageDrawable, {
+                    key: defaultImageDrawable.key + (i + 1),
+                    isWholeImage: false,
+                    textureRect: {
+                        position: {
+                            x: curX,
+                            y: curY
+                        },
+                        dimension: {
+                            x: dialogResult.frameDimensions.x,
+                            y: dialogResult.frameDimensions.y
+                        }
                     },
-                    dimension: {
-                        x: dialogResult.frameDimensions.x,
-                        y: dialogResult.frameDimensions.y
-                    }
-                },
-                textureKey: dialogResult.imageKey
-            }));
-        }
+                    textureKey: dialogResult.imageKey
+                }));
+                i++;
+            }
+        } 
         this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: frames}));
     }
 
