@@ -130,31 +130,27 @@ export class AnimatedDrawableComponent {
         }
 
         let frames : ImageDrawable[] = [];
-        let curX = 0;
-        let curY = 0;
         let textureWidth = this._assets.getImageAssetDimensions({key: dialogResult.imageKey, type: "TexturePNG"}).width;
-        for (let i = 0; i < dialogResult.numFrames; i++) {
-            if (curX + dialogResult.frameDimensions.x > textureWidth) {
-                curY += dialogResult.frameDimensions.y;
-                curX = 0;
-            }
-            frames.push(immutableAssign(defaultImageDrawable, {
-                key: defaultImageDrawable.key + (i + 1),
-                isWholeImage: false,
-                textureRect: {
-                    position: {
-                        x: curX,
-                        y: curY
+        for (let curY = 0, i = 0; frames.length < dialogResult.numFrames; curY += dialogResult.frameDimensions.y) {
+            for (let curX = 0; frames.length < dialogResult.numFrames && curX < textureWidth; curX += dialogResult.frameDimensions.x) {
+                frames.push(immutableAssign(defaultImageDrawable, {
+                    key: defaultImageDrawable.key + (i + 1),
+                    isWholeImage: false,
+                    textureRect: {
+                        position: {
+                            x: curX,
+                            y: curY
+                        },
+                        dimension: {
+                            x: dialogResult.frameDimensions.x,
+                            y: dialogResult.frameDimensions.y
+                        }
                     },
-                    dimension: {
-                        x: dialogResult.frameDimensions.x,
-                        y: dialogResult.frameDimensions.y
-                    }
-                },
-                textureKey: dialogResult.imageKey
-            }));
-            curX += dialogResult.frameDimensions.x;
-        }
+                    textureKey: dialogResult.imageKey
+                }));
+                i++;
+            }
+        } 
         this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: frames}));
     }
 
