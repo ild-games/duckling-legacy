@@ -54,7 +54,7 @@ export class MigrationService {
      * @return The map version and migration data.
      */
     async openProject(projectPath : string) : Promise<ProjectVersionInfo> {
-        let versionFileName = this._path.join(projectPath, "project", "version.json");
+        let versionFileName = this._path.join(projectPath, "project", "editor-only", "version.json");
         let rawFile = await this._jsonLoader.getJsonFromPath(versionFileName);
 
         let versionFile : VersionFile;
@@ -65,7 +65,7 @@ export class MigrationService {
             try {
                 versionFile = JSON.parse(rawFile);
             } catch (exception) {
-                rethrow(`Error loading "project/version.js"`, exception);
+                rethrow(`Error loading "project/editor-only/version.js"`, exception);
             }
         }
 

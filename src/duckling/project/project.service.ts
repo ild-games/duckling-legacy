@@ -218,7 +218,7 @@ export class ProjectService {
 
     private async _parseMapJson(json : any, key : string) {
         let rawMap = json ? JSON.parse(json) : createRawMap(this._project.versionInfo.mapVersion);
-        rawMap = await this._migrationService.migrateMap(rawMap, this._project.versionInfo, this.metaDataDir);
+        rawMap = await this._migrationService.migrateMap(rawMap, this._project.versionInfo, this._pathService.join(this.metaDataDir, "editor-only"));
 
         let parsedMap = await this._mapParser.rawMapToParsedMap(rawMap);
 
@@ -253,7 +253,7 @@ export class ProjectService {
     }
 
     private get _customAttributesRoot() {
-        return this._pathService.join(this._project.home, 'project', 'custom-attributes');
+        return this._pathService.join(this._project.home, 'project', 'editor-only', 'custom-attributes');
     }
 
     private get _project() : Project {
