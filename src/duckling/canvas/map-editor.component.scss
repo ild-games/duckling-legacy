@@ -24,11 +24,6 @@ md-card {
     padding: 0;
     z-index: 1;
     min-width: 700px;
-    
-    .tab-container {
-        flex: 0 0 auto;
-        overflow-x: auto;
-    }
 
     .canvas-top-toolbar {
         @extend .canvas-toolbar;

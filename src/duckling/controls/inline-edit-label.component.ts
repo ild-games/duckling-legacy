@@ -5,10 +5,11 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
  */
 @Component({
     selector: "dk-inline-edit-label",
+    styleUrls: ['./duckling/controls/inline-edit-label.component.css'],
     template: `
-        <span>
+        <div [title]="label">
             {{label}}
-        </span>
+        </div>
         <dk-icon-button
             icon="pencil"
             [tooltip]="tooltip"
