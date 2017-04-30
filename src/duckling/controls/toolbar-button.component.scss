@@ -1,17 +1,14 @@
 $icon-button-width: 40px;
 $icon-width: 16px;
-$icon-offset: 11px;
 $icon-font-size: 16px;
 
 button {
     min-width: $icon-button-width;
     border-radius: 0;
+    height: 100%;
 
     .icon-button {
         font-size: $icon-font-size;
-        position: absolute;
-        top: $icon-offset;
-        left: $icon-offset;
     }
 
     .button-text {

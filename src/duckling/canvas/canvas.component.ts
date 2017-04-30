@@ -45,11 +45,6 @@ import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent} fr
             (mouseup)="forwardContainingDivMouseEvent($event)"
             (mousemove)="forwardContainingDivMouseEvent($event)"
             (mouseout)="forwardContainingDivMouseEvent($event)">
-            <div
-                class="canvas-scroll"
-                [style.width]="scrollerDimensions.x"
-                [style.height]="scrollerDimensions.y">
-            </div>
             <canvas
                 #canvas
                 class="canvas"
@@ -59,6 +54,10 @@ import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent} fr
                 (mouseout)="onMouseOut()"
                 (wheel)="onMouseWheel($event)">
             </canvas>
+            <div
+                class="canvas-scroll"
+                [ngStyle]="scrollerCSS">
+            </div>
         </div>
     `
 })
@@ -401,5 +400,12 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             keyCode === KeyboardCode.DOWN ||
             keyCode === KeyboardCode.LEFT
         );
+    }
+
+    get scrollerCSS() : any {
+        return {
+            'width': `${this.scrollerDimensions.x}px`,
+            'height': `${this.scrollerDimensions.y}px`
+        };
     }
 }

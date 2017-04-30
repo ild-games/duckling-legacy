@@ -1,5 +1,9 @@
+:host {
+    display: flex;
+    align-items: center;
+}
+
 .scale-label {
-    width: 36px;
-    display: inline-block;
+    width: 48px;
     text-align: center;
 }

@@ -19,7 +19,6 @@ import {IconComponent} from './icon.component';
             [disableRipple]=true
             title="{{tooltip}}"
             color="{{color}}">
-            &nbsp;
             <dk-icon
                 class="icon-button"
                 [iconClass]="icon">
@@ -29,7 +28,6 @@ import {IconComponent} from './icon.component';
                 class="button-text">
                 {{text}}
             </span>
-            &nbsp;
         </button>
     `
 })

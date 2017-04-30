@@ -1,5 +1,3 @@
-@import "../colors";
-
-.selected-button {
-    color: $light-primary-color;
+:host {
+    display: flex;
 }
