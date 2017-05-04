@@ -1,4 +1,20 @@
+$listContainerWidth: 248px;
+
 md-nav-list {
-    max-height: 60%;
+    max-height: 60vh;
     overflow-y: auto;
+    overflow-x: hidden;
+    width: $listContainerWidth;
+}
+
+md-list-item {
+    width: $listContainerWidth - 16px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.new-map-name-field {
+    margin-left: 20px;
+    margin-top: 12px;
 }
