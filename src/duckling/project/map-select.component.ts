@@ -23,7 +23,11 @@ import {openDialog} from '../util/md-dialog';
                     <md-list-item
                         *ngFor="let map of maps"
                         (click)="selectMap(map)">
+                        <div 
+                            class="map-name-container" 
+                            title="{{map}}">
                         {{map}}
+                        </div>
                     </md-list-item>
                 </md-nav-list>
             </dk-section>

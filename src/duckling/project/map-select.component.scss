@@ -9,9 +9,13 @@ md-nav-list {
 
 md-list-item {
     width: $listContainerWidth - 16px;
+}
+
+.map-name-container {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    min-width: 0;
 }
 
 .new-map-name-field {
