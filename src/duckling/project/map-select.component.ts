@@ -25,7 +25,7 @@ import {openDialog} from '../util/md-dialog';
                         (click)="selectMap(map)">
                         <div 
                             class="map-name-container" 
-                            title="{{map}}">
+                            [title]="map">
                         {{map}}
                         </div>
                     </md-list-item>
