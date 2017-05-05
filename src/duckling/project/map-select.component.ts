@@ -17,30 +17,34 @@ import {openDialog} from '../util/md-dialog';
             <md-spinner></md-spinner>
         </div>
         <div *ngIf="listLoaded">
-            <dk-section headerText="Select an Existing Map">
+            <dk-section 
+                headerText="Select an Existing Map">
                 <md-nav-list>
                     <md-list-item
                         *ngFor="let map of maps"
                         (click)="selectMap(map)">
+                        <div 
+                            class="map-name-container" 
+                            [title]="map">
                         {{map}}
+                        </div>
                     </md-list-item>
                 </md-nav-list>
             </dk-section>
-            <dk-section headerText="Create a New Map">
-                <div>
-                    <dk-input class="dk-inline"
-                        label="New Map Name"
-                        [dividerColor]="newMapNameIsValid() ? 'primary' : 'warn'"
-                        (inputChanged)="newMapName = $event">
-                    </dk-input>
-                    <dk-icon-button
-                        icon="save"
-                        tooltip="Create the map"
-                        [disabled]="!newMapNameIsValid()"
-                        (click)="createMap()">
-                    </dk-icon-button>
-                </div>
-            </dk-section>
+            <div class="new-map-name-field">
+                <dk-input class="dk-inline"
+                    label="New Map Name"
+                    [dividerColor]="newMapNameIsValid() ? 'primary' : 'warn'"
+                    (inputChanged)="newMapName = $event">
+                </dk-input>
+                <dk-icon-button
+                    icon="plus"
+                    tooltip="Create the map"
+                    [disabled]="!newMapNameIsValid()"
+                    (click)="createMap()">
+                </dk-icon-button>
+            </div>
+
         </div>
     `
 })
