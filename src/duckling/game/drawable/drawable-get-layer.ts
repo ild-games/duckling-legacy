@@ -5,6 +5,6 @@ import {immutableAssign} from '../../util';
 /**
  * Will be registered with the EntityLayerService.
  */
-export function getLayer(attribute : DrawableAttribute) : string {
+export function getDrawableLayer(attribute : DrawableAttribute) : string {
     return "" + attribute.topDrawable.renderPriority;
 }
