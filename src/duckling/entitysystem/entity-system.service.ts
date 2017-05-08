@@ -30,6 +30,17 @@ export class EntitySystemService {
     }
 
     /**
+     * Retrieve a list of entities
+     */
+     getEntities(keys: EntityKey[]) : Entity[] {
+         let entities: Entity[] = [];
+         for (let key of keys) {
+             entities.push(this.getEntity(key));
+         }
+         return entities;
+     }
+
+    /**
      * Update the entity. Can be used to create new entities.
      * @param  key    Key of the entity to update.
      * @param  entity Entity that will be stored with the key.

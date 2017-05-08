@@ -22,7 +22,7 @@ export class EntityResizeTool extends BaseTool {
     private _mouseDownLocation : Vector = null;
     private _initialEntityBox : Box2 = null;
     private _positionOffset : Vector = null;
-    private _initialEntityValue : Entity = null;
+    private _initialEntityValue : EntityKey = null;
 
     constructor(private _selectionService: SelectionService,
                 private _entitySystemService : EntitySystemService,
@@ -41,7 +41,11 @@ export class EntityResizeTool extends BaseTool {
     }
 
     onStageDown(event : CanvasMouseEvent) {
-        this._initialEntityValue = this.selectedEntity;
+        if (!this._onlyOneSelectedEntity()) {
+            return;
+        }
+        
+        this._initialEntityValue = this.selectedEntityKey;
         this._initialEntityBox = this.selectedBox;
         this._mergeKey = newMergeKey();
 
@@ -77,18 +81,20 @@ export class EntityResizeTool extends BaseTool {
     }
 
     onStageMove(event : CanvasMouseEvent) {
-        if (this._selectedAnchor) {
-            let mouseLocation = vectorAdd(event.stageCoords, this._positionOffset);
-            if (this._snapToGrid.shouldSnapToGrid(event)) {
-                mouseLocation = this._snapToGrid.snapPosition(mouseLocation);
-            }
+        if (!this._selectedAnchor) {
+            return;
+        }
+        
+        let mouseLocation = vectorAdd(event.stageCoords, this._positionOffset);
+        if (this._snapToGrid.shouldSnapToGrid(event)) {
+            mouseLocation = this._snapToGrid.snapPosition(mouseLocation);
+        }
 
-            let newBox = getResizeFromDrag(this._initialEntityBox, this._selectedAnchor, this._mouseDownLocation, mouseLocation);
+        let newBox = getResizeFromDrag(this._initialEntityBox, this._selectedAnchor, this._mouseDownLocation, mouseLocation);
 
-            if (newBox.dimension.x > 0 && newBox.dimension.y > 0) {
-                let updatedEntity = this._entityBoxService.setEntityBox(this._initialEntityValue, newBox);
-                this._entitySystemService.updateEntity(this.selectedEntityKey, updatedEntity, this._mergeKey);
-            }
+        if (newBox.dimension.x > 0 && newBox.dimension.y > 0) {
+            let updatedEntity = this._entityBoxService.setEntityBox(this._initialEntityValue, newBox);
+            this._entitySystemService.updateEntity(this.selectedEntityKey, updatedEntity, this._mergeKey);
         }
     }
 
@@ -98,6 +104,10 @@ export class EntityResizeTool extends BaseTool {
 
     onLeaveStage() {
         this._cancel();
+    }
+   
+    private _onlyOneSelectedEntity() : boolean {
+        return (this._selectionService.selections.value && this._selectionService.selections.value.length === 1);
     }
 
     private _shouldSnapToGrid(event : CanvasMouseEvent) {
@@ -112,15 +122,21 @@ export class EntityResizeTool extends BaseTool {
     }
 
     get selectedBox() : Box2 {
-        return this._entityBoxService.getEntityBox(this.selectedEntity);
+        return this._entityBoxService.getEntityBox(this.selectedEntityKey);
     }
 
     get selectedEntity() : Entity | null {
-        return this._selectionService.selection.value.entity;
+        if (!this._selectionService.selections.value || this._selectionService.selections.value.length < 1) {
+            return null;
+        }
+        return this._selectionService.selections.value[0].entity;
     }
 
     get selectedEntityKey() : EntityKey | null {
-        return this._selectionService.selection.value.selectedEntity;
+        if (!this._selectionService.selections.value || this._selectionService.selections.value.length < 1) {
+            return null;
+        }
+        return this._selectionService.selections.value[0].key;
     }
 }
 

@@ -29,8 +29,21 @@ export function boxContainsPoint(box : Box2, position : Vector) {
     if (!box || !position) {
         return false;
     }
-    return (boxMinX(box) <= position.x && position.x <= boxMaxX(box))
-        && (boxMinY(box) <= position.y && position.y <= boxMaxY(box));
+    return (
+        (boxMinX(box) <= position.x && position.x <= boxMaxX(box)) && 
+        (boxMinY(box) <= position.y && position.y <= boxMaxY(box))
+    );
+}
+
+export function boxContainsBox(outerBox : Box2, innerBox : Box2) {
+    if (!outerBox || !innerBox) {
+        return false;
+    }
+
+    return (
+        (boxMinX(outerBox) <= boxMinX(innerBox) && boxMaxX(innerBox) <= boxMaxX(outerBox)) &&
+        (boxMinY(outerBox) <= boxMinY(innerBox) && boxMaxY(innerBox) <= boxMaxY(outerBox))
+    );
 }
 
 /**
@@ -98,4 +111,17 @@ export function boxFromWidthHeight(width : number, height : number) {
         },
         rotation: 0
     };
+}
+
+export function normalizeBox(box : Box2) : Box2 {
+    if (box.dimension.x < 0) {
+        box.position.x += box.dimension.x;
+        box.dimension.x = Math.abs(box.dimension.x);
+    }
+    if (box.dimension.y < 0) {
+        box.position.y += box.dimension.y;
+        box.dimension.y = Math.abs(box.dimension.y);
+    }
+
+    return box;
 }

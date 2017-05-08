@@ -147,13 +147,12 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private _drawFrame() {
         this._totalMillis += (1000 / this._framesPerSecond);
-
         this._redrawAllDisplayObjects();
     }
 
     copyEntity() {
-        let selection = this._selection.selection.value;
-        this._copyPaste.copy(selection.selectedEntity);
+        let selections = this._selection.selections.value;
+        this._copyPaste.copy(selections.map((selection: Selection) => { return selection.entity; }));
     }
 
     pasteEntity(position : Vector) {

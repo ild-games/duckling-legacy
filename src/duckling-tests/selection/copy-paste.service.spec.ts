@@ -2,7 +2,7 @@ import "reflect-metadata";
 import 'mocha';
 import {expect} from 'chai';
 
-import {createStoreService, createEntityService} from '../helper/state';
+import {createStoreService, createEntityService, createEntityBoxService} from '../helper/state';
 import {EntitySystemService, EntityPositionService, EntityKey, Entity} from '../../duckling/entitysystem';
 import {EntityLayerService} from '../../duckling/entitysystem/services/entity-layer.service';
 import {AvailableAttributeService} from '../../duckling/entitysystem/services/available-attribute.service';
@@ -50,6 +50,9 @@ describe("CopyPasteService", function() {
     beforeEach(function() {
         this.store = createStoreService();
         this.entitySystem = createEntityService(this.store);
+        this.entityPositionService = new EntityPositionService();
+        this.assetService = new AssetService(this.store, new PathService() , new RequiredAssetService()) ;
+        this.entityBoxService = createEntityBoxService(this.assetService, this.entityPositionService, this.entitySystem);
         this.layerService = new EntityLayerService(this.entitySytem, this.store);
         this.positionService = new MockPositionService();
         this.path = new PathService();
@@ -66,7 +69,7 @@ describe("CopyPasteService", function() {
         this.project = new ProjectService(this.entitySystem, this.store, this.migrationService, this.jsonLoader, this.path, this.mapParser, this.dialog, this.snackbar);
         this.availableAttributes = new AvailableAttributeService(this.attributeDefault, this.project);
         this.drawer = new EntityDrawerService(this.assets, this.renderPriority, this.positionService, this.entitySystem, this.layerService, this.availableAttributes, this.store);
-        this.selection = new SelectionService(this.store, this.entitySystem, this.layerService, this.drawer);
+        this.selection = new SelectionService(this.store, this.entitySystem, this.layerService, this.drawer, null, null);
         this.copyPaste = new CopyPasteService(this.store, this.entitySystem, this.selection, this.positionService);
     });
 

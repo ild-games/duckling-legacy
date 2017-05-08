@@ -3,6 +3,7 @@ import {Graphics, DisplayObject} from 'pixi.js';
 
 import {
     Entity,
+    EntityKey,
     AttributeDefaultService,
     EntitySystemService,
     EntityPositionService,
@@ -27,13 +28,12 @@ export class EntityCreatorTool extends BaseTool {
     }
 
     drawTool(canvasZoom : number) : DrawnConstruct {
-        let selectedEntityKey = this._selection.selection.value.selectedEntity;
-        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
-        if (!selectedEntity) {
+        let selectedEntityKey = this._selection.selections.value[0].key;
+        if (!selectedEntityKey) {
             return new DrawnConstruct();
         }
 
-        let box = this._entityBoxService.getEntityBox(selectedEntity);
+        let box = this._entityBoxService.getEntityBox(selectedEntityKey);
         if (!box) {
             return new DrawnConstruct();
         }
@@ -48,7 +48,7 @@ export class EntityCreatorTool extends BaseTool {
         let entity = this._attributeDefaultService.createEntity();
         entity = this._entityPositionService.setPosition(entity, event.stageCoords);
         let key = this._entitySystemService.addNewEntity(entity, mergeKey);
-        this._selection.select(key, mergeKey);
+        this._selection.select([key], mergeKey);
     }
 
     get key() {

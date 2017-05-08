@@ -1,4 +1,5 @@
 import {Component, Injectable} from '@angular/core';
+import {Subscriber} from 'rxjs';
 
 import {BaseAttributeService} from '../base-attribute.service';
 import {AttributeKey, Attribute, Entity, EntityKey} from '../entity';
@@ -25,11 +26,19 @@ export interface AttributeBoundingBox<T> {
  */
 @Injectable()
 export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<Attribute>> {
+
+    private _entitySystemSubscription : Subscriber<any>;
+    private _entityBoxCache : {[entity : string] : Box2} = {};
+    
     constructor(private _asset : AssetService,
                 private _entityPosition : EntityPositionService,
                 private _entitySystem : EntitySystemService,
                 private _entityDrawerService : EntityDrawerService) {
         super();
+
+        this._entitySystemSubscription = this._entitySystem.entitySystem.subscribe(entitySystem => {
+            this._entityBoxCache = {};
+        }) as Subscriber<any>;
     }
 
     /**
@@ -66,10 +75,11 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
      * @param  box Box the entity should be resized to.
      * @param  mergeKey Pass to merge updates on the undo/redo stack.
      */
-    setEntityBox(entity : Entity, box : Box2, mergeKey? : string) : Entity {
+    setEntityBox(entityKey : EntityKey, box : Box2, mergeKey? : string) : Entity {
         let patch : Entity = {};
 
-        let currentBox = this.getEntityBox(entity);
+        let currentBox = this.getEntityBox(entityKey);
+        let entity = this._entitySystem.getEntity(entityKey);
         let newPosition = resizePoint(currentBox, box, this._entityPosition.getPosition(entity));
 
         for (let attributeKey in entity) {
@@ -80,7 +90,7 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
                 patch[attributeKey] = implementation.setBox(entity[attributeKey], newAttributeBox, this._asset);
             }
         }
-
+        
         return this._entityPosition.setPosition({...entity, ...patch}, newPosition);
     }
 
@@ -89,9 +99,13 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
      * @param  entity Entity the bounding box will be retrieved for.
      * @return A new bounding box instance.
      */
-    getEntityBox(entity : Entity) : Box2 {
+    getEntityBox(entityKey : EntityKey) : Box2 {
+        if (this._entityBoxCache[entityKey]) {
+            return this._entityBoxCache[entityKey];
+        }
+        
         let box : Box2;
-
+        let entity = this._entitySystem.getEntity(entityKey);
         for (let key in entity) {
             if (!this._entityDrawerService.isAttributeVisible(key, entity)) {
                 continue;
@@ -107,6 +121,22 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
             }
         }
 
+        if (box) {
+            this._entityBoxCache[entityKey] = box;
+        }
+        
         return box;
+    }
+
+    getEntitiesBoundingBox(entityKeys: EntityKey[]) : Box2 {
+        if (!entityKeys || entityKeys.length === 0) {
+            return null;
+        }
+
+        let boundingBox: Box2 = this.getEntityBox(entityKeys[0]);
+        for (let i = 1; i < entityKeys.length; i++) {
+            boundingBox = boxUnion(boundingBox, this.getEntityBox(entityKeys[i]));
+        }
+        return boundingBox;
     }
 }

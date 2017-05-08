@@ -1,19 +1,24 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
+import {normalizeBox, boxContainsPoint, boxContainsBox} from '../math/box2';
+import {Vector} from '../math/vector';
+
 import {Action, StoreService} from '../state';
 import {ACTION_OPEN_MAP} from '../project/project';
 import {EntityKey, Entity} from '../entitysystem/entity';
 import {EntitySystemService} from '../entitysystem/entity-system.service';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
+import {EntityBoxService} from '../entitysystem/services/entity-box.service';
+import {RenderPriorityService} from '../canvas/drawing/render-priority.service';
 
 /**
  * Interface describing the currently selected entity. Will be an empty object
  * if there is no selection.
  */
 export interface Selection {
-    selectedEntity? : EntityKey,
+    key? : EntityKey,
     entity? : Entity
 }
 
@@ -23,25 +28,27 @@ export interface Selection {
 @Injectable()
 export class SelectionService {
 
-    public selection : BehaviorSubject<Selection>;
+    public selections : BehaviorSubject<Selection[]>;
 
     constructor(private _store : StoreService,
                 private _entitySystem : EntitySystemService,
+                private _drawerService : EntityDrawerService,
                 private _layerService : EntityLayerService,
-                private _drawerService : EntityDrawerService) {
-        this.selection = new BehaviorSubject({});
+                private _entityBoxService : EntityBoxService,
+                private _renderPriority: RenderPriorityService) {
+        this.selections = new BehaviorSubject([]);
         this._store.state.subscribe(state => {
-            this.selection.next(this._getSelection(state.selection.selectedEntity))
+            this.selections.next(this._getSelections(state.selections.selectedEntities));
         });
     }
 
     /**
      * Select the entity.
-     * @param  entityKey The key of the entity to select.
-     * @param  mergeKey  Optional mergeKey, describes which commands the action should be merged with.
+     * @param  entityKeys The keys of entities to select
+     * @param  mergeKey   Optional mergeKey, describes which commands the action should be merged with.
      */
-    select(entityKey : EntityKey, mergeKey? : any) {
-        this._store.dispatch(_selectionAction(entityKey), mergeKey);
+    select(entityKeys : EntityKey[] = [], mergeKey? : any) {
+        this._store.dispatch(_selectionAction(entityKeys), mergeKey);
     }
 
     /**
@@ -49,31 +56,75 @@ export class SelectionService {
      * @param  mergeKey  Optional mergeKey, describes which commands the action should be merged with.
      */
     deselect(mergeKey? : any) {
-        this.select("", mergeKey);
+        this.select([], mergeKey);
     }
 
-    private _getSelection(selectedEntity : EntityKey) : Selection {
-        if (!selectedEntity) {
-            return {};
-        }
+    getEntityKeyAtPosition(position: Vector) : EntityKey {
+        let entities = Array.from(this._renderPriority.sortEntities(this._entitySystem.entitySystem.getValue()));
+        entities.reverse();
+        let taggedEntity = entities
+            .filter(entity => this._layerService.isEntityVisible(entity.entity))
+            .find(entity => this._entityContainsPoint(entity.key, position));
 
-        let entity = this._entitySystem.getEntity(selectedEntity);
-        if (!this._drawerService.isEntityVisible(entity)) {
-            return {};
+        if (taggedEntity) {
+            return taggedEntity.key;
+        } else {
+            return null;
         }
-
-        return {
-            selectedEntity,
-            entity : entity || null
-        };
     }
+
+    getEntityKeysAtArea(position : Vector, dimension : Vector) : EntityKey[] {
+        let entities = Array.from(this._renderPriority.sortEntities(this._entitySystem.entitySystem.getValue()));
+        entities.reverse();
+        let taggedEntities = entities
+            .filter(entity => this._layerService.isEntityVisible(entity.entity))
+            .filter(entity => this._entityContainsWithinArea(entity.key, position, dimension));
+
+        if (taggedEntities) {
+            return taggedEntities.map(entity => entity.key);
+        } else {
+            return null;
+        }
+    }
+
+    isSelected(entityKey : EntityKey) {
+        return this.selections.value.find(selection => selection.key === entityKey) !== undefined;
+    }
+
+    private _entityContainsPoint(entityKey : EntityKey, position : Vector) {
+        return boxContainsPoint(this._entityBoxService.getEntityBox(entityKey), position);
+    }
+
+    private _entityContainsWithinArea(entityKey : EntityKey, position : Vector, dimension : Vector) {
+        return boxContainsBox(
+            normalizeBox({
+                position,
+                dimension,
+                rotation: 0
+            }),
+            this._entityBoxService.getEntityBox(entityKey));
+    }
+
+    private _getSelections(selectedEntityKeys : string[]) : Selection[] {
+        let filteredEntities: Selection[] = [];
+        if (selectedEntityKeys && selectedEntityKeys.length > 0) {
+            for (let key of selectedEntityKeys) {
+                let entity = this._entitySystem.getEntity(key);
+                if (this._layerService.isEntityVisible(entity)){
+                    filteredEntities.push({key, entity});
+                }
+            }
+        }
+        return filteredEntities;
+    }
+
 }
 
 /**
  * State of the currently selected entity.
  */
 export interface SelectionState {
-    selectedEntity? : EntityKey;
+    selectedEntities? : EntityKey[];
 }
 
 /**
@@ -81,24 +132,31 @@ export interface SelectionState {
  */
 export function selectionReducer(state : SelectionState = {}, action : SelectionAction) {
     if (action.type === ACTION_SELECT_ENTITY) {
+        state.selectedEntities = state.selectedEntities || [];
+        if (!action.selectedEntities || action.selectedEntities.length === 0) {
+            return { selectedEntities: [] };
+        }
         return {
-            selectedEntity : action.selectedEntity
+            selectedEntities : state.selectedEntities.concat(
+                action.selectedEntities.filter(selectedKey => !state.selectedEntities.includes(selectedKey)))
         }
     } else if (action.type === ACTION_OPEN_MAP) {
 
         //Clear selection if the current map is changing.
-        return {};
+        return {
+            selectedEntities: []
+        };
     }
     return state;
 }
 
 const ACTION_SELECT_ENTITY = "Selection.SelectEntity";
 interface SelectionAction extends Action {
-    selectedEntity? : EntityKey;
+    selectedEntities? : EntityKey[];
 }
-function _selectionAction(selectedEntity : EntityKey) : SelectionAction {
+function _selectionAction(selectedEntities : EntityKey[]) : SelectionAction {
     return {
-        selectedEntity,
+        selectedEntities,
         type : ACTION_SELECT_ENTITY
     }
 }
