@@ -5,7 +5,7 @@ import {AssetService} from '../../project/asset.service';
 import {immutableAssign} from '../../util/model';
 import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 
-import {PATH_HEIGHT, drawPathAttribute} from './path-drawer';
+import {PATH_HEIGHT} from './path-drawer';
 import {PathAttribute} from './path-attribute';
 
 const PADDING = 5;

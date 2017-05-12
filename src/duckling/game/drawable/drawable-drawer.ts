@@ -19,9 +19,11 @@ import {
     isDrawnConstruct,
     isAnimationConstruct,
     isContainerConstruct,
+    isPainterConstruct,
     isDisplayObject,
     ContainerConstruct
 } from '../../canvas/drawing';
+import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
 import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
@@ -42,7 +44,7 @@ import {Rectangle} from './rectangle';
  * @param  assetService Service containing the assets needed to render the drawable attribute.
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
-export function drawDrawableAttribute(drawableAttribute : DrawableAttribute, assetService : AssetService) : DrawnConstruct {
+export function getDrawableAttributeDrawnContruct(drawableAttribute : DrawableAttribute, assetService : AssetService) : DrawnConstruct {
     if (!drawableAttribute.topDrawable) {
         return null;
     }
@@ -238,12 +240,20 @@ function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture :
 }
 
 function _getBaselineBounds(drawnConstruct : DrawnConstruct) : Box2 {
+    if (isPainterConstruct(drawnConstruct)) {
+        return;
+    }
+
     drawnConstruct.scale = {x: 1, y: 1};
     return drawnConstructBounds(drawnConstruct);
 }
 
 function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
     function _applyDisplayObjectProperties(drawnConstruct : DrawnConstruct) {
+        if (isPainterConstruct(drawnConstruct)) {
+            return;
+        }
+
         let bounds = _getBaselineBounds(drawnConstruct);
         drawnConstruct.rotation = degreesToRadians(drawable.rotation);
         drawnConstruct.scale.x = drawable.scale.x;

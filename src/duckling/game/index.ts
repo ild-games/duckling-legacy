@@ -18,11 +18,11 @@ import {getPosition} from './position/get-position';
 import {defaultCollision, COLLISION_KEY} from './collision/collision-attribute';
 import {PositionComponent} from './position/position.component';
 import {CollisionComponent} from './collision/collision.component';
-import {drawCollision} from './collision/collision-drawer';
+import {getCollisionAttributeDrawnConstruct} from './collision/collision-drawer';
 import {collisionBoundingBox} from './collision/collision-box';
 
 import {defaultCamera, CAMERA_KEY} from './camera/camera-attribute';
-import {drawCameraAttribute} from './camera/camera-drawer';
+import {getCameraAttributeDrawnConstruct} from './camera/camera-drawer';
 import {cameraBoundingBox} from './camera/camera-box';
 import {CameraComponent} from './camera/camera.component';
 
@@ -37,7 +37,7 @@ import {TriggerDeathComponent} from './trigger-death/trigger-death.component';
 
 import {defaultPath, PATH_KEY} from './path/path-attribute';
 import {PathComponent} from './path/path.component';
-import {drawPathAttribute} from './path/path-drawer';
+import {getPathAttributeDrawnConstruct} from './path/path-drawer';
 import {pathBox} from './path/path-box';
 
 import {defaultPathFollower, PATH_FOLLOWER_KEY} from './path/path-follower-attribute';
@@ -45,7 +45,7 @@ import {PathFollowerComponent} from './path/path-follower.component';
 
 import {defaultDrawableAttribute, DRAWABLE_KEY} from './drawable/drawable-attribute';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
-import {drawDrawableAttribute} from './drawable/drawable-drawer';
+import {getDrawableAttributeDrawnContruct} from './drawable/drawable-drawer';
 import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
 import {getDrawableLayer} from './drawable/drawable-get-layer';
@@ -93,7 +93,7 @@ function _bootstrapButtonAttribute(services : Services) {
 
 function _bootstrapCollisionAttribute(services : Services) {
     services.attributeComponentService.register(COLLISION_KEY, CollisionComponent);
-    services.entityDrawerService.register(COLLISION_KEY, drawCollision);
+    services.entityDrawerService.register(COLLISION_KEY, getCollisionAttributeDrawnConstruct);
     services.entityBoxService.register(COLLISION_KEY, collisionBoundingBox);
     services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollision});
 }
@@ -101,7 +101,7 @@ function _bootstrapCollisionAttribute(services : Services) {
 function _bootstrapCameraAttribute(services : Services) {
     services.attributeComponentService.register(CAMERA_KEY, CameraComponent);
     services.attributeDefaultService.register(CAMERA_KEY, {createByDefault: false, default: defaultCamera});
-    services.entityDrawerService.register(CAMERA_KEY, drawCameraAttribute);
+    services.entityDrawerService.register(CAMERA_KEY, getCameraAttributeDrawnConstruct);
     services.entityBoxService.register(CAMERA_KEY, cameraBoundingBox);
 }
 
@@ -109,7 +109,7 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.attributeComponentService.register(DRAWABLE_KEY, DrawableAttributeComponent);
     services.attributeDefaultService.register(DRAWABLE_KEY, {createByDefault: true, default: defaultDrawableAttribute});
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
-    services.entityDrawerService.register(DRAWABLE_KEY, drawDrawableAttribute);
+    services.entityDrawerService.register(DRAWABLE_KEY, getDrawableAttributeDrawnContruct);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.entityLayerService.register(DRAWABLE_KEY, getDrawableLayer);
@@ -133,7 +133,7 @@ function _bootstrapTriggerDeathAttribute(services : Services) {
 function _bootstrapPathAttribute(services : Services) {
     services.attributeComponentService.register(PATH_KEY, PathComponent);
     services.attributeDefaultService.register(PATH_KEY, {createByDefault: false, default: defaultPath});
-    services.entityDrawerService.register(PATH_KEY, drawPathAttribute);
+    services.entityDrawerService.register(PATH_KEY, getPathAttributeDrawnConstruct);
     services.entityBoxService.register(PATH_KEY, pathBox);
 }
 

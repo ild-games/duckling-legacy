@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {DisplayObject} from 'pixi.js';
+import {DisplayObject, Graphics} from 'pixi.js';
 
 import {KeyboardService} from '../../util';
 

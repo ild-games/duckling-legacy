@@ -41,13 +41,14 @@ export class EntityMoveTool extends BaseTool {
         super();
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        let container = new PIXI.Container();
-        let entityBox = this._getSelectedEntityBox();
-        if (entityBox) {
-            container.addChild(this._drawSelectionBox(entityBox, canvasZoom));
+    getDisplayObject(canvasZoom : number) {
+        let graphics = new Graphics();
+        let box = this._getSelectedEntityBox();
+        if (box) {
+            graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
+            drawRectangle(box.position, box.dimension, graphics);
         }
-        return container;
+        return graphics;
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -131,13 +132,6 @@ export class EntityMoveTool extends BaseTool {
         this._mergeKey = null;
         this._initalEntity = null;
         this._initialMouseLocation = null;
-    }
-
-    private _drawSelectionBox(box : Box2, canvasZoom : number) : Graphics {
-        let graphics = new Graphics();
-        graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
-        drawRectangle(box.position, box.dimension, graphics);
-        return graphics;
     }
 
     private _getSelectedEntityBox() {

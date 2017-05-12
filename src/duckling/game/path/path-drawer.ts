@@ -4,6 +4,7 @@ import {DrawnConstruct} from '../../canvas/drawing';
 import {Entity} from '../../entitysystem/entity';
 import {drawRectangle} from '../../canvas/drawing/util';
 import {Vector, vectorRotate} from '../../math/vector';
+import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
 
 import {PathAttribute} from './path-attribute';
 
@@ -16,7 +17,7 @@ const PATH_COLOR = 0x607d8b;
 const STARTING_SQUARE_COLOR = 0x00a626;
 const ENDING_SQUARE_COLOR = 0xf44336;
 
-export function drawPathAttribute(pathAttribute : PathAttribute) : DrawnConstruct {
+export function getPathAttributeDrawnConstruct(pathAttribute : PathAttribute) : DrawnConstruct {
     if (!pathAttribute || pathAttribute.vertices.length === 0) {
         return null;
     }

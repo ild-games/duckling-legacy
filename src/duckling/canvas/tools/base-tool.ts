@@ -1,4 +1,4 @@
-import {DisplayObject} from 'pixi.js';
+import {DisplayObject, Graphics} from 'pixi.js';
 
 import {Vector} from '../../math';
 import {CanvasComponent} from '../canvas.component';

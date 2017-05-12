@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Container, DisplayObject} from 'pixi.js';
+import {Container, DisplayObject, Graphics} from 'pixi.js';
 
 import {MultiModeTool} from './multi-mode-tool';
 import {EntityMoveTool} from './entity-move-tool';
@@ -25,8 +25,17 @@ export class SelectedEntityTool extends MultiModeTool {
 
     getDisplayObject(canvasZoom : number) : DisplayObject {
         let container = new Container();
-        container.addChild(this._entityMoveTool.getDisplayObject(canvasZoom));
-        container.addChild(this._entityResizeTool.getDisplayObject(canvasZoom));
+
+        let moveToolDisplayObject = this._entityMoveTool.getDisplayObject(canvasZoom);
+        if (moveToolDisplayObject) {
+            container.addChild(moveToolDisplayObject);
+        }
+
+        let resizeToolDisplayObject = this._entityResizeTool.getDisplayObject(canvasZoom);
+        if (resizeToolDisplayObject) {
+            container.addChild(resizeToolDisplayObject);
+        }
+
         return container;
     }
 

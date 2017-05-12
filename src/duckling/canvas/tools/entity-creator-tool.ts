@@ -24,8 +24,20 @@ export class EntityCreatorTool extends BaseTool {
         super();
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        return this._buildSelectionBox(canvasZoom);
+    paint(graphics : Graphics, canvasZoom : number) {
+        let selectedEntityKey = this._selection.selection.value.selectedEntity;
+        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
+        if (!selectedEntity) {
+            return;
+        }
+
+        let box = this._entityBoxService.getEntityBox(selectedEntity);
+        if (!box) {
+            return;
+        }
+
+        graphics.lineStyle(1 / canvasZoom, 0xffcc00, 1);
+        drawRectangle(box.position, box.dimension, graphics);
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -47,26 +59,4 @@ export class EntityCreatorTool extends BaseTool {
     get icon() {
         return "pencil";
     }
-
-    private _buildSelectionBox(canvasZoom : number) : DisplayObject {
-        let graphics : Graphics = null;
-        let selectedEntityKey = this._selection.selection.value.selectedEntity;
-        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
-        if (selectedEntity) {
-            graphics = this._buildSelectionBoxAroundEntity(selectedEntity, canvasZoom);
-        }
-        return graphics;
-    }
-
-    private _buildSelectionBoxAroundEntity(entity : Entity, canvasZoom : number) : Graphics {
-        let graphics : Graphics = null;
-        let box = this._entityBoxService.getEntityBox(entity);
-        if (box) {
-            graphics = new Graphics();
-            graphics.lineStyle(1 / canvasZoom, 0xffcc00, 1);
-            drawRectangle(box.position, box.dimension, graphics);
-        }
-        return graphics;
-    }
-
 }

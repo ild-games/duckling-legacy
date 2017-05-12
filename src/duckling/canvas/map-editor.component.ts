@@ -3,12 +3,15 @@ import {
     Component,
     ElementRef,
     ViewChild,
-    OnDestroy
+    OnDestroy,
+    OnInit
 } from '@angular/core';
 import {
     Container,
     DisplayObject,
-    Graphics
+    Graphics,
+    Sprite,
+    Texture
 } from 'pixi.js';
 import {Subscriber} from 'rxjs';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
@@ -20,7 +23,7 @@ import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 import {Vector} from '../math';
 import {KeyboardService} from '../util';
-import {CopyPasteService, SelectionService} from '../selection';
+import {CopyPasteService, SelectionService, Selection} from '../selection';
 
 import {
     EntityDrawerService,
@@ -35,6 +38,19 @@ import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {CanvasComponent} from './canvas.component';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
+
+const BACKGROUND_CACHE_KEY = "background";
+const ENTITIES_CACHE_KEY = "entities";
+const GRID_CACHE_KEY = "grid";
+const TOOL_CACHE_KEY = "tool";
+// this cache controls the order in which the drawables on the map editor are drawn
+const CACHE_KEYS : string[] = [BACKGROUND_CACHE_KEY, ENTITIES_CACHE_KEY, GRID_CACHE_KEY, TOOL_CACHE_KEY];
+
+type DrawableCache = {
+    displayObject : DisplayObject;
+    graphics? : Graphics;
+    dirty: boolean;
+}
 
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
@@ -79,7 +95,7 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
         </md-card>
     `
 })
-export class MapEditorComponent implements AfterViewInit, OnDestroy {
+export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     /**
      * Current tool in use
      */
@@ -100,22 +116,14 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
      */
     canvasDisplayObject : Container = new Container();
 
-    private _entitiesDisplayObject : DisplayObject;
-    private _canvasBackgroundDisplayObject : DisplayObject;
-    private _canvasBorderDisplayObject : DisplayObject;
-    private _gridDisplayObject : DisplayObject;
-    private _toolDisplayObject : DisplayObject;
     private _framesPerSecond = 30;
     private _totalMillis = 0;
-    private _lastDrawnConstructs : DrawnConstruct[] = [];
-    private _entitySystemSubscription : Subscriber<any>;
-    private _assetServiceSubscription : Subscriber<any>;
-    private _selectionServiceSubscription : Subscriber<any>;
     private _redrawInterval : Subscriber<any>;
-    private _layerSubscription : Subscriber<any>;
-    private _attributeLayerSubscription : Subscriber<any>;
+    private _drawerServiceSubscription : Subscriber<any>;
+    private _drawableCache : {[key : string] : DrawableCache} = {};
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
+    @ViewChild('canvasElement') canvasComponent : CanvasComponent;
 
     constructor(private _entitySystemService : EntitySystemService,
                 private _selection : SelectionService,
@@ -129,70 +137,28 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._setTool(this._toolService.defaultTool);
     }
 
+    ngOnInit() {
+        this._initCache();
+        this._drawerServiceSubscription = this._entityDrawerService.invalidateDrawableCache.subscribe(() => {
+            this._markCacheDirty(ENTITIES_CACHE_KEY);
+        }) as Subscriber<any>;
+    }
+
     ngAfterViewInit() {
-        this._redrawAllDisplayObjects();
-
-        this._entitySystemSubscription = this._entitySystemService.entitySystem
-            .map(this._entityDrawerService.getSystemMapper())
-            .subscribe((drawnConstructs) => {
-                this._entitiesDrawnConstructsChanged(drawnConstructs);
-            }) as Subscriber<any>;
-
-        this._selectionServiceSubscription = this._selection.selection.subscribe(()=> {
-            this._redrawAllDisplayObjects();
-        }) as Subscriber<any>;
-
-        this._assetServiceSubscription = this._assetService.assetLoaded.subscribe((asset : Asset) => {
-            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDrawnConstructsChanged(drawnConstructs);
-            this._redrawAllDisplayObjects();
-        }) as Subscriber<any>;
-
         this._redrawInterval = TimerObservable
             .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this._drawFrame()) as Subscriber<any>;
-
-        this._layerSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
-            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDrawnConstructsChanged(drawnConstructs);
-        }) as Subscriber<any>;
-
-        this._attributeLayerSubscription = this._entityDrawerService.hiddenAttributes.subscribe(() => {
-            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDrawnConstructsChanged(drawnConstructs);
-        }) as Subscriber<any>;
     }
 
     ngOnDestroy() {
-        this._entitySystemSubscription.unsubscribe();
-        this._assetServiceSubscription.unsubscribe();
-        this._selectionServiceSubscription.unsubscribe();
         this._redrawInterval.unsubscribe();
-        this._layerSubscription.unsubscribe();
-        this._attributeLayerSubscription.unsubscribe();
-    }
-
-    private _entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {
-        this._lastDrawnConstructs = newDrawnConstructs;
-        this._createEntitiesDisplayObject(newDrawnConstructs)
+        this._drawerServiceSubscription.unsubscribe();
     }
 
     private _drawFrame() {
         this._totalMillis += (1000 / this._framesPerSecond);
-        this._createEntitiesDisplayObject(this._lastDrawnConstructs);
-    }
-
-    private _createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
-        let entitiesDrawnContainer = new Container();
-        for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, this._totalMillis)) {
-            if (entityDisplayObject) {
-                entitiesDrawnContainer.addChild(entityDisplayObject);
-            }
-        }
-        entitiesDrawnContainer.interactiveChildren = false;
-
-        this._entitiesDisplayObject = entitiesDrawnContainer;
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        
+        this._redrawAllDisplayObjects();
     }
 
     copyEntity() {
@@ -206,44 +172,78 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
 
     onToolSelected(newTool : BaseTool) {
         this._setTool(newTool);
-        this._redrawAllDisplayObjects();
+        this._markCacheDirty(TOOL_CACHE_KEY)
     }
 
     onStageDimensonsChanged(stageDimensions : Vector) {
         this.projectService.changeDimension(stageDimensions);
-        this._redrawAllDisplayObjects();
+        this._markCacheDirty(BACKGROUND_CACHE_KEY);
+        this._markCacheDirty(GRID_CACHE_KEY);
     }
 
     onGridSizeChanged(gridSize : number) {
         this.projectService.changeGridSize(gridSize);
-        this._gridDisplayObject = this._buildGrid();
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        this._markCacheDirty(GRID_CACHE_KEY);
     }
 
     onScaleChanged(scale : number) {
         this.scale = scale;
-        this._redrawAllDisplayObjects();
+        this._markAllCachesDirty();
     }
 
     onShowGridChanged(showGrid : boolean) {
         this.showGrid = showGrid;
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        this._markCacheDirty(GRID_CACHE_KEY);
     }
 
-    openMap(mapKey : string) {
-        this.projectService.openMap(mapKey);
+    async openMap(mapKey : string) {
+        await this.projectService.openMap(mapKey);
+        this._markAllCachesDirty();
     }
 
     private _redrawAllDisplayObjects() {
-        this._canvasBackgroundDisplayObject = this._buildCanvasBackground();
-        this._canvasBorderDisplayObject = this._buildCanvasBorder();
-        this._gridDisplayObject = this._buildGrid();
-        this._toolDisplayObject = this.tool.getDisplayObject(this.scale);
+        if (this._drawableCache[BACKGROUND_CACHE_KEY].dirty) {
+            this._resetCacheDrawables(BACKGROUND_CACHE_KEY);
+            this._markCacheActive(BACKGROUND_CACHE_KEY);
+
+            this._buildCanvasBackground(this._drawableCache[BACKGROUND_CACHE_KEY].graphics);
+        }
+        if (this._drawableCache[ENTITIES_CACHE_KEY].dirty) {
+            this._resetCacheDrawables(ENTITIES_CACHE_KEY);
+            this._markCacheActive(ENTITIES_CACHE_KEY);
+
+            let drawnConstructs = this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value);
+            this._drawableCache[ENTITIES_CACHE_KEY].displayObject = this._createEntitiesDisplayObject(drawnConstructs, this._totalMillis, this._drawableCache[ENTITIES_CACHE_KEY].graphics);
+        }
+        if (this._drawableCache[GRID_CACHE_KEY].dirty) {
+            this._resetCacheDrawables(GRID_CACHE_KEY);
+            this._markCacheActive(GRID_CACHE_KEY);
+
+            this._buildGrid(this._drawableCache[GRID_CACHE_KEY].graphics);
+        }
+        if (this._drawableCache[TOOL_CACHE_KEY].dirty) {
+            this._resetCacheDrawables(TOOL_CACHE_KEY);
+            this._markCacheActive(TOOL_CACHE_KEY);
+
+            this._drawableCache[TOOL_CACHE_KEY].displayObject = this.tool.getDisplayObject(this.scale);
+        }
+
         this.canvasDisplayObject = this._buildCanvasDisplayObject();
     }
 
-    private _buildGrid() : DisplayObject {
-        let graphics = new Graphics();
+    private _buildCanvasBackground(graphics : Graphics) {
+        let dimension = this.projectService.project.value.currentMap.dimension;
+        drawCanvasBackground(
+            {x: 0, y: 0},
+            dimension,
+            graphics);
+    }
+
+    private _buildGrid(graphics : Graphics) {
+        if (!this.showGrid) {
+            return;
+        }
+
         graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
         let dimension = this.projectService.project.value.currentMap.dimension;
         let gridSize = this.projectService.project.value.currentMap.gridSize;
@@ -252,52 +252,66 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
             dimension,
             {x: gridSize, y: gridSize},
             graphics);
-        return graphics;
-    }
-
-    private _buildCanvasBackground() : DisplayObject {
-        let bg = new Graphics();
-        let dimension = this.projectService.project.value.currentMap.dimension;
-        drawCanvasBackground(
-            {x: 0, y: 0},
-            dimension,
-            bg);
-        return bg;
-    }
-
-    private _buildCanvasBorder() : DisplayObject {
-        let border = new Graphics();
-        border.lineWidth = 1 / this.scale;
-        let dimension = this.projectService.project.value.currentMap.dimension;
         drawCanvasBorder(
             {x: 0, y: 0},
             dimension,
-            border);
-        return border;
+            graphics);
     }
 
     private _buildCanvasDisplayObject() : Container {
-        let canvasDrawnElements : Container = new Container();
-
-        if (this._canvasBackgroundDisplayObject) {
-            canvasDrawnElements.addChild(this._canvasBackgroundDisplayObject);
-        }
-        if (this._entitiesDisplayObject) {
-            canvasDrawnElements.addChild(this._entitiesDisplayObject);
-        }
-        if (this._toolDisplayObject) {
-            canvasDrawnElements.addChild(this._toolDisplayObject);
-        }
-        if (this.showGrid && this._gridDisplayObject) {
-            canvasDrawnElements.addChild(this._gridDisplayObject);
-        }
-        if (this._canvasBorderDisplayObject) {
-            canvasDrawnElements.addChild(this._canvasBorderDisplayObject);
+        let canvasDrawnElements = new Container();
+        for (let cacheKey of CACHE_KEYS) {
+            if (this._drawableCache[cacheKey].displayObject) {
+                canvasDrawnElements.addChild(this._drawableCache[cacheKey].displayObject);
+            }
+            if (this._drawableCache[cacheKey].graphics) {
+                canvasDrawnElements.addChild(this._drawableCache[cacheKey].graphics);
+            }
         }
         return canvasDrawnElements;
     }
 
+    private _createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[], totalMillis : number, graphics : Graphics) : DisplayObject {
+        let entitiesDrawnContainer = new Container();
+        for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, totalMillis, graphics)) {
+            if (entityDisplayObject) {
+                entitiesDrawnContainer.addChild(entityDisplayObject);
+            }
+        }
+        entitiesDrawnContainer.interactiveChildren = false;
+        return entitiesDrawnContainer;
+    }
+
     private _setTool(tool : BaseTool) {
         this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService);
+    }
+
+    private _initCache() {
+        for (let cacheKey of CACHE_KEYS) {
+            this._drawableCache[cacheKey] = {
+                displayObject: null,
+                graphics: new Graphics(),
+                dirty: true
+            };
+        }
+    }
+
+    private _resetCacheDrawables(cacheKey : string) {
+        this._drawableCache[cacheKey].displayObject = null;
+        this._drawableCache[cacheKey].graphics.clear();
+    }
+
+    private _markCacheDirty(cacheKey : string) {
+        this._drawableCache[cacheKey].dirty = true;
+    }
+
+    private _markAllCachesDirty() {
+        for (let cacheKey of CACHE_KEYS) {
+            this._markCacheDirty(cacheKey);
+        }
+    }
+
+    private _markCacheActive(cacheKey : string) {
+        this._drawableCache[cacheKey].dirty = false;
     }
 }
