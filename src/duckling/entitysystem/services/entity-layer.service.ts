@@ -85,7 +85,6 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
     }
 
     isEntityVisible(entity : Entity) : boolean {
-        // an entity is visible if any of its attributes are on visible layers
         for (let attributeKey in entity) {
             if (this.isEntityAttributeVisible(entity, attributeKey)) {
                 return true;
@@ -94,7 +93,7 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         return false;
     }
 
-    isEntityAttributeVisible(entity: Entity, attributeKey: string){
+    isEntityAttributeVisible(entity: Entity, attributeKey: string) {
         let getLayerImpl = this.getImplementation(attributeKey);
         if (!getLayerImpl) { 
             return false; 
@@ -123,8 +122,6 @@ export function layerReducer(state : LayerState = { hiddenLayers: {} }, action :
             hiddenLayers: action.hiddenLayers
         }
     } else if (action.type === ACTION_OPEN_MAP) {
-
-        // clear layers if the current map is changing
         return { hiddenLayers: {} };
     }
     return state;
