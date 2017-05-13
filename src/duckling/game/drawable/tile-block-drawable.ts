@@ -29,7 +29,7 @@ export function getTileWidth(tileBlockDrawable : TileBlockDrawable, assetService
         return 0;
     }
     
-    let width = assetService.getImageAssetDimensions({key: tileBlockDrawable.textureKey, type: "TexturePNG"}).width;
+    let width = assetService.getImageAssetDimensions({key: tileBlockDrawable.textureKey, type: "TexturePNG"}).x;
     return width / 4;
 }
 
@@ -38,6 +38,6 @@ export function getTileHeight(tileBlockDrawable : TileBlockDrawable, assetServic
         return 0;
     }
     
-    let height = assetService.getImageAssetDimensions({key: tileBlockDrawable.textureKey, type: "TexturePNG"}).height;
+    let height = assetService.getImageAssetDimensions({key: tileBlockDrawable.textureKey, type: "TexturePNG"}).y;
     return height / 4;
 }

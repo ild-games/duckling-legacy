@@ -92,7 +92,7 @@ export class AutoCreateAnimationDialogComponent {
 
     onAcceptClicked() {
         let asset : Asset = {type: "TexturePNG", key: this.imageKey};
-        if (this._assets.get(asset.key, asset.type)) {
+        if (this._assets.get(asset)) {
             this._onAssetLoaded(asset);
         } else {
             this._assets.add([{asset}]);

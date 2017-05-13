@@ -107,19 +107,19 @@ export class TileBlockDrawableComponent implements OnInit, OnDestroy {
         };
     }
 
-    private _getStartingSize(assetDimension : Rectangle) : Vector {
+    private _getStartingSize(assetDimension : Vector) : Vector {
         return {
-            x: (assetDimension.width / 4) * 6,
-            y: (assetDimension.height / 4) * 6
+            x: (assetDimension.x / 4) * 6,
+            y: (assetDimension.y / 4) * 6
         }
     }
 
-    private _validDimension(dimension : Rectangle) : boolean {
-        if (dimension.width !== dimension.height) {
+    private _validDimension(dimension : Vector) : boolean {
+        if (dimension.x !== dimension.y) {
             return false;
         }
 
-        if (!Number.isInteger(Math.sqrt(dimension.width))) {
+        if (!Number.isInteger(Math.sqrt(dimension.x))) {
             return false;
         }
 
