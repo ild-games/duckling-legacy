@@ -48,7 +48,8 @@ import {DrawableAttributeComponent} from './drawable/drawable-attribute.componen
 import {drawDrawableAttribute} from './drawable/drawable-drawer';
 import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
-import {getLayer} from './drawable/get-layer';
+import {getDrawableLayer} from './drawable/drawable-get-layer';
+import {getPathLayer} from './path/path-get-layer';
 
 type Services = {
     attributeDefaultService : AttributeDefaultService;
@@ -112,7 +113,7 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.entityDrawerService.register(DRAWABLE_KEY, drawDrawableAttribute);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
-    services.entityLayerService.register(DRAWABLE_KEY, getLayer);
+    services.entityLayerService.register(DRAWABLE_KEY, getDrawableLayer);
 }
 
 function _bootstrapActionAttribute(services : Services) {
@@ -135,6 +136,7 @@ function _bootstrapPathAttribute(services : Services) {
     services.attributeDefaultService.register(PATH_KEY, {createByDefault: false, default: defaultPath});
     services.entityDrawerService.register(PATH_KEY, drawPathAttribute);
     services.entityBoxService.register(PATH_KEY, pathBox);
+    services.entityLayerService.register(PATH_KEY, getPathLayer); 
 }
 
 function _bootstrapPathFollowerAttribute(services : Services) {
