@@ -78,10 +78,10 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
      */
     drawEntity(entity : Entity) : DrawnConstruct[] {
         let drawnConstructs : DrawnConstruct[] = [];
-        if (!this._layers.isEntityVisible(entity)) {
-            return drawnConstructs;
-        }
         for (let key in entity) {
+            if (!this._layers.isEntityAttributeVisible(entity, key)) {
+                continue;
+            }
             let drawableConstruct = this.drawAttribute(key, entity);
             if (drawableConstruct) {
                 drawnConstructs.push(drawableConstruct);

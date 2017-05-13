@@ -37,27 +37,10 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
 
         this.hiddenLayers = new BehaviorSubject({});
         this._store.state.subscribe(state => {
-            this.hiddenLayers.next(state.layers.hiddenLayers ? state.layers.hiddenLayers : {});
-        });
-    }
-
-    isEntityVisible(entity : Entity) : boolean {
-        let layerKey : string = this.getLayer(entity);
-        return !this.hiddenLayers.value[layerKey];
-    }
-
-    /**
-     * Get the layer of the entity
-     * @param entityKey The key of the entity to get the layer from
-     */
-     getLayer(entity: Entity) : string {
-        for (let key in entity) {
-            let getLayerImpl = this.getImplementation(key);
-            if (getLayerImpl) {
-                return getLayerImpl(entity[key]);
+            if (state.layers.hiddenLayers !== this.hiddenLayers.value) {
+                this.hiddenLayers.next(state.layers.hiddenLayers ? state.layers.hiddenLayers : {});
             }
-        }
-        return null;
+        });
     }
 
     getLayers() : Layer[] {
@@ -65,14 +48,20 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         let layersAccountedFor = new Set<string>();
         let entitySystem = this._entitySystemService.entitySystem.value;
 
+        
         entitySystem.forEach((entity : Entity) => {
-            let layerKey = this.getLayer(entity);
-            if (!layersAccountedFor.has(layerKey) && layerKey !== undefined && layerKey !== null) {
-                layers.push({
-                    layerName: layerKey,
-                    isVisible: !this.hiddenLayers.value[layerKey]
-                });
-                layersAccountedFor.add(layerKey);
+            for (let attributeKey in entity) {
+                let getLayerImpl = this.getImplementation(attributeKey);
+                if (!getLayerImpl) { continue; }
+                let layerKey = getLayerImpl(entity[attributeKey]);
+                
+                if (!layersAccountedFor.has(layerKey) && layerKey !== undefined && layerKey !== null) {
+                    layers.push({
+                        layerName: layerKey,
+                        isVisible: !this.hiddenLayers.value[layerKey]
+                    });
+                    layersAccountedFor.add(layerKey);
+                }
             }
         });
 
@@ -94,13 +83,32 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         }
         return visibleEntities;
     }
+
+    isEntityVisible(entity : Entity) : boolean {
+        // an entity is visible if any of its attributes are on visible layers
+        for (let attributeKey in entity) {
+            if (this.isEntityAttributeVisible(entity, attributeKey)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isEntityAttributeVisible(entity: Entity, attributeKey: string){
+        let getLayerImpl = this.getImplementation(attributeKey);
+        if (!getLayerImpl) { 
+            return false; 
+        }
+
+        let layerKey : string  = getLayerImpl(entity[attributeKey]);
+        return (!this.hiddenLayers.value[layerKey]);
+    }
 }
 
 export type Layer = {
     layerName : string;
     isVisible : Boolean;
 }
-
 
 /**
  * State for the current layers
@@ -109,7 +117,7 @@ interface LayerState {
     hiddenLayers?: HiddenLayers;
 }
 
-export function layerReducer(state : LayerState = {}, action : LayerAction) {
+export function layerReducer(state : LayerState = { hiddenLayers: {} }, action : LayerAction) {
     if (action.type === ACTION_TOGGLE_LAYER_VISIBILITY) {
         return {
             hiddenLayers: action.hiddenLayers
@@ -117,7 +125,7 @@ export function layerReducer(state : LayerState = {}, action : LayerAction) {
     } else if (action.type === ACTION_OPEN_MAP) {
 
         // clear layers if the current map is changing
-        return {};
+        return { hiddenLayers: {} };
     }
     return state;
 }
@@ -126,6 +134,7 @@ const ACTION_TOGGLE_LAYER_VISIBILITY = "Layer.ToggleVisibility";
 interface LayerAction extends Action {
     hiddenLayers?: HiddenLayers;
 }
+
 function _layerAction(hiddenLayers: HiddenLayers) {
     return {
         hiddenLayers,
