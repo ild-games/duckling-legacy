@@ -27,7 +27,7 @@ export function drawAnchor(box : Box2, anchor : DragAnchor, canvasZoom : number,
     /**
      * Anchor arrow is a 40 by 20 sprite we scale to 20 by 10.
      */
-    let sprite = new Sprite(new Texture(assetService.get("anchor_arrow", "TexturePNG", true)));
+    let sprite = new Sprite(new Texture(assetService.get({key: "anchor_arrow", type: "TexturePNG"}, true)));
     sprite.rotation = anchor.rotation;
     sprite.scale.x = 0.5 / canvasZoom;
     sprite.scale.y = 0.5 / canvasZoom;

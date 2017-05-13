@@ -1,6 +1,6 @@
 import {ReflectiveInjector} from '@angular/core';
 
-import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container} from 'pixi.js';
+import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture} from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
 import {AssetService} from '../../project';
@@ -28,6 +28,8 @@ import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
+import {TileBlockDrawable, getTileHeight, getTileWidth} from './tile-block-drawable';
+import {drawTileBlockDrawable} from './tile-block-drawable-drawer';
 import {AnimatedDrawable} from './animated-drawable';
 import {TextDrawable} from './text-drawable';
 import {ShapeType, Shape, cppTypeToShapeType} from './shape';
@@ -84,6 +86,9 @@ export function drawDrawable(drawable : Drawable, assetService : AssetService, i
             break;
         case DrawableType.Text:
             drawnObject = _drawTextDrawable(drawable as TextDrawable, assetService);
+            break;
+        case DrawableType.TileBlock:
+            drawnObject = drawTileBlockDrawable(drawable as TileBlockDrawable, assetService);
             break;
         default:
             drawnObject = null;
@@ -182,7 +187,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
         return null;
     }
 
-    let baseTexture = assetService.get(imageDrawable.textureKey, "TexturePNG");
+    let baseTexture = assetService.get({key: imageDrawable.textureKey, type: "TexturePNG"});
     if (!baseTexture) {
         return null;
     }

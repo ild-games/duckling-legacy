@@ -2,9 +2,7 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter,
-    AfterViewInit,
-    ChangeDetectorRef
+    EventEmitter
 } from '@angular/core';
 import {Rectangle} from 'pixi.js';
 
@@ -15,9 +13,7 @@ import {Vector} from '../../math/vector';
 import {AssetService, ProjectService} from '../../project';
 
 import {ImageDrawable} from './image-drawable';
-/**
- * Component used to edit an ImageDrawable
- */
+
 @Component({
     selector: "dk-image-drawable",
     template: `
@@ -134,7 +130,7 @@ export class ImageDrawableComponent {
     }
 
     get _assetDimensions() : Rectangle {
-        let texture = this._assets.get(this.imageDrawable.textureKey, "TexturePNG");
+        let texture = this._assets.get({key: this.imageDrawable.textureKey, type: "TexturePNG"});
         if (!texture) {
             return new Rectangle(0, 0, 0, 0);
         }

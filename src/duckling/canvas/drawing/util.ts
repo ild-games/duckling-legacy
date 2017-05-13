@@ -109,7 +109,7 @@ export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vect
  * @return Sprite with the missing images
  */
 export function drawMissingAsset(assetService : AssetService) : Sprite {
-    let missingTexture = assetService.get("fa-missing-image", "TexturePNG", true);
+    let missingTexture = assetService.get({key: "fa-missing-image", type: "TexturePNG"}, true);
     let sprite = new Sprite(missingTexture);
     return sprite;
 }

@@ -8,7 +8,8 @@ export enum DrawableType {
     Container,
     Image,
     Animated,
-    Text
+    Text,
+    TileBlock
 }
 
 export function cppTypeToDrawableType(cppType : string) : DrawableType {
@@ -23,6 +24,8 @@ export function cppTypeToDrawableType(cppType : string) : DrawableType {
             return DrawableType.Animated;
         case "ild::TextDrawable":
             return DrawableType.Text;
+        case "ild::TileBlockDrawable":
+            return DrawableType.TileBlock;
     }
 }
 
@@ -38,6 +41,8 @@ export function drawableTypeToCppType(type : DrawableType) : string {
             return "ild::AnimatedDrawable";
         case DrawableType.Text:
             return "ild::TextDrawable";
+        case DrawableType.TileBlock:
+            return "ild::TileBlockDrawable";
     }
 }
 
