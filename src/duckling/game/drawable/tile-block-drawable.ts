@@ -7,7 +7,6 @@ import {Drawable, defaultDrawable} from './drawable';
 export interface TileBlockDrawable extends Drawable {
     textureKey : string;
     size: Vector;
-    tileDimension: Vector;
 }
 
 export let defaultTileBlockDrawable : TileBlockDrawable = immutableAssign(defaultDrawable as TileBlockDrawable, {
@@ -17,10 +16,6 @@ export let defaultTileBlockDrawable : TileBlockDrawable = immutableAssign(defaul
     size: {
         x: 100,
         y: 100
-    },
-    tileDimension: {
-        x: 3,
-        y: 3
     }
 });
     

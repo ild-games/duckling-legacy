@@ -1,4 +1,4 @@
-import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture} from 'pixi.js';
+import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture, extras} from 'pixi.js';
 
 import {drawMissingAsset} from '../../canvas/drawing/util';
 import {Vector} from '../../math/vector';
@@ -83,7 +83,7 @@ function _getSprite(position: Vector, numberOfTiles: Vector, tileSize: number, t
 
 function _getTiledSprite(position: Vector, numberOfTiles: Vector, tileSize:number, texture: Texture, calculateOffset: {x: boolean, y: boolean}): DisplayObject {
     let tileAreaSizes = _getTileAreaSizes(position, numberOfTiles, tileSize);
-    let sprite = new (<any>PIXI).TilingSprite(texture, tileAreaSizes.x, tileAreaSizes.y);
+    let sprite = new extras.TilingSprite(texture, tileAreaSizes.x, tileAreaSizes.y);
     sprite.x = calculateOffset.x? _getSpriteOffset(position.x, numberOfTiles.x, tileSize): sprite.x;
     sprite.y = calculateOffset.y? _getSpriteOffset(position.y, numberOfTiles.y, tileSize): sprite.y;
     return sprite;
@@ -107,5 +107,3 @@ function _getSpriteOffset(position: number, numberOfTiles: number, tileSize: num
     }
     return numTileOffset * tileSize;
 }
-
-

@@ -15,6 +15,7 @@ import {DrawableAttribute} from './drawable-attribute';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
+import {TileBlockDrawable, getTileHeight, getTileWidth} from './tile-block-drawable';
 import {AnimatedDrawable} from './animated-drawable';
 import {TextDrawable} from './text-drawable';
 import {ShapeType, Shape, cppTypeToShapeType} from './shape';
@@ -63,6 +64,8 @@ function setDrawableBox(drawable : Drawable, resizeToBox: Box2, assetService : A
             return setAnimatedBox(drawable as AnimatedDrawable, resizeToBox, assetService);
         case DrawableType.Text:
             return setBoxViaScale(drawable, resizeToBox, assetService);
+        case DrawableType.TileBlock:
+            return setTileBlockBox(drawable as TileBlockDrawable, resizeToBox, assetService);
     }
     return drawable;
 }
@@ -131,4 +134,19 @@ function setShapeBox(drawable : ShapeDrawable, resizeToBox: Box2, assetService :
             return {...drawable, shape : rectangle, anchor : positionToAnchor(resizeToBox.position, resizeToBox.dimension)};
     }
     return drawable;
+}
+
+function setTileBlockBox(drawable : TileBlockDrawable, resizeToBox: Box2, assetService : AssetService) : TileBlockDrawable {
+    let tileWidth = getTileWidth(drawable, assetService);
+    let tileHeight = getTileHeight(drawable, assetService);
+    let widthInTiles = resizeToBox.dimension.x / tileWidth;
+    let heightInTiles = resizeToBox.dimension.y / tileHeight;
+    return {
+        ...drawable,
+        anchor : positionToAnchor(resizeToBox.position, resizeToBox.dimension),
+        size: { 
+            x: (widthInTiles < 1) ? tileWidth : resizeToBox.dimension.x,
+            y: (heightInTiles < 1) ? tileHeight : resizeToBox.dimension.y
+        }
+    }
 }
