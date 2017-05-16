@@ -112,7 +112,8 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
     private _assetServiceSubscription : Subscriber<any>;
     private _selectionServiceSubscription : Subscriber<any>;
     private _redrawInterval : Subscriber<any>;
-    private _layerServiceSubscription : Subscriber<any>;
+    private _layerSubscription : Subscriber<any>;
+    private _attributeLayerSubscription : Subscriber<any>;
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
 
@@ -151,7 +152,12 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
             .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this._drawFrame()) as Subscriber<any>;
 
-        this._layerServiceSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
+        this._layerSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
+            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
+            this._entitiesDrawnConstructsChanged(drawnConstructs);
+        }) as Subscriber<any>;
+
+        this._attributeLayerSubscription = this._entityLayerService.hiddenAttributes.subscribe(() => {
             let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
             this._entitiesDrawnConstructsChanged(drawnConstructs);
         }) as Subscriber<any>;
@@ -162,7 +168,8 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
         this._assetServiceSubscription.unsubscribe();
         this._selectionServiceSubscription.unsubscribe();
         this._redrawInterval.unsubscribe();
-        this._layerServiceSubscription.unsubscribe();
+        this._layerSubscription.unsubscribe();
+        this._attributeLayerSubscription.unsubscribe();
     }
 
     private _entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {

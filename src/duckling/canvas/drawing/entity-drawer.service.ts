@@ -5,7 +5,8 @@ import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
 import {AssetService} from '../../project';
 import {Entity, EntitySystem, Attribute, AttributeKey, EntityPositionService, EntitySystemService} from '../../entitysystem';
 import {drawMissingAsset} from '../../canvas/drawing/util';
-import {EntityLayerService} from '../../entitysystem/services/entity-layer.service';
+import {EntityLayerService, AttributeLayer} from '../../entitysystem/services/entity-layer.service';
+import {AvailableAttributeService} from '../../entitysystem/services/available-attribute.service';
 
 import {RenderPriorityService} from './render-priority.service';
 import {DrawnConstruct, setConstructPosition} from './drawn-construct';
@@ -35,14 +36,14 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
                 private _renderPriority : RenderPriorityService,
                 private _entityPosition : EntityPositionService,
                 private _entitySystem : EntitySystemService,
-                private _layers : EntityLayerService) {
+                private _layers : EntityLayerService,
+                private _availabeAttributes : AvailableAttributeService) {
         super();
         _assets.assetLoaded.subscribe(() => this._clearCache());
         _assets.preloadImagesLoaded.subscribe(() => this._clearCache());
         _layers.hiddenLayers.subscribe(() => this._clearCache());
+        _layers.hiddenAttributes.subscribe(() => this._clearCache());
     }
-
-
 
     /**
      * Get a DisplayObject for the attribute.
@@ -114,6 +115,17 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
             this._cache = newCache;
             return drawnConstructs;
         }
+    }
+
+    getImplementedAttributes() : AttributeKey[] {
+        let implementedAttributes : AttributeKey[] = [];
+        for (let attributeKey of this._availabeAttributes.availableAttributes()) {
+            let implementation = this.getImplementation(attributeKey);
+            if (this.getImplementation(attributeKey)) {
+                implementedAttributes.push(attributeKey);
+            }
+        }
+        return implementedAttributes;
     }
 
     private _clearCache() {
