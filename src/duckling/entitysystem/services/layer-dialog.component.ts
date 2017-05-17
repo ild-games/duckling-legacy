@@ -78,6 +78,7 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
                 private _assets : AssetService,
                 private _project : ProjectService,
                 private _entityLayerService : EntityLayerService,
+                private _entityDrawerService : EntityDrawerService,
                 private _drawerService : EntityDrawerService) {
         this._refreshLayers();
         this._refreshAttributes();
@@ -92,7 +93,7 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
             this._refreshLayers();
         }) as Subscriber<any>;
 
-        this._attributeLayerSubscription = this._entityLayerService.hiddenAttributes.subscribe(() => {
+        this._attributeLayerSubscription = this._entityDrawerService.hiddenAttributes.subscribe(() => {
             this._refreshAttributes();
         }) as Subscriber<any>;
     }
@@ -107,7 +108,7 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     }
 
     toggleAttributeVisibility(attributeLayer : AttributeLayer) {
-        this._entityLayerService.toggleAttributeVisibility(attributeLayer.attributeName);
+        this._entityDrawerService.toggleAttributeVisibility(attributeLayer.attributeName);
     }
 
     private _refreshLayers() {
@@ -128,6 +129,6 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     }
 
     private _refreshAttributes() {
-        this.attributeLayers = this._entityLayerService.getAttributeLayers(this._drawerService.getImplementedAttributes());
+        this.attributeLayers = this._entityDrawerService.getAttributeLayers();
     }
 }

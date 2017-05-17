@@ -28,25 +28,20 @@ export type AttributeLayer = {
     isVisible : Boolean;
 }
 
+
 @Injectable()
 export class EntityLayerService extends BaseAttributeService<LayerGetter> {
 
     hiddenLayers : BehaviorSubject<HiddenLayers>;
-    hiddenAttributes : BehaviorSubject<HiddenAttributes>;
 
     constructor(private _entitySystemService : EntitySystemService,
                 private _store : StoreService) {
         super();
 
         this.hiddenLayers = new BehaviorSubject({});
-        this.hiddenAttributes = new BehaviorSubject({});
         this._store.state.subscribe(state => {
             if (state.layers.hiddenLayers !== this.hiddenLayers.value) {
                 this.hiddenLayers.next(state.layers.hiddenLayers ? state.layers.hiddenLayers : {});
-            }
-
-            if (state.layers.hiddenAttributes !== this.hiddenAttributes.value) {
-                this.hiddenAttributes.next(state.layers.hiddenAttributes ? state.layers.hiddenAttributes : {});
             }
         });
     }
@@ -75,68 +70,29 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         return layers;
     }
 
-    getAttributeLayers(implementedDrawerAttributets : AttributeKey[]) : AttributeLayer[] {
-        let attributeLayers : AttributeLayer[] = [];
-        for (let attributeKey of implementedDrawerAttributets) {
-            attributeLayers.push({
-                attributeName: attributeKey,
-                isVisible: this.isAttributeVisible(attributeKey)
-            });
-        }
-        return attributeLayers;
-    }
-
     toggleLayerVisibility(layerKey : string, mergeKey? : any) {
         let patchLayers : HiddenLayers = {};
         patchLayers[layerKey] = !this.hiddenLayers.value[layerKey];
         this._store.dispatch(_layerAction(immutableAssign(this.hiddenLayers.value, patchLayers)), mergeKey);
     }
 
-    toggleAttributeVisibility(attributeKey : string, mergeKey? : any) {
-        let patchAttributes : HiddenAttributes = {};
-        patchAttributes[attributeKey] = !this.hiddenAttributes.value[attributeKey];
-        this._store.dispatch(_layerAttributeAction(immutableAssign(this.hiddenAttributes.value, patchAttributes)), mergeKey);
-    }
-
-    getVisibleEntities(entities: Entity[]) : Entity[] {
-        let visibleEntities : Entity[] = [];
-        for (let entity of entities){
-            if (this.isEntityVisible(entity)){
-                visibleEntities.push(entity);
-            }
-        }
-        return visibleEntities;
-    }
-
     isEntityVisible(entity : Entity) : boolean {
         for (let attributeKey in entity) {
-            if (this.isEntityAttributeVisible(entity, attributeKey)) {
+            if (this.isAttributeVisible(entity, attributeKey)) {
                 return true;
             }
         }
         return false;
     }
 
-    isEntityAttributeVisible(entity: Entity, attributeKey: string) {
-        if (!this.isAttributeVisible(attributeKey)) {
-            return false;
-        }
-
+    isAttributeVisible(entity: Entity, attributeKey: string) {
         let getLayerImpl = this.getImplementation(attributeKey);
         if (!getLayerImpl) { 
-            return this.isAttributeVisible(attributeKey);
+            return false;
         }
 
         let layerKey : string  = getLayerImpl(entity[attributeKey]);
         return (!this.hiddenLayers.value[layerKey]);
-    }
-
-    isAttributeVisible(attributeKey : string) {
-        if (this.hiddenAttributes.value[attributeKey] === undefined) {
-            return false;
-        }
-
-        return (!this.hiddenAttributes.value[attributeKey]);
     }
 }
 
@@ -179,7 +135,7 @@ function _layerAction(hiddenLayers: HiddenLayers) {
     }
 }
 
-function _layerAttributeAction(hiddenAttributes: HiddenAttributes) {
+export function layerAttributeAction(hiddenAttributes: HiddenAttributes) {
     return {
         hiddenAttributes,
         type: ACTION_TOGGLE_ATTRIBUTE_VISIBILITY

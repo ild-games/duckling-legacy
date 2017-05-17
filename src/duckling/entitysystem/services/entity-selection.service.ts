@@ -3,6 +3,7 @@ import {EntityKey, Entity} from '../entity';
 import {EntitySystemService} from '../entity-system.service';
 import {Vector, boxContainsPoint} from '../../math';
 import {RenderPriorityService} from '../../canvas/drawing/render-priority.service';
+import {EntityDrawerService} from '../../canvas/drawing/entity-drawer.service';
 
 import {EntityBoxService} from './entity-box.service';
 import {EntityLayerService} from './entity-layer.service';
@@ -16,8 +17,8 @@ export class EntitySelectionService {
     constructor(private _entitySystemService : EntitySystemService,
                 private _entityBoxService : EntityBoxService,
                 private _renderPriority : RenderPriorityService,
-                private _entityLayerService : EntityLayerService) {
-
+                private _entityLayerService : EntityLayerService,
+                private _entityDrawerService : EntityDrawerService) {
     }
 
     /**
@@ -31,6 +32,7 @@ export class EntitySelectionService {
         entities.reverse();
         let taggedEntity = entities
             .filter(entity => this._entityLayerService.isEntityVisible(entity.entity))
+            .filter(entity => this._entityDrawerService.isEntityVisible(entity.entity))
             .find(entity => this._entityContainsPoint(entity.entity, position));
 
         if (taggedEntity) {

@@ -5,6 +5,7 @@ import {Action, StoreService} from '../state';
 import {ACTION_OPEN_MAP} from '../project/project';
 import {EntityKey, EntitySystemService, Entity} from '../entitysystem';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
+import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 
 /**
  * Interface describing the currently selected entity. Will be an empty object
@@ -25,7 +26,8 @@ export class SelectionService {
 
     constructor(private _store : StoreService,
                 private _entitySystem : EntitySystemService,
-                private _layerService : EntityLayerService) {
+                private _layerService : EntityLayerService,
+                private _drawerService : EntityDrawerService) {
         this.selection = new BehaviorSubject({});
         this._store.state.subscribe(state => {
             this.selection.next(this._getSelection(state.selection.selectedEntity))
@@ -52,7 +54,7 @@ export class SelectionService {
     private _getSelection(selectedEntity : EntityKey) : Selection {
         if (selectedEntity) {
             let entity = this._entitySystem.getEntity(selectedEntity);
-            if (this._layerService.isEntityVisible(entity)) {
+            if (this._drawerService.isEntityVisible(entity) && this._layerService.isEntityVisible(entity)) {
                 return {
                     selectedEntity,
                     entity : entity || null
