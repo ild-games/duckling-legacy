@@ -132,6 +132,10 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
     }
 
     isAttributeVisible(attributeKey : string) {
+        if (this.hiddenAttributes.value[attributeKey] === undefined) {
+            return false;
+        }
+
         return (!this.hiddenAttributes.value[attributeKey]);
     }
 }
