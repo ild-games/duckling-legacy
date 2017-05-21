@@ -95,7 +95,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
             if (!this.isAttributeVisible(key)) {
                 continue;
             }
-            if (this._layers.isAttributeImplemented(key) && !this._layers.isAttributeOnActiveLayer(entity, key)) {
+            if (this._layers.isAttributeImplemented(key) && !this._layers.isAttributeOnAnActiveLayer(entity, key)) {
                 continue;
             }
 
@@ -155,7 +155,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
             if (!this.isAttributeVisible(attributeKey)) {
                 continue;
             }
-            if (this._layers.isAttributeImplemented(attributeKey) && !this._layers.isAttributeOnActiveLayer(entity, attributeKey)) {
+            if (this._layers.isAttributeImplemented(attributeKey) && !this._layers.isAttributeOnAnActiveLayer(entity, attributeKey)) {
                 continue;
             }
 
