@@ -2,6 +2,7 @@ import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {JsonSchemaEditComponent} from './json-schema-edit.component';
 import {EditInputComponent} from './edit-input.component';
 
@@ -63,13 +64,15 @@ const CONTROL_DECLARATIONS : Array<any> = [
 
 @NgModule({
     imports: [
-        MaterialModule.forRoot(),
+        BrowserAnimationsModule,
+        MaterialModule,
         CommonModule,
         FormsModule
     ],
     declarations : CONTROL_DECLARATIONS,
     exports : [
         CONTROL_DECLARATIONS,
+        BrowserAnimationsModule,
         MaterialModule,
         CommonModule,
         FormsModule
