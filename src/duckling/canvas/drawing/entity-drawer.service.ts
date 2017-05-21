@@ -92,9 +92,13 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
     drawEntity(entity : Entity) : DrawnConstruct[] {
         let drawnConstructs : DrawnConstruct[] = [];
         for (let key in entity) {
-            if (!this.isAttributeVisible(key) || !this._layers.isAttributeVisible(entity, key)) {
+            if (!this.isAttributeVisible(key)) {
                 continue;
             }
+            if (this._layers.isAttributeImplemented(key) && !this._layers.isAttributeOnActiveLayer(entity, key)) {
+                continue;
+            }
+
             let drawableConstruct = this.drawAttribute(key, entity);
             if (drawableConstruct) {
                 drawnConstructs.push(drawableConstruct);
@@ -148,9 +152,14 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
     
     isEntityVisible(entity : Entity) : boolean {
         for (let attributeKey in entity) {
-            if (this.isAttributeVisible(attributeKey)) {
-                return true;
+            if (!this.isAttributeVisible(attributeKey)) {
+                continue;
             }
+            if (this._layers.isAttributeImplemented(attributeKey) && !this._layers.isAttributeOnActiveLayer(entity, attributeKey)) {
+                continue;
+            }
+
+            return true;
         }
         return false;
     }

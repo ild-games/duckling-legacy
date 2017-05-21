@@ -52,16 +52,19 @@ export class SelectionService {
     }
 
     private _getSelection(selectedEntity : EntityKey) : Selection {
-        if (selectedEntity) {
-            let entity = this._entitySystem.getEntity(selectedEntity);
-            if (this._drawerService.isEntityVisible(entity) && this._layerService.isEntityVisible(entity)) {
-                return {
-                    selectedEntity,
-                    entity : entity || null
-                }
-            }
+        if (!selectedEntity) {
+            return {};
         }
-        return {};
+
+        let entity = this._entitySystem.getEntity(selectedEntity);
+        if (!this._drawerService.isEntityVisible(entity)) {
+            return {};
+        }
+
+        return {
+            selectedEntity,
+            entity : entity || null
+        };
     }
 }
 

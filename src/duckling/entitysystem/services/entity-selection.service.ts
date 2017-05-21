@@ -31,7 +31,6 @@ export class EntitySelectionService {
         let entities = Array.from(this._renderPriority.sortEntities(this._entitySystemService.entitySystem.getValue()));
         entities.reverse();
         let taggedEntity = entities
-            .filter(entity => this._entityLayerService.isEntityVisible(entity.entity))
             .filter(entity => this._entityDrawerService.isEntityVisible(entity.entity))
             .find(entity => this._entityContainsPoint(entity.entity, position));
 
