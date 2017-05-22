@@ -3,7 +3,8 @@ import {BehaviorSubject} from 'rxjs';
 
 import {Action, StoreService} from '../state';
 import {ACTION_OPEN_MAP} from '../project/project';
-import {EntityKey, EntitySystemService, Entity} from '../entitysystem';
+import {EntityKey, Entity} from '../entitysystem/entity';
+import {EntitySystemService} from '../entitysystem/entity-system.service';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 
