@@ -1,4 +1,5 @@
 # Duckling Game Editor
+![](https://travis-ci.org/ild-games/duckling.svg?branch=develop)
 
 ## About
 
@@ -7,6 +8,7 @@ Duckling is an interactive game editor used to create map files for the Ancona g
 More information about Ancona game engine can be found at the [Ancona github page](https://github.com/tlein/ancona)
 
 ![](http://i.imgur.com/n628Eeu.png)
+
 
 
 ## Setup Instructions
