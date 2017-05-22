@@ -6,6 +6,7 @@ import {createStoreService, createEntityService} from '../helper/state';
 import {SelectionService} from '../../duckling/selection';
 import {immutableAssign} from '../../duckling/util';
 import {EntityLayerService} from '../../duckling/entitysystem/services/entity-layer.service';
+import {Entity} from '../../duckling/entitysystem/entity';
 
 let entity = {
     foo : {
@@ -14,11 +15,17 @@ let entity = {
 };
 const ENTITY_KEY = "theEntity";
 
+class MockLayerService extends EntityLayerService {
+    isEntityVisible(entity : Entity) : boolean {
+        return true;
+    }
+}
+
 describe("SelectionService", function() {
     beforeEach(function() {
         this.store = createStoreService();
         this.entitySystem = createEntityService(this.store);
-        this.layerService = new EntityLayerService(this.entitySytem, this.store);
+        this.layerService = new MockLayerService(this.entitySytem, this.store);
         this.selection = new SelectionService(this.store, this.entitySystem, this.layerService);
     });
 
