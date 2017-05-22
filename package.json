@@ -1,11 +1,11 @@
 {
-  "name": "Duckling",
+  "name": "@ild-games/duckling",
   "version": "0.0.1",
   "scripts": {
-    "start": "yarn run build && concurrently \"yarn run watch\" \"yarn run duckling\" ",
-    "test": "tsc && yarn run mocha",
+    "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
+    "test": "tsc && npm run mocha",
     "build": "gulp && tsc",
-    "watch": "concurrently \"yarn run gulp:w\" \"yarn run tsc:w\"",
+    "watch": "concurrently \"npm run gulp:w\" \"npm run tsc:w\"",
     "gulp": "gulp",
     "gulp:w": "gulp watch",
     "tsc": "tsc",
