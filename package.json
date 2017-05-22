@@ -1,5 +1,9 @@
 {
   "name": "@ild-games/duckling",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ild-games/duckling"
+  },
   "version": "0.0.1",
   "scripts": {
     "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
