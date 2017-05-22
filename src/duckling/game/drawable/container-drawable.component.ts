@@ -38,13 +38,13 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
                 (elementDeleted)="onChildDrawablesChanged($event)"
                 (elementMovedDown)="onChildDrawablesChanged($event)"
                 (elementMovedUp)="onChildDrawablesChanged($event)">
-                <template let-element="$element" let-index="$index">
+                <ng-template let-element="$element" let-index="$index">
                     <dk-drawable
                         [drawable]="element"
                         [keyValidator]="keyValidator"
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable>
-                </template>
+                </ng-template>
             </dk-accordian>
         </md-card>
     `

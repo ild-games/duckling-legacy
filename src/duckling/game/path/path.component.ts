@@ -46,14 +46,14 @@ import {PathAttribute} from './path-attribute';
                 (elementMovedDown)="onVerticesChanged($event)"
                 (elementMovedUp)="onVerticesChanged($event)"
                 (elementCloned)="onVerticesChanged($event)">
-                <template let-element="$element" let-index="$index">
+                <ng-template let-element="$element" let-index="$index">
                     <dk-vector-input
                         xLabel="Vertex X"
                         yLabel="Vertex Y"
                         [value]="element"
                         (validInput)="onVertexChanged(index, $event)">
                     </dk-vector-input>
-                </template>
+                </ng-template>
             </dk-accordian>
         </md-card> 
     `

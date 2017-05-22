@@ -79,13 +79,13 @@ export enum JsonValueType {
                         (elementMovedDown)="onValueChanged($event, key)"
                         (elementMovedUp)="onValueChanged($event, key)"
                         (elementCloned)="onValueChanged($event, key)">
-                        <template let-element="$element" let-index="$index">
+                        <ng-template let-element="$element" let-index="$index">
                             <dk-json
                                 [value]="element"
                                 [schema]="schema[key][0]"
                                 (valueChanged)="onValueChanged($event, key, index)">
                             </dk-json>
-                        </template>
+                        </ng-template>
                     </dk-accordian>
                 </md-card>
             </div>

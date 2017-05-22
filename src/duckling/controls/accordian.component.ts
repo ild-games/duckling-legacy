@@ -27,10 +27,10 @@ import {TemplateWrapperDirective} from './template-wrapper.directive';
             (toggled)="onElementToggled(index, $event)"
             (cloned)="onElementCloned(index)"
             (moved)="onElementMoved(index, $event)">
-            <template
+            <ng-template
                 [templateWrapper]="elementTemplate"
                 [context]="elementContext(index)">
-            </template>
+            </ng-template>
         </dk-accordian-element>
     `
 })
