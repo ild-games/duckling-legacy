@@ -175,7 +175,6 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
     private _getImplementedAttributes() : AttributeKey[] {
         let implementedAttributes : AttributeKey[] = [];
         for (let attributeKey of this._availabeAttributes.availableAttributes()) {
-            let implementation = this.getImplementation(attributeKey);
             if (this.getImplementation(attributeKey)) {
                 implementedAttributes.push(attributeKey);
             }
