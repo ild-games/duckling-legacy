@@ -1,11 +1,16 @@
 import {Component, Injectable} from '@angular/core';
 import {Container, DisplayObject} from 'pixi.js';
+import {BehaviorSubject} from 'rxjs';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
 import {AssetService} from '../../project';
-import {Entity, EntitySystem, Attribute, AttributeKey, EntityPositionService, EntitySystemService} from '../../entitysystem';
+import {Entity, EntitySystem, Attribute, AttributeKey, EntitySystemService} from '../../entitysystem';
+import {EntityPositionService} from '../../entitysystem/services/entity-position.service';
 import {drawMissingAsset} from '../../canvas/drawing/util';
-import {EntityLayerService} from '../../entitysystem/services/entity-layer.service';
+import {EntityLayerService, HiddenAttributes, AttributeLayer, layerAttributeAction} from '../../entitysystem/services/entity-layer.service';
+import {AvailableAttributeService} from '../../entitysystem/services/available-attribute.service';
+import {StoreService} from '../../state/store.service';
+import {immutableAssign} from '../../util/model';
 
 import {RenderPriorityService} from './render-priority.service';
 import {DrawnConstruct, setConstructPosition} from './drawn-construct';
@@ -16,7 +21,6 @@ import {DrawnConstruct, setConstructPosition} from './drawn-construct';
 export type AttributeDrawer<T> = (attribute : T, assetService? : any) => DrawnConstruct;
 
 type EntityCache = {[key:string]:EntityCacheEntry};
-
 
 interface EntityCacheEntry {
     entity : Entity,
@@ -30,19 +34,28 @@ interface EntityCacheEntry {
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<Attribute>> {
     private _cache : EntityCache = {};
+    hiddenAttributes : BehaviorSubject<HiddenAttributes>;
 
     constructor(private _assets : AssetService,
                 private _renderPriority : RenderPriorityService,
                 private _entityPosition : EntityPositionService,
                 private _entitySystem : EntitySystemService,
-                private _layers : EntityLayerService) {
+                private _layers : EntityLayerService,
+                private _availabeAttributes : AvailableAttributeService,
+                private _store : StoreService) {
         super();
         _assets.assetLoaded.subscribe(() => this._clearCache());
         _assets.preloadImagesLoaded.subscribe(() => this._clearCache());
         _layers.hiddenLayers.subscribe(() => this._clearCache());
+        
+        this.hiddenAttributes = new BehaviorSubject({});
+        this.hiddenAttributes.subscribe(() => this._clearCache());
+        this._store.state.subscribe(state => {
+            if (state.layers.hiddenAttributes !== this.hiddenAttributes.value) {
+                this.hiddenAttributes.next(state.layers.hiddenAttributes ? state.layers.hiddenAttributes : {});
+            }
+        });
     }
-
-
 
     /**
      * Get a DisplayObject for the attribute.
@@ -79,9 +92,13 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
     drawEntity(entity : Entity) : DrawnConstruct[] {
         let drawnConstructs : DrawnConstruct[] = [];
         for (let key in entity) {
-            if (!this._layers.isEntityAttributeVisible(entity, key)) {
+            if (!this.isAttributeVisible(key)) {
                 continue;
             }
+            if (this._layers.isAttributeImplemented(key) && !this._layers.isAttributeOnAnActiveLayer(entity, key)) {
+                continue;
+            }
+
             let drawableConstruct = this.drawAttribute(key, entity);
             if (drawableConstruct) {
                 drawnConstructs.push(drawableConstruct);
@@ -115,6 +132,61 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
             return drawnConstructs;
         }
     }
+
+    getAttributeLayers() : AttributeLayer[] {
+        let attributeLayers : AttributeLayer[] = [];
+        for (let attributeKey of this._getImplementedAttributes()) {
+            attributeLayers.push({
+                attributeName: attributeKey,
+                isVisible: this.isAttributeVisible(attributeKey)
+            });
+        }
+        return attributeLayers;
+    }
+
+    toggleAttributeVisibility(attributeKey : string, mergeKey? : any) {
+        let patchAttributes : HiddenAttributes = {};
+        patchAttributes[attributeKey] = !this.hiddenAttributes.value[attributeKey];
+        this._store.dispatch(layerAttributeAction(immutableAssign(this.hiddenAttributes.value, patchAttributes)), mergeKey);
+    }
+    
+    isEntityVisible(entity : Entity) : boolean {
+        for (let attributeKey in entity) {
+            if (!this.isAttributeVisible(attributeKey, entity)) {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine if an attribute is visible.
+     * @param attributeKey key of attribute to check visibility of
+     * @param entity? Optional, if provided the entity's layer will also be considered for the attribute
+     */
+    isAttributeVisible(attributeKey : string, entity? : Entity) {
+        if (!this._getImplementedAttributes().includes(attributeKey)) {
+            return false;
+        }
+        if (entity && this._layers.isAttributeImplemented(attributeKey) && !this._layers.isAttributeOnAnActiveLayer(entity, attributeKey)) {
+            return false;
+        }
+
+
+        return (!this.hiddenAttributes.value[attributeKey]);
+    }
+    
+    private _getImplementedAttributes() : AttributeKey[] {
+        let implementedAttributes : AttributeKey[] = [];
+        for (let attributeKey of this._availabeAttributes.availableAttributes()) {
+            if (this.getImplementation(attributeKey)) {
+                implementedAttributes.push(attributeKey);
+            }
+        }
+        return implementedAttributes;
+    }
+
 
     private _clearCache() {
         this._cache = {};

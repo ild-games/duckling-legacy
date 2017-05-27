@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
-import {Attribute, Entity, EntityKey} from '../entity';
+import {Attribute, Entity, EntityKey, AttributeKey} from '../entity';
 import {BaseAttributeService} from '../base-attribute.service';
 import {EntitySystemService} from '../entity-system.service';
 import {Action} from '../../state/actions';
@@ -16,16 +16,19 @@ import {StoreService} from '../../state/store.service';
 import {immutableAssign} from '../../util/model';
 import {ACTION_OPEN_MAP} from '../../project/project';
 
-/**
- * Function type that is used to set a position.
- * @returns Returns the new value of the attribute.
- */
 export type LayerGetter = (attribute : Attribute) => string;
 export type HiddenLayers = {[layerKey : string] : boolean};
+export type HiddenAttributes = {[attributeKey : string] : boolean};
+export type Layer = {
+    layerName : string;
+    isVisible : Boolean;
+}
+export type AttributeLayer = {
+    attributeName : string;
+    isVisible : Boolean;
+}
 
-/**
- * The EntityLayerService is used to retrieve the layer of an entity.
- */
+
 @Injectable()
 export class EntityLayerService extends BaseAttributeService<LayerGetter> {
 
@@ -48,7 +51,6 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         let layersAccountedFor = new Set<string>();
         let entitySystem = this._entitySystemService.entitySystem.value;
 
-        
         entitySystem.forEach((entity : Entity) => {
             for (let attributeKey in entity) {
                 let getLayerImpl = this.getImplementation(attributeKey);
@@ -74,39 +76,29 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         this._store.dispatch(_layerAction(immutableAssign(this.hiddenLayers.value, patchLayers)), mergeKey);
     }
 
-    getVisibleEntities(entities: Array<Entity>) : Array<Entity> {
-        let visibleEntities : Array<Entity> = [];
-        for (let entity of entities){
-            if (this.isEntityVisible(entity)){
-                visibleEntities.push(entity);
-            }
-        }
-        return visibleEntities;
-    }
-
-    isEntityVisible(entity : Entity) : boolean {
+    isEntityOnAnActiveLayer(entity : Entity) : boolean {
         for (let attributeKey in entity) {
-            if (this.isEntityAttributeVisible(entity, attributeKey)) {
+            if (this.isAttributeOnAnActiveLayer(entity, attributeKey)) {
                 return true;
             }
         }
         return false;
     }
 
-    isEntityAttributeVisible(entity: Entity, attributeKey: string) {
+    isAttributeOnAnActiveLayer(entity: Entity, attributeKey: string) {
         let getLayerImpl = this.getImplementation(attributeKey);
-        if (!getLayerImpl) { 
-            return false; 
+        if (!getLayerImpl) {
+            return false;
         }
 
         let layerKey : string  = getLayerImpl(entity[attributeKey]);
         return (!this.hiddenLayers.value[layerKey]);
     }
-}
 
-export type Layer = {
-    layerName : string;
-    isVisible : Boolean;
+    isAttributeImplemented(attributeKey : string) {
+        let getLayerImpl = this.getImplementation(attributeKey);
+        return !!getLayerImpl;
+    }
 }
 
 /**
@@ -114,12 +106,19 @@ export type Layer = {
  */
 interface LayerState {
     hiddenLayers?: HiddenLayers;
+    hiddenAttributes?: HiddenAttributes;
 }
 
-export function layerReducer(state : LayerState = { hiddenLayers: {} }, action : LayerAction) {
+export function layerReducer(state : LayerState = { hiddenLayers: {}, hiddenAttributes: {} }, action : LayerAction) {
     if (action.type === ACTION_TOGGLE_LAYER_VISIBILITY) {
         return {
-            hiddenLayers: action.hiddenLayers
+            ...state,
+            hiddenLayers: action.hiddenLayers,
+        }
+    } else if (action.type === ACTION_TOGGLE_ATTRIBUTE_VISIBILITY) {
+        return {
+            ...state,
+            hiddenAttributes: action.hiddenAttributes,
         }
     } else if (action.type === ACTION_OPEN_MAP) {
         return { hiddenLayers: {} };
@@ -128,13 +127,22 @@ export function layerReducer(state : LayerState = { hiddenLayers: {} }, action :
 }
 
 const ACTION_TOGGLE_LAYER_VISIBILITY = "Layer.ToggleVisibility";
+const ACTION_TOGGLE_ATTRIBUTE_VISIBILITY = "Layer.Attribute.ToggleVisibility";
 interface LayerAction extends Action {
     hiddenLayers?: HiddenLayers;
+    hiddenAttributes? : HiddenAttributes;
 }
 
 function _layerAction(hiddenLayers: HiddenLayers) {
     return {
         hiddenLayers,
         type: ACTION_TOGGLE_LAYER_VISIBILITY
+    }
+}
+
+export function layerAttributeAction(hiddenAttributes: HiddenAttributes) {
+    return {
+        hiddenAttributes,
+        type: ACTION_TOGGLE_ATTRIBUTE_VISIBILITY
     }
 }
