@@ -152,22 +152,27 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
     
     isEntityVisible(entity : Entity) : boolean {
         for (let attributeKey in entity) {
-            if (!this.isAttributeVisible(attributeKey)) {
+            if (!this.isAttributeVisible(attributeKey, entity)) {
                 continue;
             }
-            if (this._layers.isAttributeImplemented(attributeKey) && !this._layers.isAttributeOnAnActiveLayer(entity, attributeKey)) {
-                continue;
-            }
-
             return true;
         }
         return false;
     }
 
-    isAttributeVisible(attributeKey : string) {
+    /**
+     * Determine if an attribute is visible.
+     * @param attributeKey key of attribute to check visibility of
+     * @param entity? Optional, if provided the entity's layer will also be considered for the attribute
+     */
+    isAttributeVisible(attributeKey : string, entity? : Entity) {
         if (!this._getImplementedAttributes().includes(attributeKey)) {
             return false;
         }
+        if (entity && this._layers.isAttributeImplemented(attributeKey) && !this._layers.isAttributeOnAnActiveLayer(entity, attributeKey)) {
+            return false;
+        }
+
 
         return (!this.hiddenAttributes.value[attributeKey]);
     }

@@ -10,6 +10,7 @@ import {immutableAssign} from '../../util';
 import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 import {drawMissingAsset} from '../../canvas/drawing/util';
 import {resize, resizePoint} from './resize'
+import {EntityDrawerService} from '../../canvas/drawing/entity-drawer.service';
 
 /**
  * Function type that provides a bounding box for an attribute.
@@ -26,7 +27,8 @@ export interface AttributeBoundingBox<T> {
 export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<Attribute>> {
     constructor(private _asset : AssetService,
                 private _entityPosition : EntityPositionService,
-                private _entitySystem : EntitySystemService) {
+                private _entitySystem : EntitySystemService,
+                private _entityDrawerService : EntityDrawerService) {
         super();
     }
 
@@ -91,6 +93,10 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
         let box : Box2;
 
         for (let key in entity) {
+            if (!this._entityDrawerService.isAttributeVisible(key, entity)) {
+                continue;
+            }
+            
             let attributeBox = this.getAttributeBox(key, entity);
             if (attributeBox) {
                 if (!box) {
