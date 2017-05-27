@@ -45,7 +45,7 @@ import {PathFollowerComponent} from './path/path-follower.component';
 
 import {defaultDrawableAttribute, DRAWABLE_KEY} from './drawable/drawable-attribute';
 import {DrawableAttributeComponent} from './drawable/drawable-attribute.component';
-import {getDrawableAttributeDrawnContruct} from './drawable/drawable-drawer';
+import {getDrawableAttributeDrawnConstruct} from './drawable/drawable-drawer';
 import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
 import {getDrawableLayer} from './drawable/drawable-get-layer';
@@ -109,7 +109,7 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.attributeComponentService.register(DRAWABLE_KEY, DrawableAttributeComponent);
     services.attributeDefaultService.register(DRAWABLE_KEY, {createByDefault: true, default: defaultDrawableAttribute});
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
-    services.entityDrawerService.register(DRAWABLE_KEY, getDrawableAttributeDrawnContruct);
+    services.entityDrawerService.register(DRAWABLE_KEY, getDrawableAttributeDrawnConstruct);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.entityLayerService.register(DRAWABLE_KEY, getDrawableLayer);

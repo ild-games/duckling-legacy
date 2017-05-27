@@ -25,15 +25,8 @@ import {Vector} from '../math';
 import {KeyboardService} from '../util';
 import {CopyPasteService, SelectionService, Selection} from '../selection';
 
-import {
-    EntityDrawerService,
-    DrawnConstruct,
-    AnimationConstruct,
-    isAnimationConstruct,
-    ContainerConstruct,
-    isContainerConstruct,
-    displayObjectsForDrawnConstructs
-} from './drawing';
+import {EntityDrawerService, DrawnConstruct} from './drawing';
+import {RenderPriorityService} from './drawing/render-priority.service';
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {CanvasComponent} from './canvas.component';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
@@ -133,7 +126,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
                 public projectService : ProjectService,
                 private _entityDrawerService : EntityDrawerService,
                 private _keyboardService : KeyboardService,
-                private _entityLayerService : EntityLayerService) {
+                private _entityLayerService : EntityLayerService,
+                private _renderPriorityService : RenderPriorityService) {
         this._setTool(this._toolService.defaultTool);
     }
 
@@ -202,84 +196,73 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _redrawAllDisplayObjects() {
-        if (this._drawableCache[BACKGROUND_CACHE_KEY].dirty) {
-            this._resetCacheDrawables(BACKGROUND_CACHE_KEY);
-            this._markCacheActive(BACKGROUND_CACHE_KEY);
-
-            this._buildCanvasBackground(this._drawableCache[BACKGROUND_CACHE_KEY].graphics);
-        }
-        if (this._drawableCache[ENTITIES_CACHE_KEY].dirty) {
-            this._resetCacheDrawables(ENTITIES_CACHE_KEY);
-            this._markCacheActive(ENTITIES_CACHE_KEY);
-
-            let drawnConstructs = this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value);
-            this._drawableCache[ENTITIES_CACHE_KEY].displayObject = this._createEntitiesDisplayObject(drawnConstructs, this._totalMillis, this._drawableCache[ENTITIES_CACHE_KEY].graphics);
-        }
-        if (this._drawableCache[GRID_CACHE_KEY].dirty) {
-            this._resetCacheDrawables(GRID_CACHE_KEY);
-            this._markCacheActive(GRID_CACHE_KEY);
-
-            this._buildGrid(this._drawableCache[GRID_CACHE_KEY].graphics);
-        }
-        if (this._drawableCache[TOOL_CACHE_KEY].dirty) {
-            this._resetCacheDrawables(TOOL_CACHE_KEY);
-            this._markCacheActive(TOOL_CACHE_KEY);
-
-            this._drawableCache[TOOL_CACHE_KEY].displayObject = this.tool.getDisplayObject(this.scale);
-        }
-
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        let drawnConstructs : DrawnConstruct[] = [];
+        drawnConstructs = drawnConstructs.concat(this._buildCanvasBackground());
+        drawnConstructs = drawnConstructs.concat(this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value));
+        drawnConstructs = drawnConstructs.concat(this._buildGrid());
+        drawnConstructs = drawnConstructs.concat(this.tool.drawTool(this.scale));
+        this._buildCanvasDisplayObject(this._renderPriorityService.sortDrawnConstructs(drawnConstructs));
     }
 
-    private _buildCanvasBackground(graphics : Graphics) {
+    private _buildCanvasBackground() : DrawnConstruct {
         let dimension = this.projectService.project.value.currentMap.dimension;
-        drawCanvasBackground(
-            {x: 0, y: 0},
-            dimension,
-            graphics);
+        let drawnConstruct = new DrawnConstruct();
+        drawnConstruct.layer = Number.NEGATIVE_INFINITY;
+        drawnConstruct.painter = (graphics : Graphics) => {
+            drawCanvasBackground(
+                {x: 0, y: 0},
+                dimension,
+                graphics);
+        };
+        return drawnConstruct;
     }
 
-    private _buildGrid(graphics : Graphics) {
+    private _buildGrid() : DrawnConstruct {
         if (!this.showGrid) {
-            return;
+            return new DrawnConstruct();
         }
 
-        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
-        let dimension = this.projectService.project.value.currentMap.dimension;
-        let gridSize = this.projectService.project.value.currentMap.gridSize;
-        drawGrid(
-            {x: 0, y: 0},
-            dimension,
-            {x: gridSize, y: gridSize},
-            graphics);
-        drawCanvasBorder(
-            {x: 0, y: 0},
-            dimension,
-            graphics);
+        let drawnConstruct = new DrawnConstruct();
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        drawnConstruct.painter = (graphics : Graphics) => {
+            graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
+            let dimension = this.projectService.project.value.currentMap.dimension;
+            let gridSize = this.projectService.project.value.currentMap.gridSize;
+            drawGrid(
+                {x: 0, y: 0},
+                dimension,
+                {x: gridSize, y: gridSize},
+                graphics);
+            drawCanvasBorder(
+                {x: 0, y: 0},
+                dimension,
+                graphics);
+        };
+        return drawnConstruct;
     }
 
-    private _buildCanvasDisplayObject() : Container {
+    private _buildCanvasDisplayObject(layerDrawnConstructs : DrawnConstruct[][]) {
         let canvasDrawnElements = new Container();
-        for (let cacheKey of CACHE_KEYS) {
-            if (this._drawableCache[cacheKey].displayObject) {
-                canvasDrawnElements.addChild(this._drawableCache[cacheKey].displayObject);
-            }
-            if (this._drawableCache[cacheKey].graphics) {
-                canvasDrawnElements.addChild(this._drawableCache[cacheKey].graphics);
-            }
+        for (let drawnConstructs of layerDrawnConstructs) {
+            this._addDrawnConstructsToContainer(drawnConstructs, canvasDrawnElements);
         }
-        return canvasDrawnElements;
+        this.canvasDisplayObject = canvasDrawnElements;
     }
 
-    private _createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[], totalMillis : number, graphics : Graphics) : DisplayObject {
-        let entitiesDrawnContainer = new Container();
-        for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, totalMillis, graphics)) {
-            if (entityDisplayObject) {
-                entitiesDrawnContainer.addChild(entityDisplayObject);
+    private _addDrawnConstructsToContainer(drawnConstructs : DrawnConstruct[], container : Container) {
+        let graphics = new Graphics();
+        for (let drawnConstruct of drawnConstructs) {
+            if (drawnConstruct.drawable) {
+                let displayObject = drawnConstruct.drawable(this._totalMillis, drawnConstruct.transformProperties);
+                if (displayObject) {
+                    container.addChild(displayObject);
+                }
+            }
+            if (drawnConstruct.painter) {
+                drawnConstruct.painter(graphics, drawnConstruct.transformProperties);
             }
         }
-        entitiesDrawnContainer.interactiveChildren = false;
-        return entitiesDrawnContainer;
+        container.addChild(graphics);
     }
 
     private _setTool(tool : BaseTool) {

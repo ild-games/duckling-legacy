@@ -13,6 +13,9 @@ import {ButtonComponent} from './button/button.component';
 import {PathComponent} from './path/path.component';
 import {PathFollowerComponent} from './path/path-follower.component';
 
+import {AnconaSFMLRenderPriorityService} from './ancona-sfml-render-priority.service';		
+import {RenderPriorityService} from '../canvas/drawing/render-priority.service';
+
 import {AnimatedDrawableComponent} from './drawable/animated-drawable.component';
 import {AutoCreateAnimationDialogComponent} from './drawable/auto-create-animation-dialog.component';
 import {ContainerDrawableComponent} from './drawable/container-drawable.component';
@@ -41,8 +44,6 @@ import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 import {RequiredAssetService} from '../project';
 import {ProjectLifecycleService} from '../project/project-lifecycle.service';
-import {AnconaSFMLRenderPriorityService} from './ancona-sfml-render-priority.service';
-import {RenderPriorityService} from '../canvas/drawing/render-priority.service';
 
 import {bootstrapGameComponents} from './index';
 
@@ -85,7 +86,7 @@ const ATTRIBUTE_COMPONENTS = [
         ATTRIBUTE_COMPONENTS
     ],
     providers: [
-        {provide: RenderPriorityService, useClass: AnconaSFMLRenderPriorityService},
+    {provide: RenderPriorityService, useClass: AnconaSFMLRenderPriorityService},
         CollisionTypesService
     ],
     entryComponents: [

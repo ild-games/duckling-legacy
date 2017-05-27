@@ -3,7 +3,6 @@ import {Box2, EMPTY_BOX} from '../../math/box2';
 import {Vector} from '../../math/vector';
 import {AssetService} from '../../project/asset.service';
 import {immutableAssign} from '../../util/model';
-import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 
 import {PATH_HEIGHT} from './path-drawer';
 import {PathAttribute} from './path-attribute';

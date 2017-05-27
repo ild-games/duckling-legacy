@@ -9,6 +9,7 @@ import {Entity, EntityKey} from '../../entitysystem/entity'
 import {SelectionService} from '../../selection/selection.service';
 import {EntityBoxService} from '../../entitysystem/services/entity-box.service';
 import {AssetService} from '../../project/asset.service';
+import {DrawnConstruct, PainterFunction, DrawableFunction} from '../drawing/drawn-construct';
 import {SnapToGridService} from './grid-snap.service';
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 import {DRAG_ANCHORS, drawAnchor, DragAnchor, anchorContainsPoint, getResizeFromDrag, getAnchorPosition} from './drag-anchor';
@@ -57,15 +58,34 @@ export class EntityResizeTool extends BaseTool {
         }
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        let container = new PIXI.Container();
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        let drawnConstruct = new DrawnConstruct();
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        drawnConstruct.drawable = this.drawable(canvasZoom);
+        drawnConstruct.painter = this.painter(canvasZoom);
+        return drawnConstruct;
+    }
+
+    drawable(canvasZoom : number) : DrawableFunction {
         let entityBox = this.selectedBox;
-        if (entityBox) {
+        if (!entityBox) {
+            return null;
+        }
+
+        return () => {
+            let container = new PIXI.Container();
             for (let anchor of DRAG_ANCHORS) {
                 container.addChild(drawAnchor(entityBox, anchor, canvasZoom, this._assetService));
             }
-        }
-        return container;
+            return container;
+        };
+    }
+
+    painter(canvasZoom : number) : PainterFunction {
+        // If the resize tool should utilize a painter in the future, implement it here. 
+        // An unimplemented function allows it to play along nicely with the dual-purpose
+        // selected entity tool.
+        return null;
     }
 
     onStageMove(event : CanvasMouseEvent) {

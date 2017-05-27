@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Container, DisplayObject, Graphics} from 'pixi.js';
 
+import {DrawnConstruct, PainterFunction, DrawableFunction} from '../drawing/drawn-construct';
+
 import {MultiModeTool} from './multi-mode-tool';
 import {EntityMoveTool} from './entity-move-tool';
 import {EntityResizeTool} from './resize-tool';
@@ -23,20 +25,41 @@ export class SelectedEntityTool extends MultiModeTool {
         }
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        let container = new Container();
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        let drawnConstruct = new DrawnConstruct();
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        drawnConstruct.painter = this._painter(canvasZoom);
+        drawnConstruct.drawable = this._drawable(canvasZoom);
+        return drawnConstruct;
+    }
 
-        let moveToolDisplayObject = this._entityMoveTool.getDisplayObject(canvasZoom);
-        if (moveToolDisplayObject) {
-            container.addChild(moveToolDisplayObject);
+    private _painter(canvasZoom : number) : PainterFunction {
+        return (graphics : Graphics) => {
+            let movePainter = this._entityMoveTool.painter(canvasZoom);
+            if (movePainter) {
+                movePainter(graphics);
+            }
+            let resizePainter = this._entityResizeTool.painter(canvasZoom);
+            if (resizePainter) {
+                resizePainter(graphics);
+            }
+        };
+    }
+
+    private _drawable(canvasZoom : number) : DrawableFunction {
+        let moveDrawable = this._entityMoveTool.drawable(canvasZoom);
+        let resizeDrawable = this._entityResizeTool.drawable(canvasZoom);
+
+        return () => {
+            let container = new Container();
+            if (moveDrawable) {
+                container.addChild(moveDrawable());
+            }
+            if (resizeDrawable) {
+                container.addChild(resizeDrawable());
+            }
+            return container;
         }
-
-        let resizeToolDisplayObject = this._entityResizeTool.getDisplayObject(canvasZoom);
-        if (resizeToolDisplayObject) {
-            container.addChild(resizeToolDisplayObject);
-        }
-
-        return container;
     }
 
     onStageDown(event : CanvasMouseEvent) {

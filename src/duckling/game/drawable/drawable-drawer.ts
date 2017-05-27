@@ -1,7 +1,17 @@
 import {ReflectiveInjector} from '@angular/core';
 
-import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture} from 'pixi.js';
-import * as PIXI from 'pixi.js';
+import {
+    RenderTexture, 
+    Texture, 
+    Sprite, 
+    Graphics, 
+    DisplayObject, 
+    Container, 
+    BaseTexture, 
+    Point, 
+    extras,
+    Text
+} from 'pixi.js';
 
 import {AssetService} from '../../project';
 import {Entity} from '../../entitysystem/entity';
@@ -9,20 +19,9 @@ import {Vector, degreesToRadians} from '../../math';
 import {Box2} from '../../math/box2';
 import {immutableAssign} from '../../util/model';
 import {drawMissingAsset} from '../../canvas/drawing/util';
-import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
-import {
-    colorToHex,
-    drawEllipse,
-    drawRectangle,
-    AnimationConstruct,
-    DrawnConstruct,
-    isDrawnConstruct,
-    isAnimationConstruct,
-    isContainerConstruct,
-    isPainterConstruct,
-    isDisplayObject,
-    ContainerConstruct
-} from '../../canvas/drawing';
+import {DrawnConstruct, TransformProperties, DrawableFunction, ContainerDrawnConstruct, AnimatedDrawnConstruct} from '../../canvas/drawing/drawn-construct';
+import {drawEllipse, drawRectangle} from '../../canvas/drawing/util';
+import {colorToHex} from '../../canvas/drawing/color';
 import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
@@ -38,31 +37,18 @@ import {ShapeType, Shape, cppTypeToShapeType} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
 
-/**
- * Draws the drawable and bounds of the drawable for a DrawableAttribute
- * @param  attribute The drawable attribute
- * @param  assetService Service containing the assets needed to render the drawable attribute.
- * @return DisplayObject that contains the drawn DrawableAttribute
- */
-export function getDrawableAttributeDrawnContruct(drawableAttribute : DrawableAttribute, assetService : AssetService) : DrawnConstruct {
+export function getDrawableAttributeDrawnConstruct(drawableAttribute : DrawableAttribute, assetService : AssetService) : DrawnConstruct {
     if (!drawableAttribute.topDrawable) {
         return null;
     }
 
-    let drawable : DrawnConstruct;
-    drawable = drawDrawable(drawableAttribute.topDrawable, assetService);
-    if (!drawable) {
-        return null;
-    }
-    _setNonInteractive(drawable);
-
-    return drawable;
+    return drawDrawable(drawableAttribute.topDrawable, assetService);
 }
 
 /**
  * Draws the drawable and bounds of the drawable for a Drawable.
- * @param  entity The entity with the drawable attribute
- * @param  assetService Service containing the assets needed to render the drawable attribute.
+ * @param entity The entity with the drawable attribute
+ * @param assetService Service containing the assets needed to render the drawable attribute.
  * @param ignoreInactive Optional parameter. Set to true to ignore the inactive drawable field. Useful if you need to measure the drawn construct
  * @return DisplayObject that contains the drawn DrawableAttribute
  */
@@ -71,120 +57,86 @@ export function drawDrawable(drawable : Drawable, assetService : AssetService, i
         return null;
     }
 
-    let drawnObject : DrawnConstruct;
+    let drawnConstruct : DrawnConstruct;
     let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
     switch (drawableType) {
         case DrawableType.Shape:
-            drawnObject = _drawShapeDrawable(drawable as ShapeDrawable);
+            drawnConstruct = _drawShapeDrawable(drawable as ShapeDrawable);
             break;
         case DrawableType.Container:
-            drawnObject = _drawContainerDrawable(drawable as ContainerDrawable, assetService, ignoreInactive);
+            drawnConstruct = _drawContainerDrawable(drawable as ContainerDrawable, assetService, ignoreInactive);
             break;
         case DrawableType.Image:
-            drawnObject = _drawImageDrawable(drawable as ImageDrawable, assetService);
+            drawnConstruct = _drawImageDrawable(drawable as ImageDrawable, assetService);
             break;
         case DrawableType.Animated:
-            drawnObject = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService, ignoreInactive);
+            drawnConstruct = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService, ignoreInactive);
             break;
         case DrawableType.Text:
-            drawnObject = _drawTextDrawable(drawable as TextDrawable, assetService);
+            drawnConstruct = _drawTextDrawable(drawable as TextDrawable, assetService);
             break;
         case DrawableType.TileBlock:
-            drawnObject = drawTileBlockDrawable(drawable as TileBlockDrawable, assetService);
+            drawnConstruct = drawTileBlockDrawable(drawable as TileBlockDrawable, assetService);
             break;
         default:
-            drawnObject = null;
+            drawnConstruct = null;
             break;
     }
 
-    if (drawnObject) {
-        _applyDrawableProperties(drawable, drawnObject);
+    if (drawnConstruct) {
+        drawnConstruct.transformProperties.anchor = drawable.anchor;
+        drawnConstruct.transformProperties.rotation = drawable.rotation;
+        drawnConstruct.transformProperties.scale = drawable.scale;
     }
-    return drawnObject;
+    return drawnConstruct;
 }
 
-function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : Graphics {
-    let graphics = new Graphics();
-    let colorHex = colorToHex(shapeDrawable.shape.fillColor);
-    graphics.beginFill(parseInt(colorHex, 16), 1);
-    graphics.fillAlpha = shapeDrawable.shape.fillColor.a / 255;
-    let shapeType = cppTypeToShapeType(shapeDrawable.shape.__cpp_type)
-    switch (shapeType) {
-        case ShapeType.Circle:
-            let radius = (shapeDrawable.shape as Circle).radius;
-            drawEllipse({x: 0, y: 0}, radius, radius, graphics);
-            break;
-        case ShapeType.Rectangle:
-            let dimension = (shapeDrawable.shape as Rectangle).dimension;
-            drawRectangle({x: 0, y: 0}, dimension, graphics);
-            break;
-    }
-    graphics.endFill();
-    return graphics;
+function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : DrawnConstruct {
+    let drawnConstruct = new DrawnConstruct();
+    drawnConstruct.drawable = _shapeDrawer(shapeDrawable);
+    return drawnConstruct;
 }
 
-function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService, ignoreInactive : boolean) : ContainerConstruct {
-    if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
-        return {
-            type: "CONTAINER",
-            childConstructs: [],
-            position: {x: 0, y: 0},
-            anchor: {x: 0, y: 0},
-            rotation: 0,
-            scale: {x: 0, y: 0}
-        };
-    }
-
-    let childConstructs : DrawnConstruct[] = []
-    for (let drawable of containerDrawable.drawables) {
-        let childDrawable = drawDrawable(drawable, assetService, ignoreInactive);
-        if (childDrawable) {
-            childConstructs.push(childDrawable);
+function _shapeDrawer(shapeDrawable : ShapeDrawable) : DrawableFunction {
+    return (totalMillis : number, transformProperties : TransformProperties) => {
+        let graphics = new Graphics();
+        let colorHex = colorToHex(shapeDrawable.shape.fillColor);
+        graphics.beginFill(parseInt(colorHex, 16), 1);
+        graphics.fillAlpha = shapeDrawable.shape.fillColor.a / 255;
+        let shapeType = cppTypeToShapeType(shapeDrawable.shape.__cpp_type)
+        switch (shapeType) {
+            case ShapeType.Circle:
+                let radius = (shapeDrawable.shape as Circle).radius;
+                drawEllipse({x: 0, y: 0}, radius, radius, graphics);
+                break;
+            case ShapeType.Rectangle:
+                let dimension = (shapeDrawable.shape as Rectangle).dimension;
+                drawRectangle({x: 0, y: 0}, dimension, graphics);
+                break;
         }
-    }
-    return {
-        type: "CONTAINER",
-        childConstructs: childConstructs,
-        position: {x: 0, y: 0},
-        anchor: {x: 0, y: 0},
-        rotation: 0,
-        scale: {x: 0, y: 0}
+        graphics.endFill();
+        applyDisplayObjectTransforms(graphics, transformProperties);
+        return graphics;
     };
 }
 
-function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService, ignoreInactive : boolean) : AnimationConstruct {
-    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
-        return {
-            type: "ANIMATION",
-            duration: 0,
-            frames: [],
-            position: {x: 0, y: 0},
-            anchor: {x: 0, y: 0},
-            rotation: 0,
-            scale: {x: 0, y: 0}
+function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DrawnConstruct {
+    try {
+        let texture = _getTexture(imageDrawable, assetService);
+        if (!texture) {
+            return null;
         }
-    }
 
-    let framesDisplayObjects : DrawnConstruct[] = [];
-    for (let frame of animatedDrawable.frames) {
-        let frameDrawable = drawDrawable(frame, assetService, ignoreInactive);
-        if (frameDrawable) {
-            framesDisplayObjects.push(frameDrawable);
-        }
-    }
-
-    return {
-        type: "ANIMATION",
-        duration: animatedDrawable.duration,
-        frames: framesDisplayObjects,
-        position: {x: 0, y: 0},
-        anchor: {x: 0, y: 0},
-        rotation: 0,
-        scale: {x: 0, y: 0}
+        let drawnConstruct = new DrawnConstruct();
+        drawnConstruct.drawable = _imageDrawer(imageDrawable, texture);
+        return drawnConstruct;
+    } catch(e) {
+        console.log(e.message);
+        return drawMissingAsset(assetService)
     }
 }
 
-function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DisplayObject {
+function _getTexture(imageDrawable : ImageDrawable, assetService : AssetService) : Texture {
     if (!imageDrawable.textureKey) {
         return null;
     }
@@ -193,6 +145,7 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
     if (!baseTexture) {
         return null;
     }
+
     let texture : Texture;
     if (imageDrawable.isWholeImage) {
         texture = new Texture(baseTexture);
@@ -204,32 +157,10 @@ function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetS
                 imageDrawable.textureRect.dimension.x,
                 imageDrawable.textureRect.dimension.y));
         } else {
-            return drawMissingAsset(assetService);
+            throw new Error("Partial image dimensions incorrect");
         }
     }
-
-    let sprite : any;
-    if (imageDrawable.isTiled && imageDrawable.tiledArea) {
-        sprite = new PIXI.extras.TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
-    } else {
-        sprite = new Sprite(texture);
-    }
-    let container = new Container();
-    container.addChild(sprite);
-    return container;
-}
-
-function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService) : DisplayObject {
-    let fontKey = textDrawable.text.fontKey || "Arial";
-    let colorHex = "#" + colorToHex(textDrawable.text.color);
-    let text = new PIXI.Text(
-        textDrawable.text.text,
-        {
-            fontFamily: assetService.fontFamilyFromAssetKey(fontKey),
-            fontSize: textDrawable.text.characterSize,
-            fill: colorHex
-        } as PIXI.TextStyle);
-    return text;
+    return texture;
 }
 
 function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture : Texture) {
@@ -239,66 +170,136 @@ function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture :
     );
 }
 
-function _getBaselineBounds(drawnConstruct : DrawnConstruct) : Box2 {
-    if (isPainterConstruct(drawnConstruct)) {
-        return;
-    }
-
-    drawnConstruct.scale = {x: 1, y: 1};
-    return drawnConstructBounds(drawnConstruct);
-}
-
-function _applyDrawableProperties(drawable : Drawable, drawableDisplayObject : DrawnConstruct) {
-    function _applyDisplayObjectProperties(drawnConstruct : DrawnConstruct) {
-        if (isPainterConstruct(drawnConstruct)) {
-            return;
-        }
-
-        let bounds = _getBaselineBounds(drawnConstruct);
-        drawnConstruct.rotation = degreesToRadians(drawable.rotation);
-        drawnConstruct.scale.x = drawable.scale.x;
-        drawnConstruct.scale.y = drawable.scale.y;
-        if (isDisplayObject(drawnConstruct)) {
-            drawnConstruct.pivot.x = bounds.dimension.x * drawable.anchor.x;
-            drawnConstruct.pivot.y = bounds.dimension.y * drawable.anchor.y;
+function _imageDrawer(imageDrawable : ImageDrawable, texture : Texture) : DrawableFunction {
+    return (totalMillis : number, transformProperties : TransformProperties) => {
+        let sprite : any;
+        if (imageDrawable.isTiled && imageDrawable.tiledArea) {
+            sprite = new extras.TilingSprite(texture, imageDrawable.tiledArea.x, imageDrawable.tiledArea.y);
         } else {
-            drawnConstruct.anchor.x = bounds.dimension.x * drawable.anchor.x;
-            drawnConstruct.anchor.y = bounds.dimension.y * drawable.anchor.y;
+            sprite = new Sprite(texture);
         }
-    }
-    if (!drawableDisplayObject) {
-        return;
+        applyDisplayObjectTransforms(sprite, transformProperties);
+        return sprite;
+    };
+}
+
+function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService, ignoreInactive : boolean) : ContainerDrawnConstruct {
+    if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
+        return null;
     }
 
-    if (isDrawnConstruct(drawableDisplayObject)) {
-        _applyDisplayObjectProperties(drawableDisplayObject);
-    } else {
-        throw Error("Unknown DrawnConstruct type in drawable-drawer::_applyDrawableProperties");
+    let drawnConstruct = new ContainerDrawnConstruct();
+    for (let drawable of containerDrawable.drawables) {
+        let childDrawable = drawDrawable(drawable, assetService, ignoreInactive);
+        if (childDrawable) {
+            drawnConstruct.childConstructs.push(childDrawable);
+        }
+    }
+    drawnConstruct.drawable = _containerDrawer(drawnConstruct.childConstructs);
+    return drawnConstruct;
+}
+
+function _containerDrawer(childConstructs : DrawnConstruct[]) : DrawableFunction {
+    return (totalMillis : number, transformProperties : TransformProperties) => {
+        let container = new Container();
+        for (let childConstruct of childConstructs) {
+            if (childConstruct.drawable) {
+                let childDisplayObject = childConstruct.drawable(totalMillis, childConstruct.transformProperties);
+                if (childDisplayObject) {
+                    container.addChild(childDisplayObject);
+                }
+            }
+        }
+        applyDisplayObjectTransforms(container, transformProperties);
+        return container;
+    };
+}
+
+function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService, ignoreInactive : boolean) : AnimatedDrawnConstruct {
+    if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
+        return null;
+    }
+
+    let drawnConstruct = new AnimatedDrawnConstruct();
+    for (let frame of animatedDrawable.frames) {
+        let frameDrawable = drawDrawable(frame, assetService, ignoreInactive);
+        if (frameDrawable) {
+            drawnConstruct.frames.push(frameDrawable);
+        }
+    }
+    drawnConstruct.duration = animatedDrawable.duration;
+    drawnConstruct.drawable = _animationDrawer(drawnConstruct.frames, drawnConstruct.duration);
+    return drawnConstruct;
+}
+
+function _animationDrawer(frames : DrawnConstruct[], duration : number) : DrawableFunction {
+    return (totalMillis : number, transformProperties : TransformProperties) => {
+        let container = new Container();
+        let displayObject = _determineAnimationDisplayObject(frames, duration, totalMillis);
+        if (displayObject) {
+            container.addChild(displayObject);
+        }
+        applyDisplayObjectTransforms(container, transformProperties);
+        return container;
     }
 }
 
-/**
- * pixi.js considers Container's children to be interactive (clickable, draggable, etc. via
- * pixi operations). Since we handle the interactive operations, we need to set the children as
- * non-interactive so pixi doesn't throw benign js errors all the time.
- * @param  drawableDrawnConstruct to make non-interactive
- */
-function _setNonInteractive(drawable : DrawnConstruct) {
-    if (!drawable) {
-        return;
+function _determineAnimationDisplayObject(frames : DrawnConstruct[], duration : number, totalMillis : number) : DisplayObject {
+    let curFrameIndex = 0;
+    if (duration !== 0) {
+        curFrameIndex = Math.trunc(totalMillis / (duration * 1000)) % frames.length;
     }
 
-    if (isAnimationConstruct(drawable)) {
-        for (let frame of drawable.frames) {
-            _setNonInteractive(frame);
-        }
-    } else if (isContainerConstruct(drawable)) {
-        for (let child of drawable.childConstructs) {
-            _setNonInteractive(child);
-        }
-    } else if (isDisplayObject(drawable)) {
-        drawable.interactiveChildren = false;
-    } else {
-        throw Error("Unknown DrawnConstruct type in drawable-drawer::_setNonInteractive");
+    let curFrame = frames[curFrameIndex];
+    if (curFrame && curFrame.drawable) {
+        return curFrame.drawable(totalMillis, curFrame.transformProperties);
     }
+    return null;
+}
+
+function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService) : DrawnConstruct {
+    let drawnConstruct = new DrawnConstruct();
+    drawnConstruct.drawable = _textDrawer(textDrawable, assetService);
+    return drawnConstruct;
+}
+
+function _textDrawer(textDrawable : TextDrawable, assetService : AssetService) : DrawableFunction {
+    return (totalMillis : number , transformProperties : TransformProperties) => {
+        let fontKey = textDrawable.text.fontKey || "Arial";
+        let colorHex = "#" + colorToHex(textDrawable.text.color);
+        let text = new Text(
+            textDrawable.text.text,
+            {
+                fontFamily: assetService.fontFamilyFromAssetKey(fontKey),
+                fontSize: textDrawable.text.characterSize,
+                fill: colorHex
+            } as PIXI.TextStyle);
+        applyDisplayObjectTransforms(text, transformProperties);
+        return text;
+    };
+}
+
+export function applyDisplayObjectTransforms(displayObject : DisplayObject, transformProperties : TransformProperties) {
+    let bounds = _displayObjectBounds(displayObject);
+    displayObject.rotation = degreesToRadians(transformProperties.rotation);
+    displayObject.scale = transformProperties.scale as Point;
+    displayObject.pivot.x = bounds.dimension.x * transformProperties.anchor.x;
+    displayObject.pivot.y = bounds.dimension.y * transformProperties.anchor.y;
+    displayObject.position = transformProperties.position as Point;
+}
+
+function _displayObjectBounds(displayObject : DisplayObject) : Box2 {
+    if (!displayObject) {
+        return null;
+    }
+
+    let container = new Container();
+    container.addChild(displayObject);
+    displayObject.updateTransform();
+    let displayObjectBounds = container.getBounds();
+    return {
+        position: {x: displayObjectBounds.x, y: displayObjectBounds.y},
+        dimension: {x: displayObjectBounds.width, y: displayObjectBounds.height},
+        rotation: 0
+    };
 }

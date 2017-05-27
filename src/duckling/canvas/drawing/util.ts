@@ -3,6 +3,8 @@ import {Graphics, Sprite} from 'pixi.js';
 import {Vector} from '../../math/vector';
 import {AssetService} from '../../project/asset.service';
 
+import {DrawnConstruct} from './drawn-construct';
+
 
 /**
  * Draw a rectangle at the given position
@@ -108,8 +110,11 @@ export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vect
  * @param  assetService Instance of the asset service to get the missing image from
  * @return Sprite with the missing images
  */
-export function drawMissingAsset(assetService : AssetService) : Sprite {
+export function drawMissingAsset(assetService : AssetService) : DrawnConstruct {
     let missingTexture = assetService.get({key: "fa-missing-image", type: "TexturePNG"}, true);
-    let sprite = new Sprite(missingTexture);
-    return sprite;
+
+    let drawnConstruct = new DrawnConstruct();
+    drawnConstruct.layer = Number.POSITIVE_INFINITY;
+    drawnConstruct.drawable = () => new Sprite(missingTexture);
+    return drawnConstruct;
 }

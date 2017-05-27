@@ -2,11 +2,12 @@ import {DisplayObject, Graphics} from 'pixi.js';
 
 import {Vector} from '../../math';
 import {CanvasComponent} from '../canvas.component';
+import {DrawnConstruct} from '../drawing/drawn-construct';
 
 export class BaseTool {
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        return null;
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        return new DrawnConstruct();
     }
 
     onStageDown(event : CanvasMouseEvent) {

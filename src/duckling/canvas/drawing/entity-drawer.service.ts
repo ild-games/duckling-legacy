@@ -15,7 +15,7 @@ import {StoreService} from '../../state/store.service';
 import {immutableAssign} from '../../util/model';
 
 import {RenderPriorityService} from './render-priority.service';
-import {DrawnConstruct, setConstructPosition, displayObjectsForDrawnConstructs} from './drawn-construct';
+import {DrawnConstruct} from './drawn-construct';
 
 export type AttributeDrawer<T> = (attribute : T, assetService? : any) => DrawnConstruct;
 
@@ -56,13 +56,19 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
     }
 
     drawEntitySystem(entitySystem : EntitySystem) : DrawnConstruct[] {
-        let sortedEntities = this._renderPriority.sortEntities(entitySystem);
-        return this._getEntitySystemDrawables(sortedEntities);
+        let drawnConstructs : DrawnConstruct[] = [];
+        let newCache : EntityCache = {};
+        entitySystem.forEach((entity, entityKey) => {
+            for (let construct of this.getEntityDrawable(entity)) {
+                drawnConstructs.push(construct);
+            }
+        });
+        return drawnConstructs;
     }
 
     getAttributeDrawable(key : AttributeKey, entity : Entity) : DrawnConstruct {
         let drawer = this.getImplementation(key);
-        if (drawer && drawer) {
+        if (drawer) {
             let drawnConstruct : DrawnConstruct;
             if (this._assets.areAssetsLoaded(entity, key)) {
                 drawnConstruct = drawer(entity[key], this._assets);
@@ -71,9 +77,13 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
             }
 
             if (drawnConstruct) {
-                setConstructPosition(
-                    drawnConstruct,
-                    this._entityPosition.getPosition(entity));
+                drawnConstruct.transformProperties.position = this._entityPosition.getPosition(entity);
+                if (this._layers.isAttributeImplemented(key)) {
+                    let layerString = this._layers.getAttributeLayer(entity, key);
+
+                    // TODO better way to translate this from string
+                    drawnConstruct.layer = parseFloat(layerString);
+                }
             }
             return drawnConstruct;
         }
@@ -93,17 +103,6 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
             let drawableConstruct = this.getAttributeDrawable(key, entity);
             if (drawableConstruct) {
                 drawnConstructs.push(drawableConstruct);
-            }
-        }
-        return drawnConstructs;
-    }
-
-    private _getEntitySystemDrawables(entities : TaggedEntity[]) : DrawnConstruct[] {
-        let drawnConstructs : DrawnConstruct[] = [];
-        let newCache : EntityCache = {};
-        for (let entity of entities) {
-            for (let construct of this.getEntityDrawable(entity.entity)) {
-                drawnConstructs.push(construct);
             }
         }
         return drawnConstructs;

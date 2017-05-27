@@ -1,6 +1,6 @@
-import {Graphics, DisplayObject, Container} from 'pixi.js';
+import {Graphics, DisplayObject, Container, Point} from 'pixi.js';
 
-import {DrawnConstruct} from '../../canvas/drawing';
+import {DrawnConstruct, TransformProperties} from '../../canvas/drawing';
 import {Entity} from '../../entitysystem/entity';
 import {drawRectangle} from '../../canvas/drawing/util';
 import {Vector, vectorRotate} from '../../math/vector';
@@ -18,6 +18,19 @@ const STARTING_SQUARE_COLOR = 0x00a626;
 const ENDING_SQUARE_COLOR = 0xf44336;
 
 export function getPathAttributeDrawnConstruct(pathAttribute : PathAttribute) : DrawnConstruct {
+    let drawnConstruct = new DrawnConstruct();
+    drawnConstruct.layer = Number.POSITIVE_INFINITY;
+    drawnConstruct.drawable = (totalMillis : number, transformProperties : TransformProperties) => {
+        let displayObject = _pathDrawable(pathAttribute);
+        if (displayObject) {
+            displayObject.position = transformProperties.position as Point;
+        }
+        return displayObject;
+    }
+    return drawnConstruct;
+}
+
+function _pathDrawable(pathAttribute : PathAttribute) : DisplayObject {
     if (!pathAttribute || pathAttribute.vertices.length === 0) {
         return null;
     }

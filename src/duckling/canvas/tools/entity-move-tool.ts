@@ -17,6 +17,7 @@ import {SelectionService} from '../../selection';
 import {ProjectService} from '../../project/project.service';
 import {KeyboardCode} from '../../util';
 import {drawRectangle} from '../drawing';
+import {DrawnConstruct, PainterFunction, DrawableFunction} from '../drawing/drawn-construct';
 
 
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
@@ -41,14 +42,30 @@ export class EntityMoveTool extends BaseTool {
         super();
     }
 
-    getDisplayObject(canvasZoom : number) {
-        let graphics = new Graphics();
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        let drawnConstruct = new DrawnConstruct();
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        drawnConstruct.drawable = this.drawable(canvasZoom);
+        drawnConstruct.painter = this.painter(canvasZoom);
+        return drawnConstruct;
+    }
+
+    drawable(canvasZoom : number) : DrawableFunction {
+        // If the move tool should utilize a drawable in the future, implement it here. 
+        // An unimplemented function allows it to play along nicely with the dual-purpose
+        // selected entity tool.
+        return null;
+    }
+
+    painter(canvasZoom : number) : PainterFunction {
         let box = this._getSelectedEntityBox();
-        if (box) {
+        if (!box) {
+            return null;
+        }
+        return (graphics : Graphics) => {
             graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
             drawRectangle(box.position, box.dimension, graphics);
         }
-        return graphics;
     }
 
     onStageDown(event : CanvasMouseEvent) {

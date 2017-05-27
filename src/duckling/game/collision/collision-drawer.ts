@@ -1,7 +1,7 @@
 import {Graphics} from 'pixi.js';
 
 import {drawRectangle, drawX} from '../../canvas/drawing/util';
-import {DrawnConstruct, createPainterConstruct} from '../../canvas/drawing';
+import {DrawnConstruct, TransformProperties} from '../../canvas/drawing/drawn-construct';
 import {Entity} from '../../entitysystem/entity';
 import {AssetService} from '../../project';
 import {Vector} from '../../math/vector';
@@ -12,21 +12,24 @@ import {CollisionAttribute} from './collision-attribute';
 const blue = 0x00ccff;
 
 export function getCollisionAttributeDrawnConstruct(collisionAttribute : CollisionAttribute, assetService : AssetService) : DrawnConstruct {
-    return createPainterConstruct((position: Vector, graphics : Graphics) => {
+    let drawnConstruct = new DrawnConstruct();
+    drawnConstruct.layer = Number.POSITIVE_INFINITY;
+    drawnConstruct.painter = (graphics : Graphics, transformProperties : TransformProperties) => {
         graphics.lineStyle(1, blue, 1);
         drawRectangle(
             {
-                x: position.x - (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x),
-                y: position.y - (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y)
+                x: transformProperties.position.x - (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x),
+                y: transformProperties.position.y - (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y)
             }, 
             collisionAttribute.dimension.dimension, 
             graphics);
         drawX(
             {
-                x: position.x - (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x),
-                y: position.y - (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y)
+                x: transformProperties.position.x - (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x),
+                y: transformProperties.position.y - (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y)
             }, 
             collisionAttribute.dimension.dimension, 
             graphics);
-    });
+    };
+    return drawnConstruct;
 }

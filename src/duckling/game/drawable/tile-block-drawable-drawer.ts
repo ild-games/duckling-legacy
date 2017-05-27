@@ -1,12 +1,14 @@
 import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture, extras} from 'pixi.js';
 
 import {drawMissingAsset} from '../../canvas/drawing/util';
+import {DrawnConstruct, TransformProperties, DrawableFunction} from '../../canvas/drawing/drawn-construct';
 import {Vector} from '../../math/vector';
 import {AssetService} from '../../project/asset.service';
 
 import {TileBlockDrawable, getTileWidth} from './tile-block-drawable';
+import {applyDisplayObjectTransforms} from './drawable-drawer';
 
-export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, assetService : AssetService) : DisplayObject {
+export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, assetService : AssetService) : DrawnConstruct {
     if (!tileBlockDrawable.textureKey) {
         return null;
     }
@@ -19,7 +21,7 @@ export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, ass
     return _constructTileBlockSprite(tileBlockDrawable, baseTexture, assetService);
 }
 
-function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, assetService : AssetService) : DisplayObject {
+function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, assetService : AssetService) : DrawnConstruct {
     let tileSize = getTileWidth(tileBlockDrawable, assetService);
     if (tileSize <= 0) {
         return drawMissingAsset(assetService);
@@ -29,7 +31,9 @@ function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTe
     let positions = _getPositions(numberOfTiles);
     let calculateOffset: {x: boolean, y: boolean} = _getOffsets(numberOfTiles);
     
-    return _constructTileBlockContainer(positions, calculateOffset, baseTexture, tileSize, numberOfTiles);
+    let drawnConstruct = new DrawnConstruct();
+    drawnConstruct.drawable = _tileBlockDrawer(positions, calculateOffset, baseTexture, tileSize, numberOfTiles);
+    return drawnConstruct;
 }
 
 function _getPositions(numberOfTiles: Vector): Vector[] {
@@ -57,16 +61,19 @@ function _getOffsets(numberOfTiles: Vector): { x : boolean, y: boolean } {
 }
 
 
-function _constructTileBlockContainer(positions: Vector[], calculateOffset: { x: boolean, y: boolean}, baseTexture: BaseTexture, tileSize: number, numberOfTiles: Vector): Container {
-    let container = new Container();
+function _tileBlockDrawer(positions: Vector[], calculateOffset: { x: boolean, y: boolean}, baseTexture: BaseTexture, tileSize: number, numberOfTiles: Vector) : DrawableFunction {
+    return (totalMillis : number , transformProperties : TransformProperties) => {
+        let container = new Container();
 
-    for (let position of positions) {
-        let texture = new Texture(baseTexture, new PIXI.Rectangle(position.x * tileSize, position.y * tileSize, tileSize, tileSize));
-        let sprite = _getSprite(position, numberOfTiles, tileSize, texture, calculateOffset);
-        container.addChild(sprite);
+        for (let position of positions) {
+            let texture = new Texture(baseTexture, new PIXI.Rectangle(position.x * tileSize, position.y * tileSize, tileSize, tileSize));
+            let sprite = _getSprite(position, numberOfTiles, tileSize, texture, calculateOffset);
+            container.addChild(sprite);
+        }
+
+        applyDisplayObjectTransforms(container, transformProperties);
+        return container;
     }
-
-    return container;
 }
 
 function _getSprite(position: Vector, numberOfTiles: Vector, tileSize: number, texture: Texture, calculateOffset: { x : boolean, y : boolean}): DisplayObject | null {
