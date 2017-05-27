@@ -1,11 +1,15 @@
 {
-  "name": "Duckling",
+  "name": "@ild-games/duckling",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ild-games/duckling"
+  },
   "version": "0.0.1",
   "scripts": {
-    "start": "yarn run build && concurrently \"yarn run watch\" \"yarn run duckling\" ",
-    "test": "tsc && yarn run mocha",
+    "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
+    "test": "tsc && npm run mocha",
     "build": "gulp && tsc",
-    "watch": "concurrently \"yarn run gulp:w\" \"yarn run tsc:w\"",
+    "watch": "concurrently \"npm run gulp:w\" \"npm run tsc:w\"",
     "gulp": "gulp",
     "gulp:w": "gulp watch",
     "tsc": "tsc",
@@ -36,6 +40,7 @@
     "@types/webfontloader": "1.6.28",
     "es6-shim": "0.35.3",
     "font-awesome": "4.7.0",
+    "glob": "7.1.2",
     "gulp": "3.9.1",
     "gulp-sass": "3.1.0",
     "gulp-watch": "4.3.11",
@@ -60,7 +65,6 @@
     "concurrently": "3.4.0",
     "electron": "1.6.8",
     "electron-mocha": "3.4.0",
-    "gulp": "3.9.1",
     "mocha": "3.4.1",
     "typescript": "2.3.2"
   }
