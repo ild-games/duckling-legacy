@@ -1,4 +1,4 @@
-import {Sprite, Point} from 'pixi.js';
+import {Sprite, Point, DisplayObject, Texture} from 'pixi.js';
 
 import {DrawnConstruct, TransformProperties} from '../../canvas/drawing/drawn-construct';
 import {Entity} from '../../entitysystem/entity';
@@ -7,15 +7,21 @@ import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
 
 import {CameraAttribute} from './camera-attribute';
 
+class CameraDrawnConstruct extends DrawnConstruct {
+    cameraTexture : Texture;
+
+    drawable(totalMillis : number) : DisplayObject {
+        let sprite = new Sprite(this.cameraTexture);
+        sprite.position = this.transformProperties.position as Point;
+        return sprite;
+    }
+}
+
 export function getCameraAttributeDrawnConstruct(cameraAttribute : CameraAttribute, assetService : AssetService) : DrawnConstruct {
     let cameraTexture = assetService.get({key: "fa-video-camera", type: "TexturePNG"}, true);
 
-    let drawnConstruct = new DrawnConstruct();
+    let drawnConstruct = new CameraDrawnConstruct();
     drawnConstruct.layer = Number.POSITIVE_INFINITY;
-    drawnConstruct.drawable = (totalMillis : number, transformProperties : TransformProperties) => {
-        let sprite = new Sprite(cameraTexture);
-        sprite.position = transformProperties.position as Point;
-        return sprite;
-    }
+    drawnConstruct.cameraTexture = cameraTexture;
     return drawnConstruct;
 }

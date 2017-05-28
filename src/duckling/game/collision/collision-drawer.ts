@@ -11,25 +11,33 @@ import {CollisionAttribute} from './collision-attribute';
 
 const blue = 0x00ccff;
 
-export function getCollisionAttributeDrawnConstruct(collisionAttribute : CollisionAttribute, assetService : AssetService) : DrawnConstruct {
-    let drawnConstruct = new DrawnConstruct();
-    drawnConstruct.layer = Number.POSITIVE_INFINITY;
-    drawnConstruct.painter = (graphics : Graphics, transformProperties : TransformProperties) => {
+class CollisionDrawnConstruct extends DrawnConstruct {
+    dimension : Vector;
+    anchor : Vector;
+
+    paint(graphics : Graphics) {
         graphics.lineStyle(1, blue, 1);
         drawRectangle(
             {
-                x: transformProperties.position.x - (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x),
-                y: transformProperties.position.y - (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y)
+                x: this.transformProperties.position.x - (this.dimension.x * this.anchor.x),
+                y: this.transformProperties.position.y - (this.dimension.y * this.anchor.y)
             }, 
-            collisionAttribute.dimension.dimension, 
+            this.dimension, 
             graphics);
         drawX(
             {
-                x: transformProperties.position.x - (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x),
-                y: transformProperties.position.y - (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y)
+                x: this.transformProperties.position.x - (this.dimension.x * this.anchor.x),
+                y: this.transformProperties.position.y - (this.dimension.y * this.anchor.y)
             }, 
-            collisionAttribute.dimension.dimension, 
+            this.dimension, 
             graphics);
-    };
+    }
+}
+
+export function getCollisionAttributeDrawnConstruct(collisionAttribute : CollisionAttribute, assetService : AssetService) : DrawnConstruct {
+    let drawnConstruct = new CollisionDrawnConstruct();
+    drawnConstruct.layer = Number.POSITIVE_INFINITY;
+    drawnConstruct.dimension = collisionAttribute.dimension.dimension;
+    drawnConstruct.anchor = collisionAttribute.anchor;
     return drawnConstruct;
 }

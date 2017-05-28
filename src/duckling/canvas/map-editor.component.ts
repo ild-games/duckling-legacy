@@ -194,14 +194,9 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private _buildCanvasBackground() : DrawnConstruct {
         let dimension = this.projectService.project.value.currentMap.dimension;
-        let drawnConstruct = new DrawnConstruct();
+        let drawnConstruct = new CanvasBackgroundDrawnConstruct();
         drawnConstruct.layer = Number.NEGATIVE_INFINITY;
-        drawnConstruct.painter = (graphics : Graphics) => {
-            drawCanvasBackground(
-                {x: 0, y: 0},
-                dimension,
-                graphics);
-        };
+        drawnConstruct.dimension = dimension;
         return drawnConstruct;
     }
 
@@ -210,22 +205,11 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
             return new DrawnConstruct();
         }
 
-        let drawnConstruct = new DrawnConstruct();
+        let drawnConstruct = new GridDrawnConstruct();
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.painter = (graphics : Graphics) => {
-            graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
-            let dimension = this.projectService.project.value.currentMap.dimension;
-            let gridSize = this.projectService.project.value.currentMap.gridSize;
-            drawGrid(
-                {x: 0, y: 0},
-                dimension,
-                {x: gridSize, y: gridSize},
-                graphics);
-            drawCanvasBorder(
-                {x: 0, y: 0},
-                dimension,
-                graphics);
-        };
+        drawnConstruct.scale = this.scale;
+        drawnConstruct.dimension = this.projectService.project.value.currentMap.dimension;
+        drawnConstruct.gridSize = this.projectService.project.value.currentMap.gridSize;
         return drawnConstruct;
     }
 
@@ -240,15 +224,11 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     private _addDrawnConstructsToContainer(drawnConstructs : DrawnConstruct[], container : Container) {
         let graphics = new Graphics();
         for (let drawnConstruct of drawnConstructs) {
-            if (drawnConstruct.drawable) {
-                let displayObject = drawnConstruct.drawable(this._totalMillis, drawnConstruct.transformProperties);
-                if (displayObject) {
-                    container.addChild(displayObject);
-                }
+            let displayObject = drawnConstruct.drawable(this._totalMillis);
+            if (displayObject) {
+                container.addChild(displayObject);
             }
-            if (drawnConstruct.painter) {
-                drawnConstruct.painter(graphics, drawnConstruct.transformProperties);
-            }
+            drawnConstruct.paint(graphics);
         }
         container.addChild(graphics);
     }
@@ -259,5 +239,35 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private _clearCache() {
         this._drawnConstructCache = [];
+    }
+}
+
+class CanvasBackgroundDrawnConstruct extends DrawnConstruct {
+    dimension : Vector;
+
+    paint(graphics : Graphics) {
+        drawCanvasBackground(
+            {x: 0, y: 0},
+            this.dimension,
+            graphics);
+    }
+}
+
+class GridDrawnConstruct extends DrawnConstruct {
+    scale : number;
+    dimension : Vector;
+    gridSize : number
+
+    paint(graphics : Graphics) {
+        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
+        drawGrid(
+            {x: 0, y: 0},
+            this.dimension,
+            {x: this.gridSize, y: this.gridSize},
+            graphics);
+        drawCanvasBorder(
+            {x: 0, y: 0},
+            this.dimension,
+            graphics);
     }
 }

@@ -17,8 +17,7 @@ import {SelectionService} from '../../selection';
 import {ProjectService} from '../../project/project.service';
 import {KeyboardCode} from '../../util';
 import {drawRectangle} from '../drawing';
-import {DrawnConstruct, PainterFunction, DrawableFunction} from '../drawing/drawn-construct';
-
+import {DrawnConstruct} from '../drawing/drawn-construct';
 
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 import {minCornerSnapDistance} from './_grid-snap';
@@ -43,29 +42,21 @@ export class EntityMoveTool extends BaseTool {
     }
 
     drawTool(canvasZoom : number) : DrawnConstruct {
-        let drawnConstruct = new DrawnConstruct();
-        drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.drawable = this.drawable(canvasZoom);
-        drawnConstruct.painter = this.painter(canvasZoom);
-        return drawnConstruct;
+        return this.createDrawnConstruct(canvasZoom);
     }
 
-    drawable(canvasZoom : number) : DrawableFunction {
-        // If the move tool should utilize a drawable in the future, implement it here. 
-        // An unimplemented function allows it to play along nicely with the dual-purpose
-        // selected entity tool.
-        return null;
-    }
-
-    painter(canvasZoom : number) : PainterFunction {
+    createDrawnConstruct(canvasZoom : number) : EntityMoveToolDrawnConstruct {
         let box = this._getSelectedEntityBox();
         if (!box) {
-            return null;
+            return new EntityMoveToolDrawnConstruct();
         }
-        return (graphics : Graphics) => {
-            graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
-            drawRectangle(box.position, box.dimension, graphics);
-        }
+
+        let drawnConstruct = new EntityMoveToolDrawnConstruct();
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        drawnConstruct.box = box;
+        drawnConstruct.canvasZoom = canvasZoom;
+        return drawnConstruct;
+
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -194,5 +185,19 @@ export class EntityMoveTool extends BaseTool {
 
     private _isDeleteKey(keyCode : number) : boolean {
         return keyCode === KeyboardCode.DELETE;
+    }
+}
+
+export class EntityMoveToolDrawnConstruct extends DrawnConstruct {
+    canvasZoom : number;
+    box : Box2;
+
+    paint(graphics : Graphics) {
+        if (!this.box) {
+            return;
+        }
+
+        graphics.lineStyle(1 / this.canvasZoom, 0x3355cc, 1);
+        drawRectangle(this.box.position, this.box.dimension, graphics);
     }
 }

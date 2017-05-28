@@ -8,7 +8,8 @@ import {
     EntityPositionService,
     EntityBoxService
 } from '../../entitysystem';
-import {Vector} from '../../math';
+import {Vector} from '../../math/vector';
+import {Box2} from '../../math/box2';
 import {SelectionService} from '../../selection';
 import {newMergeKey} from '../../state';
 import {BaseTool, CanvasMouseEvent} from './base-tool';
@@ -37,12 +38,10 @@ export class EntityCreatorTool extends BaseTool {
             return new DrawnConstruct();
         }
 
-        let drawnConstruct = new DrawnConstruct();
+        let drawnConstruct = new EntityCreatorToolDrawnConstruct();
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.painter = (graphics : Graphics) => {
-            graphics.lineStyle(1 / canvasZoom, 0xffcc00, 1);
-            drawRectangle(box.position, box.dimension, graphics);
-        };
+        drawnConstruct.canvasZoom = canvasZoom;
+        drawnConstruct.box = box;
         return drawnConstruct;
     }
 
@@ -64,5 +63,15 @@ export class EntityCreatorTool extends BaseTool {
 
     get icon() {
         return "pencil";
+    }
+}
+
+class EntityCreatorToolDrawnConstruct extends DrawnConstruct {
+    canvasZoom : number;
+    box : Box2;
+
+    paint(graphics : Graphics) {
+        graphics.lineStyle(1 / this.canvasZoom, 0xffcc00, 1);
+        drawRectangle(this.box.position, this.box.dimension, graphics);
     }
 }

@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Container, DisplayObject, Graphics} from 'pixi.js';
 
-import {DrawnConstruct, PainterFunction, DrawableFunction} from '../drawing/drawn-construct';
+import {DrawnConstruct} from '../drawing/drawn-construct';
 
 import {MultiModeTool} from './multi-mode-tool';
-import {EntityMoveTool} from './entity-move-tool';
-import {EntityResizeTool} from './resize-tool';
+import {EntityMoveTool, EntityMoveToolDrawnConstruct} from './entity-move-tool';
+import {EntityResizeTool, ResizeToolDrawnConstruct} from './resize-tool';
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 
 @Injectable()
@@ -26,40 +26,11 @@ export class SelectedEntityTool extends MultiModeTool {
     }
 
     drawTool(canvasZoom : number) : DrawnConstruct {
-        let drawnConstruct = new DrawnConstruct();
+        let drawnConstruct = new SelectedEntityToolDrawnConstruct();
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.painter = this._painter(canvasZoom);
-        drawnConstruct.drawable = this._drawable(canvasZoom);
+        drawnConstruct.moveToolConstruct = this._entityMoveTool.createDrawnConstruct(canvasZoom);
+        drawnConstruct.resizeToolConstruct = this._entityResizeTool.createDrawnConstruct(canvasZoom);
         return drawnConstruct;
-    }
-
-    private _painter(canvasZoom : number) : PainterFunction {
-        return (graphics : Graphics) => {
-            let movePainter = this._entityMoveTool.painter(canvasZoom);
-            if (movePainter) {
-                movePainter(graphics);
-            }
-            let resizePainter = this._entityResizeTool.painter(canvasZoom);
-            if (resizePainter) {
-                resizePainter(graphics);
-            }
-        };
-    }
-
-    private _drawable(canvasZoom : number) : DrawableFunction {
-        let moveDrawable = this._entityMoveTool.drawable(canvasZoom);
-        let resizeDrawable = this._entityResizeTool.drawable(canvasZoom);
-
-        return () => {
-            let container = new Container();
-            if (moveDrawable) {
-                container.addChild(moveDrawable());
-            }
-            if (resizeDrawable) {
-                container.addChild(resizeDrawable());
-            }
-            return container;
-        }
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -87,5 +58,28 @@ export class SelectedEntityTool extends MultiModeTool {
 
     get icon() {
         return "arrows";
+    }
+}
+
+class SelectedEntityToolDrawnConstruct extends DrawnConstruct {
+    resizeToolConstruct : ResizeToolDrawnConstruct;
+    moveToolConstruct : EntityMoveToolDrawnConstruct;
+
+    drawable(totalMillis : number) : DisplayObject {
+        let container = new Container();
+        let resizeToolDisplayObject = this.resizeToolConstruct.drawable(totalMillis);
+        if (resizeToolDisplayObject) {
+            container.addChild(resizeToolDisplayObject);
+        }
+        let moveToolDisplayObject = this.moveToolConstruct.drawable(totalMillis);
+        if (moveToolDisplayObject) {
+            container.addChild(moveToolDisplayObject);
+        }
+        return container;
+    }
+
+    paint(graphics : Graphics) {
+        this.resizeToolConstruct.paint(graphics);
+        this.moveToolConstruct.paint(graphics);
     }
 }
