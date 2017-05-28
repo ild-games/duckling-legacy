@@ -32,19 +32,6 @@ import {CanvasComponent} from './canvas.component';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
 
-const BACKGROUND_CACHE_KEY = "background";
-const ENTITIES_CACHE_KEY = "entities";
-const GRID_CACHE_KEY = "grid";
-const TOOL_CACHE_KEY = "tool";
-// this cache controls the order in which the drawables on the map editor are drawn
-const CACHE_KEYS : string[] = [BACKGROUND_CACHE_KEY, ENTITIES_CACHE_KEY, GRID_CACHE_KEY, TOOL_CACHE_KEY];
-
-type DrawableCache = {
-    displayObject : DisplayObject;
-    graphics? : Graphics;
-    dirty: boolean;
-}
-
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
  */
@@ -113,7 +100,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     private _totalMillis = 0;
     private _redrawInterval : Subscriber<any>;
     private _drawerServiceSubscription : Subscriber<any>;
-    private _drawableCache : {[key : string] : DrawableCache} = {};
+    private _drawnConstructCache : DrawnConstruct[][] = [];
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
     @ViewChild('canvasElement') canvasComponent : CanvasComponent;
@@ -132,9 +119,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this._initCache();
         this._drawerServiceSubscription = this._entityDrawerService.invalidateDrawableCache.subscribe(() => {
-            this._markCacheDirty(ENTITIES_CACHE_KEY);
+            this._clearCache();
         }) as Subscriber<any>;
     }
 
@@ -166,42 +152,44 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     onToolSelected(newTool : BaseTool) {
         this._setTool(newTool);
-        this._markCacheDirty(TOOL_CACHE_KEY)
+        this._clearCache();
     }
 
     onStageDimensonsChanged(stageDimensions : Vector) {
         this.projectService.changeDimension(stageDimensions);
-        this._markCacheDirty(BACKGROUND_CACHE_KEY);
-        this._markCacheDirty(GRID_CACHE_KEY);
+        this._clearCache();
     }
 
     onGridSizeChanged(gridSize : number) {
         this.projectService.changeGridSize(gridSize);
-        this._markCacheDirty(GRID_CACHE_KEY);
+        this._clearCache();
     }
 
     onScaleChanged(scale : number) {
         this.scale = scale;
-        this._markAllCachesDirty();
+        this._clearCache();
     }
 
     onShowGridChanged(showGrid : boolean) {
         this.showGrid = showGrid;
-        this._markCacheDirty(GRID_CACHE_KEY);
+        this._clearCache();
     }
 
     async openMap(mapKey : string) {
         await this.projectService.openMap(mapKey);
-        this._markAllCachesDirty();
+        this._clearCache();
     }
 
     private _redrawAllDisplayObjects() {
-        let drawnConstructs : DrawnConstruct[] = [];
-        drawnConstructs = drawnConstructs.concat(this._buildCanvasBackground());
-        drawnConstructs = drawnConstructs.concat(this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value));
-        drawnConstructs = drawnConstructs.concat(this._buildGrid());
-        drawnConstructs = drawnConstructs.concat(this.tool.drawTool(this.scale));
-        this._buildCanvasDisplayObject(this._renderPriorityService.sortDrawnConstructs(drawnConstructs));
+        if (this._drawnConstructCache.length === 0) {
+            let drawnConstructs : DrawnConstruct[] = [];
+            drawnConstructs = drawnConstructs.concat(this._buildCanvasBackground());
+            drawnConstructs = drawnConstructs.concat(this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value));
+            drawnConstructs = drawnConstructs.concat(this._buildGrid());
+            drawnConstructs = drawnConstructs.concat(this.tool.drawTool(this.scale));
+            this._drawnConstructCache = this._renderPriorityService.sortDrawnConstructs(drawnConstructs);
+        }
+        this._buildCanvasDisplayObject(this._drawnConstructCache);
     }
 
     private _buildCanvasBackground() : DrawnConstruct {
@@ -269,32 +257,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService);
     }
 
-    private _initCache() {
-        for (let cacheKey of CACHE_KEYS) {
-            this._drawableCache[cacheKey] = {
-                displayObject: null,
-                graphics: new Graphics(),
-                dirty: true
-            };
-        }
-    }
-
-    private _resetCacheDrawables(cacheKey : string) {
-        this._drawableCache[cacheKey].displayObject = null;
-        this._drawableCache[cacheKey].graphics.clear();
-    }
-
-    private _markCacheDirty(cacheKey : string) {
-        this._drawableCache[cacheKey].dirty = true;
-    }
-
-    private _markAllCachesDirty() {
-        for (let cacheKey of CACHE_KEYS) {
-            this._markCacheDirty(cacheKey);
-        }
-    }
-
-    private _markCacheActive(cacheKey : string) {
-        this._drawableCache[cacheKey].dirty = false;
+    private _clearCache() {
+        this._drawnConstructCache = [];
     }
 }
