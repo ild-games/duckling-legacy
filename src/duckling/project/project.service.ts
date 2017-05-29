@@ -4,7 +4,8 @@ import {BehaviorSubject} from 'rxjs';
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
 import {AttributeKey} from '../entitysystem/entity'
 import {StoreService, clearUndoHistoryAction} from '../state';
-import {JsonLoaderService, PathService} from '../util';
+import {PathService} from '../util';
+import {JsonLoaderService, SaveResult} from '../util/json-loader.service';
 import {immutableAssign} from '../util/model';
 import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
@@ -28,7 +29,12 @@ import {SnackBarService} from './snackbar.service';
 import {CustomAttribute} from './custom-attribute';
 
 const MAP_DIR = "maps";
-const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
+const DEFAULT_INITIAL_MAP = "map1";
+const USER_META_DATA_FILE = "user-preferences";
+
+export type UserMetaData = {
+    initialMap?: string
+}
 
 /**
  * The project service provides access to project level state and operations.
@@ -61,7 +67,11 @@ export class ProjectService {
             let versionInfo = await this._migrationService.openProject(projectPath);
             this._storeService.dispatch(setVersionInfo(versionInfo));
             await this._loadProjectMetaData();
-            await this.openMap(MAP_NAME);
+
+            // if, in the future, user meta data needs to be accessed after the initial project
+            // open, it should be a member on the project and put in the rxjs store.
+            let userMetaData = await this._loadUserMetaData();
+            await this.openMap(userMetaData.initialMap);
         } catch (error) {
             this._dialog.showErrorDialog("Unable to Open the Project", error.message);
         }
@@ -109,7 +119,9 @@ export class ProjectService {
             }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
         await this._saveProjectMetaData();
+        await this._saveUserMetaData(this._buildUserMetaData());
         await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
+        this._snackbar.invokeSnacks();
     }
 
     private async _saveProjectMetaData() {
@@ -126,6 +138,39 @@ export class ProjectService {
                 this._pathService.join(this._customAttributesRoot, customAttribute.key + '.json'),
                 JSON.stringify(customAttribute.content, null, 4));
         }
+    }
+
+    private async _saveUserMetaData(userMetaData : UserMetaData) : Promise<void> {
+        let json = JSON.stringify(userMetaData, null, 4);
+        let saveResult = await this._jsonLoader.saveJsonToPath(this.getUserMetaDataPath(USER_META_DATA_FILE), json);
+        if (!saveResult.isSuccess) {
+            this._snackbar.addSnack("Error: There was a problem saving last opened map!");
+        }
+    }
+
+    private async _loadUserMetaData() : Promise<UserMetaData> {
+        let fileExists = await this._pathService.pathExists(this.getUserMetaDataPath(USER_META_DATA_FILE));
+        let userPreferences : UserMetaData = {};
+        if (fileExists) {
+            let json = await this._jsonLoader.getJsonFromPath(this.getUserMetaDataPath(USER_META_DATA_FILE));
+            userPreferences = JSON.parse(json);
+        }
+
+        return this._fillMissingUserPreferences(userPreferences);
+    }
+
+    private async _fillMissingUserPreferences(metaData : UserMetaData) : Promise<UserMetaData> {
+        metaData["initialMap"] = metaData["initialMap"] || await this._initialUserPreferenceMap();
+        return metaData;
+    }
+
+    private async _initialUserPreferenceMap() : Promise<string> {
+        let initialMap = DEFAULT_INITIAL_MAP;
+        let mapNames = await this.getMaps();
+        if (mapNames.length > 0) {
+            initialMap = mapNames[0];
+        }
+        return initialMap;
     }
 
     /**
@@ -198,27 +243,22 @@ export class ProjectService {
      * @param metaDataFile The name of the meta data file stored in the project/ folder (excluding file type)
      * @return the path that can be used to load the meta data file
      */
-    getMetaDataPath(metaDataFile : string) : string {
-        return this._pathService.join(this.metaDataDir, metaDataFile + ".json");
+    getProjectMetaDataPath(metaDataFile : string) : string {
+        return this._pathService.join(this.projectMetaDataDir, metaDataFile + ".json");
     }
 
     /**
-     * The project's root directory.
+     * Get the path to a specific meta data file for the user.
+     * @param metaDataFile The name of the meta data file stored in the .duckling/ folder (excluding file type)
+     * @return the path that can be used to load the meta data file
      */
-    get home() {
-        return this._project.home;
-    }
-
-    /**
-     * The directory project metadata is stored in.
-     */
-    get metaDataDir() : string {
-        return this._pathService.join(this.home, "project");
+    getUserMetaDataPath(metaDataFile : string) : string {
+        return this._pathService.join(this.userMetaDataDir, metaDataFile + ".json");
     }
 
     private async _parseMapJson(json : any, key : string) {
         let rawMap = json ? JSON.parse(json) : createRawMap(this._project.versionInfo.mapVersion);
-        rawMap = await this._migrationService.migrateMap(rawMap, this._project.versionInfo, this.metaDataDir);
+        rawMap = await this._migrationService.migrateMap(rawMap, this._project.versionInfo, this.projectMetaDataDir);
 
         let parsedMap = await this._mapParser.rawMapToParsedMap(rawMap);
 
@@ -240,6 +280,12 @@ export class ProjectService {
         this._storeService.dispatch(clearUndoHistoryAction());
     }
 
+    private _buildUserMetaData() : UserMetaData {
+        return {
+            initialMap: this._project.currentMap.key
+        };
+    }
+
     private _mapPathToRoot(root : string, path : string) {
         return path.slice(root.length+1, -(".map".length));
     }
@@ -258,5 +304,23 @@ export class ProjectService {
 
     private get _project() : Project {
         return this._storeService.getState().project;
+    }
+
+    get home() {
+        return this._project.home;
+    }
+
+    /**
+     * the directory project metadata is stored in.
+     */
+    get projectMetaDataDir() : string {
+        return this._pathService.join(this.home, "project");
+    }
+
+    /**
+     * the directory user metadata is stored in.
+     */
+    get userMetaDataDir() : string {
+        return this._pathService.join(this.home, ".duckling");
     }
 }

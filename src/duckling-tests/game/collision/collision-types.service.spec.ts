@@ -13,7 +13,7 @@ import {mainReducer} from '../../../duckling/main.reducer';
 import {mergeEntityAction} from '../../../duckling/entitysystem';
 
 class MockProjectService {
-    getMetaDataPath(metaData : string) : string{
+    getProjectMetaDataPath(metaData : string) : string{
         return `META_DATA_${metaData}`;
     }
 }
