@@ -4,7 +4,8 @@ import {BehaviorSubject} from 'rxjs';
 import {createEntitySystem, EntitySystemService, EntityKey, EntitySystem} from '../entitysystem';
 import {AttributeKey} from '../entitysystem/entity'
 import {StoreService, clearUndoHistoryAction} from '../state';
-import {JsonLoaderService, PathService} from '../util';
+import {PathService} from '../util';
+import {JsonLoaderService, SaveResult} from '../util/json-loader.service';
 import {immutableAssign} from '../util/model';
 import {DialogService} from '../util/dialog.service';
 import {glob} from '../util/glob';
@@ -28,7 +29,8 @@ import {SnackBarService} from './snackbar.service';
 import {CustomAttribute} from './custom-attribute';
 
 const MAP_DIR = "maps";
-const MAP_NAME = "map1"; //Note - Eventually this will be a dynamic property
+const DEFAULT_INITIAL_MAP = "map1";
+const INITIAL_MAP_FILE = "initial-map";
 
 /**
  * The project service provides access to project level state and operations.
@@ -61,7 +63,8 @@ export class ProjectService {
             let versionInfo = await this._migrationService.openProject(projectPath);
             this._storeService.dispatch(setVersionInfo(versionInfo));
             await this._loadProjectMetaData();
-            await this.openMap(MAP_NAME);
+            let mapName = await this._loadInitialMap();
+            await this.openMap(mapName);
         } catch (error) {
             this._dialog.showErrorDialog("Unable to Open the Project", error.message);
         }
@@ -109,7 +112,9 @@ export class ProjectService {
             }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
         await this._saveProjectMetaData();
+        await this._saveInitialMap(this._project.currentMap.key);
         await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
+        this._snackbar.invokeSnacks();
     }
 
     private async _saveProjectMetaData() {
@@ -125,6 +130,32 @@ export class ProjectService {
             await this._jsonLoader.saveJsonToPath(
                 this._pathService.join(this._customAttributesRoot, customAttribute.key + '.json'),
                 JSON.stringify(customAttribute.content, null, 4));
+        }
+    }
+
+    private async _loadInitialMap() : Promise<string> {
+        let initialMapFileExists = await this._pathService.pathExists(this.getMetaDataPath(INITIAL_MAP_FILE));
+        if (initialMapFileExists) {
+            let json = await this._jsonLoader.getJsonFromPath(this.getMetaDataPath(INITIAL_MAP_FILE));
+            let initialMapData = JSON.parse(json);
+            if (initialMapData["initialMap"]) {
+                return initialMapData["initialMap"];
+            }
+        }
+
+        let mapNames = await this.getMaps();
+        if (mapNames.length > 0) {
+            return mapNames[0];
+        }
+
+        return DEFAULT_INITIAL_MAP;
+    }
+
+    private async _saveInitialMap(mapName : string) : Promise<void> {
+        let json = JSON.stringify({initialMap: mapName}, null, 4);
+        let saveResult = await this._jsonLoader.saveJsonToPath(this.getMetaDataPath(INITIAL_MAP_FILE), json);
+        if (!saveResult.isSuccess) {
+            this._snackbar.addSnack("Error: There was a problem saving last opened map!");
         }
     }
 
