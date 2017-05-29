@@ -1,14 +1,14 @@
 import {ReflectiveInjector} from '@angular/core';
 
 import {
-    RenderTexture, 
-    Texture, 
-    Sprite, 
-    Graphics, 
-    DisplayObject, 
-    Container, 
-    BaseTexture, 
-    Point, 
+    RenderTexture,
+    Texture,
+    Sprite,
+    Graphics,
+    DisplayObject,
+    Container,
+    BaseTexture,
+    Point,
     extras,
     Text
 } from 'pixi.js';
@@ -216,31 +216,38 @@ export class ImageDrawnConstruct extends DrawnConstruct {
     imageDrawable : ImageDrawable;
     texture : Texture;
 
+    private _sprite : DisplayObject = null;
+
     drawable(totalMillis : number) : DisplayObject {
-        let sprite : any;
-        if (this.imageDrawable.isTiled && this.imageDrawable.tiledArea) {
-            sprite = new extras.TilingSprite(this.texture, this.imageDrawable.tiledArea.x, this.imageDrawable.tiledArea.y);
-        } else {
-            sprite = new Sprite(this.texture);
+        if (this._sprite === null) {
+            if (this.imageDrawable.isTiled && this.imageDrawable.tiledArea) {
+                this._sprite = new extras.TilingSprite(this.texture, this.imageDrawable.tiledArea.x, this.imageDrawable.tiledArea.y);
+            } else {
+                this._sprite = new Sprite(this.texture);
+            }
+            this._applyDisplayObjectTransforms(this._sprite);
         }
-        this._applyDisplayObjectTransforms(sprite);
-        return sprite;
+        return this._sprite;
     }
 }
 
 export class ContainerDrawnConstruct extends DrawnConstruct {
     childConstructs : DrawnConstruct[] = [];
 
+    private _container : Container = null;
+
     drawable(totalMillis : number) : DisplayObject {
-        let container = new Container();
-        for (let childConstruct of this.childConstructs) {
-            let childDisplayObject = childConstruct.drawable(totalMillis);
-            if (childDisplayObject) {
-                container.addChild(childDisplayObject);
+        if (this._container === null) {
+            this._container = new Container();
+            for (let childConstruct of this.childConstructs) {
+                let childDisplayObject = childConstruct.drawable(totalMillis);
+                if (childDisplayObject) {
+                    this._container.addChild(childDisplayObject);
+                }
             }
+            this._applyDisplayObjectTransforms(this._container);
         }
-        this._applyDisplayObjectTransforms(container);
-        return container;
+        return this._container;
     }
 }
 
