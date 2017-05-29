@@ -2,8 +2,14 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter
+    EventEmitter,
+    ViewChild,
+    OnChanges,
+    SimpleChange,
+    AfterViewInit,
+    ChangeDetectorRef
 } from '@angular/core';
+import {MdSelect, MdSelectChange} from '@angular/material';
 
 /**
  * Select control that accepts an array of options.
@@ -11,14 +17,19 @@ import {
 @Component({
     selector: "dk-array-select",
     template:`
-        <select [ngModel]="value" (input)="onSelectionChanged($event.target.selectedIndex)">
-            <option *ngFor="let option of options" [value]="option.value">
+        <md-select #mdSelect
+            (change)="onSelectionChanged($event)">
+            <md-option 
+                *ngFor="let option of options" 
+                [value]="option.value">
                 {{option.title}}
-            </option>
-        </select>
+            </md-option>
+        </md-select>
     `
 })
-export class ArraySelectComponent {
+export class ArraySelectComponent implements AfterViewInit {
+    @ViewChild(MdSelect) mdSelect : MdSelect;
+    
     /**
      * The selected value.
      */
@@ -27,15 +38,29 @@ export class ArraySelectComponent {
     /**
      * The available options.
      */
-    @Input() options : SelectOption [];
+    @Input() options : SelectOption[];
 
     /**
      * Event that is published with the new value whenever the user changes it.
      */
-    @Output() selection = new EventEmitter<String>();
+    @Output() selection = new EventEmitter<string>();
 
-    onSelectionChanged(index : number) {
-        this.selection.emit(this.options[index].value);
+    constructor(private _changeDetector : ChangeDetectorRef) {
+    }
+
+    ngAfterViewInit() {
+        this.mdSelect.writeValue(this.value);
+        this._changeDetector.detectChanges();
+        
+        this.mdSelect.options.changes.startWith(null).subscribe(() => {
+            // Defer setting the value to avoid angular errors. 
+            // TODO (ISSUE #???): This can be removed once the next @angular/material beta is released
+            Promise.resolve(null).then(() => this.mdSelect.writeValue(this.value));
+        });
+    }
+
+    onSelectionChanged(selectChanged : MdSelectChange) {
+        this.selection.emit(selectChanged.value);
     }
 
     indexOfValue(value : string) {
