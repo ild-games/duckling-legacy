@@ -33,7 +33,7 @@ const DEFAULT_INITIAL_MAP = "map1";
 const USER_META_DATA_FILE = "user-preferences";
 
 export type UserMetaData = {
-    initialMap: string
+    initialMap?: string
 }
 
 /**
@@ -150,26 +150,18 @@ export class ProjectService {
 
     private async _loadUserMetaData() : Promise<UserMetaData> {
         let fileExists = await this._pathService.pathExists(this.getUserMetaDataPath(USER_META_DATA_FILE));
+        let userPreferences : UserMetaData = {};
         if (fileExists) {
             let json = await this._jsonLoader.getJsonFromPath(this.getUserMetaDataPath(USER_META_DATA_FILE));
-            let userPreferences = JSON.parse(json);
-            await this._fillMissingUserPreferences(userPreferences);
-            return userPreferences;
+            userPreferences = JSON.parse(json);
         }
 
-        return this._newUserPreferences();
+        return this._fillMissingUserPreferences(userPreferences);
     }
 
     private async _fillMissingUserPreferences(metaData : UserMetaData) : Promise<UserMetaData> {
         metaData["initialMap"] = metaData["initialMap"] || await this._initialUserPreferenceMap();
         return metaData;
-    }
-
-    private async _newUserPreferences() : Promise<UserMetaData> {
-        let initialMap = await this._initialUserPreferenceMap();
-        return {
-            initialMap
-        };
     }
 
     private async _initialUserPreferenceMap() : Promise<string> {
