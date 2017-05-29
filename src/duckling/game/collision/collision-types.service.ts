@@ -38,7 +38,7 @@ export class CollisionTypesService {
     }
 
     async postLoadMapHook(map : RawMapFile)  : Promise<RawMapFile> {
-        let json = await this._jsonLoader.getJsonFromPath(this._project.getMetaDataPath("collision-types"));
+        let json = await this._jsonLoader.getJsonFromPath(this._project.getProjectMetaDataPath("collision-types"));
         if (this._tryParseJsonFile(json)) {
             this._registerAnconaCollisionTypes(JSON.parse(json));
         } else {
@@ -123,7 +123,7 @@ export class CollisionTypesService {
 
     private _saveCollisionTypesMetaData() {
         let json = JSON.stringify({collisionTypes: Array.from(this.collisionTypes.getValue().values())}, null, 4);
-        this._jsonLoader.saveJsonToPath(this._project.getMetaDataPath("collision-types"), json);
+        this._jsonLoader.saveJsonToPath(this._project.getProjectMetaDataPath("collision-types"), json);
     }
 
     private _tryParseJsonFile(jsonStream : string) : boolean {
