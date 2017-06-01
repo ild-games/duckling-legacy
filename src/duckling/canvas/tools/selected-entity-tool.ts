@@ -26,10 +26,10 @@ export class SelectedEntityTool extends MultiModeTool {
     }
 
     drawTool(canvasZoom : number) : DrawnConstruct {
-        let drawnConstruct = new SelectedEntityToolDrawnConstruct();
+        let drawnConstruct = new SelectedEntityToolDrawnConstruct(
+            this._entityResizeTool.createDrawnConstruct(canvasZoom),
+            this._entityMoveTool.createDrawnConstruct(canvasZoom));
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.moveToolConstruct = this._entityMoveTool.createDrawnConstruct(canvasZoom);
-        drawnConstruct.resizeToolConstruct = this._entityResizeTool.createDrawnConstruct(canvasZoom);
         return drawnConstruct;
     }
 
@@ -62,24 +62,28 @@ export class SelectedEntityTool extends MultiModeTool {
 }
 
 class SelectedEntityToolDrawnConstruct extends DrawnConstruct {
-    resizeToolConstruct : ResizeToolDrawnConstruct;
-    moveToolConstruct : EntityMoveToolDrawnConstruct;
+    private _container = new Container();
 
-    drawable(totalMillis : number) : DisplayObject {
-        let container = new Container();
-        let resizeToolDisplayObject = this.resizeToolConstruct.drawable(totalMillis);
+    constructor(private _resizeToolConstruct : DrawnConstruct,
+                private _moveToolConstruct : DrawnConstruct) {
+        super();
+    }
+
+    protected _drawable(totalMillis : number) : DisplayObject {
+        this._container.removeChildren();
+        let resizeToolDisplayObject = this._resizeToolConstruct.draw(totalMillis);
         if (resizeToolDisplayObject) {
-            container.addChild(resizeToolDisplayObject);
+            this._container.addChild(resizeToolDisplayObject);
         }
-        let moveToolDisplayObject = this.moveToolConstruct.drawable(totalMillis);
+        let moveToolDisplayObject = this._moveToolConstruct.draw(totalMillis);
         if (moveToolDisplayObject) {
-            container.addChild(moveToolDisplayObject);
+            this._container.addChild(moveToolDisplayObject);
         }
-        return container;
+        return this._container;
     }
 
     paint(graphics : Graphics) {
-        this.resizeToolConstruct.paint(graphics);
-        this.moveToolConstruct.paint(graphics);
+        this._resizeToolConstruct.paint(graphics);
+        this._moveToolConstruct.paint(graphics);
     }
 }

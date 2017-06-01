@@ -38,10 +38,8 @@ export class EntityCreatorTool extends BaseTool {
             return new DrawnConstruct();
         }
 
-        let drawnConstruct = new EntityCreatorToolDrawnConstruct();
+        let drawnConstruct = new EntityCreatorToolDrawnConstruct(canvasZoom, box);
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.canvasZoom = canvasZoom;
-        drawnConstruct.box = box;
         return drawnConstruct;
     }
 
@@ -67,11 +65,13 @@ export class EntityCreatorTool extends BaseTool {
 }
 
 class EntityCreatorToolDrawnConstruct extends DrawnConstruct {
-    canvasZoom : number;
-    box : Box2;
+    constructor(private _canvasZoom : number,
+                private _box : Box2) {
+        super();
+    }
 
     paint(graphics : Graphics) {
-        graphics.lineStyle(1 / this.canvasZoom, 0xffcc00, 1);
-        drawRectangle(this.box.position, this.box.dimension, graphics);
+        graphics.lineStyle(1 / this._canvasZoom, 0xffcc00, 1);
+        drawRectangle(this._box.position, this._box.dimension, graphics);
     }
 }

@@ -3,7 +3,7 @@ import {Container, DisplayObject, Graphics} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
-import {AssetService} from '../../project';
+import {AssetService} from '../../project/asset.service';
 import {Vector} from '../../math/vector';
 import {TaggedEntity, Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
 import {EntitySystemService} from '../../entitysystem/entity-system.service';
@@ -17,7 +17,7 @@ import {immutableAssign} from '../../util/model';
 import {RenderPriorityService} from './render-priority.service';
 import {DrawnConstruct} from './drawn-construct';
 
-export type AttributeDrawer<T> = (attribute : T, assetService? : any) => DrawnConstruct;
+export type AttributeDrawer<T> = (attribute : T, assetService? : AssetService, position? : Vector) => DrawnConstruct;
 
 type EntityCache = {[key:string]:EntityCacheEntry};
 
@@ -71,13 +71,12 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         if (drawer) {
             let drawnConstruct : DrawnConstruct;
             if (this._assets.areAssetsLoaded(entity, key)) {
-                drawnConstruct = drawer(entity[key], this._assets);
+                drawnConstruct = drawer(entity[key], this._assets, this._entityPosition.getPosition(entity));
             } else {
                 drawnConstruct = drawMissingAsset(this._assets);
             }
 
             if (drawnConstruct) {
-                drawnConstruct.transformProperties.position = this._entityPosition.getPosition(entity);
                 if (this._layers.isAttributeImplemented(key)) {
                     let layerString = this._layers.getAttributeLayer(entity, key);
 

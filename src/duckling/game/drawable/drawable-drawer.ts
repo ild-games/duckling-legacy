@@ -37,76 +37,67 @@ import {ShapeType, Shape, cppTypeToShapeType} from './shape';
 import {Circle} from './circle';
 import {Rectangle} from './rectangle';
 
-export function getDrawableAttributeDrawnConstruct(drawableAttribute : DrawableAttribute, assetService : AssetService) : DrawnConstruct {
+export function getDrawableAttributeDrawnConstruct(drawableAttribute : DrawableAttribute, assetService : AssetService, position : Vector) : DrawnConstruct {
     if (!drawableAttribute.topDrawable) {
         return null;
     }
 
-    return drawDrawable(drawableAttribute.topDrawable, assetService);
+    return drawDrawable(drawableAttribute.topDrawable, assetService, position);
 }
 
-/**
- * Draws the drawable and bounds of the drawable for a Drawable.
- * @param entity The entity with the drawable attribute
- * @param assetService Service containing the assets needed to render the drawable attribute.
- * @param ignoreInactive Optional parameter. Set to true to ignore the inactive drawable field. Useful if you need to measure the drawn construct
- * @return DisplayObject that contains the drawn DrawableAttribute
- */
-export function drawDrawable(drawable : Drawable, assetService : AssetService, ignoreInactive : boolean = false) : DrawnConstruct {
+export function drawDrawable(drawable : Drawable, assetService : AssetService, position : Vector, ignoreInactive : boolean = false) : DrawnConstruct {
     if (drawable.inactive && !ignoreInactive) {
         return null;
     }
 
     let drawnConstruct : DrawnConstruct;
     let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
+    let transformProperties : TransformProperties = {
+        anchor: drawable.anchor,
+        rotation: drawable.rotation,
+        scale: drawable.scale,
+        position: position
+    };
     switch (drawableType) {
         case DrawableType.Shape:
-            drawnConstruct = _drawShapeDrawable(drawable as ShapeDrawable);
+            drawnConstruct = _drawShapeDrawable(drawable as ShapeDrawable, transformProperties);
             break;
         case DrawableType.Container:
-            drawnConstruct = _drawContainerDrawable(drawable as ContainerDrawable, assetService, ignoreInactive);
+            drawnConstruct = _drawContainerDrawable(drawable as ContainerDrawable, assetService, ignoreInactive, transformProperties);
             break;
         case DrawableType.Image:
-            drawnConstruct = _drawImageDrawable(drawable as ImageDrawable, assetService);
+            drawnConstruct = _drawImageDrawable(drawable as ImageDrawable, assetService, transformProperties);
             break;
         case DrawableType.Animated:
-            drawnConstruct = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService, ignoreInactive);
+            drawnConstruct = _drawAnimatedDrawable(drawable as AnimatedDrawable, assetService, ignoreInactive, transformProperties);
             break;
         case DrawableType.Text:
-            drawnConstruct = _drawTextDrawable(drawable as TextDrawable, assetService);
+            drawnConstruct = _drawTextDrawable(drawable as TextDrawable, assetService, transformProperties);
             break;
         case DrawableType.TileBlock:
-            drawnConstruct = drawTileBlockDrawable(drawable as TileBlockDrawable, assetService);
+            drawnConstruct = drawTileBlockDrawable(drawable as TileBlockDrawable, assetService, transformProperties);
             break;
         default:
             drawnConstruct = null;
             break;
     }
 
-    if (drawnConstruct) {
-        drawnConstruct.transformProperties.anchor = drawable.anchor;
-        drawnConstruct.transformProperties.rotation = drawable.rotation;
-        drawnConstruct.transformProperties.scale = drawable.scale;
-    }
     return drawnConstruct;
 }
 
-function _drawShapeDrawable(shapeDrawable : ShapeDrawable) : ShapeDrawnConstruct {
-    let drawnConstruct = new ShapeDrawnConstruct();
-    drawnConstruct.shapeDrawable = shapeDrawable;
+function _drawShapeDrawable(shapeDrawable : ShapeDrawable, transformProperties : TransformProperties) : ShapeDrawnConstruct {
+    let drawnConstruct = new ShapeDrawnConstruct(shapeDrawable, transformProperties);
     return drawnConstruct;
 }
 
-function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService) : DrawnConstruct {
+function _drawImageDrawable(imageDrawable : ImageDrawable, assetService : AssetService, transformProperties : TransformProperties) : DrawnConstruct {
     try {
         let texture = _getTexture(imageDrawable, assetService);
         if (!texture) {
             return null;
         }
 
-        let drawnConstruct = new ImageDrawnConstruct();
-        drawnConstruct.imageDrawable = imageDrawable;
-        drawnConstruct.texture = texture;
+        let drawnConstruct = new ImageDrawnConstruct(imageDrawable, texture, transformProperties);
         return drawnConstruct;
     } catch(e) {
         console.log(e.message);
@@ -148,151 +139,168 @@ function _isPartialImageValidForTexture(imageDrawable : ImageDrawable, texture :
     );
 }
 
-function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService, ignoreInactive : boolean) : ContainerDrawnConstruct {
+function _drawContainerDrawable(containerDrawable : ContainerDrawable, assetService : AssetService, ignoreInactive : boolean, transformProperties : TransformProperties) : ContainerDrawnConstruct {
     if (!containerDrawable.drawables || containerDrawable.drawables.length === 0) {
         return null;
     }
 
-    let drawnConstruct = new ContainerDrawnConstruct();
+    let childConstructs : DrawnConstruct[] = [];
     for (let drawable of containerDrawable.drawables) {
-        let childDrawable = drawDrawable(drawable, assetService, ignoreInactive);
+        let childDrawable = drawDrawable(drawable, assetService, {x: 0, y: 0}, ignoreInactive);
         if (childDrawable) {
-            drawnConstruct.childConstructs.push(childDrawable);
+            childConstructs.push(childDrawable);
         }
     }
+    let drawnConstruct = new ContainerDrawnConstruct(childConstructs, transformProperties);
+
     return drawnConstruct;
 }
 
-function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService, ignoreInactive : boolean) : AnimatedDrawnConstruct {
+function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService : AssetService, ignoreInactive : boolean, transformProperties : TransformProperties) : AnimatedDrawnConstruct {
     if (!animatedDrawable.frames || animatedDrawable.frames.length === 0) {
         return null;
     }
 
-    let drawnConstruct = new AnimatedDrawnConstruct();
+    let frames : DrawnConstruct[] = [];
     for (let frame of animatedDrawable.frames) {
-        let frameDrawable = drawDrawable(frame, assetService, ignoreInactive);
+        let frameDrawable = drawDrawable(frame, assetService, {x: 0, y: 0}, ignoreInactive);
         if (frameDrawable) {
-            drawnConstruct.frames.push(frameDrawable);
+            frames.push(frameDrawable);
         }
     }
-    drawnConstruct.duration = animatedDrawable.duration;
+    let drawnConstruct = new AnimatedDrawnConstruct(frames, animatedDrawable.duration, transformProperties);
     return drawnConstruct;
 }
 
-function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService) : DrawnConstruct {
-    let drawnConstruct = new TextDrawnConstruct();
-    drawnConstruct.textDrawable = textDrawable;
+function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService, transformProperties : TransformProperties) : DrawnConstruct {
     let fontKey = this.textDrawable.text.fontKey || "Arial";
-    drawnConstruct.fontFamily = this.assetService.fontFamilyFromAssetKey(fontKey);
+    let drawnConstruct = new TextDrawnConstruct(
+        textDrawable, 
+        this.assetService.fontFamilyFromAssetKey(fontKey),
+        transformProperties);
     return drawnConstruct;
 }
 
 export class ShapeDrawnConstruct extends DrawnConstruct {
-    shapeDrawable : ShapeDrawable;
+    private _graphics : Graphics = new Graphics();
 
-    drawable(totalMillis : number) : DisplayObject {
-        let graphics = new Graphics();
-        let colorHex = colorToHex(this.shapeDrawable.shape.fillColor);
-        graphics.beginFill(parseInt(colorHex, 16), 1);
-        graphics.fillAlpha = this.shapeDrawable.shape.fillColor.a / 255;
-        let shapeType = cppTypeToShapeType(this.shapeDrawable.shape.__cpp_type)
+    constructor(private _shapeDrawable : ShapeDrawable,
+                transformProperties : TransformProperties) {
+        super();
+        this.transformProperties = transformProperties;
+
+        let colorHex = colorToHex(this._shapeDrawable.shape.fillColor);
+        this._graphics.beginFill(parseInt(colorHex, 16), 1);
+        this._graphics.fillAlpha = this._shapeDrawable.shape.fillColor.a / 255;
+        let shapeType = cppTypeToShapeType(this._shapeDrawable.shape.__cpp_type)
         switch (shapeType) {
             case ShapeType.Circle:
-                let radius = (this.shapeDrawable.shape as Circle).radius;
-                drawEllipse({x: 0, y: 0}, radius, radius, graphics);
+                let radius = (this._shapeDrawable.shape as Circle).radius;
+                drawEllipse({x: 0, y: 0}, radius, radius, this._graphics);
                 break;
             case ShapeType.Rectangle:
-                let dimension = (this.shapeDrawable.shape as Rectangle).dimension;
-                drawRectangle({x: 0, y: 0}, dimension, graphics);
+                let dimension = (this._shapeDrawable.shape as Rectangle).dimension;
+                drawRectangle({x: 0, y: 0}, dimension, this._graphics);
                 break;
         }
-        graphics.endFill();
-        this._applyDisplayObjectTransforms(graphics);
-        return graphics;
+        this._graphics.endFill();
+        this._applyDisplayObjectTransforms(this._graphics);
+    }
+
+    protected _drawable(totalMillis : number) : DisplayObject {
+        return this._graphics;
     }
 }
 
 export class ImageDrawnConstruct extends DrawnConstruct {
-    imageDrawable : ImageDrawable;
-    texture : Texture;
-
     private _sprite : DisplayObject = null;
 
-    drawable(totalMillis : number) : DisplayObject {
-        if (this._sprite === null) {
-            if (this.imageDrawable.isTiled && this.imageDrawable.tiledArea) {
-                this._sprite = new extras.TilingSprite(this.texture, this.imageDrawable.tiledArea.x, this.imageDrawable.tiledArea.y);
-            } else {
-                this._sprite = new Sprite(this.texture);
-            }
-            this._applyDisplayObjectTransforms(this._sprite);
+    constructor(private _imageDrawable : ImageDrawable,
+                private _texture : Texture,
+                transformProperties : TransformProperties) {
+        super();
+        this.transformProperties = transformProperties;
+
+        if (this._imageDrawable.isTiled && this._imageDrawable.tiledArea) {
+            this._sprite = new extras.TilingSprite(this._texture, this._imageDrawable.tiledArea.x, this._imageDrawable.tiledArea.y);
+        } else {
+            this._sprite = new Sprite(this._texture);
         }
+        this._applyDisplayObjectTransforms(this._sprite);
+    }
+
+    protected _drawable(totalMillis : number) : DisplayObject {
         return this._sprite;
     }
 }
 
 export class ContainerDrawnConstruct extends DrawnConstruct {
-    childConstructs : DrawnConstruct[] = [];
+    private _container : Container = new Container();
 
-    private _container : Container = null;
+    constructor(private _childConstructs : DrawnConstruct[],
+                transformProperties : TransformProperties) {
+        super();
+        this.transformProperties = transformProperties;
+    }
 
-    drawable(totalMillis : number) : DisplayObject {
-        if (this._container === null) {
-            this._container = new Container();
-            for (let childConstruct of this.childConstructs) {
-                let childDisplayObject = childConstruct.drawable(totalMillis);
-                if (childDisplayObject) {
-                    this._container.addChild(childDisplayObject);
-                }
+    protected _drawable(totalMillis : number) : DisplayObject {
+        this._container.removeChildren();
+        for (let childConstruct of this._childConstructs) {
+            let childDisplayObject = childConstruct.draw(totalMillis);
+            if (childDisplayObject) {
+                this._container.addChild(childDisplayObject);
             }
-            this._applyDisplayObjectTransforms(this._container);
         }
+        this._applyDisplayObjectTransforms(this._container);
         return this._container;
     }
 }
 
 export class AnimatedDrawnConstruct extends DrawnConstruct {
-    frames : DrawnConstruct[] = [];
-    duration : number = 0;
-
-    drawable(totalMillis : number) : DisplayObject {
-        let container = new Container();
-        let displayObject = this._determineAnimationDisplayObject(totalMillis);
-        if (displayObject) {
-            container.addChild(displayObject);
-        }
-        this._applyDisplayObjectTransforms(container);
-        return container;
+    constructor(private _frames : DrawnConstruct[],
+                private _duration : number,
+                transformProperties : TransformProperties) {
+        super();
+        this.transformProperties = transformProperties;
     }
 
-    private _determineAnimationDisplayObject(totalMillis : number) : DisplayObject {
+    protected _drawable(totalMillis : number) : DisplayObject {
         let curFrameIndex = 0;
-        if (this.duration !== 0) {
-            curFrameIndex = Math.trunc(totalMillis / (this.duration * 1000)) % this.frames.length;
+        if (this._duration !== 0) {
+            curFrameIndex = Math.trunc(totalMillis / (this._duration * 1000)) % this._frames.length;
         }
 
-        let curFrame = this.frames[curFrameIndex];
+        let curFrame = this._frames[curFrameIndex];
         if (curFrame) {
-            return curFrame.drawable(totalMillis);
+            let displayObject = curFrame.draw(totalMillis);
+            this._applyDisplayObjectTransforms(displayObject);
+            return displayObject;
         }
         return null;
     }
 }
 
 export class TextDrawnConstruct extends DrawnConstruct {
-    textDrawable : TextDrawable;
-    fontFamily : string;
+    private _text : Text;
 
-    drawable(totalMillis : number) : DisplayObject {
-        let colorHex = "#" + colorToHex(this.textDrawable.text.color);
-        let text = new Text(
-            this.textDrawable.text.text,
+    constructor(private _textDrawable : TextDrawable,
+                private _fontFamily : string,
+                transformProperties : TransformProperties) {
+        super();
+        this.transformProperties = transformProperties;
+
+        let colorHex = "#" + colorToHex(this._textDrawable.text.color);
+        this._text = new Text(
+            this._textDrawable.text.text,
             {
-                fontFamily: this.fontFamily,
-                fontSize: this.textDrawable.text.characterSize,
+                fontFamily: this._fontFamily,
+                fontSize: this._textDrawable.text.characterSize,
                 fill: colorHex
             } as PIXI.TextStyle);
-        this._applyDisplayObjectTransforms(text);
-        return text;
+        this._applyDisplayObjectTransforms(this._text);
+    }
+
+    protected _drawable(totalMillis : number) : DisplayObject {
+        return this._text;
     }
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {DisplayObject} from 'pixi.js';
+import {DisplayObject, Container} from 'pixi.js';
 
 import {newMergeKey} from '../../state';
 import {Box2} from '../../math/box2';
@@ -18,7 +18,6 @@ import {minCornerSnapDistance} from './_grid-snap';
 @Injectable()
 export class EntityResizeTool extends BaseTool {
     private _mergeKey : any;
-
     private _selectedAnchor : DragAnchor = null;
     private _mouseDownLocation : Vector = null;
     private _initialEntityBox : Box2 = null;
@@ -62,19 +61,18 @@ export class EntityResizeTool extends BaseTool {
         return this.createDrawnConstruct(canvasZoom);
     }
 
-    createDrawnConstruct(canvasZoom : number) : ResizeToolDrawnConstruct {
+    createDrawnConstruct(canvasZoom : number) : DrawnConstruct {
         let entityBox = this.selectedBox;
         if (!entityBox) {
-            return new ResizeToolDrawnConstruct();
+            return new DrawnConstruct();
         }
         let drawnAnchors : DisplayObject[] = [];
         for (let anchor of DRAG_ANCHORS) {
             drawnAnchors.push(drawAnchor(entityBox, anchor, canvasZoom, this._assetService));
         }
 
-        let drawnConstruct = new ResizeToolDrawnConstruct();
+        let drawnConstruct = new ResizeToolDrawnConstruct(drawnAnchors);
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.anchorDisplayObjects = drawnAnchors;
         return drawnConstruct;
     }
 
@@ -127,13 +125,16 @@ export class EntityResizeTool extends BaseTool {
 }
 
 export class ResizeToolDrawnConstruct extends DrawnConstruct {
-    anchorDisplayObjects : DisplayObject[] = [];
+    private _container = new Container();
 
-    drawable(totalMillis : number) {
-        let container = new PIXI.Container();
-        for (let anchor of this.anchorDisplayObjects) {
-            container.addChild(anchor);
+    constructor(private _anchorDisplayObjects : DisplayObject[]) {
+        super();
+        for (let anchor of this._anchorDisplayObjects) {
+            this._container.addChild(anchor);
         }
-        return container;
+    }
+
+    protected _drawable(totalMillis : number) {
+        return this._container;
     }
 }

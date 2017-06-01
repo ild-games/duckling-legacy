@@ -16,20 +16,41 @@ export class DrawnConstruct {
     transformProperties : TransformProperties = new TransformProperties();
     private _layer : number;
 
-    drawable(totalMillis : number) : DisplayObject {
-        return null;
+    draw(totalMillis : number) : DisplayObject {
+        return this._drawable(totalMillis);
     }
 
     paint(graphics : Graphics) {
     }
 
+    protected _drawable(totalMillis : number) : DisplayObject {
+        return null;
+    }
+
     protected _applyDisplayObjectTransforms(displayObject : DisplayObject) {
-        let bounds = this._displayObjectBounds(displayObject);
-        displayObject.rotation = degreesToRadians(this.transformProperties.rotation);
-        displayObject.scale = this.transformProperties.scale as Point;
-        displayObject.pivot.x = bounds.dimension.x * this.transformProperties.anchor.x;
-        displayObject.pivot.y = bounds.dimension.y * this.transformProperties.anchor.y;
-        displayObject.position = this.transformProperties.position as Point;
+        if (this.transformProperties.anchor.x || this.transformProperties.anchor.y) {
+            let bounds = this._displayObjectBounds(displayObject);
+            displayObject.pivot.x = bounds.dimension.x * this.transformProperties.anchor.x;
+            displayObject.pivot.y = bounds.dimension.y * this.transformProperties.anchor.y;
+        }
+
+        if (this.transformProperties.rotation) {
+            displayObject.rotation = degreesToRadians(this.transformProperties.rotation);
+        }
+
+        if (this.transformProperties.scale.x) {
+            displayObject.scale.x = this.transformProperties.scale.x;
+        }
+        if (this.transformProperties.scale.y) {
+            displayObject.scale.y = this.transformProperties.scale.y;
+        }
+
+        if (this.transformProperties.position.x) {
+            displayObject.position.x = this.transformProperties.position.x;
+        }
+        if (this.transformProperties.position.y) {
+            displayObject.position.y = this.transformProperties.position.y;
+        }
     }
 
     private _displayObjectBounds(displayObject : DisplayObject) : Box2 {
@@ -71,17 +92,15 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
     }
 
     let container = new Container();
-    if (drawnConstruct.drawable) {
-        let displayObject = drawnConstruct.drawable(1);
+    let displayObject = drawnConstruct.draw(1);
+    if (displayObject) {
         container.addChild(displayObject);
         displayObject.updateTransform();
     }
-    if (drawnConstruct.paint) {
-        let graphics = new Graphics();
-        drawnConstruct.paint(graphics);
-        container.addChild(graphics);
-        graphics.updateTransform();
-    }
+    let graphics = new Graphics();
+    drawnConstruct.paint(graphics);
+    container.addChild(graphics);
+    graphics.updateTransform();
 
     let containerBounds = container.getBounds();
     return {

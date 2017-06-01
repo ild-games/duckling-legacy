@@ -44,7 +44,7 @@ export const drawableBoundingBox : AttributeBoundingBox<DrawableAttribute> = {
 };
 
 function getDrawableBox(drawable : Drawable, assetService : AssetService) : Box2 {
-    let construct = drawDrawable(drawable, assetService, true);
+    let construct = drawDrawable(drawable, assetService, {x: 0, y: 0}, true);
     if (construct) {
         return drawnConstructBounds(construct);
     }

@@ -32,6 +32,15 @@ import {CanvasComponent} from './canvas.component';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
 
+type LayerCache = {
+    graphics : Graphics; 
+    drawnConstructs : DrawnConstruct[]
+};
+
+type DrawableCache = {
+    layers: LayerCache[];
+};
+
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
  */
@@ -100,7 +109,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     private _totalMillis = 0;
     private _redrawInterval : Subscriber<any>;
     private _drawerServiceSubscription : Subscriber<any>;
-    private _drawnConstructCache : DrawnConstruct[][] = [];
+    private _drawnConstructCache : DrawableCache = {layers: []};
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
     @ViewChild('canvasElement') canvasComponent : CanvasComponent;
@@ -181,22 +190,28 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _redrawAllDisplayObjects() {
-        if (this._drawnConstructCache.length === 0) {
+        if (this._drawnConstructCache.layers.length === 0) {
             let drawnConstructs : DrawnConstruct[] = [];
             drawnConstructs = drawnConstructs.concat(this._buildCanvasBackground());
             drawnConstructs = drawnConstructs.concat(this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value));
             drawnConstructs = drawnConstructs.concat(this._buildGrid());
             drawnConstructs = drawnConstructs.concat(this.tool.drawTool(this.scale));
-            this._drawnConstructCache = this._renderPriorityService.sortDrawnConstructs(drawnConstructs);
+
+            let layeredDrawnConstructs = this._renderPriorityService.sortDrawnConstructs(drawnConstructs);
+            for (let layer = 0; layer < layeredDrawnConstructs.length; layer++) {
+                this._drawnConstructCache.layers[layer] = {
+                    graphics: new Graphics(),
+                    drawnConstructs: layeredDrawnConstructs[layer]
+                };
+            }
+            this._paintDrawableCache();
         }
-        this._buildCanvasDisplayObject(this._drawnConstructCache);
+        this._buildCanvasDisplayObject();
     }
 
     private _buildCanvasBackground() : DrawnConstruct {
-        let dimension = this.projectService.project.value.currentMap.dimension;
-        let drawnConstruct = new CanvasBackgroundDrawnConstruct();
+        let drawnConstruct = new CanvasBackgroundDrawnConstruct(this.projectService.project.value.currentMap.dimension);
         drawnConstruct.layer = Number.NEGATIVE_INFINITY;
-        drawnConstruct.dimension = dimension;
         return drawnConstruct;
     }
 
@@ -205,32 +220,31 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
             return new DrawnConstruct();
         }
 
-        let drawnConstruct = new GridDrawnConstruct();
+        let drawnConstruct = new GridDrawnConstruct(this.scale, this.projectService.project.value.currentMap.dimension, this.projectService.project.value.currentMap.gridSize);
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
-        drawnConstruct.scale = this.scale;
-        drawnConstruct.dimension = this.projectService.project.value.currentMap.dimension;
-        drawnConstruct.gridSize = this.projectService.project.value.currentMap.gridSize;
         return drawnConstruct;
     }
 
-    private _buildCanvasDisplayObject(layerDrawnConstructs : DrawnConstruct[][]) {
+    private _buildCanvasDisplayObject() {
         let canvasDrawnElements = new Container();
-        for (let drawnConstructs of layerDrawnConstructs) {
-            this._addDrawnConstructsToContainer(drawnConstructs, canvasDrawnElements);
+        for (let layerCache of this._drawnConstructCache.layers) {
+            for (let drawnConstruct of layerCache.drawnConstructs) {
+                let displayObject = drawnConstruct.draw(this._totalMillis);
+                if (displayObject) {
+                    canvasDrawnElements.addChild(displayObject);
+                }
+                canvasDrawnElements.addChild(layerCache.graphics);
+            }
         }
         this.canvasDisplayObject = canvasDrawnElements;
     }
 
-    private _addDrawnConstructsToContainer(drawnConstructs : DrawnConstruct[], container : Container) {
-        let graphics = new Graphics();
-        for (let drawnConstruct of drawnConstructs) {
-            let displayObject = drawnConstruct.drawable(this._totalMillis);
-            if (displayObject) {
-                container.addChild(displayObject);
+    private _paintDrawableCache() {
+        for (let layerCache of this._drawnConstructCache.layers) {
+            for (let drawnConstruct of layerCache.drawnConstructs) {
+                drawnConstruct.paint(layerCache.graphics);
             }
-            drawnConstruct.paint(graphics);
         }
-        container.addChild(graphics);
     }
 
     private _setTool(tool : BaseTool) {
@@ -238,36 +252,47 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _clearCache() {
-        this._drawnConstructCache = [];
+        this._drawnConstructCache = {layers: []};
     }
 }
 
 class CanvasBackgroundDrawnConstruct extends DrawnConstruct {
-    dimension : Vector;
+    private _graphics = new Graphics();
 
-    paint(graphics : Graphics) {
+    constructor(private _dimension : Vector) {
+        super();
         drawCanvasBackground(
             {x: 0, y: 0},
-            this.dimension,
-            graphics);
+            this._dimension,
+            this._graphics);
+        }
+
+    protected _drawable(totalMillis : number) {
+        return this._graphics;
     }
 }
 
 class GridDrawnConstruct extends DrawnConstruct {
-    scale : number;
-    dimension : Vector;
-    gridSize : number
+    private _graphics = new Graphics();
 
-    paint(graphics : Graphics) {
-        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
+    constructor(private _scale : number,
+                private _dimension : Vector,
+                private _gridSize : number) {
+        super();
+
+        this._graphics.lineStyle(1 / this._scale, 0xEEEEEE, 0.5);
         drawGrid(
             {x: 0, y: 0},
-            this.dimension,
-            {x: this.gridSize, y: this.gridSize},
-            graphics);
+            this._dimension,
+            {x: this._gridSize, y: this._gridSize},
+            this._graphics);
         drawCanvasBorder(
             {x: 0, y: 0},
-            this.dimension,
-            graphics);
+            this._dimension,
+            this._graphics);
+    }
+
+    protected _drawable(totalMillis : number) {
+        return this._graphics;
     }
 }

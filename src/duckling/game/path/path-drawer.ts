@@ -5,6 +5,7 @@ import {Entity} from '../../entitysystem/entity';
 import {drawRectangle} from '../../canvas/drawing/util';
 import {Vector, vectorRotate} from '../../math/vector';
 import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
+import {AssetService} from '../../project/asset.service';
 
 import {PathAttribute} from './path-attribute';
 
@@ -17,36 +18,37 @@ const PATH_COLOR = 0x607d8b;
 const STARTING_SQUARE_COLOR = 0x00a626;
 const ENDING_SQUARE_COLOR = 0xf44336;
 
-export function getPathAttributeDrawnConstruct(pathAttribute : PathAttribute) : DrawnConstruct {
+export function getPathAttributeDrawnConstruct(pathAttribute : PathAttribute, assetService : AssetService, position : Vector) : DrawnConstruct {
     if (!pathAttribute) {
         return null;
     }
 
-    let drawnConstruct = new PathDrawnConstruct();
+    let drawnConstruct = new PathDrawnConstruct(pathAttribute.vertices, pathAttribute.isLoop, position);
     drawnConstruct.layer = Number.POSITIVE_INFINITY;
-    drawnConstruct.vertices = pathAttribute.vertices;
-    drawnConstruct.isLoop = pathAttribute.isLoop;
     return drawnConstruct;
 }
 
 class PathDrawnConstruct extends DrawnConstruct {
-    vertices : Vector[];
-    isLoop : boolean;
+    private _displayObject : DisplayObject;
 
-    drawable(totalMillis : number) : DisplayObject {
-        let displayObject = this._pathDrawable();
-        if (displayObject) {
-            displayObject.position = this.transformProperties.position as Point;
-        }
-        return displayObject;
+    constructor(private _vertices : Vector[],
+                private _isLoop : boolean,
+                private _position : Vector) {
+        super();
+        this._displayObject = this._pathDrawable();
+        this._displayObject.position = this._position as Point;
+    }
+
+    protected _drawable(totalMillis : number) : DisplayObject {
+        return this._displayObject;
     }
 
     private _pathDrawable() : DisplayObject {
-        if (this.vertices.length === 0) {
+        if (this._vertices.length === 0) {
             return null;
         }
 
-        if (this.isLoop) {
+        if (this._isLoop) {
             return this._drawLoop();
         } else {
             return this._drawNonLoopPath();
@@ -54,24 +56,24 @@ class PathDrawnConstruct extends DrawnConstruct {
     }
 
     private _drawLoop() : DisplayObject {
-        if (this.vertices.length === 1) {
-            return this._drawJoint(this.vertices[0]);
+        if (this._vertices.length === 1) {
+            return this._drawJoint(this._vertices[0]);
         }
 
         return this._drawLoopPath();
     }
 
     private _drawNonLoopPath() : DisplayObject {
-        if (this.vertices.length === 1) {
-            return this._drawJoint(this.vertices[0]);
+        if (this._vertices.length === 1) {
+            return this._drawJoint(this._vertices[0]);
         }
 
-        if (this.vertices.length === 2) {
+        if (this._vertices.length === 2) {
             let container = new Container();
-            let theta = this._pathTheta(this.vertices[0], this.vertices[1]);
-            container.addChild(this._drawLine(this.vertices[0], this.vertices[1]));
-            container.addChild(this._drawSquare(this.vertices[0], theta, STARTING_SQUARE_COLOR));
-            container.addChild(this._drawSquare(this.vertices[1], theta, ENDING_SQUARE_COLOR));
+            let theta = this._pathTheta(this._vertices[0], this._vertices[1]);
+            container.addChild(this._drawLine(this._vertices[0], this._vertices[1]));
+            container.addChild(this._drawSquare(this._vertices[0], theta, STARTING_SQUARE_COLOR));
+            container.addChild(this._drawSquare(this._vertices[1], theta, ENDING_SQUARE_COLOR));
             return container;
         }
 
@@ -80,16 +82,16 @@ class PathDrawnConstruct extends DrawnConstruct {
 
     private _drawLoopPath() : DisplayObject {
         let container = new Container();
-        for (let i = 0; i < this.vertices.length - 1; i++) {
-            let startVertex = this.vertices[i];
-            let endVertex = this.vertices[i + 1];
+        for (let i = 0; i < this._vertices.length - 1; i++) {
+            let startVertex = this._vertices[i];
+            let endVertex = this._vertices[i + 1];
             container.addChild(this._drawLine(startVertex, endVertex));
             container.addChild(this._drawJoint(endVertex));
         }
-        container.addChild(this._drawLine(this.vertices[this.vertices.length - 1], this.vertices[0]));
+        container.addChild(this._drawLine(this._vertices[this._vertices.length - 1], this._vertices[0]));
 
         // draw the loop indicator last so that it will be drawn on top of other segments
-        container.addChild(this._drawLoopIndicator(this.vertices[0], this._pathTheta(this.vertices[0], this.vertices[1])));
+        container.addChild(this._drawLoopIndicator(this._vertices[0], this._pathTheta(this._vertices[0], this._vertices[1])));
         return container;
     }
 
@@ -105,17 +107,17 @@ class PathDrawnConstruct extends DrawnConstruct {
     private _drawPath() : DisplayObject {
         let container = new Container();
 
-        for (let i = 0; i < this.vertices.length - 1; i++) {
-            let startVertex = this.vertices[i];
-            let endVertex = this.vertices[i + 1];
+        for (let i = 0; i < this._vertices.length - 1; i++) {
+            let startVertex = this._vertices[i];
+            let endVertex = this._vertices[i + 1];
             container.addChild(this._drawLine(startVertex, endVertex));
             container.addChild(this._drawJoint(endVertex));
         }
 
-        let firstSquareTheta = this._pathTheta(this.vertices[0], this.vertices[1]);
-        container.addChild(this._drawSquare(this.vertices[0], firstSquareTheta, STARTING_SQUARE_COLOR));
-        let secondSquareTheta = this._pathTheta(this.vertices[this.vertices.length - 2], this.vertices[this.vertices.length - 1]);
-        container.addChild(this._drawSquare(this.vertices[this.vertices.length - 1], secondSquareTheta, ENDING_SQUARE_COLOR));
+        let firstSquareTheta = this._pathTheta(this._vertices[0], this._vertices[1]);
+        container.addChild(this._drawSquare(this._vertices[0], firstSquareTheta, STARTING_SQUARE_COLOR));
+        let secondSquareTheta = this._pathTheta(this._vertices[this._vertices.length - 2], this._vertices[this._vertices.length - 1]);
+        container.addChild(this._drawSquare(this._vertices[this._vertices.length - 1], secondSquareTheta, ENDING_SQUARE_COLOR));
 
         return container;
     }

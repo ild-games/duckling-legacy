@@ -4,24 +4,30 @@ import {DrawnConstruct, TransformProperties} from '../../canvas/drawing/drawn-co
 import {Entity} from '../../entitysystem/entity';
 import {AssetService} from '../../project/asset.service';
 import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
+import {Vector} from '../../math/vector';
 
 import {CameraAttribute} from './camera-attribute';
 
 class CameraDrawnConstruct extends DrawnConstruct {
-    cameraTexture : Texture;
+    private _sprite : Sprite;
 
-    drawable(totalMillis : number) : DisplayObject {
-        let sprite = new Sprite(this.cameraTexture);
-        sprite.position = this.transformProperties.position as Point;
-        return sprite;
+    constructor(private _cameraTexture : Texture,
+                private _position : Vector) {
+        super();
+
+        this._sprite = new Sprite(this._cameraTexture);
+        this._sprite.position = this._position as Point;
+    }
+
+    protected _drawable(totalMillis : number) : DisplayObject {
+        return this._sprite;
     }
 }
 
-export function getCameraAttributeDrawnConstruct(cameraAttribute : CameraAttribute, assetService : AssetService) : DrawnConstruct {
+export function getCameraAttributeDrawnConstruct(cameraAttribute : CameraAttribute, assetService : AssetService, position : Vector) : DrawnConstruct {
     let cameraTexture = assetService.get({key: "fa-video-camera", type: "TexturePNG"}, true);
 
-    let drawnConstruct = new CameraDrawnConstruct();
+    let drawnConstruct = new CameraDrawnConstruct(cameraTexture, position);
     drawnConstruct.layer = Number.POSITIVE_INFINITY;
-    drawnConstruct.cameraTexture = cameraTexture;
     return drawnConstruct;
 }
