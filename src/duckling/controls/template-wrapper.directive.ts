@@ -11,7 +11,7 @@ import {
 
 /**
  * Wraps a template to be used in a list of templates. Exposes the wrapped element used as the
- * template and the index of the template in the list. See accordian.component.ts for an example.
+ * template and the index of the template in the list. See accordion.component.ts for an example.
  */
 @Directive({
     selector: '[templateWrapper]'

@@ -7,7 +7,7 @@ import {
     ViewContainerRef
 } from '@angular/core';
 
-import {AccordianComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
+import {AccordionComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 import {AssetService} from '../../project/asset.service';
 import {Vector} from '../../math';
@@ -54,7 +54,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
         <md-card
             *ngIf="hasAnyFrames"
             class="drawables-card">
-            <dk-accordian
+            <dk-accordion
                 titleProperty="key"
                 keyProperty="key"
                 [elements]="animatedDrawable?.frames"
@@ -70,7 +70,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable>
                 </ng-template>
-            </dk-accordian>
+            </dk-accordion>
         </md-card>
     `
 })

@@ -39,7 +39,7 @@ import {PathAttribute} from './path-attribute';
         
         <div class="form-label">Vertices</div>
         <md-card class="vertices-card">
-            <dk-accordian
+            <dk-accordion
                 [elements]="attribute?.vertices"
                 [clone]="true"
                 (elementDeleted)="onVerticesChanged($event)"
@@ -54,7 +54,7 @@ import {PathAttribute} from './path-attribute';
                         (validInput)="onVertexChanged(index, $event)">
                     </dk-vector-input>
                 </ng-template>
-            </dk-accordian>
+            </dk-accordion>
         </md-card> 
     `
 })
