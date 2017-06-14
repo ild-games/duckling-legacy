@@ -28,27 +28,30 @@ export class DrawnConstruct {
     }
 
     protected _applyDisplayObjectTransforms(displayObject : DisplayObject) {
-        if (this.transformProperties.anchor.x || this.transformProperties.anchor.y) {
-            let bounds = this._displayObjectBounds(displayObject);
-            displayObject.pivot.x = bounds.dimension.x * this.transformProperties.anchor.x;
-            displayObject.pivot.y = bounds.dimension.y * this.transformProperties.anchor.y;
+        if (this.transformProperties.anchor) {
+            let bounds : Box2;
+            if (this.transformProperties.anchor.x !== 0.0 || this.transformProperties.anchor.y !== 0.0) {
+                bounds = this._displayObjectBounds(displayObject);
+            }
+            if (this.transformProperties.anchor.x !== 0.0) {
+                displayObject.pivot.x = bounds.dimension.x * this.transformProperties.anchor.x;
+            }
+            if (this.transformProperties.anchor.y !== 0.0) {
+                displayObject.pivot.y = bounds.dimension.y * this.transformProperties.anchor.y;
+            }
         }
 
-        if (this.transformProperties.rotation) {
+        if (this.transformProperties.rotation !== undefined && this.transformProperties.rotation !== null) {
             displayObject.rotation = degreesToRadians(this.transformProperties.rotation);
         }
 
-        if (this.transformProperties.scale.x) {
+        if (this.transformProperties.scale) {
             displayObject.scale.x = this.transformProperties.scale.x;
-        }
-        if (this.transformProperties.scale.y) {
             displayObject.scale.y = this.transformProperties.scale.y;
         }
 
-        if (this.transformProperties.position.x) {
+        if (this.transformProperties.position) {
             displayObject.position.x = this.transformProperties.position.x;
-        }
-        if (this.transformProperties.position.y) {
             displayObject.position.y = this.transformProperties.position.y;
         }
     }

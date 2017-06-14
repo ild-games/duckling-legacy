@@ -257,6 +257,8 @@ export class ContainerDrawnConstruct extends DrawnConstruct {
 }
 
 export class AnimatedDrawnConstruct extends DrawnConstruct {
+    private _container : Container = new Container();
+
     constructor(private _frames : DrawnConstruct[],
                 private _duration : number,
                 transformProperties : TransformProperties) {
@@ -272,9 +274,10 @@ export class AnimatedDrawnConstruct extends DrawnConstruct {
 
         let curFrame = this._frames[curFrameIndex];
         if (curFrame) {
-            let displayObject = curFrame.draw(totalMillis);
-            this._applyDisplayObjectTransforms(displayObject);
-            return displayObject;
+            this._container.removeChildren();
+            this._container.addChild(curFrame.draw(totalMillis));
+            this._applyDisplayObjectTransforms(this._container);
+            return this._container;
         }
         return null;
     }
