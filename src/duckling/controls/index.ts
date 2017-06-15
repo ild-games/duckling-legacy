@@ -10,8 +10,8 @@ export * from './template-wrapper.directive';
 export * from './toolbar-button.component';
 export * from './toolbar-button-group.component';
 export * from './form-label.component';
-export * from './accordian.component';
-export * from './accordian-element.component';
+export * from './accordion.component';
+export * from './accordion-element.component';
 export * from './color.component';
 export * from './icon.component';
 export * from './icon-button.component'

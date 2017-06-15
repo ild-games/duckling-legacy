@@ -7,8 +7,8 @@ import {JsonSchemaEditComponent} from './json-schema-edit.component';
 import {EditInputComponent} from './edit-input.component';
 
 import {
-    AccordianComponent,
-    AccordianElementComponent,
+    AccordionComponent,
+    AccordionElementComponent,
     ArrayChoiceComponent,
     ArraySelectComponent,
     Box2Component,
@@ -34,8 +34,8 @@ import {
 } from './index';
 
 const CONTROL_DECLARATIONS : Array<any> = [
-    AccordianComponent,
-    AccordianElementComponent,
+    AccordionComponent,
+    AccordionElementComponent,
     ArrayChoiceComponent,
     ArraySelectComponent,
     Box2Component,

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 import {Validator} from '../../controls/validated-input.component';
-import {AccordianComponent, FormLabelComponent, EnumChoiceComponent} from '../../controls';
+import {AccordionComponent, FormLabelComponent, EnumChoiceComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
 
 
@@ -31,7 +31,7 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
         <md-card
             *ngIf="containerDrawable?.drawables?.length > 0"
             class="drawables-card">
-            <dk-accordian
+            <dk-accordion
                 [elements]="containerDrawable?.drawables"
                 titleProperty="key"
                 keyProperty="key"
@@ -45,7 +45,7 @@ import {Drawable, DrawableType, drawableTypeToCppType} from './drawable';
                         (drawableChanged)="onChildDrawableChanged(index, $event)">
                     </dk-drawable>
                 </ng-template>
-            </dk-accordian>
+            </dk-accordion>
         </md-card>
     `
 })

@@ -10,13 +10,13 @@ import {
 
 import {immutableAssign, immutableArrayAssign, immutableArrayDelete, immutableSwapElements} from '../util';
 
-import {AccordianElementComponent} from './accordian-element.component';
+import {AccordionElementComponent} from './accordion-element.component';
 import {TemplateWrapperDirective} from './template-wrapper.directive';
 
 @Component({
-    selector: "dk-accordian",
+    selector: "dk-accordion",
     template: `
-        <dk-accordian-element
+        <dk-accordion-element
             *ngFor="let index of indices()"
             [title]="titleForIndex(index)"
             [opened]="openedElements[keyForIndex(index)]"
@@ -32,17 +32,17 @@ import {TemplateWrapperDirective} from './template-wrapper.directive';
                 [templateWrapper]="elementTemplate"
                 [context]="elementContext(index)">
             </ng-template>
-        </dk-accordian-element>
+        </dk-accordion-element>
     `
 })
-export class AccordianComponent<T> {
+export class AccordionComponent<T> {
     @ContentChild(TemplateRef) elementTemplate : TemplateRef<any>;
     /**
-     * The list of elements to be displayed in the accordian
+     * The list of elements to be displayed in the accordion
      */
     @Input() elements : T[];
     /**
-     * The property on the element being displayed in the accordian used for the title
+     * The property on the element being displayed in the accordion used for the title
      */
     @Input() titleProperty : string;
     /**
@@ -54,7 +54,7 @@ export class AccordianComponent<T> {
      */
     @Input() keyProperty : string;
     /**
-     * Whether the accordian can clone its elements.
+     * Whether the accordion can clone its elements.
      */
     @Input() clone : boolean;
     /**
@@ -62,15 +62,15 @@ export class AccordianComponent<T> {
      */
     @Output() elementDeleted = new EventEmitter<ReadonlyArray<T>>();
     /**
-     * Function emitted when an element has been moved up the accordian, passes the new elements array up
+     * Function emitted when an element has been moved up the accordion, passes the new elements array up
      */
     @Output() elementMovedDown = new EventEmitter<ReadonlyArray<T>>();
     /**
-     * Function emitted when an element has been moved down the accordian, passes the new elements array up
+     * Function emitted when an element has been moved down the accordion, passes the new elements array up
      */
     @Output() elementMovedUp = new EventEmitter<ReadonlyArray<T>>();
     /**
-     * Function emitted when an element has been cloned to the bottom of the accordian
+     * Function emitted when an element has been cloned to the bottom of the accordion
      */
     @Output() elementCloned = new EventEmitter<ReadonlyArray<T>>();
 

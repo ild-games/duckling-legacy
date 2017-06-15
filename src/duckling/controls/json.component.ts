@@ -71,7 +71,7 @@ export enum JsonValueType {
                     <dk-icon iconClass="plus"></dk-icon>
                 </button>
                 <md-card class="array-card">
-                    <dk-accordian
+                    <dk-accordion
                         [elements]="value[key]"
                         [titlePrefix]="key + ': '"
                         [clone]="true"
@@ -86,7 +86,7 @@ export enum JsonValueType {
                                 (valueChanged)="onValueChanged($event, key, index)">
                             </dk-json>
                         </ng-template>
-                    </dk-accordian>
+                    </dk-accordion>
                 </md-card>
             </div>
         </div>

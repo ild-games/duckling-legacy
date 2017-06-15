@@ -10,11 +10,11 @@ import {immutableAssign} from '../util';
 import {IconComponent} from './icon.component';
 
 /**
- * Component used as an element within an accordian
+ * Component used as an element within an accordion
  */
 @Component({
-    selector: "dk-accordian-element",
-    styleUrls: ['./duckling/controls/accordian-element.component.css'],
+    selector: "dk-accordion-element",
+    styleUrls: ['./duckling/controls/accordion-element.component.css'],
     template: `
         <dk-section-header
             [sectionOpen]="opened"
@@ -69,7 +69,7 @@ import {IconComponent} from './icon.component';
         </div>
     `
 })
-export class AccordianElementComponent {
+export class AccordionElementComponent {
     @Input() title : string;
     @Input() first : boolean;
     @Input() last : boolean;
