@@ -113,7 +113,7 @@ class MissingDrawnConstruct extends DrawnConstruct {
         this._sprite = new Sprite(this._missingTexture);
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         return this._sprite;
     }
 }

@@ -69,7 +69,7 @@ class SelectedEntityToolDrawnConstruct extends DrawnConstruct {
         super();
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         this._container.removeChildren();
         let resizeToolDisplayObject = this._resizeToolConstruct.draw(totalMillis);
         if (resizeToolDisplayObject) {

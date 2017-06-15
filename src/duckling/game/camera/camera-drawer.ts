@@ -19,7 +19,7 @@ class CameraDrawnConstruct extends DrawnConstruct {
         this._sprite.position = this._position as Point;
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         return this._sprite;
     }
 }

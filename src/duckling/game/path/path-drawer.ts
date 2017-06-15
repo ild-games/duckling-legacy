@@ -39,7 +39,7 @@ class PathDrawnConstruct extends DrawnConstruct {
         this._displayObject.position = this._position as Point;
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         return this._displayObject;
     }
 

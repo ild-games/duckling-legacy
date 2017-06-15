@@ -267,7 +267,7 @@ class CanvasBackgroundDrawnConstruct extends DrawnConstruct {
             this._graphics);
         }
 
-    protected _drawable(totalMillis : number) {
+    draw(totalMillis : number) {
         return this._graphics;
     }
 }
@@ -292,7 +292,7 @@ class GridDrawnConstruct extends DrawnConstruct {
             this._graphics);
     }
 
-    protected _drawable(totalMillis : number) {
+    draw(totalMillis : number) {
         return this._graphics;
     }
 }

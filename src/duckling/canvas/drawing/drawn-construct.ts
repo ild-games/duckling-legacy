@@ -17,14 +17,10 @@ export class DrawnConstruct {
     private _layer : number;
 
     draw(totalMillis : number) : DisplayObject {
-        return this._drawable(totalMillis);
+        return null;
     }
 
     paint(graphics : Graphics) {
-    }
-
-    protected _drawable(totalMillis : number) : DisplayObject {
-        return null;
     }
 
     protected _applyDisplayObjectTransforms(displayObject : DisplayObject) {

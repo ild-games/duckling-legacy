@@ -207,7 +207,7 @@ export class ShapeDrawnConstruct extends DrawnConstruct {
         this._applyDisplayObjectTransforms(this._graphics);
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         return this._graphics;
     }
 }
@@ -229,7 +229,7 @@ export class ImageDrawnConstruct extends DrawnConstruct {
         this._applyDisplayObjectTransforms(this._sprite);
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         return this._sprite;
     }
 }
@@ -243,7 +243,7 @@ export class ContainerDrawnConstruct extends DrawnConstruct {
         this.transformProperties = transformProperties;
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         this._container.removeChildren();
         for (let childConstruct of this._childConstructs) {
             let childDisplayObject = childConstruct.draw(totalMillis);
@@ -266,7 +266,7 @@ export class AnimatedDrawnConstruct extends DrawnConstruct {
         this.transformProperties = transformProperties;
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         let curFrameIndex = 0;
         if (this._duration !== 0) {
             curFrameIndex = Math.trunc(totalMillis / (this._duration * 1000)) % this._frames.length;
@@ -303,7 +303,7 @@ export class TextDrawnConstruct extends DrawnConstruct {
         this._applyDisplayObjectTransforms(this._text);
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         return this._text;
     }
 }

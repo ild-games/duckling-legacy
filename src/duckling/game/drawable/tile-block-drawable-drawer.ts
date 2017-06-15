@@ -78,7 +78,7 @@ class TileBlockDrawnConstruct extends DrawnConstruct {
         this._applyDisplayObjectTransforms(this._container);
     }
 
-    protected _drawable(totalMillis : number) : DisplayObject {
+    draw(totalMillis : number) : DisplayObject {
         return this._container;
     }
 

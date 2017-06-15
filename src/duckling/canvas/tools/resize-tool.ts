@@ -134,7 +134,7 @@ export class ResizeToolDrawnConstruct extends DrawnConstruct {
         }
     }
 
-    protected _drawable(totalMillis : number) {
+    draw(totalMillis : number) {
         return this._container;
     }
 }
