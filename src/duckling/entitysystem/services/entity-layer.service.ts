@@ -70,6 +70,15 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         return layers;
     }
 
+    getAttributeLayer(entity : Entity, attributeKey : AttributeKey) : string {
+        let getLayerImpl = this.getImplementation(attributeKey);
+        if (getLayerImpl) {
+            return getLayerImpl(entity[attributeKey]);
+        }
+
+        return "";
+    }
+
     toggleLayerVisibility(layerKey : string, mergeKey? : any) {
         let patchLayers : HiddenLayers = {};
         patchLayers[layerKey] = !this.hiddenLayers.value[layerKey];

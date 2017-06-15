@@ -3,12 +3,15 @@ import {
     Component,
     ElementRef,
     ViewChild,
-    OnDestroy
+    OnDestroy,
+    OnInit
 } from '@angular/core';
 import {
     Container,
     DisplayObject,
-    Graphics
+    Graphics,
+    Sprite,
+    Texture
 } from 'pixi.js';
 import {Subscriber} from 'rxjs';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
@@ -20,21 +23,23 @@ import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 import {Vector} from '../math';
 import {KeyboardService} from '../util';
-import {CopyPasteService, SelectionService} from '../selection';
+import {CopyPasteService, SelectionService, Selection} from '../selection';
 
-import {
-    EntityDrawerService,
-    DrawnConstruct,
-    AnimationConstruct,
-    isAnimationConstruct,
-    ContainerConstruct,
-    isContainerConstruct,
-    displayObjectsForDrawnConstructs
-} from './drawing';
+import {EntityDrawerService, DrawnConstruct} from './drawing';
+import {RenderPriorityService} from './drawing/render-priority.service';
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {CanvasComponent} from './canvas.component';
 import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
 import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
+
+type LayerCache = {
+    graphics : Graphics; 
+    drawnConstructs : DrawnConstruct[]
+};
+
+type DrawableCache = {
+    layers: LayerCache[];
+};
 
 /**
  * The MapEditorComponent contains the canvas and tools needed to interact with the map.
@@ -79,7 +84,7 @@ import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
         </md-card>
     `
 })
-export class MapEditorComponent implements AfterViewInit, OnDestroy {
+export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     /**
      * Current tool in use
      */
@@ -100,22 +105,14 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
      */
     canvasDisplayObject : Container = new Container();
 
-    private _entitiesDisplayObject : DisplayObject;
-    private _canvasBackgroundDisplayObject : DisplayObject;
-    private _canvasBorderDisplayObject : DisplayObject;
-    private _gridDisplayObject : DisplayObject;
-    private _toolDisplayObject : DisplayObject;
     private _framesPerSecond = 30;
     private _totalMillis = 0;
-    private _lastDrawnConstructs : DrawnConstruct[] = [];
-    private _entitySystemSubscription : Subscriber<any>;
-    private _assetServiceSubscription : Subscriber<any>;
-    private _selectionServiceSubscription : Subscriber<any>;
     private _redrawInterval : Subscriber<any>;
-    private _layerSubscription : Subscriber<any>;
-    private _attributeLayerSubscription : Subscriber<any>;
+    private _drawerServiceSubscription : Subscriber<any>;
+    private _drawnConstructCache : DrawableCache = {layers: []};
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
+    @ViewChild('canvasElement') canvasComponent : CanvasComponent;
 
     constructor(private _entitySystemService : EntitySystemService,
                 private _selection : SelectionService,
@@ -125,74 +122,32 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
                 public projectService : ProjectService,
                 private _entityDrawerService : EntityDrawerService,
                 private _keyboardService : KeyboardService,
-                private _entityLayerService : EntityLayerService) {
+                private _entityLayerService : EntityLayerService,
+                private _renderPriorityService : RenderPriorityService) {
         this._setTool(this._toolService.defaultTool);
     }
 
+    ngOnInit() {
+        this._drawerServiceSubscription = this._entityDrawerService.invalidateDrawableCache.subscribe(() => {
+            this._clearCache();
+        }) as Subscriber<any>;
+    }
+
     ngAfterViewInit() {
-        this._redrawAllDisplayObjects();
-
-        this._entitySystemSubscription = this._entitySystemService.entitySystem
-            .map(this._entityDrawerService.getSystemMapper())
-            .subscribe((drawnConstructs) => {
-                this._entitiesDrawnConstructsChanged(drawnConstructs);
-            }) as Subscriber<any>;
-
-        this._selectionServiceSubscription = this._selection.selection.subscribe(()=> {
-            this._redrawAllDisplayObjects();
-        }) as Subscriber<any>;
-
-        this._assetServiceSubscription = this._assetService.assetLoaded.subscribe((asset : Asset) => {
-            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDrawnConstructsChanged(drawnConstructs);
-            this._redrawAllDisplayObjects();
-        }) as Subscriber<any>;
-
         this._redrawInterval = TimerObservable
             .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this._drawFrame()) as Subscriber<any>;
-
-        this._layerSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
-            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDrawnConstructsChanged(drawnConstructs);
-        }) as Subscriber<any>;
-
-        this._attributeLayerSubscription = this._entityDrawerService.hiddenAttributes.subscribe(() => {
-            let drawnConstructs = this._entityDrawerService.getSystemMapper()(this._entitySystemService.entitySystem.value);
-            this._entitiesDrawnConstructsChanged(drawnConstructs);
-        }) as Subscriber<any>;
     }
 
     ngOnDestroy() {
-        this._entitySystemSubscription.unsubscribe();
-        this._assetServiceSubscription.unsubscribe();
-        this._selectionServiceSubscription.unsubscribe();
         this._redrawInterval.unsubscribe();
-        this._layerSubscription.unsubscribe();
-        this._attributeLayerSubscription.unsubscribe();
-    }
-
-    private _entitiesDrawnConstructsChanged(newDrawnConstructs : DrawnConstruct[]) {
-        this._lastDrawnConstructs = newDrawnConstructs;
-        this._createEntitiesDisplayObject(newDrawnConstructs)
+        this._drawerServiceSubscription.unsubscribe();
     }
 
     private _drawFrame() {
         this._totalMillis += (1000 / this._framesPerSecond);
-        this._createEntitiesDisplayObject(this._lastDrawnConstructs);
-    }
-
-    private _createEntitiesDisplayObject(entitiesDrawnConstructs : DrawnConstruct[]) {
-        let entitiesDrawnContainer = new Container();
-        for (let entityDisplayObject of displayObjectsForDrawnConstructs(entitiesDrawnConstructs, this._totalMillis)) {
-            if (entityDisplayObject) {
-                entitiesDrawnContainer.addChild(entityDisplayObject);
-            }
-        }
-        entitiesDrawnContainer.interactiveChildren = false;
-
-        this._entitiesDisplayObject = entitiesDrawnContainer;
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        
+        this._redrawAllDisplayObjects();
     }
 
     copyEntity() {
@@ -206,98 +161,138 @@ export class MapEditorComponent implements AfterViewInit, OnDestroy {
 
     onToolSelected(newTool : BaseTool) {
         this._setTool(newTool);
-        this._redrawAllDisplayObjects();
+        this._clearCache();
     }
 
     onStageDimensonsChanged(stageDimensions : Vector) {
         this.projectService.changeDimension(stageDimensions);
-        this._redrawAllDisplayObjects();
+        this._clearCache();
     }
 
     onGridSizeChanged(gridSize : number) {
         this.projectService.changeGridSize(gridSize);
-        this._gridDisplayObject = this._buildGrid();
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        this._clearCache();
     }
 
     onScaleChanged(scale : number) {
         this.scale = scale;
-        this._redrawAllDisplayObjects();
+        this._clearCache();
     }
 
     onShowGridChanged(showGrid : boolean) {
         this.showGrid = showGrid;
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        this._clearCache();
     }
 
-    openMap(mapKey : string) {
-        this.projectService.openMap(mapKey);
+    async openMap(mapKey : string) {
+        await this.projectService.openMap(mapKey);
+        this._clearCache();
     }
 
     private _redrawAllDisplayObjects() {
-        this._canvasBackgroundDisplayObject = this._buildCanvasBackground();
-        this._canvasBorderDisplayObject = this._buildCanvasBorder();
-        this._gridDisplayObject = this._buildGrid();
-        this._toolDisplayObject = this.tool.getDisplayObject(this.scale);
-        this.canvasDisplayObject = this._buildCanvasDisplayObject();
+        if (this._drawnConstructCache.layers.length === 0) {
+            let drawnConstructs : DrawnConstruct[] = [];
+            drawnConstructs = drawnConstructs.concat(this._buildCanvasBackground());
+            drawnConstructs = drawnConstructs.concat(this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value));
+            drawnConstructs = drawnConstructs.concat(this._buildGrid());
+            drawnConstructs = drawnConstructs.concat(this.tool.drawTool(this.scale));
+
+            let layeredDrawnConstructs = this._renderPriorityService.sortDrawnConstructs(drawnConstructs);
+            for (let layer = 0; layer < layeredDrawnConstructs.length; layer++) {
+                this._drawnConstructCache.layers[layer] = {
+                    graphics: new Graphics(),
+                    drawnConstructs: layeredDrawnConstructs[layer]
+                };
+            }
+            this._paintDrawableCache();
+        }
+        this._buildCanvasDisplayObject();
     }
 
-    private _buildGrid() : DisplayObject {
-        let graphics = new Graphics();
-        graphics.lineStyle(1 / this.scale, 0xEEEEEE, 0.5);
-        let dimension = this.projectService.project.value.currentMap.dimension;
-        let gridSize = this.projectService.project.value.currentMap.gridSize;
-        drawGrid(
-            {x: 0, y: 0},
-            dimension,
-            {x: gridSize, y: gridSize},
-            graphics);
-        return graphics;
+    private _buildCanvasBackground() : DrawnConstruct {
+        let drawnConstruct = new CanvasBackgroundDrawnConstruct(this.projectService.project.value.currentMap.dimension);
+        drawnConstruct.layer = Number.NEGATIVE_INFINITY;
+        return drawnConstruct;
     }
 
-    private _buildCanvasBackground() : DisplayObject {
-        let bg = new Graphics();
-        let dimension = this.projectService.project.value.currentMap.dimension;
-        drawCanvasBackground(
-            {x: 0, y: 0},
-            dimension,
-            bg);
-        return bg;
+    private _buildGrid() : DrawnConstruct {
+        if (!this.showGrid) {
+            return new DrawnConstruct();
+        }
+
+        let drawnConstruct = new GridDrawnConstruct(this.scale, this.projectService.project.value.currentMap.dimension, this.projectService.project.value.currentMap.gridSize);
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        return drawnConstruct;
     }
 
-    private _buildCanvasBorder() : DisplayObject {
-        let border = new Graphics();
-        border.lineWidth = 1 / this.scale;
-        let dimension = this.projectService.project.value.currentMap.dimension;
-        drawCanvasBorder(
-            {x: 0, y: 0},
-            dimension,
-            border);
-        return border;
+    private _buildCanvasDisplayObject() {
+        let canvasDrawnElements = new Container();
+        for (let layerCache of this._drawnConstructCache.layers) {
+            for (let drawnConstruct of layerCache.drawnConstructs) {
+                let displayObject = drawnConstruct.draw(this._totalMillis);
+                if (displayObject) {
+                    canvasDrawnElements.addChild(displayObject);
+                }
+                canvasDrawnElements.addChild(layerCache.graphics);
+            }
+        }
+        this.canvasDisplayObject = canvasDrawnElements;
     }
 
-    private _buildCanvasDisplayObject() : Container {
-        let canvasDrawnElements : Container = new Container();
-
-        if (this._canvasBackgroundDisplayObject) {
-            canvasDrawnElements.addChild(this._canvasBackgroundDisplayObject);
+    private _paintDrawableCache() {
+        for (let layerCache of this._drawnConstructCache.layers) {
+            for (let drawnConstruct of layerCache.drawnConstructs) {
+                drawnConstruct.paint(layerCache.graphics);
+            }
         }
-        if (this._entitiesDisplayObject) {
-            canvasDrawnElements.addChild(this._entitiesDisplayObject);
-        }
-        if (this._toolDisplayObject) {
-            canvasDrawnElements.addChild(this._toolDisplayObject);
-        }
-        if (this.showGrid && this._gridDisplayObject) {
-            canvasDrawnElements.addChild(this._gridDisplayObject);
-        }
-        if (this._canvasBorderDisplayObject) {
-            canvasDrawnElements.addChild(this._canvasBorderDisplayObject);
-        }
-        return canvasDrawnElements;
     }
 
     private _setTool(tool : BaseTool) {
         this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService);
+    }
+
+    private _clearCache() {
+        this._drawnConstructCache = {layers: []};
+    }
+}
+
+class CanvasBackgroundDrawnConstruct extends DrawnConstruct {
+    private _graphics = new Graphics();
+
+    constructor(private _dimension : Vector) {
+        super();
+        drawCanvasBackground(
+            {x: 0, y: 0},
+            this._dimension,
+            this._graphics);
+        }
+
+    draw(totalMillis : number) {
+        return this._graphics;
+    }
+}
+
+class GridDrawnConstruct extends DrawnConstruct {
+    private _graphics = new Graphics();
+
+    constructor(private _scale : number,
+                private _dimension : Vector,
+                private _gridSize : number) {
+        super();
+
+        this._graphics.lineStyle(1 / this._scale, 0xEEEEEE, 0.5);
+        drawGrid(
+            {x: 0, y: 0},
+            this._dimension,
+            {x: this._gridSize, y: this._gridSize},
+            this._graphics);
+        drawCanvasBorder(
+            {x: 0, y: 0},
+            this._dimension,
+            this._graphics);
+    }
+
+    draw(totalMillis : number) {
+        return this._graphics;
     }
 }

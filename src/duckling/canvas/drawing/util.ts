@@ -1,7 +1,9 @@
-import {Graphics, Sprite} from 'pixi.js';
+import {Graphics, Sprite, DisplayObject} from 'pixi.js';
 
 import {Vector} from '../../math/vector';
 import {AssetService} from '../../project/asset.service';
+
+import {DrawnConstruct} from './drawn-construct';
 
 
 /**
@@ -103,13 +105,28 @@ export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vect
         graphics);
 }
 
+class MissingDrawnConstruct extends DrawnConstruct {
+    private _sprite : Sprite;
+
+    constructor(private _missingTexture : any) {
+        super();
+        this._sprite = new Sprite(this._missingTexture);
+    }
+
+    draw(totalMillis : number) : DisplayObject {
+        return this._sprite;
+    }
+}
+
 /**
  * Draws an image representing a missing asset
  * @param  assetService Instance of the asset service to get the missing image from
  * @return Sprite with the missing images
  */
-export function drawMissingAsset(assetService : AssetService) : Sprite {
+export function drawMissingAsset(assetService : AssetService) : DrawnConstruct {
     let missingTexture = assetService.get({key: "fa-missing-image", type: "TexturePNG"}, true);
-    let sprite = new Sprite(missingTexture);
-    return sprite;
+
+    let drawnConstruct = new MissingDrawnConstruct(missingTexture);
+    drawnConstruct.layer = Number.POSITIVE_INFINITY;
+    return drawnConstruct;
 }

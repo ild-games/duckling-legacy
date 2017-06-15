@@ -1,26 +1,44 @@
 import {Graphics} from 'pixi.js';
 
 import {drawRectangle, drawX} from '../../canvas/drawing/util';
-import {DrawnConstruct} from '../../canvas/drawing';
+import {DrawnConstruct, TransformProperties} from '../../canvas/drawing/drawn-construct';
 import {Entity} from '../../entitysystem/entity';
 import {AssetService} from '../../project';
+import {Vector} from '../../math/vector';
+import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
 
 import {CollisionAttribute} from './collision-attribute';
 
 const blue = 0x00ccff;
 
-/**
- * Used to draw a collision component.
- * @param  entity The entity the component belongs to.
- * @return A DisplayObject representing the collision component.
- */
-export function drawCollision(collisionAttribute : CollisionAttribute) : DrawnConstruct {
-    let graphics = new Graphics();
-    graphics.lineStyle(1, blue, 1);
-    drawRectangle({x: 0, y: 0}, collisionAttribute.dimension.dimension, graphics);
-    drawX({x: 0, y: 0}, collisionAttribute.dimension.dimension, graphics);
-    graphics.pivot.x = (collisionAttribute.dimension.dimension.x * collisionAttribute.anchor.x);
-    graphics.pivot.y = (collisionAttribute.dimension.dimension.y * collisionAttribute.anchor.y);
+class CollisionDrawnConstruct extends DrawnConstruct {
+    constructor(private _dimension : Vector,
+                private _anchor : Vector,
+                private _position : Vector) {
+        super();
+    }
 
-    return graphics;
+    paint(graphics : Graphics) {
+        graphics.lineStyle(1, blue, 1);
+        drawRectangle(
+            {
+                x: this._position.x - (this._dimension.x * this._anchor.x),
+                y: this._position.y - (this._dimension.y * this._anchor.y)
+            }, 
+            this._dimension, 
+            graphics);
+        drawX(
+            {
+                x: this._position.x - (this._dimension.x * this._anchor.x),
+                y: this._position.y - (this._dimension.y * this._anchor.y)
+            }, 
+            this._dimension, 
+            graphics);
+    }
+}
+
+export function getCollisionAttributeDrawnConstruct(collisionAttribute : CollisionAttribute, assetService : AssetService, position : Vector) : DrawnConstruct {
+    let drawnConstruct = new CollisionDrawnConstruct(collisionAttribute.dimension.dimension, collisionAttribute.anchor, position);
+    drawnConstruct.layer = Number.POSITIVE_INFINITY;
+    return drawnConstruct;
 }

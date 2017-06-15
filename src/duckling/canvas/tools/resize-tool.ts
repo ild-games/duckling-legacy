@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {DisplayObject} from 'pixi.js';
+import {DisplayObject, Container} from 'pixi.js';
 
 import {newMergeKey} from '../../state';
 import {Box2} from '../../math/box2';
@@ -9,6 +9,7 @@ import {Entity, EntityKey} from '../../entitysystem/entity'
 import {SelectionService} from '../../selection/selection.service';
 import {EntityBoxService} from '../../entitysystem/services/entity-box.service';
 import {AssetService} from '../../project/asset.service';
+import {DrawnConstruct} from '../drawing/drawn-construct';
 import {SnapToGridService} from './grid-snap.service';
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 import {DRAG_ANCHORS, drawAnchor, DragAnchor, anchorContainsPoint, getResizeFromDrag, getAnchorPosition} from './drag-anchor';
@@ -17,7 +18,6 @@ import {minCornerSnapDistance} from './_grid-snap';
 @Injectable()
 export class EntityResizeTool extends BaseTool {
     private _mergeKey : any;
-
     private _selectedAnchor : DragAnchor = null;
     private _mouseDownLocation : Vector = null;
     private _initialEntityBox : Box2 = null;
@@ -57,15 +57,23 @@ export class EntityResizeTool extends BaseTool {
         }
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        let container = new PIXI.Container();
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        return this.createDrawnConstruct(canvasZoom);
+    }
+
+    createDrawnConstruct(canvasZoom : number) : DrawnConstruct {
         let entityBox = this.selectedBox;
-        if (entityBox) {
-            for (let anchor of DRAG_ANCHORS) {
-                container.addChild(drawAnchor(entityBox, anchor, canvasZoom, this._assetService));
-            }
+        if (!entityBox) {
+            return new DrawnConstruct();
         }
-        return container;
+        let drawnAnchors : DisplayObject[] = [];
+        for (let anchor of DRAG_ANCHORS) {
+            drawnAnchors.push(drawAnchor(entityBox, anchor, canvasZoom, this._assetService));
+        }
+
+        let drawnConstruct = new ResizeToolDrawnConstruct(drawnAnchors);
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        return drawnConstruct;
     }
 
     onStageMove(event : CanvasMouseEvent) {
@@ -113,5 +121,20 @@ export class EntityResizeTool extends BaseTool {
 
     get selectedEntityKey() : EntityKey | null {
         return this._selectionService.selection.value.selectedEntity;
+    }
+}
+
+export class ResizeToolDrawnConstruct extends DrawnConstruct {
+    private _container = new Container();
+
+    constructor(private _anchorDisplayObjects : DisplayObject[]) {
+        super();
+        for (let anchor of this._anchorDisplayObjects) {
+            this._container.addChild(anchor);
+        }
+    }
+
+    draw(totalMillis : number) {
+        return this._container;
     }
 }

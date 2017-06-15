@@ -7,8 +7,8 @@ import {EntityPositionService} from '../services/entity-position.service';
 import {AssetService} from '../../project/asset.service';
 import {Box2, boxUnion, vectorSubtract, vectorAdd} from '../../math';
 import {immutableAssign} from '../../util';
-import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 import {drawMissingAsset} from '../../canvas/drawing/util';
+import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
 import {resize, resizePoint} from './resize'
 import {EntityDrawerService} from '../../canvas/drawing/entity-drawer.service';
 

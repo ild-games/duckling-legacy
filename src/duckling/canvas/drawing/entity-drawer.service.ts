@@ -1,10 +1,12 @@
 import {Component, Injectable} from '@angular/core';
-import {Container, DisplayObject} from 'pixi.js';
+import {Container, DisplayObject, Graphics} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
 
 import {BaseAttributeService} from '../../entitysystem/base-attribute.service';
-import {AssetService} from '../../project';
-import {Entity, EntitySystem, Attribute, AttributeKey, EntitySystemService} from '../../entitysystem';
+import {AssetService} from '../../project/asset.service';
+import {Vector} from '../../math/vector';
+import {TaggedEntity, Entity, EntitySystem, Attribute, AttributeKey} from '../../entitysystem/entity';
+import {EntitySystemService} from '../../entitysystem/entity-system.service';
 import {EntityPositionService} from '../../entitysystem/services/entity-position.service';
 import {drawMissingAsset} from '../../canvas/drawing/util';
 import {EntityLayerService, HiddenAttributes, AttributeLayer, layerAttributeAction} from '../../entitysystem/services/entity-layer.service';
@@ -13,12 +15,9 @@ import {StoreService} from '../../state/store.service';
 import {immutableAssign} from '../../util/model';
 
 import {RenderPriorityService} from './render-priority.service';
-import {DrawnConstruct, setConstructPosition} from './drawn-construct';
+import {DrawnConstruct} from './drawn-construct';
 
-/**
- * Function type used to draw attributes.
- */
-export type AttributeDrawer<T> = (attribute : T, assetService? : any) => DrawnConstruct;
+export type AttributeDrawer<T> = (attribute : T, assetService? : AssetService, position? : Vector) => DrawnConstruct;
 
 type EntityCache = {[key:string]:EntityCacheEntry};
 
@@ -27,14 +26,10 @@ interface EntityCacheEntry {
     renderedEntity : DrawnConstruct []
 }
 
-/**
- * The AttributeComponentService is used to find and instantiate a component class
- * for an attribute.
- */
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<Attribute>> {
-    private _cache : EntityCache = {};
     hiddenAttributes : BehaviorSubject<HiddenAttributes>;
+    invalidateDrawableCache : BehaviorSubject<boolean>;
 
     constructor(private _assets : AssetService,
                 private _renderPriority : RenderPriorityService,
@@ -44,9 +39,12 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
                 private _availabeAttributes : AvailableAttributeService,
                 private _store : StoreService) {
         super();
+        this.invalidateDrawableCache = new BehaviorSubject(false);
+
         _assets.assetLoaded.subscribe(() => this._clearCache());
         _assets.preloadImagesLoaded.subscribe(() => this._clearCache());
         _layers.hiddenLayers.subscribe(() => this._clearCache());
+        _entitySystem.entitySystem.subscribe(() => this._clearCache());
         
         this.hiddenAttributes = new BehaviorSubject({});
         this.hiddenAttributes.subscribe(() => this._clearCache());
@@ -57,39 +55,41 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         });
     }
 
-    /**
-     * Get a DisplayObject for the attribute.
-     * @param key Attribute key of the attribute that should be drawn.
-     * @param attribute Attribute that needs to be drawn.
-     * @return A DrawnConstruct that describes how an entity is drawn.
-     */
-    drawAttribute(key : AttributeKey, entity : Entity) : DrawnConstruct {
+    drawEntitySystem(entitySystem : EntitySystem) : DrawnConstruct[] {
+        let drawnConstructs : DrawnConstruct[] = [];
+        let newCache : EntityCache = {};
+        entitySystem.forEach((entity, entityKey) => {
+            for (let construct of this.getEntityDrawable(entity)) {
+                drawnConstructs.push(construct);
+            }
+        });
+        return drawnConstructs;
+    }
+
+    getAttributeDrawable(key : AttributeKey, entity : Entity) : DrawnConstruct {
         let drawer = this.getImplementation(key);
         if (drawer) {
             let drawnConstruct : DrawnConstruct;
             if (this._assets.areAssetsLoaded(entity, key)) {
-                drawnConstruct = drawer(entity[key], this._assets);
+                drawnConstruct = drawer(entity[key], this._assets, this._entityPosition.getPosition(entity));
             } else {
                 drawnConstruct = drawMissingAsset(this._assets);
             }
 
             if (drawnConstruct) {
-                setConstructPosition(
-                    drawnConstruct,
-                    this._entityPosition.getPosition(entity));
+                if (this._layers.isAttributeImplemented(key)) {
+                    let layerString = this._layers.getAttributeLayer(entity, key);
+
+                    // TODO better way to translate this from string
+                    drawnConstruct.layer = parseFloat(layerString);
+                }
             }
             return drawnConstruct;
         }
         return null;
     }
 
-
-    /**
-     * Get a DisplayObject for the entity.
-     * @param entity Entity that needs to be drawn.
-     * @return A DisplayObject for the entity.
-     */
-    drawEntity(entity : Entity) : DrawnConstruct[] {
+    getEntityDrawable(entity : Entity) : DrawnConstruct[] {
         let drawnConstructs : DrawnConstruct[] = [];
         for (let key in entity) {
             if (!this.isAttributeVisible(key)) {
@@ -99,38 +99,12 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
                 continue;
             }
 
-            let drawableConstruct = this.drawAttribute(key, entity);
+            let drawableConstruct = this.getAttributeDrawable(key, entity);
             if (drawableConstruct) {
                 drawnConstructs.push(drawableConstruct);
             }
         }
         return drawnConstructs;
-    }
-
-    /**
-     * Get a function that can map the entitySystem stream into a stage stream.
-     * @return A function that can be applied to map the system manager.
-     */
-    getSystemMapper() {
-        return (entitySystem : EntitySystem) : DrawnConstruct[] => {
-            let drawnConstructs : DrawnConstruct[] = [];
-            let newCache : EntityCache = {};
-            this._renderPriority.sortEntities(entitySystem).forEach(entity => {
-                let entry = this._cache[entity.key];
-                if (!entry || entry.entity !== entity.entity) {
-                    entry = {
-                        entity : entity.entity,
-                        renderedEntity : this.drawEntity(entity.entity)
-                    }
-                }
-                for (let construct of entry.renderedEntity) {
-                    drawnConstructs.push(construct);
-                }
-                newCache[entity.key] = entry;
-            });
-            this._cache = newCache;
-            return drawnConstructs;
-        }
     }
 
     getAttributeLayers() : AttributeLayer[] {
@@ -189,6 +163,6 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
 
 
     private _clearCache() {
-        this._cache = {};
+        this.invalidateDrawableCache.next(true);
     }
 }

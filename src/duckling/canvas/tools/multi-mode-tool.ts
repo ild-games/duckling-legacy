@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {DisplayObject} from 'pixi.js';
+import {DisplayObject, Graphics} from 'pixi.js';
 
 import {KeyboardService} from '../../util';
+import {DrawnConstruct} from '../drawing/drawn-construct';
 
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 
@@ -17,9 +18,9 @@ export abstract class MultiModeTool extends BaseTool {
 
     protected abstract get selectedTool() : BaseTool;
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
+    drawTool(canvasZoom : number) : DrawnConstruct {
         if (this.selectedTool) {
-            return this.selectedTool.getDisplayObject(canvasZoom);
+            return this.selectedTool.drawTool(canvasZoom);
         }
     }
 

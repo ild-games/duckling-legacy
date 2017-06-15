@@ -1,12 +1,13 @@
 import {RenderTexture, Texture, Sprite, Graphics, DisplayObject, Container, BaseTexture, extras} from 'pixi.js';
 
 import {drawMissingAsset} from '../../canvas/drawing/util';
+import {DrawnConstruct, TransformProperties} from '../../canvas/drawing/drawn-construct';
 import {Vector} from '../../math/vector';
 import {AssetService} from '../../project/asset.service';
 
 import {TileBlockDrawable, getTileWidth} from './tile-block-drawable';
 
-export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, assetService : AssetService) : DisplayObject {
+export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, assetService : AssetService, transformProperties : TransformProperties) : DrawnConstruct {
     if (!tileBlockDrawable.textureKey) {
         return null;
     }
@@ -16,10 +17,10 @@ export function drawTileBlockDrawable(tileBlockDrawable : TileBlockDrawable, ass
         return drawMissingAsset(assetService);
     }
     
-    return _constructTileBlockSprite(tileBlockDrawable, baseTexture, assetService);
+    return _constructTileBlockSprite(tileBlockDrawable, baseTexture, assetService, transformProperties);
 }
 
-function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, assetService : AssetService) : DisplayObject {
+function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTexture : BaseTexture, assetService : AssetService, transformProperties : TransformProperties) : DrawnConstruct {
     let tileSize = getTileWidth(tileBlockDrawable, assetService);
     if (tileSize <= 0) {
         return drawMissingAsset(assetService);
@@ -29,7 +30,8 @@ function _constructTileBlockSprite(tileBlockDrawable : TileBlockDrawable, baseTe
     let positions = _getPositions(numberOfTiles);
     let calculateOffset: {x: boolean, y: boolean} = _getOffsets(numberOfTiles);
     
-    return _constructTileBlockContainer(positions, calculateOffset, baseTexture, tileSize, numberOfTiles);
+    let drawnConstruct = new TileBlockDrawnConstruct(positions, baseTexture, tileSize, numberOfTiles, calculateOffset, transformProperties);
+    return drawnConstruct;
 }
 
 function _getPositions(numberOfTiles: Vector): Vector[] {
@@ -56,54 +58,66 @@ function _getOffsets(numberOfTiles: Vector): { x : boolean, y: boolean } {
     return {x: numberOfTiles.x !==1, y: numberOfTiles.y !== 1};
 }
 
+class TileBlockDrawnConstruct extends DrawnConstruct {
+    private _container = new Container();
 
-function _constructTileBlockContainer(positions: Vector[], calculateOffset: { x: boolean, y: boolean}, baseTexture: BaseTexture, tileSize: number, numberOfTiles: Vector): Container {
-    let container = new Container();
+    constructor(private _positions : Vector[],
+                private _baseTexture : BaseTexture,
+                private _tileSize : number,
+                private _numberOfTiles : Vector,
+                private _calculateOffset : {x: boolean, y: boolean},
+                transformProperties : TransformProperties) {
+        super();
+        this.transformProperties = transformProperties;
 
-    for (let position of positions) {
-        let texture = new Texture(baseTexture, new PIXI.Rectangle(position.x * tileSize, position.y * tileSize, tileSize, tileSize));
-        let sprite = _getSprite(position, numberOfTiles, tileSize, texture, calculateOffset);
-        container.addChild(sprite);
+        for (let position of this._positions) {
+            let texture = new Texture(this._baseTexture, new PIXI.Rectangle(position.x * this._tileSize, position.y * this._tileSize, this._tileSize, this._tileSize));
+            let sprite = this._getSprite(position, texture);
+            this._container.addChild(sprite);
+        }
+        this._applyDisplayObjectTransforms(this._container);
     }
 
-    return container;
-}
+    draw(totalMillis : number) : DisplayObject {
+        return this._container;
+    }
 
-function _getSprite(position: Vector, numberOfTiles: Vector, tileSize: number, texture: Texture, calculateOffset: { x : boolean, y : boolean}): DisplayObject | null {
-    // Only tiles in row/column 1 (0 indexed) are ever repeated
-    if (position.x === 1 || position.y === 1){
-        return _getTiledSprite(position, numberOfTiles, tileSize, texture, calculateOffset);
-    } else {
-        let sprite = new Sprite(texture);
-        sprite.x = calculateOffset.x? _getSpriteOffset(position.x, numberOfTiles.x, tileSize): sprite.x;
-        sprite.y = calculateOffset.y? _getSpriteOffset(position.y, numberOfTiles.y, tileSize): sprite.y;
+    private _getSprite(position: Vector, texture: Texture) : DisplayObject | null {
+        // Only tiles in row/column 1 (0 indexed) are ever repeated
+        if (position.x === 1 || position.y === 1){
+            return this._getTiledSprite(position,texture);
+        } else {
+            let sprite = new Sprite(texture);
+            sprite.x = this._calculateOffset.x ? this._getSpriteOffset(position.x, this._numberOfTiles.x) : sprite.x;
+            sprite.y = this._calculateOffset.y ? this._getSpriteOffset(position.y, this._numberOfTiles.y) : sprite.y;
+            return sprite;
+        }
+    }
+
+    private _getTiledSprite(position: Vector, texture: Texture): DisplayObject {
+        let tileAreaSizes = this._getTileAreaSizes(position);
+        let sprite = new extras.TilingSprite(texture, tileAreaSizes.x, tileAreaSizes.y);
+        sprite.x = this._calculateOffset.x ? this._getSpriteOffset(position.x, this._numberOfTiles.x) : sprite.x;
+        sprite.y = this._calculateOffset.y ? this._getSpriteOffset(position.y, this._numberOfTiles.y) : sprite.y;
         return sprite;
     }
-}
 
-function _getTiledSprite(position: Vector, numberOfTiles: Vector, tileSize:number, texture: Texture, calculateOffset: {x: boolean, y: boolean}): DisplayObject {
-    let tileAreaSizes = _getTileAreaSizes(position, numberOfTiles, tileSize);
-    let sprite = new extras.TilingSprite(texture, tileAreaSizes.x, tileAreaSizes.y);
-    sprite.x = calculateOffset.x? _getSpriteOffset(position.x, numberOfTiles.x, tileSize): sprite.x;
-    sprite.y = calculateOffset.y? _getSpriteOffset(position.y, numberOfTiles.y, tileSize): sprite.y;
-    return sprite;
-}
+    private _getTileAreaSizes(position: Vector): Vector {
+        let tileAreaSizes = { x: this._tileSize, y: this._tileSize };
+        if (position.x === 1 && this._numberOfTiles.x !== 1){
+            tileAreaSizes.x = (this._numberOfTiles.x - 2) * this._tileSize; 
+        }
+        if (position.y === 1 && this._numberOfTiles.y !== 1){
+            tileAreaSizes.y = (this._numberOfTiles.y - 2) * this._tileSize;
+        }
+        return tileAreaSizes;
+    }
 
-function _getTileAreaSizes(position: Vector, numberOfTiles: Vector, tileSize: number): Vector {
-    let tileAreaSizes = { x: tileSize, y:tileSize };
-    if (position.x === 1 && numberOfTiles.x !== 1){
-        tileAreaSizes.x = (numberOfTiles.x - 2) * tileSize; 
+    private _getSpriteOffset(position: number, numberOfTiles: number): number {
+        let numTileOffset = position;
+        if (position === 2) {
+            numTileOffset = numberOfTiles - 1; // Account for middle section
+        }
+        return numTileOffset * this._tileSize;
     }
-    if (position.y === 1 && numberOfTiles.y !== 1){
-        tileAreaSizes.y = (numberOfTiles.y - 2) * tileSize;
-    }
-    return tileAreaSizes;
-}
-
-function _getSpriteOffset(position: number, numberOfTiles: number, tileSize: number): number {
-    let numTileOffset = position;
-    if (position === 2) {
-        numTileOffset = numberOfTiles - 1; // Account for middle section
-    }
-    return numTileOffset * tileSize;
 }

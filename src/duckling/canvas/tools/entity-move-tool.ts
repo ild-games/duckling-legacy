@@ -17,7 +17,7 @@ import {SelectionService} from '../../selection';
 import {ProjectService} from '../../project/project.service';
 import {KeyboardCode} from '../../util';
 import {drawRectangle} from '../drawing';
-
+import {DrawnConstruct} from '../drawing/drawn-construct';
 
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 import {minCornerSnapDistance} from './_grid-snap';
@@ -41,13 +41,20 @@ export class EntityMoveTool extends BaseTool {
         super();
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        let container = new PIXI.Container();
-        let entityBox = this._getSelectedEntityBox();
-        if (entityBox) {
-            container.addChild(this._drawSelectionBox(entityBox, canvasZoom));
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        return this.createDrawnConstruct(canvasZoom);
+    }
+
+    createDrawnConstruct(canvasZoom : number) : DrawnConstruct {
+        let box = this._getSelectedEntityBox();
+        if (!box) {
+            return new DrawnConstruct();
         }
-        return container;
+
+        let drawnConstruct = new EntityMoveToolDrawnConstruct(canvasZoom, box);
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        return drawnConstruct;
+
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -133,13 +140,6 @@ export class EntityMoveTool extends BaseTool {
         this._initialMouseLocation = null;
     }
 
-    private _drawSelectionBox(box : Box2, canvasZoom : number) : Graphics {
-        let graphics = new Graphics();
-        graphics.lineStyle(1 / canvasZoom, 0x3355cc, 1);
-        drawRectangle(box.position, box.dimension, graphics);
-        return graphics;
-    }
-
     private _getSelectedEntityBox() {
         let selectedEntity = this._selectionService.selection.getValue().entity;
         let box : Box2 = null;
@@ -183,5 +183,21 @@ export class EntityMoveTool extends BaseTool {
 
     private _isDeleteKey(keyCode : number) : boolean {
         return keyCode === KeyboardCode.DELETE;
+    }
+}
+
+export class EntityMoveToolDrawnConstruct extends DrawnConstruct {
+    constructor(private _canvasZoom : number,
+                private _box : Box2) {
+        super();
+    }
+
+    paint(graphics : Graphics) {
+        if (!this._box) {
+            return;
+        }
+
+        graphics.lineStyle(1 / this._canvasZoom, 0x3355cc, 1);
+        drawRectangle(this._box.position, this._box.dimension, graphics);
     }
 }

@@ -8,11 +8,13 @@ import {
     EntityPositionService,
     EntityBoxService
 } from '../../entitysystem';
-import {Vector} from '../../math';
+import {Vector} from '../../math/vector';
+import {Box2} from '../../math/box2';
 import {SelectionService} from '../../selection';
 import {newMergeKey} from '../../state';
 import {BaseTool, CanvasMouseEvent} from './base-tool';
 import {drawRectangle} from '../drawing';
+import {DrawnConstruct} from '../drawing/drawn-construct';
 
 @Injectable()
 export class EntityCreatorTool extends BaseTool {
@@ -24,8 +26,21 @@ export class EntityCreatorTool extends BaseTool {
         super();
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        return this._buildSelectionBox(canvasZoom);
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        let selectedEntityKey = this._selection.selection.value.selectedEntity;
+        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
+        if (!selectedEntity) {
+            return new DrawnConstruct();
+        }
+
+        let box = this._entityBoxService.getEntityBox(selectedEntity);
+        if (!box) {
+            return new DrawnConstruct();
+        }
+
+        let drawnConstruct = new EntityCreatorToolDrawnConstruct(canvasZoom, box);
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        return drawnConstruct;
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -47,26 +62,16 @@ export class EntityCreatorTool extends BaseTool {
     get icon() {
         return "pencil";
     }
+}
 
-    private _buildSelectionBox(canvasZoom : number) : DisplayObject {
-        let graphics : Graphics = null;
-        let selectedEntityKey = this._selection.selection.value.selectedEntity;
-        let selectedEntity = this._entitySystemService.getEntity(selectedEntityKey);
-        if (selectedEntity) {
-            graphics = this._buildSelectionBoxAroundEntity(selectedEntity, canvasZoom);
-        }
-        return graphics;
+class EntityCreatorToolDrawnConstruct extends DrawnConstruct {
+    constructor(private _canvasZoom : number,
+                private _box : Box2) {
+        super();
     }
 
-    private _buildSelectionBoxAroundEntity(entity : Entity, canvasZoom : number) : Graphics {
-        let graphics : Graphics = null;
-        let box = this._entityBoxService.getEntityBox(entity);
-        if (box) {
-            graphics = new Graphics();
-            graphics.lineStyle(1 / canvasZoom, 0xffcc00, 1);
-            drawRectangle(box.position, box.dimension, graphics);
-        }
-        return graphics;
+    paint(graphics : Graphics) {
+        graphics.lineStyle(1 / this._canvasZoom, 0xffcc00, 1);
+        drawRectangle(this._box.position, this._box.dimension, graphics);
     }
-
 }

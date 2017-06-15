@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Container, DisplayObject} from 'pixi.js';
+import {Container, DisplayObject, Graphics} from 'pixi.js';
+
+import {DrawnConstruct} from '../drawing/drawn-construct';
 
 import {MultiModeTool} from './multi-mode-tool';
-import {EntityMoveTool} from './entity-move-tool';
-import {EntityResizeTool} from './resize-tool';
+import {EntityMoveTool, EntityMoveToolDrawnConstruct} from './entity-move-tool';
+import {EntityResizeTool, ResizeToolDrawnConstruct} from './resize-tool';
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 
 @Injectable()
@@ -23,11 +25,12 @@ export class SelectedEntityTool extends MultiModeTool {
         }
     }
 
-    getDisplayObject(canvasZoom : number) : DisplayObject {
-        let container = new Container();
-        container.addChild(this._entityMoveTool.getDisplayObject(canvasZoom));
-        container.addChild(this._entityResizeTool.getDisplayObject(canvasZoom));
-        return container;
+    drawTool(canvasZoom : number) : DrawnConstruct {
+        let drawnConstruct = new SelectedEntityToolDrawnConstruct(
+            this._entityResizeTool.createDrawnConstruct(canvasZoom),
+            this._entityMoveTool.createDrawnConstruct(canvasZoom));
+        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        return drawnConstruct;
     }
 
     onStageDown(event : CanvasMouseEvent) {
@@ -55,5 +58,32 @@ export class SelectedEntityTool extends MultiModeTool {
 
     get icon() {
         return "arrows";
+    }
+}
+
+class SelectedEntityToolDrawnConstruct extends DrawnConstruct {
+    private _container = new Container();
+
+    constructor(private _resizeToolConstruct : DrawnConstruct,
+                private _moveToolConstruct : DrawnConstruct) {
+        super();
+    }
+
+    draw(totalMillis : number) : DisplayObject {
+        this._container.removeChildren();
+        let resizeToolDisplayObject = this._resizeToolConstruct.draw(totalMillis);
+        if (resizeToolDisplayObject) {
+            this._container.addChild(resizeToolDisplayObject);
+        }
+        let moveToolDisplayObject = this._moveToolConstruct.draw(totalMillis);
+        if (moveToolDisplayObject) {
+            this._container.addChild(moveToolDisplayObject);
+        }
+        return this._container;
+    }
+
+    paint(graphics : Graphics) {
+        this._resizeToolConstruct.paint(graphics);
+        this._moveToolConstruct.paint(graphics);
     }
 }
