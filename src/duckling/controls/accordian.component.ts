@@ -28,6 +28,7 @@ import {TemplateWrapperDirective} from './template-wrapper.directive';
             (cloned)="onElementCloned(index)"
             (moved)="onElementMoved(index, $event)">
             <ng-template
+                *ngIf="openedElements[keyForIndex(index)]"
                 [templateWrapper]="elementTemplate"
                 [context]="elementContext(index)">
             </ng-template>
