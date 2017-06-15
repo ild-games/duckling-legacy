@@ -72,14 +72,9 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     private _layerSubscription : Subscriber<any>;
     private _attributeLayerSubscription : Subscriber<any>;
 
-    constructor(private _dialogRef : MdDialogRef<LayerDialogComponent>,
-                private _path : PathService,
-                private _dialog : DialogService,
-                private _assets : AssetService,
-                private _project : ProjectService,
+    constructor(private _dialog : DialogService,
                 private _entityLayerService : EntityLayerService,
-                private _entityDrawerService : EntityDrawerService,
-                private _drawerService : EntityDrawerService) {
+                private _entityDrawerService : EntityDrawerService) {
         this._refreshLayers();
         this._refreshAttributes();
     }
