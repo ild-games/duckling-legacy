@@ -65,12 +65,10 @@ export class EntityMoveTool extends BaseTool {
     }
 
     createDrawnConstruct(canvasZoom : number) : DrawnConstruct {
-        let box = this._drawSelectionBox();
-        if (!box) {
-            return new DrawnConstruct();
-        }
-
-        let drawnConstruct = new EntityMoveToolDrawnConstruct(canvasZoom, box, this._drawSelectedEntityGizmos());
+        let drawnConstruct = new EntityMoveToolDrawnConstruct(
+            canvasZoom, 
+            this._drawSelectionBox(), 
+            this._drawSelectedEntityGizmos());
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
         return drawnConstruct;
     }
@@ -418,15 +416,17 @@ export class EntityMoveToolDrawnConstruct extends DrawnConstruct {
     }
 
     paint(graphics : Graphics) {
-        if (!this._box) {
-            return;
-        }
-
         for (let gizmo of this._selectedEntityGizmos) {
             graphics.lineStyle(1 / this._canvasZoom, 0x3355cc, 1);
             drawRectangle(gizmo.position, gizmo.dimension, graphics);
         }
-        graphics.lineStyle(1 / this._canvasZoom, 0x3355cc, 1);
-        drawRectangle(this._box.position, this._box.dimension, graphics);
+
+        if (this._box) {
+            graphics.beginFill(0x3355cc, 0.2);
+            drawRectangle(this._box.position, this._box.dimension, graphics);
+            graphics.endFill();
+            graphics.lineStyle(1 / this._canvasZoom, 0x3355cc, 1);
+            drawRectangle(this._box.position, this._box.dimension, graphics);
+        }
     }
 }

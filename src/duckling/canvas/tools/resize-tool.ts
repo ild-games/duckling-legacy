@@ -66,6 +66,10 @@ export class EntityResizeTool extends BaseTool {
     }
 
     createDrawnConstruct(canvasZoom : number) : DrawnConstruct {
+        if (!this._onlyOneSelectedEntity()) {
+            return new DrawnConstruct();
+        }
+
         let entityBox = this.selectedBox;
         if (!entityBox) {
             return new DrawnConstruct();

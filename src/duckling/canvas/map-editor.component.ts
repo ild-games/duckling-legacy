@@ -190,6 +190,10 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _redrawAllDisplayObjects() {
+        // DEBUG, we need to clear the cache when dragging the selection box
+        this._clearCache(true);
+        // END DEBUG
+
         if (this._drawingCache.layers.length === 0) {
             let drawnConstructs : DrawnConstruct[] = [
                 this._buildCanvasBackground(),

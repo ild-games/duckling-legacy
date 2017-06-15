@@ -63,7 +63,7 @@ export class SelectionService {
         let entities = Array.from(this._renderPriority.sortEntities(this._entitySystem.entitySystem.getValue()));
         entities.reverse();
         let taggedEntity = entities
-            .filter(entity => this._layerService.isEntityVisible(entity.entity))
+            .filter(entity => this._drawerService.isEntityVisible(entity.entity))
             .find(entity => this._entityContainsPoint(entity.key, position));
 
         if (taggedEntity) {
@@ -77,7 +77,7 @@ export class SelectionService {
         let entities = Array.from(this._renderPriority.sortEntities(this._entitySystem.entitySystem.getValue()));
         entities.reverse();
         let taggedEntities = entities
-            .filter(entity => this._layerService.isEntityVisible(entity.entity))
+            .filter(entity => this._drawerService.isEntityVisible(entity.entity))
             .filter(entity => this._entityContainsWithinArea(entity.key, position, dimension));
 
         if (taggedEntities) {
@@ -110,7 +110,7 @@ export class SelectionService {
         if (selectedEntityKeys && selectedEntityKeys.length > 0) {
             for (let key of selectedEntityKeys) {
                 let entity = this._entitySystem.getEntity(key);
-                if (this._layerService.isEntityVisible(entity)){
+                if (this._drawerService.isEntityVisible(entity)){
                     filteredEntities.push({key, entity});
                 }
             }

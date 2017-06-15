@@ -16,5 +16,5 @@ export function createEntityService(store : StoreService) : EntitySystemService 
 }
 
 export function createEntityBoxService(assetService : AssetService, entityPositionService: EntityPositionService , entitySystemService: EntitySystemService): EntityBoxService {
-    return new EntityBoxService(assetService, entityPositionService, entitySystemService);
+    return new EntityBoxService(assetService, entityPositionService, entitySystemService, null);
 }
