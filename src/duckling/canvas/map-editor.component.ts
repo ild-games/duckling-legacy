@@ -25,7 +25,7 @@ import {Vector} from '../math';
 import {KeyboardService} from '../util';
 import {CopyPasteService, SelectionService, Selection} from '../selection';
 
-import {EntityDrawerService, DrawnConstruct} from './drawing';
+import {EntityDrawerService, EntityCache, DrawnConstruct} from './drawing';
 import {RenderPriorityService} from './drawing/render-priority.service';
 import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
 import {CanvasComponent} from './canvas.component';
@@ -33,12 +33,13 @@ import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from '.
 import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
 
 type LayerCache = {
-    graphics : Graphics; 
+    graphics : Graphics;
     drawnConstructs : DrawnConstruct[]
 };
 
 type DrawableCache = {
     layers: LayerCache[];
+    entityCache : EntityCache;
 };
 
 /**
@@ -109,7 +110,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     private _totalMillis = 0;
     private _redrawInterval : Subscriber<any>;
     private _drawerServiceSubscription : Subscriber<any>;
-    private _drawnConstructCache : DrawableCache = {layers: []};
+    private _drawingCache : DrawableCache = {layers: [], entityCache : {}};
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
     @ViewChild('canvasElement') canvasComponent : CanvasComponent;
@@ -128,8 +129,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this._drawerServiceSubscription = this._entityDrawerService.invalidateDrawableCache.subscribe(() => {
-            this._clearCache();
+        this._drawerServiceSubscription = this._entityDrawerService.redraw.subscribe((entityCacheValid) => {
+            this._clearCache(entityCacheValid);
         }) as Subscriber<any>;
     }
 
@@ -146,7 +147,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private _drawFrame() {
         this._totalMillis += (1000 / this._framesPerSecond);
-        
+
         this._redrawAllDisplayObjects();
     }
 
@@ -190,16 +191,17 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _redrawAllDisplayObjects() {
-        if (this._drawnConstructCache.layers.length === 0) {
-            let drawnConstructs : DrawnConstruct[] = [];
-            drawnConstructs = drawnConstructs.concat(this._buildCanvasBackground());
-            drawnConstructs = drawnConstructs.concat(this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value));
-            drawnConstructs = drawnConstructs.concat(this._buildGrid());
-            drawnConstructs = drawnConstructs.concat(this.tool.drawTool(this.scale));
+        if (this._drawingCache.layers.length === 0) {
+            let drawnConstructs : DrawnConstruct[] = [
+                this._buildCanvasBackground(),
+                ...this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value, this._drawingCache.entityCache),
+                this._buildGrid(),
+                this.tool.drawTool(this.scale)
+            ];
 
             let layeredDrawnConstructs = this._renderPriorityService.sortDrawnConstructs(drawnConstructs);
             for (let layer = 0; layer < layeredDrawnConstructs.length; layer++) {
-                this._drawnConstructCache.layers[layer] = {
+                this._drawingCache.layers[layer] = {
                     graphics: new Graphics(),
                     drawnConstructs: layeredDrawnConstructs[layer]
                 };
@@ -227,7 +229,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private _buildCanvasDisplayObject() {
         let canvasDrawnElements = new Container();
-        for (let layerCache of this._drawnConstructCache.layers) {
+        for (let layerCache of this._drawingCache.layers) {
             for (let drawnConstruct of layerCache.drawnConstructs) {
                 let displayObject = drawnConstruct.draw(this._totalMillis);
                 if (displayObject) {
@@ -240,7 +242,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _paintDrawableCache() {
-        for (let layerCache of this._drawnConstructCache.layers) {
+        for (let layerCache of this._drawingCache.layers) {
             for (let drawnConstruct of layerCache.drawnConstructs) {
                 drawnConstruct.paint(layerCache.graphics);
             }
@@ -251,8 +253,11 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService);
     }
 
-    private _clearCache() {
-        this._drawnConstructCache = {layers: []};
+    private _clearCache(entityCacheValid : boolean = false) {
+        this._drawingCache = {
+            layers : [],
+            entityCache : entityCacheValid ? this._drawingCache.entityCache : {}
+        }
     }
 }
 
