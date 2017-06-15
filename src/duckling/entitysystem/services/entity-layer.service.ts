@@ -85,6 +85,13 @@ export class EntityLayerService extends BaseAttributeService<LayerGetter> {
         this._store.dispatch(_layerAction(immutableAssign(this.layers.value.hiddenLayers, patchLayers)), mergeKey);
     }
 
+    toggleAttributeVisibility(attributeKey : string, mergeKey? : any) {
+        let patchAttributes : HiddenAttributes = {};
+        patchAttributes[attributeKey] = !this.layers.value.hiddenAttributes[attributeKey];
+        this._store.dispatch(layerAttributeAction(immutableAssign(this.layers.value.hiddenAttributes, patchAttributes)), mergeKey);
+    }
+
+
     isEntityOnAnActiveLayer(entity : Entity) : boolean {
         for (let attributeKey in entity) {
             if (this.isAttributeOnAnActiveLayer(entity, attributeKey)) {

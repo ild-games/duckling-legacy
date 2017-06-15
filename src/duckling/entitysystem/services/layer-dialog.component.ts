@@ -100,7 +100,7 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     }
 
     toggleAttributeVisibility(attributeLayer : AttributeLayer) {
-        this._entityDrawerService.toggleAttributeVisibility(attributeLayer.attributeName);
+        this._entityLayerService.toggleAttributeVisibility(attributeLayer.attributeName);
     }
 
     private _refreshLayers() {

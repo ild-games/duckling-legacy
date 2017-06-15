@@ -132,12 +132,6 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         return attributeLayers;
     }
 
-    toggleAttributeVisibility(attributeKey : string, mergeKey? : any) {
-        let patchAttributes : HiddenAttributes = {};
-        patchAttributes[attributeKey] = !this._layers.layers.value.hiddenAttributes[attributeKey];
-        this._store.dispatch(layerAttributeAction(immutableAssign(this._layers.layers.value.hiddenAttributes, patchAttributes)), mergeKey);
-    }
-
     isEntityVisible(entity : Entity) : boolean {
         for (let attributeKey in entity) {
             if (!this.isAttributeVisible(attributeKey, entity)) {
