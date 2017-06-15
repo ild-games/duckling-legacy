@@ -19,7 +19,11 @@ import {DrawnConstruct} from './drawn-construct';
 
 export type AttributeDrawer<T> = (attribute : T, assetService? : AssetService, position? : Vector) => DrawnConstruct;
 
-type EntityCache = {[key:string]:EntityCacheEntry};
+export interface EntityCache {
+    cache? : EntityCacheInternal;
+}
+
+type EntityCacheInternal = {[key:string]:EntityCacheEntry};
 
 interface EntityCacheEntry {
     entity : Entity,
@@ -28,8 +32,10 @@ interface EntityCacheEntry {
 
 @Injectable()
 export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<Attribute>> {
-    hiddenAttributes : BehaviorSubject<HiddenAttributes>;
-    invalidateDrawableCache : BehaviorSubject<boolean>;
+    /**
+     * Publish true if the cache is still valid.
+     */
+    redraw : BehaviorSubject<boolean>;
 
     constructor(private _assets : AssetService,
                 private _renderPriority : RenderPriorityService,
@@ -39,30 +45,38 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
                 private _availabeAttributes : AvailableAttributeService,
                 private _store : StoreService) {
         super();
-        this.invalidateDrawableCache = new BehaviorSubject(false);
+        this.redraw = new BehaviorSubject(false);
 
-        _assets.assetLoaded.subscribe(() => this._clearCache());
-        _assets.preloadImagesLoaded.subscribe(() => this._clearCache());
-        _layers.hiddenLayers.subscribe(() => this._clearCache());
-        _entitySystem.entitySystem.subscribe(() => this._clearCache());
-        
-        this.hiddenAttributes = new BehaviorSubject({});
-        this.hiddenAttributes.subscribe(() => this._clearCache());
-        this._store.state.subscribe(state => {
-            if (state.layers.hiddenAttributes !== this.hiddenAttributes.value) {
-                this.hiddenAttributes.next(state.layers.hiddenAttributes ? state.layers.hiddenAttributes : {});
-            }
-        });
+        _assets.assetLoaded.subscribe(() => this._redraw());
+        _assets.preloadImagesLoaded.subscribe(() => this._redraw());
+        _layers.layers.subscribe(() => this._redraw());
+        _entitySystem.entitySystem.subscribe(() => this._redraw(true));
     }
 
-    drawEntitySystem(entitySystem : EntitySystem) : DrawnConstruct[] {
+    drawEntitySystem(entitySystem : EntitySystem, cache? : EntityCache) : DrawnConstruct[] {
         let drawnConstructs : DrawnConstruct[] = [];
-        let newCache : EntityCache = {};
+        let newCache : EntityCacheInternal = {}
+        let oldCache : EntityCacheInternal = (cache && cache.cache) ? cache.cache : {};
+
         entitySystem.forEach((entity, entityKey) => {
-            for (let construct of this.getEntityDrawable(entity)) {
-                drawnConstructs.push(construct);
+            if (oldCache[entityKey] && oldCache[entityKey].entity === entity) {
+                for (let construct of oldCache[entityKey].renderedEntity) {
+                    drawnConstructs.push(construct);
+                }
+                newCache[entityKey] = oldCache[entityKey];
+            } else {
+                let renderedEntity = this.getEntityDrawable(entity);
+                for (let construct of renderedEntity) {
+                    drawnConstructs.push(construct);
+                }
+                newCache[entityKey] = {entity, renderedEntity};
             }
         });
+
+        if (cache) {
+            cache.cache = newCache;
+        }
+
         return drawnConstructs;
     }
 
@@ -118,12 +132,6 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         return attributeLayers;
     }
 
-    toggleAttributeVisibility(attributeKey : string, mergeKey? : any) {
-        let patchAttributes : HiddenAttributes = {};
-        patchAttributes[attributeKey] = !this.hiddenAttributes.value[attributeKey];
-        this._store.dispatch(layerAttributeAction(immutableAssign(this.hiddenAttributes.value, patchAttributes)), mergeKey);
-    }
-    
     isEntityVisible(entity : Entity) : boolean {
         for (let attributeKey in entity) {
             if (!this.isAttributeVisible(attributeKey, entity)) {
@@ -148,9 +156,9 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         }
 
 
-        return (!this.hiddenAttributes.value[attributeKey]);
+        return (!this._layers.layers.value.hiddenAttributes[attributeKey]);
     }
-    
+
     private _getImplementedAttributes() : AttributeKey[] {
         let implementedAttributes : AttributeKey[] = [];
         for (let attributeKey of this._availabeAttributes.availableAttributes()) {
@@ -161,8 +169,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         return implementedAttributes;
     }
 
-
-    private _clearCache() {
-        this.invalidateDrawableCache.next(true);
+    private _redraw(entityCacheValid : boolean = false) {
+        this.redraw.next(entityCacheValid);
     }
 }

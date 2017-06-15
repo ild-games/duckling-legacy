@@ -84,11 +84,8 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     }
 
     ngAfterViewInit() {
-        this._layerSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
+        this._layerSubscription = this._entityLayerService.layers.subscribe(() => {
             this._refreshLayers();
-        }) as Subscriber<any>;
-
-        this._attributeLayerSubscription = this._entityDrawerService.hiddenAttributes.subscribe(() => {
             this._refreshAttributes();
         }) as Subscriber<any>;
     }
@@ -103,7 +100,7 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     }
 
     toggleAttributeVisibility(attributeLayer : AttributeLayer) {
-        this._entityDrawerService.toggleAttributeVisibility(attributeLayer.attributeName);
+        this._entityLayerService.toggleAttributeVisibility(attributeLayer.attributeName);
     }
 
     private _refreshLayers() {
