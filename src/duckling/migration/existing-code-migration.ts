@@ -4,6 +4,7 @@ import {Attribute} from './map-format';
 import {MapMigrationFunction} from './migration.service';
 
 export interface ExistingCodeMigration {
-    function: (tools : MigrationTools) => MapMigrationFunction;
+    rawMapFunction: (tools : MigrationTools) => MapMigrationFunction;
+    entitySystemFunction: () => MapMigrationFunction;
     name: string;
 }

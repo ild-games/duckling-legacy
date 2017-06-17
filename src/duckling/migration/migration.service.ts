@@ -34,7 +34,7 @@ export class MigrationService {
     /**
      * Migrate a map to the newest version supported by the editor. Throws if the map is more advanced than the editor supports.
      */
-    async migrateMap<T>(map: T, versionInfo: ProjectVersionInfo, migrationRoot: string): Promise<T> {
+    async migrateMap(map: any, versionInfo: ProjectVersionInfo, migrationRoot: string): Promise<any> {
         let mapVersion = (map as any).version;
 
         if (versionCompareFunction(versionInfo.mapVersion, mapVersion) < 0) {
@@ -55,6 +55,7 @@ export class MigrationService {
 
         return Promise.resolve(result);
     }
+
 
     /**
      * Get project migration data and run any migrations that need to be run immediatly.
@@ -150,7 +151,7 @@ export class MigrationService {
     }
 
     private _loadExistingCodeMigration(migration: MapMigration): MapMigrationFunction {
-        return this._existingCodeMigrations[migration.name].function(new MigrationTools());
+        return this._existingCodeMigrations[migration.name].rawFunction(new MigrationTools());
     }
 }
 
