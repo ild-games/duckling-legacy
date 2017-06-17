@@ -30,6 +30,35 @@ function _isUpdateEntityAction(action : Action): action is EntityUpdateAction  {
     return action.type === ACTION_UPDATE_ENTITY;
 }
 
+const ACTION_UPDATE_ENTITIES = "EntitySystem.UpdateEntities";
+
+/**
+ *  Action used to describe updates to multiple entities. If no entity with the
+ *  given key exists, then a new entity will be created.
+ */
+export interface EntitiesUpdateAction extends Action {
+    entities : Entity[];
+    entityKeys : EntityKey[];
+}
+
+/**
+ * Factory function for a EntitiesUpdateAction
+ * @param  entities    New value for the entities.
+ * @param  entityKeys The keys for the entities
+ * @return A new EntitiesUpdateAction.
+ */
+export function updateEntitiesAction(entities : Entity[], entityKeys : EntityKey[]) : EntitiesUpdateAction {
+    return {
+        type : ACTION_UPDATE_ENTITIES,
+        entities,
+        entityKeys
+    }
+}
+
+function _isUpdateEntitiesAction(action : Action): action is EntitiesUpdateAction  {
+    return action.type === ACTION_UPDATE_ENTITIES;
+}
+
 /**
  *  Action used to replace the current entity system with another.
  */
@@ -132,6 +161,11 @@ export function mergeEntityAction(action : EntityUpdateAction, previousAction : 
 export function entitySystemReducer(entitySystem : EntitySystem = createEntitySystem(), action : Action) : EntitySystem {
     if (_isUpdateEntityAction(action)) {
         return entitySystem.set(action.entityKey, action.entity);
+    } else if (_isUpdateEntitiesAction(action)) {
+        for (let i = 0; i < action.entities.length; i++) {
+            entitySystem = entitySystem.set(action.entityKeys[i], action.entities[i]);
+        }
+        return entitySystem;
     } else if (_isReplaceSystemAction(action)) {
         return action.entitySystem;
     } else if (_isDeleteEntityAction(action)) {

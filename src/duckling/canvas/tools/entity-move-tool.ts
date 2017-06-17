@@ -241,10 +241,14 @@ export class EntityMoveTool extends BaseTool {
             dragDistance = this._getDragDistanceWithSnapping(dragDistance);
         }
 
+        let entityKeys : EntityKey[] = [];
+        let entities : Entity[] = [];
         for (let selection of this._selectionService.selections.value) {
             let updatedEntity = this._entityPositionService.setPosition(selection.entity, vectorAdd(dragDistance, this._initialPositions[selection.key]));
-            this._entitySystemService.updateEntity(selection.key, updatedEntity, this._mergeKey);
+            entityKeys.push(selection.key);
+            entities.push(updatedEntity);
         }
+        this._entitySystemService.updateEntities(entityKeys, entities, this._mergeKey);
     }
 
     private _getDragDistanceWithSnapping(dragDistance: Vector): Vector {
@@ -347,11 +351,15 @@ export class EntityMoveTool extends BaseTool {
     }
 
     private _adjustEntityPosition(adjustment : Vector) {
+        let entityKeys : EntityKey[] = [];
+        let entities : Entity[] = [];
         for (let selection of this._selectionService.selections.value) {
             let oldPosition = this._entityPositionService.getPosition(selection.entity);
             let updatedEntity = this._entityPositionService.setPosition(selection.entity, vectorAdd(oldPosition, adjustment));
-            this._entitySystemService.updateEntity(selection.key, updatedEntity);
+            entityKeys.push(selection.key);
+            entities.push(updatedEntity);
         }
+        this._entitySystemService.updateEntities(entityKeys, entities, this._mergeKey);
     }
 
     private _deleteSelectedEntities() {
