@@ -285,8 +285,9 @@ export class ProjectService {
         return versionFile;
     }
 
-    async saveVersionFile(versionFileJSON: any): Promise<SaveResult> {
-        return this._jsonLoader.saveJsonToPath(this._pathService.join(this.projectMetaDataDir, "version.json"), versionFileJSON);
+    async saveVersionFile(versionFileContents: any): Promise<SaveResult> {
+        let json = JSON.stringify(versionFileContents, null, 4);
+        return this._jsonLoader.saveJsonToPath(this._pathService.join(this.projectMetaDataDir, "version.json"), json);
     }
 
     private async _parseMapJson(json: any, key: string) {
