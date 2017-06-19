@@ -6,7 +6,7 @@ import {StoreService} from '../../state/store.service';
 import {ProjectService} from '../../project/project.service';
 import {Validator} from '../../controls/validated-input.component';
 
-import {CollisionTypesService} from './collision-types.service';
+import {CollisionTypesService, NONE_COLLISION_TYPE} from './collision-types.service';
 import {EDIT_COLLISION_TYPE_MIGRATION_NAME} from './collision-migration';
 
 /**
@@ -36,16 +36,22 @@ import {EDIT_COLLISION_TYPE_MIGRATION_NAME} from './collision-migration';
         </dk-section>
         <dk-section headerText="Current Collision Types">
             <mat-list class="current-collision-types">
-                <dk-edit-input
-                    *ngFor="let collisionType of collisionTypes"
-                    [value]="collisionType"
-                    [validator]="collisionTypeValidator(collisionType)"
-                    [floatIconRight]="true"
-                    editTooltip="Edit collision type"
-                    validTooltip="Save collision type"
-                    invalidTooltip="Collision type cannot be a duplicate or blank"
-                    (onValueSaved)="onCollisionTypeModified(collisionType, $event)">
-                </dk-edit-input>
+                <ng-container *ngFor="let collisionType of collisionTypes">
+                    <div *ngIf="!isNoneCollisionType(collisionType)">
+                        <dk-edit-input
+                            [value]="collisionType"
+                            [validator]="collisionTypeValidator(collisionType)"
+                            [floatIconRight]="true"
+                            editTooltip="Edit collision type"
+                            validTooltip="Save collision type"
+                            invalidTooltip="Collision type cannot be a duplicate or blank"
+                            (onValueSaved)="onCollisionTypeModified(collisionType, $event)">
+                        </dk-edit-input>
+                        <dk-delete-button 
+                            (deleteClick)="onCollisionTypeDeleted(collisionType)">
+                        </dk-delete-button>
+                    </div>
+                </ng-container>
             </mat-list>
         </dk-section>
     `
@@ -78,6 +84,20 @@ export class EditCollisionTypesComponent {
                 oldType: oldValue, 
                 newType: newValue
             });
+    }
+
+    onCollisionTypeDeleted(collisionType : string) {
+        this._collisionTypes.removeCollisionType(collisionType);
+        this._projectService.runExistingCodeMigration(
+            EDIT_COLLISION_TYPE_MIGRATION_NAME, 
+            {
+                oldType: collisionType, 
+                newType: NONE_COLLISION_TYPE
+            });
+    }
+
+    isNoneCollisionType(collisionType : string) {
+        return collisionType === NONE_COLLISION_TYPE;
     }
 
     get collisionTypes() : string[] {

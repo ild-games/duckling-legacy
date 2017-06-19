@@ -80,6 +80,15 @@ export class CollisionTypesService {
         this._store.dispatch(_collisionTypesAction(new Set<string>(newCollisionTypes)));
     }
 
+    removeCollisionType(collisionType : string) {
+        if (!this.collisionTypes.value.has(collisionType)) {
+            throw new Error(`Attempt to delete collision type that is not registered: ${collisionType}`);
+        }
+        let newCollisionTypes = new Set<string>(this.collisionTypes.value);
+        newCollisionTypes.delete(collisionType);
+        this._store.dispatch(_collisionTypesAction(new Set<string>(newCollisionTypes)));
+    }
+
     private _registerAnconaCollisionTypes(collisionTypeMetaData : CollisionTypeMetaData) {
         let collisionTypes = [NONE_COLLISION_TYPE];
         if (collisionTypeMetaData) {
