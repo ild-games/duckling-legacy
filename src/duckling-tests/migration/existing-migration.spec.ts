@@ -9,7 +9,6 @@ import { MigrationTools } from '../../duckling/migration/migration-tools';
 import { ParsedMap } from '../../duckling/project/map-parser.service';
 import { EntitySystem, Entity, EntityKey } from '../../duckling/entitysystem/entity';
 
-
 const MIGRATION_FILE: ProjectVersionInfo = {
     mapVersion: "1.0",
     mapMigrations: [
@@ -69,7 +68,6 @@ describe("MigrationService", function () {
         migrationService.registerExistingCodeMigration(fakeCollisionMigration);
     });
 
-
     describe("migrateMap", () => {
         it("Runs existing code on a raw map", async function () {
             let map = await migrationService.migrateMap(RAW_MAP, MIGRATION_FILE, "THE_ROOT");
@@ -77,11 +75,10 @@ describe("MigrationService", function () {
         });
     });
 
-    describe("updateVersionFileWithExistingCodeMigration", () => {
+    describe("updateVersionInfoWithExistingCodeMigration", () => {
 
-        const PRE_MIGRATION_VERSION_FILE = {
-            projectVersion: "1.0",
-            editorVersion: "0.1",
+        const PRE_MIGRATION_VERSION_INFO : ProjectVersionInfo = {
+            mapVersion: "1.0",
             mapMigrations: [
                 {
                     type: "code",
@@ -91,9 +88,8 @@ describe("MigrationService", function () {
             ]
         };
 
-        const EXPECTED_VERSION_FILE = {
-            projectVersion: "2.0",
-            editorVersion: "0.1",
+        const EXPECTED_VERSION_INFO = {
+            mapVersion: "2.0",
             mapMigrations: [
                 {
                     type: "code",
@@ -112,36 +108,34 @@ describe("MigrationService", function () {
             ]
         };
 
-        let versionFileJson: any;
+        let versionInfo: any;
 
         beforeEach(() => {
-            versionFileJson = Object.assign({}, PRE_MIGRATION_VERSION_FILE);
-            versionFileJson = migrationService.updateVersionFileWithExistingCodeMigration(
-                versionFileJson,
+            versionInfo = Object.assign({}, PRE_MIGRATION_VERSION_INFO);
+            versionInfo = migrationService.updateVersionInfoWithExistingCodeMigration(
+                versionInfo,
                 "collision",
                 { oldType: "oldType", newType: "newType" });
         });
 
         describe("the existing-code migration that it adds", () => {
-
             it("has an 'updateTo' equal to the new project version in the file", () => {
-                expect(versionFileJson.mapMigrations[1].updateTo).to.eql(EXPECTED_VERSION_FILE.projectVersion);
+                expect(versionInfo.mapMigrations[1].updateTo).to.eql(EXPECTED_VERSION_INFO.mapVersion);
             });
 
             it("has the options that were provided", () => {
-                expect(versionFileJson.mapMigrations[1].options).to.eql((EXPECTED_VERSION_FILE.mapMigrations[1] as any).options);
+                expect(versionInfo.mapMigrations[1].options).to.eql((EXPECTED_VERSION_INFO.mapMigrations[1] as any).options);
             });
         });
 
         it("increments the project version", () => {
-            expect(versionFileJson.projectVersion).to.eql(EXPECTED_VERSION_FILE.projectVersion);
+            expect(versionInfo.mapVersion).to.eql(EXPECTED_VERSION_INFO.mapVersion);
         });
     });
 
     describe("migrateEntitySystem", () => {
 
         let entitySystem: EntitySystem;
-
 
         const ENTITY_SYSTEM: EntitySystem = Map<EntityKey, Entity>({
             entity1: {
@@ -169,7 +163,6 @@ describe("MigrationService", function () {
             }
         });
 
-
         beforeEach(() => {
             entitySystem = Map(ENTITY_SYSTEM); 
         });
@@ -184,6 +177,5 @@ describe("MigrationService", function () {
                 "fake-collision-migration", 
                 { oldType: "oldType", newType: "newType"})).to.eql(MIGRATED_ENTITY_SYSTEM);
         });
-
     });
 });

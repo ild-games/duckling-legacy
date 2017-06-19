@@ -43,14 +43,15 @@ const USER_META_DATA_FILE = "user-meta-data";
 export class ProjectService {
     project: BehaviorSubject<Project>;
 
-    constructor(private _entitySystem: EntitySystemService,
-        private _storeService: StoreService,
-        private _migrationService: MigrationService,
-        private _jsonLoader: JsonLoaderService,
-        private _pathService: PathService,
-        private _mapParser: MapParserService,
-        private _dialog: DialogService,
-        private _snackbar: SnackBarService) {
+    constructor(
+            private _entitySystem: EntitySystemService,
+            private _storeService: StoreService,
+            private _migrationService: MigrationService,
+            private _jsonLoader: JsonLoaderService,
+            private _pathService: PathService,
+            private _mapParser: MapParserService,
+            private _dialog: DialogService,
+            private _snackbar: SnackBarService) {
         this.project = new BehaviorSubject(this._project);
         this._storeService.state.subscribe((state) => {
             this.project.next(state.project);
@@ -252,31 +253,24 @@ export class ProjectService {
     }
 
     async runExistingCodeMigration(migrationName: string, options: any): Promise<void> {
-        await this._updateVersionFileWithExistingCodeMigration(migrationName, options);
-        await this._updateEntitySystemWithExistingCodeMigration(migrationName, options);
-        await this._updateProjectVersionInfo();
+        this._updateProjectVersionInfo(migrationName, options);
+        this._updateEntitySystemWithExistingCodeMigration(migrationName, options);
     }
 
-    private async _updateVersionFileWithExistingCodeMigration(migrationName: string, options: any) {
-        let versionFile = await this.openVersionFile();
-        this._migrationService.updateVersionFileWithExistingCodeMigration(versionFile, migrationName, options);
-        this.saveVersionFile(versionFile);
+    private _updateProjectVersionInfo(migrationName: string, options?: any) {
+        let newVersionInfo = this._migrationService.updateVersionInfoWithExistingCodeMigration(
+            this.project.value.versionInfo,
+            migrationName,
+            options);
+        this._storeService.dispatch(setVersionInfo(newVersionInfo));
     }
 
-    private async _updateEntitySystemWithExistingCodeMigration(migrationName: string, options: any) {
+    private _updateEntitySystemWithExistingCodeMigration(migrationName: string, options: any) {
         let newEntitySystem = this._migrationService.migrateEntitySystem(
             this._entitySystem.entitySystem.value,
-            migrationName);
+            migrationName,
+            options);
         this._storeService.dispatch(replaceSystemAction(newEntitySystem));
-    }
-
-    private async _updateProjectVersionInfo() {
-        this._storeService.dispatch(
-            setVersionInfo({
-                mapVersion: incrementMajorVersion(this.project.value.versionInfo.mapVersion),
-                mapMigrations: this.project.value.versionInfo.mapMigrations
-            })
-        );
     }
 
     async openVersionFile(): Promise<any> {

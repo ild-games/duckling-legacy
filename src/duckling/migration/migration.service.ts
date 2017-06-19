@@ -34,17 +34,17 @@ export class MigrationService {
         this._existingCodeMigrations[existingCodeMigration.name] = existingCodeMigration;
     }
 
-    updateVersionFileWithExistingCodeMigration(versionFile: any, name: string, options?: any): any {
-        versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
-        versionFile.mapMigrations.push(
+    updateVersionInfoWithExistingCodeMigration(versionInfo: ProjectVersionInfo, name: string, options?: any): any {
+        versionInfo.mapVersion = incrementMajorVersion(versionInfo.mapVersion);
+        versionInfo.mapMigrations.push(
             {
                 type: "existing-code",
-                updateTo: versionFile.projectVersion,
+                updateTo: versionInfo.mapVersion,
                 name,
                 options
             }
         );
-        return versionFile;
+        return versionInfo;
     }
 
     migrateEntitySystem(entitySystem: EntitySystem, migrationName: string, options?: any): EntitySystem {
@@ -193,7 +193,7 @@ export interface EntitySystemMigrationFunction {
 }
 
 interface ProjectMigrationFunction {
-    async(): Promise<void>;
+    async (): Promise<void>;
 }
 
 interface VersionFile {
