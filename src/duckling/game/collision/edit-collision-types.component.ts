@@ -40,6 +40,7 @@ import {EDIT_COLLISION_TYPE_MIGRATION_NAME} from './collision-migration';
                     *ngFor="let collisionType of collisionTypes"
                     [value]="collisionType"
                     [validator]="collisionTypeValidator(collisionType)"
+                    [floatIconRight]="true"
                     editTooltip="Edit collision type"
                     validTooltip="Save collision type"
                     invalidTooltip="Collision type cannot be a duplicate or blank"

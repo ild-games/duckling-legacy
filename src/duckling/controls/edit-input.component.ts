@@ -20,6 +20,7 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
             <div *ngIf="!isEditingValue" class="edit-label">
                 <dk-inline-edit-label
                     [label]="labelAndValue"
+                    [floatIconRight]="floatIconRight"
                     [tooltip]="editTooltip"
                     (startEdit)="onBeginEdit()">
                 </dk-inline-edit-label>
@@ -50,6 +51,7 @@ export class EditInputComponent implements OnChanges, OnInit {
     @Input() editTooltip : string;
     @Input() validTooltip : string;
     @Input() invalidTooltip : string;
+    @Input() floatIconRight : boolean;
     @Output() onValueSaved = new EventEmitter<string>();
 
     editValue : string;
