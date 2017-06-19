@@ -19,14 +19,14 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
         <div class="container">
             <div *ngIf="!isEditingValue" class="edit-label">
                 <dk-inline-edit-label
-                    label="{{label}}: {{value}}"
+                    [label]="labelAndValue"
                     [tooltip]="editTooltip"
                     (startEdit)="onBeginEdit()">
                 </dk-inline-edit-label>
             </div>
             
             <div *ngIf="isEditingValue" class="edit-label">
-                <span class="edit-label-text">{{label}}:</span>
+                <span class="edit-label-text">{{editLabel}}</span>
                 <dk-input
                     [value]="editValue"
                     [dividerColor]="isValid ? 'primary' : 'warn'"
@@ -97,5 +97,19 @@ export class EditInputComponent implements OnChanges, OnInit {
         }
 
         return this.validator(this.editValue);
+    }
+
+    get labelAndValue() : string {
+        if (this.label) {
+            return `${this.label}: ${this.value}`;
+        }
+        return this.value;
+    }
+
+    get editLabel() : string {
+        if (this.label) {
+            return `${this.label}:`;
+        }
+        return "";
     }
 }
