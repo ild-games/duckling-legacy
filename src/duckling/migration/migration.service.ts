@@ -115,6 +115,11 @@ export class MigrationService {
         }
     }
 
+    async saveProject(projectPath: string, versionInfo: VersionFile): Promise<any> {
+        let versionFileName = this._path.join(projectPath, "project", "version.json");
+        await this._jsonLoader.saveJsonToPath(versionFileName, JSON.stringify(versionInfo,null, 4));
+    }
+
     private async _addMissingEditorMigrations(versionFile: VersionFile, missingMigrations: EditorMigration[], versionFileName: string) {
         missingMigrations.sort((a, b) => versionCompareFunction(a.updateEditorVersion, b.updateEditorVersion));
         for (let migration of missingMigrations) {

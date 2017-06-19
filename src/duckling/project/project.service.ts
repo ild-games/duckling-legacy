@@ -114,20 +114,16 @@ export class ProjectService {
             ...this._project.currentMap
         }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
+        await this._migrationService.saveProject(this.projectMetaDataDir, this.project.value.versionInfo);     
         await this._saveProjectMetaData();
         await this._saveUserMetaData(this.project.value.userMetaData);
         await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
+
         this._snackbar.invokeSnacks();
     }
 
     private async _saveProjectMetaData() {
-        await this._saveProjectVersionInfo();
         await this._saveCustomAttributes();
-    }
-
-    private async _saveProjectVersionInfo() {
-
-
     }
 
     private async _saveCustomAttributes() {
