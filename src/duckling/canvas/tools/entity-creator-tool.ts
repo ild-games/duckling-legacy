@@ -28,6 +28,10 @@ export class EntityCreatorTool extends BaseTool {
     }
 
     drawTool(canvasZoom : number) : DrawnConstruct {
+        if (this._selection.selections.value.length === 0) {
+            return new DrawnConstruct();
+        }
+
         let selectedEntityKey = this._selection.selections.value[0].key;
         if (!selectedEntityKey) {
             return new DrawnConstruct();
@@ -48,6 +52,7 @@ export class EntityCreatorTool extends BaseTool {
         let entity = this._attributeDefaultService.createEntity();
         entity = this._entityPositionService.setPosition(entity, event.stageCoords);
         let key = this._entitySystemService.addNewEntity(entity, mergeKey);
+        this._selection.deselect(mergeKey);
         this._selection.select([key], mergeKey);
     }
 
