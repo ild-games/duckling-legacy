@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Subscriber, BehaviorSubject, Observable} from 'rxjs';
 import {DisplayObject} from 'pixi.js';
 
 import {KeyboardService} from '../../util';
@@ -12,11 +13,15 @@ import {MultiModeTool} from './multi-mode-tool';
  */
 @Injectable()
 export class BimodalTool extends MultiModeTool {
-
     constructor(private _primaryTool : BaseTool,
                 private _secondaryTool : BaseTool,
                 private _keyboardService : KeyboardService) {
         super();
+
+        this.drawnConstructChanged = Observable.merge(
+            this._primaryTool.drawnConstructChanged, 
+            this._secondaryTool.drawnConstructChanged
+        ) as BehaviorSubject<boolean>;
     }
 
     protected get selectedTool() {

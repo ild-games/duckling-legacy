@@ -1,10 +1,12 @@
 import {DisplayObject, Graphics} from 'pixi.js';
+import {BehaviorSubject} from 'rxjs';
 
 import {Vector} from '../../math';
 import {CanvasComponent} from '../canvas.component';
 import {DrawnConstruct} from '../drawing/drawn-construct';
 
 export class BaseTool {
+    drawnConstructChanged : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     drawTool(canvasZoom : number) : DrawnConstruct {
         return new DrawnConstruct();

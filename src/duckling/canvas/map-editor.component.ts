@@ -110,6 +110,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     private _totalMillis = 0;
     private _redrawInterval : Subscriber<any>;
     private _drawerServiceSubscription : Subscriber<any>;
+    private _toolDrawnConstructChangedSubscription : Subscriber<any>;
     private _drawingCache : DrawableCache = {layers: [], entityCache : {}};
 
     @ViewChild('canvasElement') canvasElement : ElementRef;
@@ -132,6 +133,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         this._drawerServiceSubscription = this._entityDrawerService.redraw.subscribe((entityCacheValid) => {
             this._clearCache(entityCacheValid);
         }) as Subscriber<any>;
+
     }
 
     ngAfterViewInit() {
@@ -143,6 +145,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     ngOnDestroy() {
         this._redrawInterval.unsubscribe();
         this._drawerServiceSubscription.unsubscribe();
+        this._toolDrawnConstructChangedSubscription.unsubscribe();
     }
 
     private _drawFrame() {
@@ -190,10 +193,6 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _redrawAllDisplayObjects() {
-        // DEBUG, we need to clear the cache when dragging the selection box
-        this._clearCache(true);
-        // END DEBUG
-
         if (this._drawingCache.layers.length === 0) {
             let drawnConstructs : DrawnConstruct[] = [
                 this._buildCanvasBackground(),
@@ -254,6 +253,13 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private _setTool(tool : BaseTool) {
         this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService);
+
+        if (this._toolDrawnConstructChangedSubscription) {
+            this._toolDrawnConstructChangedSubscription.unsubscribe();
+        }
+        this._toolDrawnConstructChangedSubscription = this.tool.drawnConstructChanged.subscribe(() => {
+            this._clearCache(true);
+        }) as Subscriber<any>;
     }
 
     private _clearCache(entityCacheValid : boolean = false) {

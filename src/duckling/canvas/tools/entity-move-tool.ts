@@ -228,6 +228,7 @@ export class EntityMoveTool extends BaseTool {
 
     onStageMoveSelectionBox(event : CanvasMouseEvent) {
         this._selectionBoxDimensions = vectorSubtract(event.stageCoords, this._initialMouseLocation);
+        this.drawnConstructChanged.next(true);
     }
     
     onStageMoveSelectedEntities(event : CanvasMouseEvent) {

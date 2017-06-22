@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Subscriber, BehaviorSubject, Observable} from 'rxjs';
 import {Container, DisplayObject, Graphics} from 'pixi.js';
 
 import {DrawnConstruct} from '../drawing/drawn-construct';
@@ -15,6 +16,11 @@ export class SelectedEntityTool extends MultiModeTool {
     constructor(private _entityMoveTool : EntityMoveTool,
                 private _entityResizeTool : EntityResizeTool) {
         super();
+
+        this.drawnConstructChanged = Observable.merge(
+            this._entityMoveTool.drawnConstructChanged, 
+            this._entityResizeTool.drawnConstructChanged
+        ) as BehaviorSubject<boolean>;
     }
 
     protected get selectedTool() {
