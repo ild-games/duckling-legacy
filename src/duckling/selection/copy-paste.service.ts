@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {Action, StoreService, newMergeKey} from '../state';
-import {Vector, vectorRound} from '../math';
+import {Vector, vectorRound, vectorSubtract, vectorAdd} from '../math';
 import {Entity, EntitySystemService, EntityPositionService, EntityKey} from '../entitysystem';
 import {SelectionService} from './selection.service';
 
@@ -29,10 +29,24 @@ export class CopyPasteService {
     paste(position : Vector) : EntityKey[] {
         let clipboardEntities = this.clipboard.value.copiedEntities;
         let pastedEntities: EntityKey[] = [];
+        let lowestPoint = this.findLowestPoint(clipboardEntities);
         for (let entity of clipboardEntities) {
-            pastedEntities.push(this._entitySystem.addNewEntity(this._position.setPosition(entity, vectorRound(position))));
+            let newEntity = this._position.setPosition(entity, vectorRound(vectorAdd(position, vectorSubtract(this._position.getPosition(entity), lowestPoint))));
+            pastedEntities.push(this._entitySystem.addNewEntity(newEntity));
         }
         return pastedEntities;
+    }
+
+    findLowestPoint(entities : Entity[]) : Vector {
+        let lowestPoint = { x: Number.MAX_VALUE, y: Number.MAX_VALUE };
+        for (let entity of entities) {
+            let position = this._position.getPosition(entity);
+            if (position) {
+                lowestPoint.x = Math.min(lowestPoint.x, position.x);
+                lowestPoint.y = Math.min(lowestPoint.y, position.y);
+            }
+        }
+        return lowestPoint;
     }
 }
 
