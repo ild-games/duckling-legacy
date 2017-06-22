@@ -30,9 +30,10 @@ export class CopyPasteService {
         let clipboardEntities = this.clipboard.value.copiedEntities;
         let pastedEntities: EntityKey[] = [];
         let lowestPoint = this.findLowestPoint(clipboardEntities);
+        let mergeKey = newMergeKey();
         for (let entity of clipboardEntities) {
             let newEntity = this._position.setPosition(entity, vectorRound(vectorAdd(position, vectorSubtract(this._position.getPosition(entity), lowestPoint))));
-            pastedEntities.push(this._entitySystem.addNewEntity(newEntity));
+            pastedEntities.push(this._entitySystem.addNewEntity(newEntity, mergeKey));
         }
         return pastedEntities;
     }
