@@ -173,10 +173,10 @@ function _drawAnimatedDrawable(animatedDrawable : AnimatedDrawable, assetService
 }
 
 function _drawTextDrawable(textDrawable : TextDrawable, assetService : AssetService, transformProperties : TransformProperties) : DrawnConstruct {
-    let fontKey = this.textDrawable.text.fontKey || "Arial";
+    let fontKey = textDrawable.text.fontKey || "Arial";
     let drawnConstruct = new TextDrawnConstruct(
         textDrawable, 
-        this.assetService.fontFamilyFromAssetKey(fontKey),
+        assetService.fontFamilyFromAssetKey(fontKey),
         transformProperties);
     return drawnConstruct;
 }
