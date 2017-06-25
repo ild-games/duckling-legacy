@@ -18,7 +18,7 @@ import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
 import {AssetService, Asset, ProjectService} from '../project';
-import {setScrollPositionsAction} from '../project/user-meta-data';
+import {setScrollPositionsAction, setInitialMap, setScaleAction} from '../project/user-meta-data';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
@@ -68,6 +68,8 @@ type DrawableCache = {
                 [scale]="scale"
                 [showGrid]="showGrid"
                 [canvasDisplayObject]="canvasDisplayObject"
+                [scrollLeft]="scrollLeft"
+                [scrollTop]="scrollTop"
                 (elementCopy)="copyEntity()"
                 (elementPaste)="pasteEntity($event)"
                 (scaleChanged)="onScaleChanged($event)">
@@ -108,6 +110,9 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
      */
     canvasDisplayObject : Container = new Container();
 
+    scrollLeft : number;
+    scrollTop : number;
+
     private _framesPerSecond = 30;
     private _totalMillis = 0;
     private _redrawInterval : Subscriber<any>;
@@ -137,12 +142,24 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
             this._clearCache(entityCacheValid);
         }) as Subscriber<any>;
 
+        this._loadMetaData();
     }
 
     ngAfterViewInit() {
         this._redrawInterval = TimerObservable
             .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this._drawFrame()) as Subscriber<any>;
+    }
+
+    private _loadMetaData() {
+        let curMapUserMetaData = this.projectService.project.value.userMetaData.mapMetaData[this.projectService.project.value.currentMap.key];
+        if (!curMapUserMetaData) {
+            return;
+        }
+
+        this.scale = curMapUserMetaData.scale;
+        this.scrollLeft = curMapUserMetaData.scrollLeft;
+        this.scrollTop = curMapUserMetaData.scrollTop;
     }
 
     ngOnDestroy() {
@@ -154,12 +171,9 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     onSave() {
         let scrollLeft = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollLeft;
         let scrollTop = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollTop;
-        this._storeService.dispatch(setScrollPositionsAction(
-            this.projectService.project.value.currentMap.key,
-            {
-                scrollLeft,
-                scrollTop
-            }));
+        this._storeService.dispatch(setScrollPositionsAction(this.projectService.project.value.currentMap.key, {scrollLeft, scrollTop}));
+        this._storeService.dispatch(setInitialMap(this.projectService.project.value.currentMap.key));
+        this._storeService.dispatch(setScaleAction(this.projectService.project.value.currentMap.key, this.scale));
         this.projectService.save();
     }
 

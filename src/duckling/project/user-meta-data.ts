@@ -9,6 +9,7 @@ export interface UserMetaData {
 export interface MapMetaData {
     scrollTop?: number;
     scrollLeft?: number;
+    scale?: number;
 }
 
 ///////////////////
@@ -61,6 +62,56 @@ function _setScrollPositions(userMetaData : UserMetaData, action : SetScrollPosi
         });
 }
 
+////////
+// Scale
+export function setScaleAction(mapName : string, newScale : number) : SetScaleAction {
+    return {
+        type: ACTION_SET_SCALE,
+        mapName,
+        scale: newScale
+    }
+}
+export const ACTION_SET_SCALE = "UserMetaData.SetScaleAction";
+interface SetScaleAction extends Action {
+    mapName: string,
+    scale : number
+}
+function _setScale(userMetaData : UserMetaData, action : SetScaleAction) : UserMetaData {
+    let newMapMetaData = {...userMetaData.mapMetaData};
+    newMapMetaData[action.mapName] = {
+        ...userMetaData.mapMetaData[action.mapName],
+        scale: action.scale,
+    };
+    return immutableAssign(
+        userMetaData, 
+        {
+            ...userMetaData,
+            mapMetaData: {
+                ...userMetaData.mapMetaData,
+                ...newMapMetaData
+            }
+        });
+}
+
+//////////////
+// Initial Map
+export function setInitialMap(newInitialMap : string) : SetInitialMapAction {
+    return {
+        type: ACTION_SET_INITIAL_MAP,
+        newInitialMap
+    }
+}
+export const ACTION_SET_INITIAL_MAP = "UserMetaData.SetInitialMap";
+interface SetInitialMapAction extends Action {
+    newInitialMap : string
+}
+function _setInitialMap(userMetaData : UserMetaData, action : SetInitialMapAction) : UserMetaData {
+    return immutableAssign(userMetaData, {
+        ...userMetaData,
+        initialMap: action.newInitialMap
+    });
+}
+
 //////////
 // Reducer
 export function userMetaDataReducer(state : UserMetaData = {mapMetaData: {}}, action : Action) {
@@ -69,6 +120,10 @@ export function userMetaDataReducer(state : UserMetaData = {mapMetaData: {}}, ac
             return _updateUserMetaData(state, action as UpdateUserMetaDataAction);
         case ACTION_SET_SCROLL_POSITIONS:
             return _setScrollPositions(state, action as SetScrollPositionsAction);
+        case ACTION_SET_SCALE:
+            return _setScale(state, action as SetScaleAction);
+        case ACTION_SET_INITIAL_MAP:
+            return _setInitialMap(state, action as SetInitialMapAction);
         default:
             return state;
     }

@@ -67,6 +67,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     @Input() stageDimensions : Vector;
     @Input() gridSize : number;
+    @Input() scrollLeft : number = 0;
+    @Input() scrollTop : number = 0;
     @Input() scale : number;
     @Input() showGrid : boolean;
     @Input() canvasDisplayObject : DisplayObject;
@@ -124,7 +126,11 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this._renderer.backgroundColor = 0xDFDFDF;
 
         this._resizeCanvasElements();
-        this._centerStage();
+        if (this.scrollTop === 0 && this.scrollLeft === 0) {
+            this._centerStage();
+        } else {
+            this.scrollTo({x: this.scrollLeft, y: this.scrollTop});
+        }
         this._render();
     }
 
