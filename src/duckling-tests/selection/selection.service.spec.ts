@@ -60,43 +60,46 @@ describe("SelectionService", function() {
         this.project = new ProjectService(this.entitySystem, this.store, this.migrationService, this.jsonLoader, this.path, this.mapParser, this.dialog, this.snackbar);
         this.availableAttributes = new AvailableAttributeService(this.attributeDefault, this.project);
         this.drawer = new MockDrawerService(this.assets, this.renderPriority, this.positionService, this.entitySystem, this.layerService, this.availableAttributes, this.store);
-        this.selection = new SelectionService(this.store, this.entitySystem, this.layerService, this.drawer, null, null);
+        this.selection = new SelectionService(this.store, this.entitySystem, this.drawer, this.layerService, this.entityBoxService, this.renderPriority);
     });
 
-    it("with no selection, the selction behavior is empty", function() {
-        expect(this.selection.selection.value).to.eql({});
+    it("with no selection, the selection behavior is empty", function() {
+        expect(this.selection.selections.value).to.eql([]);
     });
 
     it("can make a selection even if the entity does not exist", function() {
-        this.selection.select(ENTITY_KEY);
-        expect(this.selection.selection.value).to.eql({selectedEntity: ENTITY_KEY, entity: null});
+        this.selection.select([ENTITY_KEY]);
+        expect(this.selection.selections.value).to.eql([{key: ENTITY_KEY, entity: null}]);
     });
 
     it("creating an already selected entity will update the selection", function() {
-        this.selection.select(ENTITY_KEY);
+        this.selection.select([ENTITY_KEY]);
         this.entitySystem.updateEntity(ENTITY_KEY, entity);
-        expect(this.selection.selection.value).to.eql({selectedEntity: ENTITY_KEY, entity});
+        expect(this.selection.selections.value).to.eql([{key: ENTITY_KEY, entity}]);
     });
 
     describe("with a selected entity", function() {
         beforeEach(function() {
             this.entitySystem.updateEntity(ENTITY_KEY, entity);
-            this.selection.select(ENTITY_KEY);
+            this.selection.select([ENTITY_KEY]);
         });
 
         it("updating an already selected entity will update the selection", function() {
             let newEntity = immutableAssign(entity, {compa : {tr : "umpet"}});
             this.entitySystem.updateEntity(ENTITY_KEY, newEntity);
             let selection = {
-                selectedEntity : ENTITY_KEY,
+                key : ENTITY_KEY,
                 entity : newEntity
             }
-            expect(this.selection.selection.value).to.eql(selection);
+            expect(this.selection.selections.value).to.eql([selection]);
         });
 
-        it("it is possible to change the selection", function() {
-            this.selection.select("theOther");
-            expect(this.selection.selection.value).to.eql({selectedEntity: "theOther", entity : null});
+        it("it is possible to add to the selection", function() {
+            this.selection.select(["theOther"]);
+            expect(this.selection.selections.value).to.eql([
+                {key: ENTITY_KEY, entity},
+                {key: "theOther", entity : null}
+            ]);
         });
     });
 

@@ -110,7 +110,9 @@ export class SelectionService {
         if (selectedEntityKeys && selectedEntityKeys.length > 0) {
             for (let key of selectedEntityKeys) {
                 let entity = this._entitySystem.getEntity(key);
-                if (this._drawerService.isEntityVisible(entity)){
+                if (!entity) {
+                    filteredEntities.push({key, entity: null});
+                } else if (this._drawerService.isEntityVisible(entity)){
                     filteredEntities.push({key, entity});
                 }
             }
