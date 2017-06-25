@@ -3,7 +3,7 @@ import {immutableAssign} from '../util';
 
 export interface UserMetaData {
     initialMap?: string,
-    mapMetaData?: {[mapName : string] : MapMetaData}
+    mapMetaData: {[mapName : string] : MapMetaData}
 }
 
 export interface MapMetaData {
@@ -27,34 +27,48 @@ function _updateUserMetaData(userMetaData : UserMetaData, action : UpdateUserMet
     return immutableAssign(userMetaData, action.newUserMetaData);
 }
 
-//////////////
-// Initial Map
-export function setInitialMapAction(newInitialMap : string) {
+///////////////////
+// Scroll Positions
+export function setScrollPositionsAction(mapName : string, newScrollPosition : {scrollTop: number, scrollLeft: number}) : SetScrollPositionsAction {
     return {
-        type: ACTION_SET_INITIAL_MAP,
-        newInitialMap
+        type: ACTION_SET_SCROLL_POSITIONS,
+        mapName,
+        scrollTop: newScrollPosition.scrollTop,
+        scrollLeft: newScrollPosition.scrollLeft
     }
 }
-export const ACTION_SET_INITIAL_MAP = "UserMetaData.SetInitialMap";
-interface SetInitialMapAction extends Action {
-    newInitialMap: string
+export const ACTION_SET_SCROLL_POSITIONS = "UserMetaData.SetScrollPositions";
+interface SetScrollPositionsAction extends Action {
+    mapName: string,
+    scrollTop: number,
+    scrollLeft : number
 }
-function _setInitialMap(userMetaData : UserMetaData, action : SetInitialMapAction) : UserMetaData {
+function _setScrollPositions(userMetaData : UserMetaData, action : SetScrollPositionsAction) : UserMetaData {
+    let newMapMetaData = {...userMetaData.mapMetaData};
+    newMapMetaData[action.mapName] = {
+        ...userMetaData.mapMetaData[action.mapName],
+        scrollLeft: action.scrollLeft,
+        scrollTop: action.scrollTop,
+    };
     return immutableAssign(
         userMetaData, 
         {
             ...userMetaData,
-            initialMap: action.newInitialMap
+            mapMetaData: {
+                ...userMetaData.mapMetaData,
+                ...newMapMetaData
+            }
         });
 }
 
-
-export function userMetaDataReducer(state : UserMetaData = {}, action : Action) {
+//////////
+// Reducer
+export function userMetaDataReducer(state : UserMetaData = {mapMetaData: {}}, action : Action) {
     switch (action.type) {
         case ACTION_UPDATE_USER_META_DATA:
             return _updateUserMetaData(state, action as UpdateUserMetaDataAction);
-        case ACTION_SET_INITIAL_MAP:
-            return _setInitialMap(state, action as SetInitialMapAction);
+        case ACTION_SET_SCROLL_POSITIONS:
+            return _setScrollPositions(state, action as SetScrollPositionsAction);
         default:
             return state;
     }

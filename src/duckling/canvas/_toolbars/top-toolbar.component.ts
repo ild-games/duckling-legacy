@@ -22,7 +22,7 @@ import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.com
         <dk-toolbar-button
             icon="floppy-o"
             tooltip="Save Project"
-            (click)="project.save()">
+            (click)="onSaveClicked()">
         </dk-toolbar-button>
 
         <span class="separator"></span>
@@ -73,6 +73,7 @@ export class TopToolbarComponent {
     @Input() mapName : string;
 
     @Output() mapSelected = new EventEmitter<String>();
+    @Output() saveClicked = new EventEmitter<void>();
 
     constructor(public store : StoreService,
                 public project : ProjectService,
@@ -91,6 +92,10 @@ export class TopToolbarComponent {
                 this.mapSelected.emit(mapName);
             }
         });
+    }
+
+    onSaveClicked() {
+        this.saveClicked.emit();
     }
 
     onShowHideLayersClicked() {

@@ -25,17 +25,13 @@ import {
     Project,
     setVersionInfo
 } from './project';
-import {updateUserMetaDataAction} from './user-meta-data';
+import {UserMetaData, updateUserMetaDataAction} from './user-meta-data';
 import {SnackBarService} from './snackbar.service';
 import {CustomAttribute} from './custom-attribute';
 
 const MAP_DIR = "maps";
 const DEFAULT_INITIAL_MAP = "map1";
 const USER_META_DATA_FILE = "user-preferences";
-
-export type UserMetaData = {
-    initialMap?: string
-}
 
 /**
  * The project service provides access to project level state and operations.
@@ -149,7 +145,7 @@ export class ProjectService {
 
     private async _loadUserMetaData() : Promise<UserMetaData> {
         let fileExists = await this._pathService.pathExists(this.getUserMetaDataPath(USER_META_DATA_FILE));
-        let userPreferences : UserMetaData = {};
+        let userPreferences : UserMetaData = {mapMetaData: {}};
         if (fileExists) {
             let json = await this._jsonLoader.getJsonFromPath(this.getUserMetaDataPath(USER_META_DATA_FILE));
             userPreferences = JSON.parse(json);

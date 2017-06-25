@@ -18,6 +18,7 @@ import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
 import {AssetService, Asset, ProjectService} from '../project';
+import {setScrollPositionsAction} from '../project/user-meta-data';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
@@ -55,7 +56,8 @@ type DrawableCache = {
                 [selectedToolKey]="tool.key"
                 [mapName]="projectService.project.getValue().currentMap.key"
                 (toolSelection)="onToolSelected($event)"
-                (mapSelected)="openMap($event)">
+                (mapSelected)="openMap($event)"
+                (saveClicked)="onSave()">
             </dk-top-toolbar>
 
             <dk-canvas #canvasElement
@@ -125,7 +127,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
                 private _entityDrawerService : EntityDrawerService,
                 private _keyboardService : KeyboardService,
                 private _entityLayerService : EntityLayerService,
-                private _renderPriorityService : RenderPriorityService) {
+                private _renderPriorityService : RenderPriorityService,
+                private _storeService : StoreService) {
         this._setTool(this._toolService.defaultTool);
     }
 
@@ -146,6 +149,18 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         this._redrawInterval.unsubscribe();
         this._drawerServiceSubscription.unsubscribe();
         this._toolDrawnConstructChangedSubscription.unsubscribe();
+    }
+
+    onSave() {
+        let scrollLeft = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollLeft;
+        let scrollTop = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollTop;
+        this._storeService.dispatch(setScrollPositionsAction(
+            this.projectService.project.value.currentMap.key,
+            {
+                scrollLeft,
+                scrollTop
+            }));
+        this.projectService.save();
     }
 
     private _drawFrame() {

@@ -156,7 +156,7 @@ function _changeCustomAttributes(project : Project, action : ChangeCustomAttribu
 /**
  * Reducer used to update the state of the selected project.
  */
-export function projectReducer(state : Project = {customAttributes: [], userMetaData: {}}, action : Action) {
+export function projectReducer(state : Project = {customAttributes: [], userMetaData: {mapMetaData: {}}}, action : Action) {
     let newState = state;
     switch (action.type) {
         case ACTION_SWITCH_PROJECT:
