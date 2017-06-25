@@ -25,6 +25,7 @@ import {
     Project,
     setVersionInfo
 } from './project';
+import {updateUserMetaDataAction} from './user-meta-data';
 import {SnackBarService} from './snackbar.service';
 import {CustomAttribute} from './custom-attribute';
 
@@ -67,11 +68,9 @@ export class ProjectService {
             let versionInfo = await this._migrationService.openProject(projectPath);
             this._storeService.dispatch(setVersionInfo(versionInfo));
             await this._loadProjectMetaData();
-
-            // if, in the future, user meta data needs to be accessed after the initial project
-            // open, it should be a member on the project and put in the rxjs store.
             let userMetaData = await this._loadUserMetaData();
-            await this.openMap(userMetaData.initialMap);
+            this._storeService.dispatch(updateUserMetaDataAction(userMetaData));
+            await this.openMap(this.project.value.userMetaData.initialMap);
         } catch (error) {
             this._dialog.showErrorDialog("Unable to Open the Project", error.message);
         }
@@ -119,7 +118,7 @@ export class ProjectService {
             }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
         await this._saveProjectMetaData();
-        await this._saveUserMetaData(this._buildUserMetaData());
+        await this._saveUserMetaData(this.project.value.userMetaData);
         await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
         this._snackbar.invokeSnacks();
     }
@@ -278,12 +277,6 @@ export class ProjectService {
         }));
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());
-    }
-
-    private _buildUserMetaData() : UserMetaData {
-        return {
-            initialMap: this._project.currentMap.key
-        };
     }
 
     private _mapPathToRoot(root : string, path : string) {
