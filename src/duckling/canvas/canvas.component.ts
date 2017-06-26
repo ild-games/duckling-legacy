@@ -67,8 +67,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     @Input() stageDimensions : Vector;
     @Input() gridSize : number;
-    @Input() scrollLeft : number = 0;
-    @Input() scrollTop : number = 0;
+    @Input() initialScrollPosition : Vector = {x: 0, y: 0};
     @Input() scale : number;
     @Input() showGrid : boolean;
     @Input() canvasDisplayObject : DisplayObject;
@@ -126,10 +125,10 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this._renderer.backgroundColor = 0xDFDFDF;
 
         this._resizeCanvasElements();
-        if (this.scrollTop === 0 && this.scrollLeft === 0) {
+        if (this.initialScrollPosition === {x: 0, y: 0}) {
             this._centerStage();
         } else {
-            this.scrollTo({x: this.scrollLeft, y: this.scrollTop});
+            this.scrollTo(this.initialScrollPosition);
         }
         this._render();
     }
@@ -145,19 +144,23 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this.onKeyDown(event);
     }
 
-    ngOnChanges(changes : {stageDimensions?:SimpleChange, scale?:SimpleChange}) {
-        if (!this._viewInited) {
-            return;
-        }
-
+    ngOnChanges(changes : {stageDimensions?:SimpleChange, scale?:SimpleChange, initialScrollPosition?:SimpleChange}) {
         if (changes.stageDimensions) {
             this._resizeCanvasElements();
             this._centerStage();
-        } else if (changes.scale) {
+        } 
+        if (changes.scale) {
             this.onScaleChanged(changes.scale.previousValue, changes.scale.currentValue);
+        } 
+        if (changes.initialScrollPosition) {
+            if (this.scrollPosition != changes.initialScrollPosition.currentValue) {
+                this.scrollTo(changes.initialScrollPosition.currentValue);
+            }
         }
 
-        this._render();
+        if (this._viewInited) {
+            this._render();
+        }
     }
 
     onScaleChanged(oldScale : number, newScale : number) {
@@ -188,6 +191,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
         this._zoomInCanvasCoords = null;
         this._resizeCanvasElements();
+        this._zoomLevel = ZOOM_LEVELS.indexOf(newScale);
         this.scrollPan(offsetPan);
     }
 

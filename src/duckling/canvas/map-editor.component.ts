@@ -68,8 +68,7 @@ type DrawableCache = {
                 [scale]="scale"
                 [showGrid]="showGrid"
                 [canvasDisplayObject]="canvasDisplayObject"
-                [scrollLeft]="scrollLeft"
-                [scrollTop]="scrollTop"
+                [initialScrollPosition]="initialScrollPosition"
                 (elementCopy)="copyEntity()"
                 (elementPaste)="pasteEntity($event)"
                 (scaleChanged)="onScaleChanged($event)">
@@ -110,8 +109,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
      */
     canvasDisplayObject : Container = new Container();
 
-    scrollLeft : number;
-    scrollTop : number;
+    initialScrollPosition : Vector = {x: 0, y: 0};
 
     private _framesPerSecond = 30;
     private _totalMillis = 0;
@@ -149,17 +147,6 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         this._redrawInterval = TimerObservable
             .create(0, 1000 / this._framesPerSecond)
             .subscribe(() => this._drawFrame()) as Subscriber<any>;
-    }
-
-    private _loadMetaData() {
-        let curMapUserMetaData = this.projectService.project.value.userMetaData.mapMetaData[this.projectService.project.value.currentMap.key];
-        if (!curMapUserMetaData) {
-            return;
-        }
-
-        this.scale = curMapUserMetaData.scale;
-        this.scrollLeft = curMapUserMetaData.scrollLeft;
-        this.scrollTop = curMapUserMetaData.scrollTop;
     }
 
     ngOnDestroy() {
@@ -218,7 +205,18 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     async openMap(mapKey : string) {
         await this.projectService.openMap(mapKey);
+        this._loadMetaData();
         this._clearCache();
+    }
+
+    private _loadMetaData() {
+        let curMapUserMetaData = this.projectService.project.value.userMetaData.mapMetaData[this.projectService.project.value.currentMap.key];
+        if (!curMapUserMetaData) {
+            return;
+        }
+
+        this.scale = curMapUserMetaData.scale;
+        this.initialScrollPosition = {x: curMapUserMetaData.scrollLeft, y: curMapUserMetaData.scrollTop};
     }
 
     private _redrawAllDisplayObjects() {

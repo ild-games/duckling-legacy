@@ -31,7 +31,7 @@ import {CustomAttribute} from './custom-attribute';
 
 const MAP_DIR = "maps";
 const DEFAULT_INITIAL_MAP = "map1";
-const USER_META_DATA_FILE = "user-preferences";
+const USER_META_DATA_FILE = "user-meta-data";
 
 /**
  * The project service provides access to project level state and operations.
