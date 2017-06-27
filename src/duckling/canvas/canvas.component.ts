@@ -125,7 +125,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this._renderer.backgroundColor = 0xDFDFDF;
 
         this._resizeCanvasElements();
-        if (this.initialScrollPosition === {x: 0, y: 0}) {
+        if (this.initialScrollPosition.x === 0 && this.initialScrollPosition.y === 0) {
             this._centerStage();
         } else {
             this.scrollTo(this.initialScrollPosition);
