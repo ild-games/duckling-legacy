@@ -1,15 +1,17 @@
 import {Action} from '../state';
 import {immutableAssign} from '../util';
+import {LayerState} from '../entitysystem/services/entity-layer.service';
 
 export interface UserMetaData {
-    initialMap?: string,
-    mapMetaData: {[mapName : string] : MapMetaData}
+    mapMetaData: {[mapName : string] : MapMetaData};
+    initialMap?: string;
 }
 
 export interface MapMetaData {
     scrollTop?: number;
     scrollLeft?: number;
     scale?: number;
+    hiddenLayers?: LayerState;
 }
 
 ///////////////////
@@ -112,6 +114,29 @@ function _setInitialMap(userMetaData : UserMetaData, action : SetInitialMapActio
     });
 }
 
+///////////////////
+// Layer Visibility
+export function setHiddenLayers(mapName : string, hiddenLayers: LayerState) : SetHiddenLayersAction {
+    return {
+        type: ACTION_SET_HIDDEN_LAYERS,
+        mapName,
+        hiddenLayers,
+    };
+}
+export const ACTION_SET_HIDDEN_LAYERS = "UserMetaData.SetHiddenLayers";
+interface SetHiddenLayersAction extends Action {
+    mapName: string,
+    hiddenLayers: LayerState
+}
+function _setHiddenLayers(userMetaData : UserMetaData, action : SetHiddenLayersAction) : UserMetaData {
+    let newMapMetaData = {...userMetaData.mapMetaData};
+    newMapMetaData[action.mapName] = {
+        ...userMetaData.mapMetaData[action.mapName],
+        hiddenLayers: action.hiddenLayers
+    };
+    return immutableAssign(userMetaData, { ...userMetaData, mapMetaData: newMapMetaData }); 
+}
+    
 //////////
 // Reducer
 export function userMetaDataReducer(state : UserMetaData = {mapMetaData: {}}, action : Action) {
@@ -124,6 +149,8 @@ export function userMetaDataReducer(state : UserMetaData = {mapMetaData: {}}, ac
             return _setScale(state, action as SetScaleAction);
         case ACTION_SET_INITIAL_MAP:
             return _setInitialMap(state, action as SetInitialMapAction);
+        case ACTION_SET_HIDDEN_LAYERS:
+            return _setHiddenLayers(state, action as SetHiddenLayersAction);
         default:
             return state;
     }
