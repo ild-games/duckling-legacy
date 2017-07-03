@@ -51,8 +51,10 @@ import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets'
 import {getDrawableLayer} from './drawable/drawable-get-layer';
 
 import {AudioAttribute, AUDIO_KEY, defaultAudio} from './audio/audio-attribute';
+import {entityRequiredAudioAssets} from './audio/audio-required-assets';
 import {AudioComponent} from './audio/audio.component';
-import { JsonComponent} from '../controls/json.component';
+
+import {JsonComponent} from '../controls/json.component';
 
 type Services = {
     attributeDefaultService : AttributeDefaultService;
@@ -116,7 +118,6 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
     services.entityDrawerService.register(DRAWABLE_KEY, getDrawableAttributeDrawnConstruct);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
-    services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.entityLayerService.register(DRAWABLE_KEY, getDrawableLayer);
 }
 
@@ -150,4 +151,5 @@ function _bootstrapPathFollowerAttribute(services : Services) {
 function _bootstrapAudioAttribute(services: Services) {
     services.attributeComponentService.register(AUDIO_KEY, AudioComponent);
     services.attributeDefaultService.register(AUDIO_KEY, { createByDefault: false, default: defaultAudio });
+    services.requiredAssetService.register(AUDIO_KEY, entityRequiredAudioAssets);
 }

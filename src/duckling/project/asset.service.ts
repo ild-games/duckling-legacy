@@ -10,7 +10,7 @@ import {Vector} from '../math/vector';
 
 import {RequiredAssetService} from './required-asset.service';
 
-export type AssetType = "TexturePNG" | "FontTTF";
+export type AssetType = "TexturePNG" | "FontTTF" | "SoundWAV";
 
 export interface Asset {
     type : AssetType,
@@ -56,6 +56,9 @@ export class AssetService {
         
         let nonFontAssetsToLoad = 0;
         for (let assetToLoad of assets) {
+            if (this._unsupportedPixiLoadType(assetToLoad)) {
+                continue;
+            }
             let loaded = this._loadAsset(assetToLoad);
             if (loaded && !this._assetTypeIsFont(assetToLoad.asset.type)) {
                 nonFontAssetsToLoad++;
@@ -67,9 +70,18 @@ export class AssetService {
         }
     }
 
+    private _unsupportedPixiLoadType(assetToLoad : LoadingAsset) {
+        switch (assetToLoad.asset.type) {
+            case "SoundWAV":
+                return true;
+            default: 
+                return false;
+        }
+    }
+
     private _loadAsset(assetToLoad : LoadingAsset) : boolean {
         if (this._assets[this._getFullKey(assetToLoad)]) {
-            return false;;
+            return false;
         }
         
         this._assets[this._getFullKey(assetToLoad)] = assetToLoad.asset;
@@ -131,6 +143,8 @@ export class AssetService {
         switch (asset.type) {
             case "TexturePNG":
                 return this._getTexture(fullKey);
+            case "SoundWAV":
+                throw new Error("Sounds are unsupported in duckling asset serivce");
             case "FontTTF":
                 throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
             default:
@@ -277,6 +291,8 @@ export class AssetService {
                 return "png";
             case "FontTTF":
                 return "ttf";
+            case "SoundWAV":
+                return "wav";
             default:
                 throw new Error("Unknown asset type: " + type);
         }

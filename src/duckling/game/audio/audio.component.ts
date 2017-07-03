@@ -9,11 +9,12 @@ import { MdSliderModule, MdSliderChange} from '@angular/material';
 import { Vector } from '../../math/vector';
 
 import {FormLabelComponent, InputComponent, NumberInputComponent, Box2Component, CheckboxComponent, Validator} from '../../controls';
-import {immutableAssign, DialogService} from '../../util';
+import {immutableAssign, immutableArrayAssign} from '../../util/model';
+import {DialogService} from '../../util/dialog.service';
 import {AssetService, ProjectService} from '../../project';
 
 import { AudioAttribute } from './audio-attribute';
-import { defaultSound } from './sound';
+import { defaultSound, Sound } from './sound';
 
 @Component({
     selector: "dk-audio",
@@ -38,7 +39,6 @@ import { defaultSound } from './sound';
                     [checked]="element.loopSound">
                     Loop Sound?
                 </md-checkbox>
-                
             </ng-template>
         </dk-accordion>
     `
@@ -53,12 +53,15 @@ export class AudioComponent {
     }
 
     public onAddSoundClicked(fileChosen: string) {
-        let newSound = immutableAssign(defaultSound, { soundKey: fileChosen})
-        this.attribute.sounds.push(newSound);
+        let newSound = immutableAssign(defaultSound, {soundKey: fileChosen})
+        this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: this.attribute.sounds.concat(newSound)}));
     }
 
     public onSliderChanged(event: MdSliderChange, index: number) {
-        this.attribute.sounds[index].volume = event.value;
+        let newSounds : Sound[] = [];
+        newSounds[index] = immutableAssign(this.attribute.sounds[index], {volume : event.value});
+        let soundsPatch = immutableArrayAssign(this.attribute.sounds, newSounds);
+        this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: soundsPatch}));
     }
 
     get dialogOptions() {

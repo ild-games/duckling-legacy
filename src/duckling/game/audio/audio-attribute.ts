@@ -10,3 +10,7 @@ export interface AudioAttribute extends Attribute {
 export let defaultAudio : AudioAttribute = {
     sounds: []
 }
+
+export function getAudioAttribute(entity : Entity) : AudioAttribute {
+    return <AudioAttribute>entity[AUDIO_KEY];
+}
