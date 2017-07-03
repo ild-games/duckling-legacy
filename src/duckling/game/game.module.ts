@@ -12,6 +12,7 @@ import {TriggerDeathComponent} from './trigger-death/trigger-death.component';
 import {ButtonComponent} from './button/button.component';
 import {PathComponent} from './path/path.component';
 import {PathFollowerComponent} from './path/path-follower.component';
+import {AudioComponent} from './audio/audio.component';
 
 import {AnconaSFMLRenderPriorityService} from './ancona-sfml-render-priority.service';		
 import {RenderPriorityService} from '../canvas/drawing/render-priority.service';
@@ -57,7 +58,8 @@ const ATTRIBUTE_COMPONENTS = [
     TriggerDeathComponent,
     ButtonComponent,
     PathComponent,
-    PathFollowerComponent
+    PathFollowerComponent,
+    AudioComponent
 ]
 
 @NgModule({

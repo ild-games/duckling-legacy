@@ -5,3 +5,9 @@ export interface Sound {
     soundKey: string;
 
 }
+
+export let defaultSound = {
+    loopSound: false,
+    volume: 100,
+    soundKey: ""
+}

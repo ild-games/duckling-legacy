@@ -34,9 +34,9 @@ let storeService = new StoreService(mainReducer, mergeEntityAction);
 // Setup window defaults
 @NgModule({
     imports: [
-        BrowserModule,
         CanvasModule,
         ControlsModule,
+        BrowserModule,
         EntityEditorModule,
         EntitySystemModule,
         GameModule,
