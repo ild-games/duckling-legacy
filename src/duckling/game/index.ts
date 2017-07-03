@@ -50,6 +50,9 @@ import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
 import {getDrawableLayer} from './drawable/drawable-get-layer';
 
+import {AudioAttribute, AUDIO_KEY, defaultAudio} from './audio/audio-attribute';
+import { JsonComponent} from '../controls/json.component';
+
 type Services = {
     attributeDefaultService : AttributeDefaultService;
     entityPositionService : EntityPositionService,
@@ -70,7 +73,8 @@ let _bootstrapFunctions : Function[] = [
     _bootstrapButtonAttribute,
     _bootstrapTriggerDeathAttribute,
     _bootstrapPathAttribute,
-    _bootstrapPathFollowerAttribute
+    _bootstrapPathFollowerAttribute,
+    _bootstrapAudioAttribute
 ];
 
 /**
@@ -140,4 +144,9 @@ function _bootstrapPathAttribute(services : Services) {
 function _bootstrapPathFollowerAttribute(services : Services) {
     services.attributeComponentService.register(PATH_FOLLOWER_KEY, PathFollowerComponent);
     services.attributeDefaultService.register(PATH_FOLLOWER_KEY, {createByDefault: false, default: defaultPathFollower});
+}
+
+function _bootstrapAudioAttribute(services: Services) {
+    services.attributeComponentService.register(AUDIO_KEY, JsonComponent);
+    services.attributeDefaultService.register(AUDIO_KEY, { createByDefault: false, default: defaultAudio });
 }
