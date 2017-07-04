@@ -48,7 +48,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         this.redraw = new BehaviorSubject(false);
 
         _assets.assetLoaded.subscribe(() => this._redraw());
-        _assets.preloadImagesLoaded.subscribe(() => this._redraw());
+        _assets.preloadAssetsLoaded.subscribe(() => this._redraw());
         _layers.layers.subscribe(() => this._redraw());
         _entitySystem.entitySystem.subscribe(() => this._redraw(true));
     }

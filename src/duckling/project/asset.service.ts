@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {loader, Texture, Rectangle} from 'pixi.js';
 import {BehaviorSubject} from 'rxjs';
 import {load as webFontLoader} from 'webfontloader';
+import {Howl} from 'howler';
 
 import {AttributeKey, Entity} from '../entitysystem';
 import {StoreService} from '../state/store.service';
@@ -20,10 +21,10 @@ export interface LoadingAsset {
     asset: Asset;
     filePath?: string;
     editorSpecific?: boolean;
-}
+};
 export type AssetMap = {[key: string] : Asset};
 
-const EDITOR_SPECIFIC_IMAGE_PREFIX = "DUCKLING_PRELOADED_IMAGE__";
+const EDITOR_SPECIFIC_ASSET_PREFIX = "DUCKLING_PRELOADED_ASSET__";
 
 @Injectable()
 export class AssetService {
@@ -37,10 +38,10 @@ export class AssetService {
     private _assets : {[key : string] : Asset} = {};
     private _loadedAssets : {[key : string] : boolean} = {};
     private _assetsToLoad : {[key: string] : LoadingAsset} = {};
-    private _preloadedImagesLoaded : {[key : string] : boolean} = {};
-    private _fontObjects : {[key : string] : any} = {};
+    private _preloadedAssetsLoaded : {[key : string] : boolean} = {};
+    private _audioObjects : {[key : string] : any} = {};
     assetLoaded : BehaviorSubject<Asset> = new BehaviorSubject(null);
-    preloadImagesLoaded : BehaviorSubject<boolean> = new BehaviorSubject(false);
+    preloadAssetsLoaded : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     /*
      * Add a new asset into the asset service
@@ -56,26 +57,14 @@ export class AssetService {
         
         let nonFontAssetsToLoad = 0;
         for (let assetToLoad of assets) {
-            if (this._unsupportedPixiLoadType(assetToLoad)) {
-                continue;
-            }
             let loaded = this._loadAsset(assetToLoad);
-            if (loaded && !this._assetTypeIsFont(assetToLoad.asset.type)) {
+            if (loaded && this._pixiLoadedAsset(assetToLoad.asset.type)) {
                 nonFontAssetsToLoad++;
             }
         }
         
         if (nonFontAssetsToLoad > 0) {
             loader.load();
-        }
-    }
-
-    private _unsupportedPixiLoadType(assetToLoad : LoadingAsset) {
-        switch (assetToLoad.asset.type) {
-            case "SoundWAV":
-                return true;
-            default: 
-                return false;
         }
     }
 
@@ -87,32 +76,12 @@ export class AssetService {
         this._assets[this._getFullKey(assetToLoad)] = assetToLoad.asset;
         if (this._assetTypeIsFont(assetToLoad.asset.type)) {
             this._loadFont(assetToLoad);
+        } else if (this._assetTypeIsAudio(assetToLoad.asset.type)) {
+            this._loadAudio(assetToLoad);
         } else {
             loader.add(this._getFullKey(assetToLoad), this._getFilePath(assetToLoad));
         }
         return true;
-    }
-    
-    private _getFilePath(assetToLoad : LoadingAsset) : string {
-        let filePath = assetToLoad.filePath || this._store.getState().project.home + "/resources/" + assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type);
-        return filePath;
-    }
-
-    private _getFullKey(assetToLoad : LoadingAsset) : string {
-        if (assetToLoad.editorSpecific) {
-            return EDITOR_SPECIFIC_IMAGE_PREFIX + assetToLoad.asset.key;
-        }
-        return assetToLoad.asset.key;
-    }
-
-    private _cacheOffAssetsToLoad(assets : LoadingAsset[]) {
-        for (let assetToLoad of assets) {
-            this._assetsToLoad[assetToLoad.asset.key] = assetToLoad;
-        }
-    }
-
-    private _assetTypeIsFont(type : AssetType) {
-        return type === "FontTTF";
     }
 
     /**
@@ -130,6 +99,50 @@ export class AssetService {
     }
 
     /**
+     * Audio is loaded using howler and not the pixi loader
+     */
+    private _loadAudio(assetToLoad : LoadingAsset) {
+        let key = this._getFullKey(assetToLoad);
+        let sound = new Howl({
+            src: this._getFilePath(assetToLoad),
+            autoplay: false,
+            loop: false,
+            onload: () => this._onAssetLoaded(key)
+        });
+        this._audioObjects[key] = sound;
+    }
+    
+    private _getFilePath(assetToLoad : LoadingAsset) : string {
+        let filePath = assetToLoad.filePath || this._store.getState().project.home + "/resources/" + assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type);
+        return filePath;
+    }
+
+    private _getFullKey(assetToLoad : LoadingAsset) : string {
+        if (assetToLoad.editorSpecific) {
+            return EDITOR_SPECIFIC_ASSET_PREFIX + assetToLoad.asset.key;
+        }
+        return assetToLoad.asset.key;
+    }
+
+    private _cacheOffAssetsToLoad(assets : LoadingAsset[]) {
+        for (let assetToLoad of assets) {
+            this._assetsToLoad[assetToLoad.asset.key] = assetToLoad;
+        }
+    }
+
+    private _assetTypeIsFont(type : AssetType) {
+        return type === "FontTTF";
+    }
+
+    private _assetTypeIsAudio(type : AssetType) {
+        return type === "SoundWAV";
+    }
+
+    private _pixiLoadedAsset(type : AssetType) {
+        return type === "TexturePNG";
+    }
+
+    /**
      * Gets an asset out of the asset service
      * @param  key The asset key
      * @param  editorSpecific Optional boolean that determines if the asset is an editor specific resource, default is false.
@@ -138,13 +151,13 @@ export class AssetService {
     get(asset : Asset, editorSpecific? : boolean) : any {
         let fullKey = asset.key;
         if (editorSpecific) {
-            fullKey = EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key;
+            fullKey = EDITOR_SPECIFIC_ASSET_PREFIX + asset.key;
         }
         switch (asset.type) {
             case "TexturePNG":
                 return this._getTexture(fullKey);
             case "SoundWAV":
-                throw new Error("Sounds are unsupported in duckling asset serivce");
+                return this._getAudio(fullKey);
             case "FontTTF":
                 throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
             default:
@@ -157,6 +170,14 @@ export class AssetService {
             return loader.resources[key].texture;
         }
         return null;
+    }
+
+    private _getAudio(key : string) : any {
+        if (!this.isLoaded(key)) {
+            return null;
+        }
+
+        return this._audioObjects[key];
     }
 
     private _createFontFace(fontFamilyName : string, file : string) {
@@ -199,9 +220,9 @@ export class AssetService {
     /**
      * Load the images that are used by the internal editor
      */
-    loadPreloadedEditorImages() {
-        this._path.walk("resources/images/preloaded-editor").then((files : string[]) => {
-            this._preloadEditorImages(files)
+    loadPreloadedEditorAssets() {
+        this._path.walk("resources/preloaded-editor").then((files : string[]) => {
+            this._preloadEditorAssets(files);
         });
     }
 
@@ -243,46 +264,59 @@ export class AssetService {
 
     private _onAssetLoaded(assetKey : string) {
         this._loadedAssets[assetKey] = true;
-        this._preloadedImagesLoaded[assetKey] = true;
+        this._preloadedAssetsLoaded[assetKey] = true;
         this.assetLoaded.next(this._assets[assetKey]);
-        if (this._allPreloadedImagesLoaded()) {
-            this.preloadImagesLoaded.next(true);
+        if (this._allPreloadedAssetsLoaded()) {
+            this.preloadAssetsLoaded.next(true);
         }
     }
 
-    private _allPreloadedImagesLoaded() {
+    private _allPreloadedAssetsLoaded() {
         let allLoaded = true;
-        for (let key in this._preloadedImagesLoaded) {
-            allLoaded = this._preloadedImagesLoaded[key];
+        for (let key in this._preloadedAssetsLoaded) {
+            allLoaded = this._preloadedAssetsLoaded[key];
         }
         return allLoaded;
     }
 
-    private _preloadEditorImages(imageFiles : string[]) {
+    private _preloadEditorAssets(files : string[]) {
         let assetsToLoad : LoadingAsset[] = [];
-        for (let imageFile of imageFiles) {
-            let asset = this._textureFromImageFile(imageFile);
+        for (let file of files) {
+            let asset = this._assetFromFile(file);
             assetsToLoad.push({
                 asset,
-                filePath: imageFile,
+                filePath: file,
                 editorSpecific: true
             });
-            this._preloadedImagesLoaded[EDITOR_SPECIFIC_IMAGE_PREFIX + asset.key] = false;
+            this._preloadedAssetsLoaded[EDITOR_SPECIFIC_ASSET_PREFIX + asset.key] = false;
         }
         this.add(assetsToLoad);
     }
 
-    private _textureFromImageFile(imageFile : string) : Asset {
+    private _assetFromFile(file : string) : Asset {
         return {
-            type: "TexturePNG",
-            key: this._stripPreloadedImageKey(imageFile)
+            type: this._typeFromExtension(this._path.extname(file)),
+            key: this._stripPreloadedFileKey(file)
         };
     }
 
-    private _stripPreloadedImageKey(imageFile : string) {
-        let folderPieces = imageFile.split('/');
+    private _typeFromExtension(extension : string) : AssetType {
+        switch (extension.toLowerCase()) {
+            case ".png":
+                return "TexturePNG";
+            case ".ttf":
+                return "FontTTF";
+            case ".wav":
+                return "SoundWAV";
+            default:
+                throw new Error(`Unknown extension: ${extension}`);
+        }
+    }
+
+    private _stripPreloadedFileKey(file : string) {
+        let folderPieces = file.split('/');
         let key = folderPieces[folderPieces.length - 1];
-        return key.replace('.png', '');
+        return key.replace(this._path.extname(file), '');
     }
 
     private _fileExtensionFromType(type : AssetType) : string {

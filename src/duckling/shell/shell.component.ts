@@ -75,9 +75,9 @@ export class ShellComponent implements OnInit, OnDestroy {
 
         this._windowService.setMinimumSize(0, 0);
         this._initSplashToolbar();
-        this._assetService.loadPreloadedEditorImages();
+        this._assetService.loadPreloadedEditorAssets();
 
-        this._assetServiceSubscription = this._assetService.preloadImagesLoaded.subscribe((allLoaded : boolean) => {
+        this._assetServiceSubscription = this._assetService.preloadAssetsLoaded.subscribe((allLoaded : boolean) => {
             this._editorImagesLoaded = allLoaded;
         }) as Subscriber<any>;
     }

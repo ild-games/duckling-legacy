@@ -8,6 +8,6 @@ export interface Sound {
 
 export let defaultSound = {
     loopSound: false,
-    volume: 100,
+    volume: 1.0,
     soundKey: ""
 }
