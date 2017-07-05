@@ -88,6 +88,7 @@ export class AudioComponent {
             sound.volume(this.attribute.sounds[index].volume);
         }
 
+        sound.stop();
         sound.play();
     }
 
