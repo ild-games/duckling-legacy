@@ -1,13 +1,13 @@
 import {Entity} from '../../entitysystem/entity';
 import {Asset, AssetMap} from '../../project';
 
-import {getAudioAttribute} from './audio-attribute';
+import {getSoundAttribute} from './sound-attribute';
 
-export function entityRequiredAudioAssets(entity : Entity) : AssetMap {
-    let audioAttribute = getAudioAttribute(entity);
+export function entityRequiredSoundAssets(entity : Entity) : AssetMap {
+    let soundAttribute = getSoundAttribute(entity);
 
     let assets : AssetMap = {};
-    for (let sound of audioAttribute.sounds) {
+    for (let sound of soundAttribute.sounds) {
         assets[sound.soundKey] = {
             type: "SoundWAV",
             key: sound.soundKey

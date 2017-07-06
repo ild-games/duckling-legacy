@@ -1,0 +1,14 @@
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+dk-browse-asset {
+    margin-top: 12px;
+}

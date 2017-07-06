@@ -39,7 +39,7 @@ export class AssetService {
     private _loadedAssets : {[key : string] : boolean} = {};
     private _assetsToLoad : {[key: string] : LoadingAsset} = {};
     private _preloadedAssetsLoaded : {[key : string] : boolean} = {};
-    private _audioObjects : {[key : string] : any} = {};
+    private _soundObjects : {[key : string] : any} = {};
     assetLoaded : BehaviorSubject<Asset> = new BehaviorSubject(null);
     preloadAssetsLoaded : BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -76,8 +76,8 @@ export class AssetService {
         this._assets[this._getFullKey(assetToLoad)] = assetToLoad.asset;
         if (this._assetTypeIsFont(assetToLoad.asset.type)) {
             this._loadFont(assetToLoad);
-        } else if (this._assetTypeIsAudio(assetToLoad.asset.type)) {
-            this._loadAudio(assetToLoad);
+        } else if (this._assetTypeIsSound(assetToLoad.asset.type)) {
+            this._loadSound(assetToLoad);
         } else {
             loader.add(this._getFullKey(assetToLoad), this._getFilePath(assetToLoad));
         }
@@ -99,9 +99,9 @@ export class AssetService {
     }
 
     /**
-     * Audio is loaded using howler and not the pixi loader
+     * Sound is loaded using howler and not the pixi loader
      */
-    private _loadAudio(assetToLoad : LoadingAsset) {
+    private _loadSound(assetToLoad : LoadingAsset) {
         let key = this._getFullKey(assetToLoad);
         let sound = new Howl({
             src: this._getFilePath(assetToLoad),
@@ -109,7 +109,7 @@ export class AssetService {
             loop: false,
             onload: () => this._onAssetLoaded(key)
         });
-        this._audioObjects[key] = sound;
+        this._soundObjects[key] = sound;
     }
     
     private _getFilePath(assetToLoad : LoadingAsset) : string {
@@ -134,7 +134,7 @@ export class AssetService {
         return type === "FontTTF";
     }
 
-    private _assetTypeIsAudio(type : AssetType) {
+    private _assetTypeIsSound(type : AssetType) {
         return type === "SoundWAV";
     }
 
@@ -157,7 +157,7 @@ export class AssetService {
             case "TexturePNG":
                 return this._getTexture(fullKey);
             case "SoundWAV":
-                return this._getAudio(fullKey);
+                return this._getSound(fullKey);
             case "FontTTF":
                 throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
             default:
@@ -172,12 +172,12 @@ export class AssetService {
         return null;
     }
 
-    private _getAudio(key : string) : any {
+    private _getSound(key : string) : any {
         if (!this.isLoaded(key)) {
             return null;
         }
 
-        return this._audioObjects[key];
+        return this._soundObjects[key];
     }
 
     private _createFontFace(fontFamilyName : string, file : string) {

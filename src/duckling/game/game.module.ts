@@ -12,7 +12,9 @@ import {TriggerDeathComponent} from './trigger-death/trigger-death.component';
 import {ButtonComponent} from './button/button.component';
 import {PathComponent} from './path/path.component';
 import {PathFollowerComponent} from './path/path-follower.component';
-import {AudioComponent} from './audio/audio.component';
+import {SoundAttributeComponent} from './audio/sound-attribute.component';
+import {SoundComponent} from './audio/sound.component';
+
 
 import {AnconaSFMLRenderPriorityService} from './ancona-sfml-render-priority.service';		
 import {RenderPriorityService} from '../canvas/drawing/render-priority.service';
@@ -59,7 +61,7 @@ const ATTRIBUTE_COMPONENTS = [
     ButtonComponent,
     PathComponent,
     PathFollowerComponent,
-    AudioComponent
+    SoundAttributeComponent
 ]
 
 @NgModule({
@@ -82,7 +84,8 @@ const ATTRIBUTE_COMPONENTS = [
         ShapeDrawableComponent,
         GenericShapeComponent,
         AutoCreateAnimationDialogComponent,
-        EditCollisionTypesComponent
+        EditCollisionTypesComponent,
+        SoundComponent
     ],
     exports: [
         ATTRIBUTE_COMPONENTS
