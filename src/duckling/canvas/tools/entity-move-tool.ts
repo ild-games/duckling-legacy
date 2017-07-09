@@ -67,7 +67,7 @@ export class EntityMoveTool extends BaseTool {
     createDrawnConstruct(canvasZoom : number) : DrawnConstruct {
         let drawnConstruct = new EntityMoveToolDrawnConstruct(
             canvasZoom, 
-            this._drawSelectionBox(), 
+            this._getSelectionBox(), 
             this._drawSelectedEntityGizmos());
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
         return drawnConstruct;
@@ -87,9 +87,10 @@ export class EntityMoveTool extends BaseTool {
             boxes.push(allEntitiesBox);
         }
         return boxes;
+
     }
 
-    private _drawSelectionBox() : Box2 {
+    private _getSelectionBox() : Box2 {
         if (!this._initialMouseLocation || !this._selectionBoxDimensions) {
             return;
         }
@@ -106,15 +107,12 @@ export class EntityMoveTool extends BaseTool {
     }
 
     onStageDown(event : CanvasMouseEvent) {
-        console.log("Initial: " + State[this._state]);
         this._mergeKey = newMergeKey();
         this._initialMouseLocation = event.stageCoords;
         
         let selectedEntityKey = this._selectionService.getEntityKeyAtPosition(event.stageCoords);
 
         this._setStateFromMouseDown(selectedEntityKey, event.shiftKey)
-
-        console.log("Down: " + State[this._state]);
 
         switch (this._state) {
             case State.clickOnUnselected : {
@@ -178,8 +176,6 @@ export class EntityMoveTool extends BaseTool {
 
         this._setStateFromMove();
 
-        console.log("Move: " + State[this._state]);
-
         switch (this._state) {
             case State.clickSelectionBox:
             case State.shiftClickSelectionBox: {
@@ -242,14 +238,12 @@ export class EntityMoveTool extends BaseTool {
             dragDistance = this._getDragDistanceWithSnapping(dragDistance);
         }
 
-        let entityKeys : EntityKey[] = [];
-        let entities : Entity[] = [];
+        let entities : Map<EntityKey, Entity> = new Map<EntityKey, Entity>();
         for (let selection of this._selectionService.selections.value) {
             let updatedEntity = this._entityPositionService.setPosition(selection.entity, vectorAdd(dragDistance, this._initialPositions[selection.key]));
-            entityKeys.push(selection.key);
-            entities.push(updatedEntity);
+            entities = entities.set(selection.key, updatedEntity);
         }
-        this._entitySystemService.updateEntities(entityKeys, entities, this._mergeKey);
+        this._entitySystemService.updateEntities(entities, this._mergeKey);
     }
 
     private _getDragDistanceWithSnapping(dragDistance: Vector): Vector {
@@ -262,7 +256,6 @@ export class EntityMoveTool extends BaseTool {
 
     onStageUp(event : CanvasMouseEvent) {
 
-        console.log("Up: " + State[this._state]);
         switch (this._state) {
             case State.clickOff: {
                 this._selectionService.deselect(this._mergeKey);
@@ -306,7 +299,7 @@ export class EntityMoveTool extends BaseTool {
     }
 
     selectEntitiesInSelectionBox() {
-        let entityKeys = this._selectionService.getEntityKeysAtArea(this._initialMouseLocation, this._selectionBoxDimensions);
+        let entityKeys = this._selectionService.getEntityKeysInSelection(this._initialMouseLocation, this._selectionBoxDimensions);
         if (!entityKeys || entityKeys.length === 0) {
             return;
         }
@@ -352,15 +345,13 @@ export class EntityMoveTool extends BaseTool {
     }
 
     private _adjustEntityPosition(adjustment : Vector) {
-        let entityKeys : EntityKey[] = [];
-        let entities : Entity[] = [];
+        let entities = new Map<EntityKey, Entity>();
         for (let selection of this._selectionService.selections.value) {
             let oldPosition = this._entityPositionService.getPosition(selection.entity);
             let updatedEntity = this._entityPositionService.setPosition(selection.entity, vectorAdd(oldPosition, adjustment));
-            entityKeys.push(selection.key);
-            entities.push(updatedEntity);
+            entities = entities.set(selection.key, updatedEntity);
         }
-        this._entitySystemService.updateEntities(entityKeys, entities, this._mergeKey);
+        this._entitySystemService.updateEntities(entities, this._mergeKey);
     }
 
     private _deleteSelectedEntities() {
