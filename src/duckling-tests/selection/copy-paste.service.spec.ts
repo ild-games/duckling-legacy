@@ -69,7 +69,7 @@ describe("CopyPasteService", function() {
         this.project = new ProjectService(this.entitySystem, this.store, this.migrationService, this.jsonLoader, this.path, this.mapParser, this.dialog, this.snackbar);
         this.availableAttributes = new AvailableAttributeService(this.attributeDefault, this.project);
         this.drawer = new EntityDrawerService(this.assets, this.renderPriority, this.positionService, this.entitySystem, this.layerService, this.availableAttributes, this.store);
-        this.selection = new SelectionService(this.store, this.entitySystem, this.layerService, this.drawer, null, null);
+        this.selection = new SelectionService(this.store, this.entitySystem, this.drawer, this.layerService, this.entityBoxService, this.renderPriority);
         this.copyPaste = new CopyPasteService(this.store, this.entitySystem, this.selection, this.positionService);
     });
 

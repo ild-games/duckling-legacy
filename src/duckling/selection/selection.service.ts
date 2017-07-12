@@ -106,6 +106,8 @@ export class SelectionService {
     }
 
     private _getSelections(selectedEntityKeys: string[]): Selection[] {
+        selectedEntityKeys = selectedEntityKeys || [];
+
         let filteredEntities: Selection[] = [];
         for (let key of selectedEntityKeys) {
             let entity = this._entitySystem.getEntity(key);

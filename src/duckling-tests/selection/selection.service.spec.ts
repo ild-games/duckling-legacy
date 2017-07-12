@@ -69,7 +69,7 @@ describe("SelectionService", function() {
 
     it("can make a selection even if the entity does not exist", function() {
         this.selection.select([ENTITY_KEY]);
-        expect(this.selection.selections.value).to.eql([{key: ENTITY_KEY, entity: null}]);
+        expect(this.selection.selections.value).to.eql([{key: ENTITY_KEY, entity: undefined}]);
     });
 
     it("creating an already selected entity will update the selection", function() {
@@ -98,7 +98,7 @@ describe("SelectionService", function() {
             this.selection.select(["theOther"]);
             expect(this.selection.selections.value).to.eql([
                 {key: ENTITY_KEY, entity},
-                {key: "theOther", entity : null}
+                {key: "theOther", entity : undefined}
             ]);
         });
     });
