@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 import {Action, StoreService, newMergeKey} from '../state';
-import {Vector, vectorRound} from '../math';
+import {Vector, vectorRound, vectorSubtract, vectorAdd} from '../math';
 import {Entity, EntitySystemService, EntityPositionService, EntityKey} from '../entitysystem';
 import {SelectionService} from './selection.service';
 
@@ -22,18 +22,36 @@ export class CopyPasteService {
         this._store.state.subscribe(state => this.clipboard.next(state.clipboard));
     }
 
-    copy(entityKey : EntityKey) {
-        let entity = this._entitySystem.getEntity(entityKey);
-        this._store.dispatch(_copyAction(entity));
+    copy(entities : Entity[]) {
+        this._store.dispatch(_copyAction(entities));
     }
 
-    paste(position : Vector) : EntityKey {
-        let clipboardEntity = this.clipboard.value.copiedEntity;
-        if (clipboardEntity) {
-            return this._entitySystem.addNewEntity(this._position.setPosition(clipboardEntity, vectorRound(position)));
-        } else {
+    paste(position : Vector) : EntityKey[] {
+        let clipboardEntities = this.clipboard.value.copiedEntities;
+        if (!clipboardEntities) {
             return null;
         }
+
+        let pastedEntities: EntityKey[] = [];
+        let lowestPoint = this.findLowestPoint(clipboardEntities);
+        let mergeKey = newMergeKey();
+        for (let entity of clipboardEntities) {
+            let newEntity = this._position.setPosition(entity, vectorRound(vectorAdd(position, vectorSubtract(this._position.getPosition(entity), lowestPoint))));
+            pastedEntities.push(this._entitySystem.addNewEntity(newEntity, mergeKey));
+        }
+        return pastedEntities;
+    }
+
+    findLowestPoint(entities : Entity[]) : Vector {
+        let lowestPoint = { x: Number.MAX_VALUE, y: Number.MAX_VALUE };
+        for (let entity of entities) {
+            let position = this._position.getPosition(entity);
+            if (position) {
+                lowestPoint.x = Math.min(lowestPoint.x, position.x);
+                lowestPoint.y = Math.min(lowestPoint.y, position.y);
+            }
+        }
+        return lowestPoint;
     }
 }
 
@@ -41,28 +59,28 @@ export class CopyPasteService {
  * State of the clipboard.
  */
 export interface CopyPasteState {
-    copiedEntity? : Entity
+    copiedEntities? : Entity[]
 }
 
 /**
  * Reducer used to update the clipboard state.
  */
 export function copyPasteReducer(state : CopyPasteState = {}, action : Action) {
-    if (action.type === ACTION_COPY_ENTITY) {
+    if (action.type === ACTION_COPY_ENTITIES) {
         return {
-            copiedEntity : (action as CopyAction).copiedEntity
+            copiedEntities : (action as CopyAction).copiedEntities
         }
     }
     return state;
 }
 
-const ACTION_COPY_ENTITY = "CopyPaste.Copy";
+const ACTION_COPY_ENTITIES = "CopyPaste.Copy";
 interface CopyAction extends Action {
-    copiedEntity : Entity
+    copiedEntities : Entity
 }
-function _copyAction(copiedEntity : Entity) {
+function _copyAction(copiedEntities : Entity[]) {
     return {
-        copiedEntity,
-        type : ACTION_COPY_ENTITY
+        copiedEntities,
+        type : ACTION_COPY_ENTITIES
     }
 }

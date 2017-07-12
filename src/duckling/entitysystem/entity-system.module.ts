@@ -6,7 +6,6 @@ import {
     AvailableAttributeService,
     EntityBoxService,
     EntityPositionService,
-    EntitySelectionService,
     BaseAttributeService,
     EntitySystemService,
     EntityLayerService
@@ -19,7 +18,6 @@ import {LayerDialogComponent} from './services/layer-dialog.component';
         AvailableAttributeService,
         EntityBoxService,
         EntityPositionService,
-        EntitySelectionService,
         EntityLayerService,
         BaseAttributeService,
         EntitySystemService

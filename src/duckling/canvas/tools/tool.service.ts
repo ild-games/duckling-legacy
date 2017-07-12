@@ -6,7 +6,6 @@ import {SelectedEntityTool} from './selected-entity-tool'
 
 /**
  * Provide access to tools for the canvas.
- * @return {[type]} [description]
  */
 @Injectable()
 export class ToolService {

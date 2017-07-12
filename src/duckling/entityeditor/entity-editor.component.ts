@@ -20,60 +20,96 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
 @Component({
     selector: "dk-entity-editor",
     template: `
-        <div *ngIf="selection?.selectedEntity">
+        <div *ngIf="selections?.length === 0">
+            <md-card>
+                <md-card-title>
+                    No Single Entity Selected
+                </md-card-title>
+            </md-card>
+        </div>
+        
+        <div *ngIf="selections?.length === 1">
             <dk-entity-name
-                [currentSelectedEntity]="selection.selectedEntity"
+                [currentSelectedEntity]="selections[0].key"
                 (deleteEntity)="onDeleteEntity()"
                 (renameEntity)="onRenameEntity($event)">
             </dk-entity-name>
             <dk-entity
-                [entity]="selection.entity"
+                [entity]="selections[0].entity"
                 (entityChanged)="onEntityChanged($event)">
             </dk-entity>
             <dk-attribute-selector
                 (addAttribute)="addAttribute($event)"
-                [entity]="selection.entity">
+                [entity]="selections[0].entity">
             </dk-attribute-selector>
         </div>
-        <div *ngIf="!(selection?.selectedEntity)">
+        
+        <div *ngIf="selections?.length > 1">
             <md-card>
+                <md-card-title>
+                    Selected Entities
+                </md-card-title>
                 <md-card-content>
-                    No Entity Selected
+                    <md-list>
+                        <md-list-item *ngFor="let selection of selections">
+                            {{selection.key}}
+                        </md-list-item>
+                    </md-list>
                 </md-card-content>
             </md-card>
         </div>
     `
 })
 export class EntityEditorComponent {
-    selection : Selection;
+    selections : Selection[];
 
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
                 private _attributeDefault : AttributeDefaultService,
                 private _projectService : ProjectService) {
-        _selection.selection.subscribe((selection) => {
-            this.selection = selection
+        _selection.selections.subscribe((selections) => {
+            if (!selections) {
+                this.selections = [];
+            }
+            
+            this.selections = selections;
         });
     }
 
     onEntityChanged(entity : Entity) {
-        this._entitySystem.updateEntity(this.selection.selectedEntity, entity);
+        if (this.selections.length !== 1) {
+            return;
+        }
+        
+        this._entitySystem.updateEntity(this.selections[0].key, entity);
     }
 
     onDeleteEntity() {
+        if (this.selections.length !== 1) {
+            return;
+        }
+        
         let mergeKey = newMergeKey();
-        let entityKey = this.selection.selectedEntity;
+        let entityKey = this.selections[0].key;
         this._selection.deselect(mergeKey);
         this._entitySystem.deleteEntity(entityKey, mergeKey);
     }
 
     onRenameEntity(newName : string) {
+        if (this.selections.length !== 1) {
+            return;
+        }
+        
         let mergeKey = newMergeKey();
-        this._entitySystem.renameEntity(this.selection.selectedEntity, newName, mergeKey);
-        this._selection.select(newName, mergeKey);
+        this._entitySystem.renameEntity(this.selections[0].key, newName, mergeKey);
+        this._selection.select([newName], mergeKey);
     }
 
     addAttribute(key : AttributeKey) {
+        if (this.selections.length !== 1) {
+            return;
+        }
+        
         let defaultAttribute = {};
         if (this._projectService.isCustomAttribute(key)) {
             defaultAttribute = getDefaultCustomAttributeValue(this._projectService.getCustomAttribute(key));
@@ -83,7 +119,7 @@ export class EntityEditorComponent {
 
         let patch : any = {};
         patch[key] = defaultAttribute;
-        let newEntity = immutableAssign(this.selection.entity, patch);
+        let newEntity = immutableAssign(this.selections[0].entity, patch);
         this.onEntityChanged(newEntity);
     }
 }

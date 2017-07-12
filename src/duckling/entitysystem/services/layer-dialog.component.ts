@@ -70,7 +70,6 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     attributeLayers : AttributeLayer[] = [];
 
     private _layerSubscription : Subscriber<any>;
-    private _attributeLayerSubscription : Subscriber<any>;
 
     constructor(private _dialog : DialogService,
                 private _entityLayerService : EntityLayerService,
@@ -92,7 +91,6 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
 
     ngOnDestroy() {
         this._layerSubscription.unsubscribe;
-        this._attributeLayerSubscription.unsubscribe;
     }
 
     toggleLayerVisibility(layer : Layer) {

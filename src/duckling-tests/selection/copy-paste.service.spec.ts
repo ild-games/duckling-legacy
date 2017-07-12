@@ -2,7 +2,7 @@ import "reflect-metadata";
 import 'mocha';
 import {expect} from 'chai';
 
-import {createStoreService, createEntityService} from '../helper/state';
+import {createStoreService, createEntityService, createEntityBoxService} from '../helper/state';
 import {EntitySystemService, EntityPositionService, EntityKey, Entity} from '../../duckling/entitysystem';
 import {EntityLayerService} from '../../duckling/entitysystem/services/entity-layer.service';
 import {AvailableAttributeService} from '../../duckling/entitysystem/services/available-attribute.service';
@@ -50,6 +50,9 @@ describe("CopyPasteService", function() {
     beforeEach(function() {
         this.store = createStoreService();
         this.entitySystem = createEntityService(this.store);
+        this.entityPositionService = new EntityPositionService();
+        this.assetService = new AssetService(this.store, new PathService() , new RequiredAssetService()) ;
+        this.entityBoxService = createEntityBoxService(this.assetService, this.entityPositionService, this.entitySystem);
         this.layerService = new EntityLayerService(this.entitySytem, this.store);
         this.positionService = new MockPositionService();
         this.path = new PathService();
@@ -66,7 +69,7 @@ describe("CopyPasteService", function() {
         this.project = new ProjectService(this.entitySystem, this.store, this.migrationService, this.jsonLoader, this.path, this.mapParser, this.dialog, this.snackbar);
         this.availableAttributes = new AvailableAttributeService(this.attributeDefault, this.project);
         this.drawer = new EntityDrawerService(this.assets, this.renderPriority, this.positionService, this.entitySystem, this.layerService, this.availableAttributes, this.store);
-        this.selection = new SelectionService(this.store, this.entitySystem, this.layerService, this.drawer);
+        this.selection = new SelectionService(this.store, this.entitySystem, this.drawer, this.layerService, this.entityBoxService, this.renderPriority);
         this.copyPaste = new CopyPasteService(this.store, this.entitySystem, this.selection, this.positionService);
     });
 
@@ -76,8 +79,8 @@ describe("CopyPasteService", function() {
 
     it("copying an entity updates the store with that entity", function() {
         this.entitySystem.updateEntity(ENTITY_KEY, entity);
-        this.copyPaste.copy(ENTITY_KEY);
-        expect(this.copyPaste.clipboard.value).to.eql({copiedEntity: entity});
+        this.copyPaste.copy([entity]);
+        expect(this.copyPaste.clipboard.value).to.eql({copiedEntities: [entity]});
     });
 
     describe("pasting an enitity", function() {
@@ -92,13 +95,13 @@ describe("CopyPasteService", function() {
         }
 
         it("creates a new entity at the specified location", function() {
-            this.copyPaste.copy(ENTITY_KEY);
-            let key = this.copyPaste.paste(this.newPosition);
-            let entity = this.entitySystem.getEntity(key);
+            this.copyPaste.copy([this.entitySystem.getEntity(ENTITY_KEY)]);
+            let keys = this.copyPaste.paste(this.newPosition);
+            let entity = this.entitySystem.getEntity(keys[0]);
             expect(entity).to.eql(this.movedEntity);
         });
 
-        it("with an empty clipboard does not creat an entity", function() {
+        it("with an empty clipboard does not create an entity", function() {
             let systemSize = size(this.entitySystem);
             this.copyPaste.paste(this.newPosition);
             expect(size(this.entitySystem)).to.eql(systemSize++);
