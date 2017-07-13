@@ -149,10 +149,7 @@ export class AssetService {
      * @return Raw asset
      */
     get(asset : Asset, editorSpecific? : boolean) : any {
-        let fullKey = asset.key;
-        if (editorSpecific) {
-            fullKey = EDITOR_SPECIFIC_ASSET_PREFIX + asset.key;
-        }
+        let fullKey = this._getFullKey({asset, editorSpecific});
         switch (asset.type) {
             case "TexturePNG":
                 return this._getTexture(fullKey);
