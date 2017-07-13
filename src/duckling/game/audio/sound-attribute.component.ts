@@ -20,14 +20,20 @@ import { defaultSound, Sound } from './sound';
     selector: "dk-sound-attribute",
     styleUrls: ['./duckling/game/audio/sound-attribute.component.css'],
     template: `
-        <dk-browse-asset
-            [dialogOptions]="dialogOptions"
-            (filePicked)="onAddSoundClicked($event)">
-        </dk-browse-asset>
+        <dk-button
+            tooltip="Add new sound"
+            text="Add Sound"
+            icon="plus"
+            (click)="onAddSoundClicked()">
+        </dk-button>
         <md-card class="sounds-card">
             <dk-accordion
                 [elements]="attribute.sounds"
-                titleProperty="soundKey">
+                titleProperty="soundKey"
+                defaultTitle="<new sound>"
+                (elementDeleted)="onSoundsChanged($event)"
+                (elementMovedDown)="onSoundsChanged($event)"
+                (elementMovedUp)="onSoundsChanged($event)">
                 <ng-template let-element="$element" let-index="$index">
                     <dk-sound
                         [sound]="element"
@@ -47,9 +53,8 @@ export class SoundAttributeComponent {
                 private _project : ProjectService) {
     }
 
-    onAddSoundClicked(fileChosen: string) {
-        this._assets.add([{asset: {key: fileChosen, type: "SoundWAV"}}]);
-        let newSound = immutableAssign(defaultSound, {soundKey: fileChosen})
+    onAddSoundClicked() {
+        let newSound = immutableAssign(defaultSound, {});
         this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: this.attribute.sounds.concat(newSound)}));
     }
 
@@ -60,15 +65,7 @@ export class SoundAttributeComponent {
         this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: soundsPatch}));
     }
 
-    get dialogOptions() {
-        return {
-            defaultPath: this._project.home,
-            properties: [
-                'openFile'
-            ],
-            filters: [
-                {name: 'SoundFiles', extensions: ['wav']},
-            ]
-        }
+    onSoundsChanged(newSounds : Sound[]) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: newSounds}));
     }
 }

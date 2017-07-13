@@ -17,29 +17,24 @@ import { ProjectService } from '../../project/project.service';
     styleUrls: ['./duckling/game/audio/sound.component.css'],
     template: `
         <div class="topRow">
-            <div>
-                Volume
-                <md-slider
-                    label="Volume"
-                    min="0"
-                    max="100" 
-                    [value]="displayVolume(sound.volume)"
-                    (change)="onSliderChanged($event)">
-                </md-slider>
-                {{displayVolume(sound.volume)}}
-            </div>
+            Volume
+            <md-slider
+                label="Volume"
+                min="0"
+                max="100" 
+                [value]="displayVolume(sound.volume)"
+                (change)="onSliderChanged($event)">
+            </md-slider>
+            {{displayVolume(sound.volume)}}
             <dk-icon-button
                 tooltip="Play Sound"
                 color="accent"
                 icon="play"
+                [disabled]="sound.soundKey === ''"
                 [isRaised]="true"
                 (iconClick)="onPlaySound(index)">
             </dk-icon-button>
         </div>
-        <md-checkbox
-            [checked]="sound.loopSound">
-            Loop Sound?
-        </md-checkbox>
         <dk-browse-asset
             [dialogOptions]="dialogOptions"
             [selectedFile]="sound.soundKey"

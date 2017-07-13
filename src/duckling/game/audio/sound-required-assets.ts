@@ -8,6 +8,10 @@ export function entityRequiredSoundAssets(entity : Entity) : AssetMap {
 
     let assets : AssetMap = {};
     for (let sound of soundAttribute.sounds) {
+        if (!sound.soundKey) {
+            continue;
+        }
+
         assets[sound.soundKey] = {
             type: "SoundWAV",
             key: sound.soundKey

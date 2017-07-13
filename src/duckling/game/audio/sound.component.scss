@@ -1,3 +1,5 @@
+@import '../../forms';
+
 :host {
     display: flex;
     flex-direction: column;
@@ -7,6 +9,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    md-slider {
+        flex: 1 0 auto;
+    }
+
+    dk-icon-button {
+        margin-left: $spacer-unit;
+    }
 }
 
 dk-browse-asset {
