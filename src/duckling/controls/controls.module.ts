@@ -32,6 +32,7 @@ import {
     SectionHeaderComponent,
     InlineEditLabelComponent
 } from './index';
+import {ButtonComponent} from './button.component';
 
 const CONTROL_DECLARATIONS : Array<any> = [
     AccordionComponent,
@@ -47,6 +48,7 @@ const CONTROL_DECLARATIONS : Array<any> = [
     FormLabelComponent,
     IconComponent,
     IconButtonComponent,
+    ButtonComponent,
     InputComponent,
     JsonComponent,
     NumberInputComponent,

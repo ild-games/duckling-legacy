@@ -41,6 +41,10 @@ export class PathService {
         return npath.basename(path);
     }
 
+    extname(path : string) : string {
+        return npath.extname(path);
+    }
+
     /**
      * Return a promise that evaluates to true if the path exists.
      * @param path Path to check for existence.

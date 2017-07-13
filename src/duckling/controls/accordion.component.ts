@@ -50,6 +50,10 @@ export class AccordionComponent<T> {
      */
     @Input() titlePrefix : string = "";
     /**
+     * A default title that will appear if the value of the titleProperty is blank or null
+     */
+    @Input() defaultTitle : string = "";
+    /**
      * The property on the element that is used to uniquely identify the element
      */
     @Input() keyProperty : string;
@@ -135,8 +139,11 @@ export class AccordionComponent<T> {
         let title = "";
         if (this.titleProperty) {
             title = (<any>this.elements[index])[this.titleProperty] as string;
+            if (!title || title === "") {
+                title = this.defaultTitle;
+            }
         } else {
-            title = index + "";
+            title = `${this.defaultTitle} ${index}`;
         }
         return this.titlePrefix + title;
     }

@@ -50,6 +50,12 @@ import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
 import {getDrawableLayer} from './drawable/drawable-get-layer';
 
+import {SoundAttribute, SOUND_KEY, defaultSound} from './audio/sound-attribute';
+import {entityRequiredSoundAssets} from './audio/sound-required-assets';
+import {SoundAttributeComponent} from './audio/sound-attribute.component';
+
+import {JsonComponent} from '../controls/json.component';
+
 type Services = {
     attributeDefaultService : AttributeDefaultService;
     entityPositionService : EntityPositionService,
@@ -70,7 +76,8 @@ let _bootstrapFunctions : Function[] = [
     _bootstrapButtonAttribute,
     _bootstrapTriggerDeathAttribute,
     _bootstrapPathAttribute,
-    _bootstrapPathFollowerAttribute
+    _bootstrapPathFollowerAttribute,
+    _bootstrapSoundAttribute
 ];
 
 /**
@@ -111,7 +118,6 @@ function _bootstrapDrawableAttribute(services : Services) {
     services.entityBoxService.register(DRAWABLE_KEY, drawableBoundingBox);
     services.entityDrawerService.register(DRAWABLE_KEY, getDrawableAttributeDrawnConstruct);
     services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
-    services.requiredAssetService.register(DRAWABLE_KEY, entityRequiredDrawableAssets);
     services.entityLayerService.register(DRAWABLE_KEY, getDrawableLayer);
 }
 
@@ -140,4 +146,10 @@ function _bootstrapPathAttribute(services : Services) {
 function _bootstrapPathFollowerAttribute(services : Services) {
     services.attributeComponentService.register(PATH_FOLLOWER_KEY, PathFollowerComponent);
     services.attributeDefaultService.register(PATH_FOLLOWER_KEY, {createByDefault: false, default: defaultPathFollower});
+}
+
+function _bootstrapSoundAttribute(services: Services) {
+    services.attributeComponentService.register(SOUND_KEY, SoundAttributeComponent);
+    services.attributeDefaultService.register(SOUND_KEY, { createByDefault: false, default: defaultSound });
+    services.requiredAssetService.register(SOUND_KEY, entityRequiredSoundAssets);
 }

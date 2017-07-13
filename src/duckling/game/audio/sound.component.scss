@@ -1,0 +1,24 @@
+@import '../../forms';
+
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    md-slider {
+        flex: 1 0 auto;
+    }
+
+    dk-icon-button {
+        margin-left: $spacer-unit;
+    }
+}
+
+dk-browse-asset {
+    margin-top: 12px;
+}
