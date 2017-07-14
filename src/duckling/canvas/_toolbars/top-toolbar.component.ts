@@ -9,7 +9,6 @@ import {
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
-import {ProjectService} from '../../project';
 import {ToolbarOption} from '../../controls';
 import {MapSelectComponent} from '../../project/map-select.component';
 import {EntityLayerService} from '../../entitysystem';
@@ -76,7 +75,6 @@ export class TopToolbarComponent {
     @Output() saveClicked = new EventEmitter<void>();
 
     constructor(public store : StoreService,
-                public project : ProjectService,
                 public toolService : ToolService,
                 private _viewContainer : ViewContainerRef) {
         this.toolOptions = this.toolService.toolOptions;

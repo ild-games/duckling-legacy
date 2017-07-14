@@ -99,7 +99,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _zoomInCanvasCoords : Vector = null;
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
-    private _viewInited = false;
+    private _viewInitialized = false;
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _optionsService : OptionsService,
@@ -108,7 +108,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this._viewInited = true;
+        this._viewInitialized = true;
         this.setupContainingElementEvents();
 
         if (this._optionsService.getSetting("useWebGL", true)) {
@@ -158,7 +158,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             }
         }
 
-        if (this._viewInited) {
+        if (this._viewInitialized) {
             this._render();
         }
     }
