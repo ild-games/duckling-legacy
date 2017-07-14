@@ -1,17 +1,18 @@
 import {Action} from '../state';
 import {immutableAssign} from '../util';
-import {LayerState} from '../entitysystem/services/entity-layer.service';
+import {HiddenAttributes, HiddenLayers} from '../entitysystem/services/entity-layer.service';
 
 export interface UserMetaData {
     mapMetaData: {[mapName : string] : MapMetaData};
     initialMap?: string;
+    hiddenAttributes?: HiddenAttributes;
 }
 
 export interface MapMetaData {
     scrollTop?: number;
     scrollLeft?: number;
     scale?: number;
-    hiddenLayers?: LayerState;
+    hiddenLayers?: HiddenLayers;
 }
 
 ///////////////////
@@ -116,7 +117,7 @@ function _setInitialMap(userMetaData : UserMetaData, action : SetInitialMapActio
 
 ///////////////////
 // Layer Visibility
-export function setHiddenLayers(mapName : string, hiddenLayers: LayerState) : SetHiddenLayersAction {
+export function setHiddenLayers(mapName : string, hiddenLayers: HiddenLayers) : SetHiddenLayersAction {
     return {
         type: ACTION_SET_HIDDEN_LAYERS,
         mapName,
@@ -126,7 +127,7 @@ export function setHiddenLayers(mapName : string, hiddenLayers: LayerState) : Se
 export const ACTION_SET_HIDDEN_LAYERS = "UserMetaData.SetHiddenLayers";
 interface SetHiddenLayersAction extends Action {
     mapName: string,
-    hiddenLayers: LayerState
+    hiddenLayers: HiddenLayers
 }
 function _setHiddenLayers(userMetaData : UserMetaData, action : SetHiddenLayersAction) : UserMetaData {
     let newMapMetaData = {...userMetaData.mapMetaData};
@@ -135,6 +136,25 @@ function _setHiddenLayers(userMetaData : UserMetaData, action : SetHiddenLayersA
         hiddenLayers: action.hiddenLayers
     };
     return immutableAssign(userMetaData, { ...userMetaData, mapMetaData: newMapMetaData }); 
+}
+
+///////////////////////
+// Attribute Visibility
+export function setHiddenAttributes(hiddenAttributes: HiddenAttributes) : SetHiddenAttributesAction {
+    return {
+        type: ACTION_SET_HIDDEN_ATTRIBUTES,
+        hiddenAttributes,
+    };
+}
+export const ACTION_SET_HIDDEN_ATTRIBUTES = "UserMetaData.SetHiddenAttributes";
+interface SetHiddenAttributesAction extends Action {
+    hiddenAttributes: HiddenAttributes
+}
+function _setHiddenAttributes(userMetaData : UserMetaData, action : SetHiddenAttributesAction) : UserMetaData {
+    return immutableAssign(userMetaData, {
+        ...userMetaData,
+        hiddenAttributes: action.hiddenAttributes
+    });
 }
     
 //////////
@@ -151,6 +171,8 @@ export function userMetaDataReducer(state : UserMetaData = {mapMetaData: {}}, ac
             return _setInitialMap(state, action as SetInitialMapAction);
         case ACTION_SET_HIDDEN_LAYERS:
             return _setHiddenLayers(state, action as SetHiddenLayersAction);
+        case ACTION_SET_HIDDEN_ATTRIBUTES:
+            return _setHiddenAttributes(state, action as SetHiddenAttributesAction);
         default:
             return state;
     }
