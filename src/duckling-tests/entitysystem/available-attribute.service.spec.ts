@@ -21,7 +21,10 @@ function sort(array : any[]) {
 
 class MockProjectService {
     project = new BehaviorSubject<Project>({
-        customAttributes: []
+        customAttributes: [],
+        userMetaData: {
+            mapMetaData: {}
+        }
     });
 
     addCustomAttribute(key : string, content : JsonSchema) {

@@ -25,16 +25,13 @@ import {
     Project,
     setVersionInfo
 } from './project';
+import {UserMetaData, updateUserMetaDataAction} from './user-meta-data';
 import {SnackBarService} from './snackbar.service';
 import {CustomAttribute} from './custom-attribute';
 
 const MAP_DIR = "maps";
 const DEFAULT_INITIAL_MAP = "map1";
-const USER_META_DATA_FILE = "user-preferences";
-
-export type UserMetaData = {
-    initialMap?: string
-}
+const USER_META_DATA_FILE = "user-meta-data";
 
 /**
  * The project service provides access to project level state and operations.
@@ -67,11 +64,9 @@ export class ProjectService {
             let versionInfo = await this._migrationService.openProject(projectPath);
             this._storeService.dispatch(setVersionInfo(versionInfo));
             await this._loadProjectMetaData();
-
-            // if, in the future, user meta data needs to be accessed after the initial project
-            // open, it should be a member on the project and put in the rxjs store.
             let userMetaData = await this._loadUserMetaData();
-            await this.openMap(userMetaData.initialMap);
+            this._storeService.dispatch(updateUserMetaDataAction(userMetaData));
+            await this.openMap(this.project.value.userMetaData.initialMap);
         } catch (error) {
             this._dialog.showErrorDialog("Unable to Open the Project", error.message);
         }
@@ -119,7 +114,7 @@ export class ProjectService {
             }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
         await this._saveProjectMetaData();
-        await this._saveUserMetaData(this._buildUserMetaData());
+        await this._saveUserMetaData(this.project.value.userMetaData);
         await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
         this._snackbar.invokeSnacks();
     }
@@ -150,7 +145,7 @@ export class ProjectService {
 
     private async _loadUserMetaData() : Promise<UserMetaData> {
         let fileExists = await this._pathService.pathExists(this.getUserMetaDataPath(USER_META_DATA_FILE));
-        let userPreferences : UserMetaData = {};
+        let userPreferences : UserMetaData = {mapMetaData: {}};
         if (fileExists) {
             let json = await this._jsonLoader.getJsonFromPath(this.getUserMetaDataPath(USER_META_DATA_FILE));
             userPreferences = JSON.parse(json);
@@ -278,12 +273,6 @@ export class ProjectService {
         }));
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());
-    }
-
-    private _buildUserMetaData() : UserMetaData {
-        return {
-            initialMap: this._project.currentMap.key
-        };
     }
 
     private _mapPathToRoot(root : string, path : string) {

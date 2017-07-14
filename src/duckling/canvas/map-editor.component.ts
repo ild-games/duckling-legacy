@@ -18,6 +18,7 @@ import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
 import {AssetService, Asset, ProjectService} from '../project';
+import {setScrollPositionsAction, setInitialMap, setScaleAction} from '../project/user-meta-data';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
@@ -55,7 +56,8 @@ type DrawableCache = {
                 [selectedToolKey]="tool.key"
                 [mapName]="projectService.project.getValue().currentMap.key"
                 (toolSelection)="onToolSelected($event)"
-                (mapSelected)="openMap($event)">
+                (mapSelected)="openMap($event)"
+                (saveClicked)="onSave()">
             </dk-top-toolbar>
 
             <dk-canvas #canvasElement
@@ -66,6 +68,7 @@ type DrawableCache = {
                 [scale]="scale"
                 [showGrid]="showGrid"
                 [canvasDisplayObject]="canvasDisplayObject"
+                [initialScrollPosition]="initialScrollPosition"
                 (elementCopy)="copyEntity()"
                 (elementPaste)="pasteEntity($event)"
                 (scaleChanged)="onScaleChanged($event)">
@@ -106,6 +109,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
      */
     canvasDisplayObject : Container = new Container();
 
+    initialScrollPosition : Vector = {x: 0, y: 0};
+
     private _framesPerSecond = 30;
     private _totalMillis = 0;
     private _redrawInterval : Subscriber<any>;
@@ -125,7 +130,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
                 private _entityDrawerService : EntityDrawerService,
                 private _keyboardService : KeyboardService,
                 private _entityLayerService : EntityLayerService,
-                private _renderPriorityService : RenderPriorityService) {
+                private _renderPriorityService : RenderPriorityService,
+                private _storeService : StoreService) {
         this._setTool(this._toolService.defaultTool);
     }
 
@@ -134,6 +140,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
             this._clearCache(entityCacheValid);
         }) as Subscriber<any>;
 
+        this._loadMetaData();
     }
 
     ngAfterViewInit() {
@@ -146,6 +153,15 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         this._redrawInterval.unsubscribe();
         this._drawerServiceSubscription.unsubscribe();
         this._toolDrawnConstructChangedSubscription.unsubscribe();
+    }
+
+    onSave() {
+        let scrollLeft = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollLeft;
+        let scrollTop = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollTop;
+        this._storeService.dispatch(setScrollPositionsAction(this.projectService.project.value.currentMap.key, {scrollLeft, scrollTop}));
+        this._storeService.dispatch(setInitialMap(this.projectService.project.value.currentMap.key));
+        this._storeService.dispatch(setScaleAction(this.projectService.project.value.currentMap.key, this.scale));
+        this.projectService.save();
     }
 
     private _drawFrame() {
@@ -189,7 +205,18 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     async openMap(mapKey : string) {
         await this.projectService.openMap(mapKey);
+        this._loadMetaData();
         this._clearCache();
+    }
+
+    private _loadMetaData() {
+        let curMapUserMetaData = this.projectService.project.value.userMetaData.mapMetaData[this.projectService.project.value.currentMap.key];
+        if (!curMapUserMetaData) {
+            return;
+        }
+
+        this.scale = curMapUserMetaData.scale;
+        this.initialScrollPosition = {x: curMapUserMetaData.scrollLeft, y: curMapUserMetaData.scrollTop};
     }
 
     private _redrawAllDisplayObjects() {

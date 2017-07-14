@@ -9,7 +9,6 @@ import {
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
-import {ProjectService} from '../../project';
 import {ToolbarOption} from '../../controls';
 import {MapSelectComponent} from '../../project/map-select.component';
 import {EntityLayerService} from '../../entitysystem';
@@ -22,7 +21,7 @@ import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.com
         <dk-toolbar-button
             icon="floppy-o"
             tooltip="Save Project"
-            (click)="project.save()">
+            (click)="onSaveClicked()">
         </dk-toolbar-button>
 
         <span class="separator"></span>
@@ -73,9 +72,9 @@ export class TopToolbarComponent {
     @Input() mapName : string;
 
     @Output() mapSelected = new EventEmitter<String>();
+    @Output() saveClicked = new EventEmitter<void>();
 
     constructor(public store : StoreService,
-                public project : ProjectService,
                 public toolService : ToolService,
                 private _viewContainer : ViewContainerRef) {
         this.toolOptions = this.toolService.toolOptions;
@@ -91,6 +90,10 @@ export class TopToolbarComponent {
                 this.mapSelected.emit(mapName);
             }
         });
+    }
+
+    onSaveClicked() {
+        this.saveClicked.emit();
     }
 
     onShowHideLayersClicked() {

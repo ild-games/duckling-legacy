@@ -6,6 +6,7 @@ import {MapVersion} from '../util/version';
 import {ProjectVersionInfo} from '../migration/migration.service';
 
 import {CustomAttribute} from './custom-attribute';
+import {UserMetaData, userMetaDataReducer} from './user-meta-data';
 
 interface ProjectMap {
     key: string,
@@ -22,7 +23,8 @@ export interface Project {
     loaded? : boolean,
     currentMap? : ProjectMap,
     versionInfo? : ProjectVersionInfo,
-    customAttributes : CustomAttribute[]
+    userMetaData : UserMetaData
+    customAttributes : CustomAttribute[],
 }
 
 /**
@@ -42,7 +44,11 @@ interface SwitchProjectAction extends Action {
     home : string,
 }
 function _switchProject(project : Project, action : SwitchProjectAction) : Project {
-    return {loaded: false, home : action.home, customAttributes: project.customAttributes};
+    return {
+        ...project,
+        loaded: false, 
+        home : action.home, 
+    };
 }
 
 const ACTION_SET_VERSION = "Project.SetVersion";
@@ -150,24 +156,35 @@ function _changeCustomAttributes(project : Project, action : ChangeCustomAttribu
 /**
  * Reducer used to update the state of the selected project.
  */
-export function projectReducer(state : Project = {customAttributes: []}, action : Action) {
-
+export function projectReducer(state : Project = {customAttributes: [], userMetaData: {mapMetaData: {}}}, action : Action) {
+    let newState = state;
     switch (action.type) {
         case ACTION_SWITCH_PROJECT:
-            return _switchProject(state, action as SwitchProjectAction);
+            newState = _switchProject(state, action as SwitchProjectAction);
+            break;
         case ACTION_DONE_LOADING:
-            return immutableAssign(state, {loaded: true});
+            newState = immutableAssign(state, {loaded: true});
+            break;
         case ACTION_OPEN_MAP:
-            return _openMap(state, action as OpenMapAction);
+            newState = _openMap(state, action as OpenMapAction);
+            break;
         case ACTION_CHANGE_MAP_DIMENSION:
-            return _changeCurrentMapDimension(state, action as ChangeCurrentMapDimensionAction);
+            newState = _changeCurrentMapDimension(state, action as ChangeCurrentMapDimensionAction);
+            break;
         case ACTION_CHANGE_MAP_GRID:
-            return _changeCurrentMapGrid(state, action as ChangeCurrentMapGridAction);
+            newState = _changeCurrentMapGrid(state, action as ChangeCurrentMapGridAction);
+            break;
         case ACTION_SET_VERSION:
-            return _setMapVersion(state, action as SetVersionAction);
+            newState = _setMapVersion(state, action as SetVersionAction);
+            break;
         case ACTION_CHANGE_CUSTOM_ATTRIBUTES:
-            return _changeCustomAttributes(state, action as ChangeCustomAttributesAction);
+            newState = _changeCustomAttributes(state, action as ChangeCustomAttributesAction);
+            break;
     }
 
-    return state;
+    let newUserMetaData = userMetaDataReducer(state.userMetaData, action);
+    return {
+        ...newState,
+        userMetaData: newUserMetaData
+    };
 }

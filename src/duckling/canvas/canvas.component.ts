@@ -67,6 +67,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     @Input() stageDimensions : Vector;
     @Input() gridSize : number;
+    @Input() initialScrollPosition : Vector = {x: 0, y: 0};
     @Input() scale : number;
     @Input() showGrid : boolean;
     @Input() canvasDisplayObject : DisplayObject;
@@ -98,7 +99,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _zoomInCanvasCoords : Vector = null;
     private _renderer : WebGLRenderer | CanvasRenderer;
     private _scrollStageOffset = 32;
-    private _viewInited = false;
+    private _viewInitialized = false;
 
     constructor(private _changeDetector : ChangeDetectorRef,
                 private _optionsService : OptionsService,
@@ -107,7 +108,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this._viewInited = true;
+        this._viewInitialized = true;
         this.setupContainingElementEvents();
 
         if (this._optionsService.getSetting("useWebGL", true)) {
@@ -124,7 +125,11 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this._renderer.backgroundColor = 0xDFDFDF;
 
         this._resizeCanvasElements();
-        this._centerStage();
+        if (this.initialScrollPosition.x === 0 && this.initialScrollPosition.y === 0) {
+            this._centerStage();
+        } else {
+            this.scrollTo(this.initialScrollPosition);
+        }
         this._render();
     }
 
@@ -139,19 +144,23 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event : KeyboardEvent) => this.onKeyDown(event);
     }
 
-    ngOnChanges(changes : {stageDimensions?:SimpleChange, scale?:SimpleChange}) {
-        if (!this._viewInited) {
-            return;
-        }
-
+    ngOnChanges(changes : {stageDimensions?:SimpleChange, scale?:SimpleChange, initialScrollPosition?:SimpleChange}) {
         if (changes.stageDimensions) {
             this._resizeCanvasElements();
             this._centerStage();
-        } else if (changes.scale) {
+        } 
+        if (changes.scale) {
             this.onScaleChanged(changes.scale.previousValue, changes.scale.currentValue);
+        } 
+        if (changes.initialScrollPosition) {
+            if (this.scrollPosition != changes.initialScrollPosition.currentValue) {
+                this.scrollTo(changes.initialScrollPosition.currentValue);
+            }
         }
 
-        this._render();
+        if (this._viewInitialized) {
+            this._render();
+        }
     }
 
     onScaleChanged(oldScale : number, newScale : number) {
@@ -182,6 +191,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
         this._zoomInCanvasCoords = null;
         this._resizeCanvasElements();
+        this._zoomLevel = ZOOM_LEVELS.indexOf(newScale);
         this.scrollPan(offsetPan);
     }
 
