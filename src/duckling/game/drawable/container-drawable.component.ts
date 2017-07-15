@@ -11,8 +11,15 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 
 
 import {ContainerDrawable} from './container-drawable';
-import {getDefaultDrawable, DrawableComponent} from './drawable.component';
-import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} from './drawable';
+import {DrawableComponent} from './drawable.component';
+import {
+    Drawable, 
+    DrawableType, 
+    drawableTypeToCppType, 
+    cppTypeToDrawableType, 
+    cloneDrawable,
+    newDrawable
+} from './drawable';
 
 /**
  * Component used to edit a Container Drawable including all its children drawables
@@ -59,45 +66,33 @@ export class ContainerDrawableComponent {
     @Input() containerDrawable : ContainerDrawable;
     @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
 
-    onChildDrawableCloned(newDrawables : Drawable[]) {
-        let newDrawable = newDrawables[newDrawables.length - 1];
-        let newDrawableType = cppTypeToDrawableType(newDrawable.__cpp_type);
-        let defaultKey = getDefaultDrawable(newDrawableType).key;
-        newDrawable = immutableAssign(
-            newDrawables[newDrawables.length - 1],
-            {key: defaultKey + this.findNextUniqueKey(newDrawableType, defaultKey)});
-
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newDrawables.slice(0, newDrawables.length - 1).concat([newDrawable])}));
-    }
-
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        let newChildren = this.containerDrawable.drawables.slice(0);
-        newChildren[index] = newDrawable;
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newChildren}));
-    }
-
-    onChildDrawablesChanged(newDrawables : Drawable[]) {
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {drawables: newDrawables}));
-    }
-
-    onNewDrawableClicked(pickedType : DrawableType) {
-        let defaultDrawable = getDefaultDrawable(pickedType);
-        let newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType, defaultDrawable.key)});
+        let newDrawablesPatch : Drawable[] = [];
+        newDrawablesPatch[index] = newDrawable;
         this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
-            drawables: this.containerDrawable.drawables.concat(newDrawable)
+            drawables: immutableArrayAssign(this.containerDrawable.drawables, newDrawablesPatch)
         }));
     }
 
-    findNextUniqueKey(pickedType : DrawableType, defaultKey : string) {
-        let lastKey = 0;
-        for (let drawable of this.containerDrawable.drawables) {
-            if (drawable.__cpp_type === drawableTypeToCppType(pickedType)) {
-                let keyNum : number = +drawable.key.split(defaultKey)[1];
-                if (keyNum > lastKey) {
-                    lastKey = keyNum;
-                }
-            }
-        }
-        return ++lastKey;
+    onChildDrawablesChanged(newDrawables : Drawable[]) {
+        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
+            drawables: newDrawables
+        }));
+    }
+
+    onNewDrawableClicked(pickedType : DrawableType) {
+        let newDrawablesPatch : Drawable[] = [];
+        newDrawablesPatch[this.containerDrawable.drawables.length] = newDrawable(pickedType, this.containerDrawable.drawables);
+        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
+            drawables: immutableArrayAssign(this.containerDrawable.drawables, newDrawablesPatch)
+        }));
+    }
+
+    onChildDrawableCloned(newDrawables : Drawable[]) {
+        let newDrawablesPatch : Drawable[] = [];
+        newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(newDrawables[newDrawables.length - 1], this.containerDrawable.drawables);
+        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
+            drawables: immutableArrayAssign(newDrawables, newDrawablesPatch)
+        }));
     }
 }
