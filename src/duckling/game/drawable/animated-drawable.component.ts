@@ -16,14 +16,13 @@ import {Validator} from '../../controls/validated-input.component';
 import {AnimatedDrawable} from './animated-drawable';
 import {ImageDrawable, defaultImageDrawable} from './image-drawable';
 import {DrawableComponent} from './drawable.component';
+import {Drawable, DrawableType} from './drawable';
 import {
-    Drawable, 
-    DrawableType, 
     drawableTypeToCppType, 
     cppTypeToDrawableType,
     cloneDrawable,
     newDrawable
-} from './drawable';
+} from './drawable-helpers';
 import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto-create-animation-dialog.component';
 
 /**

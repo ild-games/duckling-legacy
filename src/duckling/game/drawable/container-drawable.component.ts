@@ -12,14 +12,13 @@ import {immutableAssign, immutableArrayAssign} from '../../util';
 
 import {ContainerDrawable} from './container-drawable';
 import {DrawableComponent} from './drawable.component';
+import {Drawable, DrawableType} from './drawable';
 import {
-    Drawable, 
-    DrawableType, 
     drawableTypeToCppType, 
-    cppTypeToDrawableType, 
+    cppTypeToDrawableType,
     cloneDrawable,
     newDrawable
-} from './drawable';
+} from './drawable-helpers';
 
 /**
  * Component used to edit a Container Drawable including all its children drawables

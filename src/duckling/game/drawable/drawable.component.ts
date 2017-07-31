@@ -11,7 +11,8 @@ import {EnumChoiceComponent, VectorInputComponent, FormLabelComponent} from '../
 import {immutableAssign} from '../../util';
 
 import {DrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType, cppTypeToDrawableType, getDefaultDrawable} from './drawable';
+import {Drawable, DrawableType} from './drawable';
+import {cppTypeToDrawableType, getDefaultDrawable} from './drawable-helpers';
 import {ShapeDrawableComponent} from './shape-drawable.component';
 import {ContainerDrawableComponent} from './container-drawable.component';
 import {AnimatedDrawableComponent} from './animated-drawable.component';

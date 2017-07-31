@@ -2,7 +2,8 @@ import {Entity} from '../../entitysystem/entity';
 import {Asset, AssetMap} from '../../project';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
+import {Drawable, DrawableType} from './drawable';
+import {cppTypeToDrawableType} from './drawable-helpers';
 import {ImageDrawable} from './image-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {AnimatedDrawable} from './animated-drawable';

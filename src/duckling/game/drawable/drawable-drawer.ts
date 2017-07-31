@@ -25,7 +25,8 @@ import {colorToHex} from '../../canvas/drawing/color';
 import {AttributeDrawer} from '../../canvas/drawing/entity-drawer.service';
 
 import {DrawableAttribute, getDrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
+import {Drawable, DrawableType} from './drawable';
+import {cppTypeToDrawableType} from './drawable-helpers';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';
 import {ImageDrawable} from './image-drawable';
