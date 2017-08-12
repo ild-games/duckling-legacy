@@ -37,6 +37,10 @@ export class MigrationTools {
      */
     attributeMigration(systemName : string, migration : AttributeMigration) {
         return (map : Map) : Map => {
+            if (!map.systems[systemName]) {
+                return map;
+            }
+
             let newComponents : Components = {};
             let oldComponents : Components = map.systems[systemName].components;
             for (let attributeKey in oldComponents)
