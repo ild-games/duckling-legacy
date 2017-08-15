@@ -1,11 +1,11 @@
 import {Attribute, Map, System, Components} from './map-format';
 
 interface AttributeMigration {
-    (attribute : Attribute) : Attribute;
+    (attribute : Attribute, options?: any) : Attribute;
 }
 
 interface EntityMigration {
-    (entity : Entity, entityKey: string) : Entity;
+    (entity : Entity, entityKey: string, options?: any) : Entity;
 }
 
 interface MigrationTest {
@@ -36,18 +36,18 @@ export class MigrationTools {
      * @return A migration that runs over a map.
      */
     attributeMigration(systemName : string, migration : AttributeMigration) {
-        return (map : Map) : Map => {
+        return (map : Map, options?: any) : Map => {
             if (!map.systems[systemName]) {
                 return map;
             }
 
             let newComponents : Components = {};
             let oldComponents : Components = map.systems[systemName].components;
-            for (let attributeKey in oldComponents)
+            for (let entityKey in oldComponents)
             {
-                let migratedAttribute = migration(oldComponents[attributeKey]);
+                let migratedAttribute = migration(oldComponents[entityKey], options);
                 if (migratedAttribute) {
-                    newComponents[attributeKey] = migratedAttribute;
+                    newComponents[entityKey] = migratedAttribute;
                 }
             }
             let newSystem: System = {...map.systems[systemName], components : newComponents};
@@ -76,10 +76,10 @@ export class MigrationTools {
      * @return a migration that runs over a map.
      */
     entityMigration(entityMigration : EntityMigration) {
-        return (map : Map) : Map => {
+        return (map : Map, options?: any) : Map => {
             let systems : {[systemName : string] : System} = {};
             for (let entityKey of map.entities) {
-                let migratedEntity = entityMigration(this.getEntity(map, entityKey), entityKey);
+                let migratedEntity = entityMigration(this.getEntity(map, entityKey), entityKey, options);
                 for (let systemKey in migratedEntity) {
 
                     if (!systems[systemKey]) {

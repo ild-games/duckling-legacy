@@ -1,14 +1,15 @@
-import {posix} from "path";
-import {Injectable} from "@angular/core";
+import { posix } from "path";
+import { Injectable } from "@angular/core";
 
-import {rethrow} from '../util/rethrow';
-import {JsonLoaderService} from '../util/json-loader.service';
-import {PathService} from '../util/path.service';
-import {versionCompareFunction, MapVersion, EditorVersion, EDITOR_VERSION, incrementMajorVersion} from '../util/version';
+import { rethrow } from '../util/rethrow';
+import { JsonLoaderService } from '../util/json-loader.service';
+import { PathService } from '../util/path.service';
+import { versionCompareFunction, MapVersion, EditorVersion, EDITOR_VERSION, incrementMajorVersion } from '../util/version';
 
-import {migrationsToRun, MapMigration} from './map-migration';
-import {MigrationTools} from './migration-tools';
-import {EditorMigration, editorMigrations} from './editor-migration';
+import { migrationsToRun, MapMigration } from './map-migration';
+import { MigrationTools } from './migration-tools';
+import { EditorMigration, editorMigrations } from './editor-migration';
+import { ExistingCodeMigration } from './existing-code-migration';
 
 /**
 * Used for registering migrations and duckling versions during the bootstrap process.
@@ -17,16 +18,23 @@ import {EditorMigration, editorMigrations} from './editor-migration';
 */
 @Injectable()
 export class MigrationService {
-    private _versionMigrations : {}
+    private _existingCodeMigrations: { [name: string]: ExistingCodeMigration } = {};
 
-    constructor(private _path : PathService, private _jsonLoader : JsonLoaderService) {
+    constructor(private _path: PathService, private _jsonLoader: JsonLoaderService) {
 
+    }
+
+    addExistingCodeMigration(existingCodeMigration: ExistingCodeMigration) {
+        if (this._existingCodeMigrations[existingCodeMigration.name]) {
+            throw new Error("Adding duplicate existing code migrations is not allowed.");
+        }
+        this._existingCodeMigrations[existingCodeMigration.name] = existingCodeMigration;
     }
 
     /**
      * Migrate a map to the newest version supported by the editor. Throws if the map is more advanced than the editor supports.
      */
-    async migrateMap<T>(map : T, versionInfo : ProjectVersionInfo, migrationRoot : string) : Promise<T> {
+    async migrateMap<T>(map: T, versionInfo: ProjectVersionInfo, migrationRoot: string): Promise<T> {
         let mapVersion = (map as any).version;
 
         if (versionCompareFunction(versionInfo.mapVersion, mapVersion) < 0) {
@@ -35,11 +43,11 @@ export class MigrationService {
 
         let migrations = migrationsToRun(mapVersion, versionInfo.mapVersion, versionInfo.mapMigrations);
 
-        let result : any = map;
+        let result: any = map;
         for (let migration of migrations) {
             let mapMigration = this._getMigration(migration, migrationRoot);
             try {
-                result = mapMigration(result);
+                result = mapMigration(result, migration.options);
             } catch (error) {
                 throw new Error(`Migration ${migration.name} threw an exception. Consider adding a breakpoint in MigrationService.migrateMap.`);
             }
@@ -53,11 +61,11 @@ export class MigrationService {
      * @param  projectPath Path to the project.
      * @return The map version and migration data.
      */
-    async openProject(projectPath : string) : Promise<ProjectVersionInfo> {
+    async openProject(projectPath: string): Promise<ProjectVersionInfo> {
         let versionFileName = this._path.join(projectPath, "project", "version.json");
         let rawFile = await this._jsonLoader.getJsonFromPath(versionFileName);
 
-        let versionFile : VersionFile;
+        let versionFile: VersionFile;
         if (!rawFile) {
             versionFile = DEFAULT_VERSION_FILE;
             await this._jsonLoader.saveJsonToPath(versionFileName, JSON.stringify(DEFAULT_VERSION_FILE, null, 4));
@@ -76,41 +84,43 @@ export class MigrationService {
         await this._addMissingEditorMigrations(versionFile, this._findMissingEditorMigrations(versionFile), versionFileName);
 
         return {
-            mapMigrations : versionFile.mapMigrations,
-            mapVersion : versionFile.projectVersion
+            mapMigrations: versionFile.mapMigrations,
+            mapVersion: versionFile.projectVersion
         }
     }
 
-    private async _addMissingEditorMigrations(versionFile : VersionFile, missingMigrations : EditorMigration[], versionFileName : string) {
+    private async _addMissingEditorMigrations(versionFile: VersionFile, missingMigrations: EditorMigration[], versionFileName: string) {
         missingMigrations.sort((a, b) => versionCompareFunction(a.updateEditorVersion, b.updateEditorVersion));
         for (let migration of missingMigrations) {
             versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
             versionFile.mapMigrations.push({
-                    updateTo: versionFile.projectVersion,
-                    name: `${migration.updateEditorVersion}`,
-                    type: "editor-version"
-                });
+                updateTo: versionFile.projectVersion,
+                name: `${migration.updateEditorVersion}`,
+                type: "editor-version"
+            });
         }
         versionFile.editorVersion = EDITOR_VERSION;
         await this._jsonLoader.saveJsonToPath(versionFileName, JSON.stringify(versionFile, null, 4));
     }
 
-    private _findMissingEditorMigrations(versionFile : VersionFile) : EditorMigration[] {
+    private _findMissingEditorMigrations(versionFile: VersionFile): EditorMigration[] {
         return editorMigrations.filter(migration => versionFile.editorVersion < migration.updateEditorVersion);
     }
 
-    protected _getMigration(migration : MapMigration, migrationRoot : string) : MapMigrationFunction {
+    protected _getMigration(migration: MapMigration, migrationRoot: string): MapMigrationFunction {
         switch (migration.type) {
             case "code":
                 return this._loadMapMigration(migration, migrationRoot);
             case "editor-version":
                 return this._loadEditorVersionMigration(migration);
+            case "existing-code":
+                return this._loadExistingCodeMigration(migration);
         }
     }
 
-    private _loadMapMigration(migration : MapMigration, migrationRoot : string) : MapMigrationFunction {
+    private _loadMapMigration(migration: MapMigration, migrationRoot: string): MapMigrationFunction {
         let fileName = this._path.join(migrationRoot, migration.name);
-        let mapMigration : MapMigrationFunction;
+        let mapMigration: MapMigrationFunction;
 
         try {
             let migrationModule = require(fileName);
@@ -130,7 +140,7 @@ export class MigrationService {
         return mapMigration;
     }
 
-    private _loadEditorVersionMigration(migration : MapMigration) : MapMigrationFunction {
+    private _loadEditorVersionMigration(migration: MapMigration): MapMigrationFunction {
         for (let editorMigration of editorMigrations) {
             if (migration.name === editorMigration.updateEditorVersion) {
                 return editorMigration.function(new MigrationTools());
@@ -138,29 +148,33 @@ export class MigrationService {
         }
         throw new Error(`Migration "${migration.name}" is not recognized by the editor.`);
     }
+
+    private _loadExistingCodeMigration(migration: MapMigration): MapMigrationFunction {
+        return this._existingCodeMigrations[migration.name].function(new MigrationTools());
+    }
 }
 
 export interface ProjectVersionInfo {
-    mapMigrations : MapMigration [],
-    mapVersion : MapVersion
+    mapMigrations: MapMigration[],
+    mapVersion: MapVersion
 }
 
 export interface MapMigrationFunction {
-    (map : any, options? : any): any;
+    (map: any, options?: any): any;
 }
 
 interface ProjectMigrationFunction {
-    async () : Promise<void>;
+    async(): Promise<void>;
 }
 
 interface VersionFile {
-    projectVersion : MapVersion,
-    editorVersion : string,
-    mapMigrations : MapMigration[]
+    projectVersion: MapVersion,
+    editorVersion: string,
+    mapMigrations: MapMigration[]
 }
 
-const DEFAULT_VERSION_FILE : VersionFile = {
-    projectVersion : "1.0",
-    editorVersion : EDITOR_VERSION,
-    mapMigrations : []
+const DEFAULT_VERSION_FILE: VersionFile = {
+    projectVersion: "1.0",
+    editorVersion: EDITOR_VERSION,
+    mapMigrations: []
 }
