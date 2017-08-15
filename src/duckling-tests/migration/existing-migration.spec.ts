@@ -14,7 +14,6 @@ const MIGRATION_FILE: VersionFile = {
     editorVersion: "0.1",
     mapMigrations: [
         {
-            type: "existing-code",
             updateTo: "1.0",
             name: "fake-collision-migration",
             options: {
@@ -83,7 +82,6 @@ describe("MigrationService", function () {
             editorVersion: "0.1",
             mapMigrations: [
                 {
-                    type: "code",
                     updateTo: "1.0",
                     name: "migrations/coin-migration"
                 }
@@ -95,12 +93,10 @@ describe("MigrationService", function () {
             editorVersion: "0.1",            
             mapMigrations: [
                 {
-                    type: "code",
                     updateTo: "1.0",
                     name: "migrations/coin-migration"
                 },
                 {
-                    type: "existing-code",
                     updateTo: "2.0",
                     name: "collision",
                     options: {

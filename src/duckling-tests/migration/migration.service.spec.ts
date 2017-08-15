@@ -9,37 +9,30 @@ const MIGRATION_FILE : VersionFile = {
     editorVersion: "0.1",
     mapMigrations : [
         {
-            type : "code",
             updateTo : "1.0",
             name : "skip1"
         },
         {
-            type : "code",
             updateTo : "3.0",
             name : "3.0"
         },
         {
-            type : "code",
             updateTo : "4.0",
             name : "4.0"
         },
         {
-            type : "code",
             updateTo : "4.0",
             name : "4.0"
         },
         {
-            type : "code",
             updateTo : "2.0",
             name : "2.0"
         },
         {
-            type : "code",
             updateTo : "5.0",
             name : "5.0"
         },
         {
-            type : "code",
             updateTo : "6.0",
             name : "skip6"
         },

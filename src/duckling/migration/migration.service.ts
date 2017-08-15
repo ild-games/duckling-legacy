@@ -38,7 +38,6 @@ export class MigrationService {
         versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
         versionFile.mapMigrations.push(
             {
-                type: "existing-code",
                 updateTo: versionFile.projectVersion,
                 name,
                 options
@@ -126,8 +125,7 @@ export class MigrationService {
             versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
             versionFile.mapMigrations.push({
                 updateTo: versionFile.projectVersion,
-                name: `${migration.updateEditorVersion}`,
-                type: "editor-version"
+                name: `${migration.updateEditorVersion}`
             });
         }
         versionFile.editorVersion = EDITOR_VERSION;
@@ -139,18 +137,15 @@ export class MigrationService {
     }
 
     protected _getMigration(migration: MapMigration, migrationRoot: string): MapMigrationFunction {
-        switch (migration.type) {
-            case "code":
-                return this._loadMapMigration(migration, migrationRoot);
-            case "editor-version":
-                return this._loadEditorVersionMigration(migration);
-            case "existing-code":
-                return this._loadExistingCodeMigration(migration);
+        if (migration.name) {
+            return this._loadMigrationByName(migration);
+        } else {
+            return this._loadMigrationByPath(migration, migrationRoot);
         }
     }
 
-    private _loadMapMigration(migration: MapMigration, migrationRoot: string): MapMigrationFunction {
-        let fileName = this._path.join(migrationRoot, migration.name);
+    private _loadMigrationByPath(migration: MapMigration, migrationRoot: string): MapMigrationFunction {
+        let fileName = this._path.join(migrationRoot, migration.path);
         let mapMigration: MapMigrationFunction;
 
         try {
@@ -161,27 +156,26 @@ export class MigrationService {
             }
 
             if (typeof mapMigration !== 'function') {
-                throw new Error(`Migration "${migration.name}" does not export a function that returns a function.`);
+                throw new Error(`Migration "${migration.path}" does not export a function that returns a function.`);
             }
 
         } catch (error) {
-            rethrow(`Unable to load migration "${migration.name}" from "${fileName}".`, error);
+            rethrow(`Unable to load migration "${migration.path}" from "${fileName}".`, error);
         }
 
         return mapMigration;
     }
 
-    private _loadEditorVersionMigration(migration: MapMigration): MapMigrationFunction {
+    private _loadMigrationByName(migration: MapMigration): MapMigrationFunction {
+        if (this._existingCodeMigrations[migration.name]) {
+            return this._existingCodeMigrations[migration.name].rawMapFunction(new MigrationTools());
+        }
         for (let editorMigration of editorMigrations) {
             if (migration.name === editorMigration.updateEditorVersion) {
                 return editorMigration.function(new MigrationTools());
             }
         }
         throw new Error(`Migration "${migration.name}" is not recognized by the editor.`);
-    }
-
-    private _loadExistingCodeMigration(migration: MapMigration): MapMigrationFunction {
-        return this._existingCodeMigrations[migration.name].rawMapFunction(new MigrationTools());
     }
 }
 
