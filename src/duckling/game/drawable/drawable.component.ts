@@ -11,43 +11,14 @@ import {EnumChoiceComponent, VectorInputComponent, FormLabelComponent} from '../
 import {immutableAssign} from '../../util';
 
 import {DrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
-import {defaultShapeDrawable} from './shape-drawable';
-import {defaultContainerDrawable} from './container-drawable';
-import {defaultAnimatedDrawable} from './animated-drawable';
-import {defaultImageDrawable} from './image-drawable';
-import {defaultTileBlockDrawable} from './tile-block-drawable';
-import {defaultTextDrawable} from './text-drawable';
+import {Drawable, DrawableType} from './drawable';
+import {cppTypeToDrawableType, getDefaultDrawable} from './drawable-helpers';
 import {ShapeDrawableComponent} from './shape-drawable.component';
 import {ContainerDrawableComponent} from './container-drawable.component';
 import {AnimatedDrawableComponent} from './animated-drawable.component';
 import {ImageDrawableComponent} from './image-drawable.component';
 import {TileBlockDrawableComponent} from './tile-block-drawable.component';
 import {GenericDrawableComponent} from './generic-drawable.component';
-
-/**
- * Gets the default drawable based on the given DrawableType
- * @param  type Type of the drawable
- * @return Default drawable implementation for the given type
- */
-export function getDefaultDrawable(type : DrawableType) : Drawable {
-    switch (type) {
-        default:
-            return null;
-        case DrawableType.Shape:
-            return defaultShapeDrawable;
-        case DrawableType.Container:
-            return defaultContainerDrawable;
-        case DrawableType.Image:
-            return defaultImageDrawable;
-        case DrawableType.TileBlock:
-            return defaultTileBlockDrawable;
-        case DrawableType.Animated:
-            return defaultAnimatedDrawable;
-        case DrawableType.Text:
-            return defaultTextDrawable;
-    }
-}
 
 /**
  * Component used to edit non-type specified drawable

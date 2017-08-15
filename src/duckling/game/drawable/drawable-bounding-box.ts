@@ -10,7 +10,8 @@ import {AttributeBoundingBox} from '../../entitysystem/services/entity-box.servi
 import {resize, resizePoint} from '../../entitysystem/services/resize';
 
 import {drawDrawable} from './drawable-drawer';
-import {Drawable, DrawableType, cppTypeToDrawableType} from './drawable';
+import {Drawable, DrawableType} from './drawable';
+import {cppTypeToDrawableType} from './drawable-helpers';
 import {DrawableAttribute} from './drawable-attribute';
 import {ShapeDrawable} from './shape-drawable';
 import {ContainerDrawable} from './container-drawable';

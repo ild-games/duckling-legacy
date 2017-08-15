@@ -15,8 +15,14 @@ import {Validator} from '../../controls/validated-input.component';
 
 import {AnimatedDrawable} from './animated-drawable';
 import {ImageDrawable, defaultImageDrawable} from './image-drawable';
-import {getDefaultDrawable, DrawableComponent} from './drawable.component';
-import {Drawable, DrawableType, drawableTypeToCppType, cppTypeToDrawableType} from './drawable';
+import {DrawableComponent} from './drawable.component';
+import {Drawable, DrawableType} from './drawable';
+import {
+    drawableTypeToCppType, 
+    cppTypeToDrawableType,
+    cloneDrawable,
+    newDrawable
+} from './drawable-helpers';
 import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto-create-animation-dialog.component';
 
 /**
@@ -87,32 +93,33 @@ export class AnimatedDrawableComponent {
     }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        let newFrames = this.animatedDrawable.frames.slice(0);
-        newFrames[index] = newDrawable;
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newFrames}));
+        let newDrawablesPatch : Drawable[] = [];
+        newDrawablesPatch[index] = newDrawable;
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
+            frames: immutableArrayAssign(this.animatedDrawable.frames, newDrawablesPatch)
+        }));
     }
 
     onChildDrawablesChanged(newDrawables : Drawable[]) {
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newDrawables}));
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
+            frames: newDrawables
+        }));
     }
 
     onNewDrawableClicked(pickedType : DrawableType) {
-        let defaultDrawable = getDefaultDrawable(pickedType);
-        let newDrawable = immutableAssign(defaultDrawable, {key: defaultDrawable.key + this.findNextUniqueKey(pickedType, defaultDrawable.key)});
+        let newDrawablesPatch : Drawable[] = [];
+        newDrawablesPatch[this.animatedDrawable.frames.length] = newDrawable(pickedType, this.animatedDrawable.frames);
         this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
-            frames: this.animatedDrawable.frames.concat(newDrawable)
+            frames: immutableArrayAssign(this.animatedDrawable.frames, newDrawablesPatch)
         }));
     }
 
     onFrameCloned(newDrawables : Drawable[]) {
-        let newFrame = newDrawables[newDrawables.length - 1];
-        let newFrameType = cppTypeToDrawableType(newFrame.__cpp_type);
-        let defaultKey = getDefaultDrawable(newFrameType).key;
-        newFrame = immutableAssign(
-            newDrawables[newDrawables.length - 1],
-            {key: defaultKey + this.findNextUniqueKey(newFrameType, defaultKey)});
-
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: newDrawables.slice(0, newDrawables.length - 1).concat([newFrame])}));
+        let newDrawablesPatch : Drawable[] = [];
+        newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(newDrawables[newDrawables.length - 1], this.animatedDrawable.frames);
+        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
+            frames: immutableArrayAssign(newDrawables, newDrawablesPatch)
+        }));
     }
 
     onDurationChanged(newDuration : number) {

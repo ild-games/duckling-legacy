@@ -9,7 +9,8 @@ import {immutableAssign} from '../../util';
 import {Validator} from '../../controls/validated-input.component';
 
 import {DrawableAttribute} from './drawable-attribute';
-import {Drawable, getDrawableByKey} from './drawable';
+import {Drawable} from './drawable';
+import {getDrawableByKey} from './drawable-helpers';
 import {DrawableComponent} from './drawable.component';
 
 /**

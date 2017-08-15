@@ -1,7 +1,5 @@
 import {Vector} from '../../math';
-
-import {ContainerDrawable} from './container-drawable';
-import {AnimatedDrawable} from './animated-drawable';
+import {immutableAssign} from '../../util';
 
 export enum DrawableType {
     Shape,
@@ -10,40 +8,6 @@ export enum DrawableType {
     Animated,
     Text,
     TileBlock
-}
-
-export function cppTypeToDrawableType(cppType : string) : DrawableType {
-    switch (cppType) {
-        case "ild::ShapeDrawable":
-            return DrawableType.Shape;
-        case "ild::ContainerDrawable":
-            return DrawableType.Container;
-        case "ild::ImageDrawable":
-            return DrawableType.Image;
-        case "ild::AnimatedDrawable":
-            return DrawableType.Animated;
-        case "ild::TextDrawable":
-            return DrawableType.Text;
-        case "ild::TileBlockDrawable":
-            return DrawableType.TileBlock;
-    }
-}
-
-export function drawableTypeToCppType(type : DrawableType) : string {
-    switch (type) {
-        case DrawableType.Shape:
-            return "ild::ShapeDrawable";
-        case DrawableType.Container:
-            return "ild::ContainerDrawable";
-        case DrawableType.Image:
-            return "ild::ImageDrawable";
-        case DrawableType.Animated:
-            return "ild::AnimatedDrawable";
-        case DrawableType.Text:
-            return "ild::TextDrawable";
-        case DrawableType.TileBlock:
-            return "ild::TileBlockDrawable";
-    }
 }
 
 export interface Drawable {
@@ -73,28 +37,3 @@ export let defaultDrawable : Drawable = {
     },
     priorityOffset: 0
 };
-
-export function getDrawableByKey(parentDrawable : Drawable, key : string) : Drawable {
-    if (key === parentDrawable.key) {
-        return parentDrawable;
-    }
-
-    switch (cppTypeToDrawableType(parentDrawable.__cpp_type)) {
-        case DrawableType.Container:
-            return findDrawableInArray(key, (parentDrawable as ContainerDrawable).drawables);
-        case DrawableType.Animated:
-            return findDrawableInArray(key, (parentDrawable as AnimatedDrawable).frames);
-        default:
-            return null;
-    }
-}
-
-function findDrawableInArray(key : string, drawables : Drawable[]) : Drawable {
-    for (let drawable of drawables) {
-        let childByKey = getDrawableByKey(drawable, key);
-        if (childByKey) {
-            return childByKey;
-        }
-    }
-    return null;
-}
