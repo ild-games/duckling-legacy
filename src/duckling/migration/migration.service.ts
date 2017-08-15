@@ -6,6 +6,7 @@ import { JsonLoaderService } from '../util/json-loader.service';
 import { PathService } from '../util/path.service';
 import { versionCompareFunction, MapVersion, EditorVersion, EDITOR_VERSION, incrementMajorVersion } from '../util/version';
 
+import { EntitySystem } from '../entitysystem/entity';
 import { migrationsToRun, MapMigration } from './map-migration';
 import { MigrationTools } from './migration-tools';
 import { EditorMigration, editorMigrations } from './editor-migration';
@@ -20,15 +21,38 @@ import { ExistingCodeMigration } from './existing-code-migration';
 export class MigrationService {
     private _existingCodeMigrations: { [name: string]: ExistingCodeMigration } = {};
 
-    constructor(private _path: PathService, private _jsonLoader: JsonLoaderService) {
+    constructor(
+        private _path: PathService,
+        private _jsonLoader: JsonLoaderService) {
 
     }
 
-    addExistingCodeMigration(existingCodeMigration: ExistingCodeMigration) {
+    registerExistingCodeMigration(existingCodeMigration: ExistingCodeMigration) {
         if (this._existingCodeMigrations[existingCodeMigration.name]) {
             throw new Error("Adding duplicate existing code migrations is not allowed.");
         }
         this._existingCodeMigrations[existingCodeMigration.name] = existingCodeMigration;
+    }
+
+    updateVersionFileWithExistingCodeMigration(versionFile: any, name: string, options?: any): any {
+        versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
+        versionFile.mapMigrations.push(
+            {
+                type: "existing-code",
+                updateTo: versionFile.projectVersion,
+                name,
+                options
+            }
+        );
+        return versionFile;
+    }
+
+    migrateEntitySystem(entitySystem: EntitySystem, migrationName: string, options?: any): EntitySystem {
+        if (!this._existingCodeMigrations[migrationName]) {
+            throw new Error(`Existing code migration "${migrationName}" has not been registered. See registerExistingCodeMigration.`);
+        }
+        let migrationFunction = this._existingCodeMigrations[migrationName].entitySystemFunction;
+        return migrationFunction(entitySystem, options);
     }
 
     /**
@@ -151,7 +175,7 @@ export class MigrationService {
     }
 
     private _loadExistingCodeMigration(migration: MapMigration): MapMigrationFunction {
-        return this._existingCodeMigrations[migration.name].rawFunction(new MigrationTools());
+        return this._existingCodeMigrations[migration.name].rawMapFunction(new MigrationTools());
     }
 }
 
@@ -162,6 +186,10 @@ export interface ProjectVersionInfo {
 
 export interface MapMigrationFunction {
     (map: any, options?: any): any;
+}
+
+export interface EntitySystemMigrationFunction {
+    (entitySystem: EntitySystem, options?: any): EntitySystem;
 }
 
 interface ProjectMigrationFunction {
