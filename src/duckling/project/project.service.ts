@@ -255,11 +255,11 @@ export class ProjectService {
     }
 
     async runExistingCodeMigration(migrationName: string, options: any): Promise<void> {
-        this._updateProjectVersionInfo(migrationName, options);
-        this._updateEntitySystemWithExistingCodeMigration(migrationName, options);
+        this._addMigrationToVersionInfo(migrationName, options);
+        this._runMigrationOnOpenMap(migrationName, options);
     }
 
-    private _updateProjectVersionInfo(migrationName: string, options?: any) {
+    private _addMigrationToVersionInfo(migrationName: string, options?: any) {
         let newVersionInfo = this._migrationService.updateVersionInfoWithExistingCodeMigration(
             this.project.value.versionInfo,
             migrationName,
@@ -267,14 +267,14 @@ export class ProjectService {
         this._storeService.dispatch(setVersionInfo(newVersionInfo));
     }
 
-    private _updateEntitySystemWithExistingCodeMigration(migrationName: string, options: any) {
+    private _runMigrationOnOpenMap(migrationName: string, options: any) {
         let newEntitySystem = this._migrationService.migrateEntitySystem(
             this._entitySystem.entitySystem.value,
             migrationName,
             options);
         this._storeService.dispatch(replaceSystemAction(newEntitySystem));
     }
-    
+
     async saveVersionFile(versionFileContents: any): Promise<SaveResult> {
         let json = JSON.stringify(versionFileContents, null, 4);
         return this._jsonLoader.saveJsonToPath(this._pathService.join(this.projectMetaDataDir, "version.json"), json);
