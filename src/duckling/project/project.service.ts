@@ -274,19 +274,7 @@ export class ProjectService {
             options);
         this._storeService.dispatch(replaceSystemAction(newEntitySystem));
     }
-
-    async openVersionFile(): Promise<any> {
-        let versionFileName = this._pathService.join(this.projectMetaDataDir, "version.json");
-        let rawFile = await this._jsonLoader.getJsonFromPath(versionFileName);
-        let versionFile;
-        try {
-            versionFile = JSON.parse(rawFile);
-        } catch (exception) {
-            rethrow(`Error loading "project/version.js"`, exception);
-        }
-        return versionFile;
-    }
-
+    
     async saveVersionFile(versionFileContents: any): Promise<SaveResult> {
         let json = JSON.stringify(versionFileContents, null, 4);
         return this._jsonLoader.saveJsonToPath(this._pathService.join(this.projectMetaDataDir, "version.json"), json);
