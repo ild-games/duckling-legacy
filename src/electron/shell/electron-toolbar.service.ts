@@ -31,12 +31,6 @@ export class ElectronToolbarService extends FileToolbarService {
             shortcut: "CmdOrCtrl+V",
             role: "paste"
         });
-        this.addAction({
-            menuPath : ["Edit"],
-            label: "Paste",
-            shortcut: "CmdOrCtrl+V",
-            role: "paste"
-        });
     }
 
     bootstrapMenu() {

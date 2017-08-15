@@ -78,7 +78,7 @@ function setContainerBox(drawable : ContainerDrawable, resizeToBox: Box2, assetS
 
     return {
         ...drawable,
-        position : positionToAnchor(newPosition, resizeToBox.dimension),
+        anchor : positionToAnchor(newPosition, resizeToBox.dimension),
         drawables : drawable.drawables.map((childDrawable) => {
             let childBox = getDrawableBox(childDrawable, assetService);
             return setDrawableBox(childDrawable, resize(currentBox, resizeToBox, childBox, newPosition), assetService);

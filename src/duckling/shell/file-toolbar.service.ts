@@ -25,7 +25,7 @@ export interface FileToolbarAction {
     /**
      * Role for special actions
      */
-    role?: Electron.MenuItemRole | Electron.MenuItemRoleMac;
+    role?: string;
 }
 
 /**
