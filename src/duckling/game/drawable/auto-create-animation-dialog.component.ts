@@ -16,7 +16,6 @@ import {Vector} from '../../math';
 import {ProjectService} from '../../project';
 import {AssetService, Asset} from '../../project/asset.service';
 import {DialogService} from '../../util';
-import {openDialog} from '../../util/md-dialog';
 
 export type AutoCreateDialogResult = {
     numFrames : number,
@@ -71,10 +70,6 @@ export class AutoCreateAnimationDialogComponent {
     imageKey : string;
 
     private _assetServiceSubscription : Subscriber<any>;
-
-    static open(viewContainer : ViewContainerRef) : Observable<AutoCreateDialogResult> {
-        return openDialog<AutoCreateDialogResult>(viewContainer, AutoCreateAnimationDialogComponent);
-    }
 
     constructor(private _dialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>,
                 private _dialog : DialogService,

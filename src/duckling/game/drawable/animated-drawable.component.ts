@@ -6,6 +6,7 @@ import {
     AfterViewInit,
     ViewContainerRef
 } from '@angular/core';
+import {MdDialog} from '@angular/material';
 
 import {AccordionComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
@@ -89,7 +90,8 @@ export class AnimatedDrawableComponent {
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
     constructor(private _viewContainerRef : ViewContainerRef,
-                private _assets : AssetService) {
+                private _assets : AssetService,
+                private _dialog : MdDialog) {
     }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
@@ -127,7 +129,7 @@ export class AnimatedDrawableComponent {
     }
 
     onCreateFromTilesheetClicked() {
-        AutoCreateAnimationDialogComponent.open(this._viewContainerRef).subscribe(result => this._autoCreateAnimationFromTilesheet(result));
+        this._dialog.open(AutoCreateAnimationDialogComponent).afterClosed().subscribe(result => this._autoCreateAnimationFromTilesheet(result));
     }
 
 

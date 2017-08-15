@@ -6,6 +6,7 @@ import {
     EventEmitter,
     ViewContainerRef
 } from '@angular/core';
+import {MdDialog} from '@angular/material';
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
@@ -76,7 +77,8 @@ export class TopToolbarComponent {
 
     constructor(public store : StoreService,
                 public toolService : ToolService,
-                private _viewContainer : ViewContainerRef) {
+                private _viewContainer : ViewContainerRef,
+                private _dialog : MdDialog) {
         this.toolOptions = this.toolService.toolOptions;
     }
 
@@ -85,7 +87,7 @@ export class TopToolbarComponent {
     }
 
     onChangeMap() {
-        MapSelectComponent.open(this._viewContainer).subscribe((mapName : string) => {
+        this._dialog.open(MapSelectComponent).afterClosed().subscribe((mapName : string) => {
             if (mapName) {
                 this.mapSelected.emit(mapName);
             }
@@ -97,6 +99,6 @@ export class TopToolbarComponent {
     }
 
     onShowHideLayersClicked() {
-        LayerDialogComponent.open(this._viewContainer);
+        this._dialog.open(LayerDialogComponent);
     }
 }

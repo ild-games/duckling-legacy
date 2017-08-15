@@ -16,7 +16,6 @@ import {EntityLayerService, Layer, AttributeLayer} from '../../entitysystem/serv
 import {EntityDrawerService} from '../../canvas/drawing/entity-drawer.service';
 import {DialogService} from '../../util/dialog.service';
 import {PathService} from '../../util/path.service';
-import {openDialog} from '../../util/md-dialog';
 
 @Component({
     selector: 'dk-layer-dialog',
@@ -71,15 +70,10 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
 
     private _layerSubscription : Subscriber<any>;
 
-    constructor(private _dialog : DialogService,
-                private _entityLayerService : EntityLayerService,
+    constructor(private _entityLayerService : EntityLayerService,
                 private _entityDrawerService : EntityDrawerService) {
         this._refreshLayers();
         this._refreshAttributes();
-    }
-
-    static open(viewContainer : ViewContainerRef) {
-        openDialog<string>(viewContainer, LayerDialogComponent);
     }
 
     ngAfterViewInit() {
