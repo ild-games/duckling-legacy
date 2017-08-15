@@ -34,17 +34,17 @@ export class MigrationService {
         this._existingCodeMigrations[existingCodeMigration.name] = existingCodeMigration;
     }
 
-    updateVersionInfoWithExistingCodeMigration(versionInfo: ProjectVersionInfo, name: string, options?: any): any {
-        versionInfo.mapVersion = incrementMajorVersion(versionInfo.mapVersion);
-        versionInfo.mapMigrations.push(
+    updateVersionInfoWithExistingCodeMigration(versionFile: VersionFile, name: string, options?: any): any {
+        versionFile.projectVersion = incrementMajorVersion(versionFile.projectVersion);
+        versionFile.mapMigrations.push(
             {
                 type: "existing-code",
-                updateTo: versionInfo.mapVersion,
+                updateTo: versionFile.projectVersion,
                 name,
                 options
             }
         );
-        return versionInfo;
+        return versionFile;
     }
 
     migrateEntitySystem(entitySystem: EntitySystem, migrationName: string, options?: any): EntitySystem {
@@ -58,14 +58,14 @@ export class MigrationService {
     /**
      * Migrate a map to the newest version supported by the editor. Throws if the map is more advanced than the editor supports.
      */
-    async migrateMap(map: any, versionInfo: ProjectVersionInfo, migrationRoot: string): Promise<any> {
+    async migrateMap(map: any, versionFile: VersionFile, migrationRoot: string): Promise<any> {
         let mapVersion = (map as any).version;
 
-        if (versionCompareFunction(versionInfo.mapVersion, mapVersion) < 0) {
-            throw new Error(`Map version ${mapVersion} is greater than the projects expected map version ${versionInfo.mapVersion}`);
+        if (versionCompareFunction(versionFile.projectVersion, mapVersion) < 0) {
+            throw new Error(`Map version ${mapVersion} is greater than the projects expected map version ${versionFile.projectVersion}`);
         }
 
-        let migrations = migrationsToRun(mapVersion, versionInfo.mapVersion, versionInfo.mapMigrations);
+        let migrations = migrationsToRun(mapVersion, versionFile.projectVersion, versionFile.mapMigrations);
 
         let result: any = map;
         for (let migration of migrations) {
@@ -86,7 +86,7 @@ export class MigrationService {
      * @param  projectPath Path to the project.
      * @return The map version and migration data.
      */
-    async openProject(projectPath: string): Promise<ProjectVersionInfo> {
+    async openProject(projectPath: string): Promise<VersionFile> {
         let versionFileName = this._path.join(projectPath, "project", "version.json");
         let rawFile = await this._jsonLoader.getJsonFromPath(versionFileName);
 
@@ -110,7 +110,8 @@ export class MigrationService {
 
         return {
             mapMigrations: versionFile.mapMigrations,
-            mapVersion: versionFile.projectVersion
+            editorVersion: versionFile.editorVersion,
+            projectVersion: versionFile.projectVersion
         }
     }
 
@@ -179,11 +180,6 @@ export class MigrationService {
     }
 }
 
-export interface ProjectVersionInfo {
-    mapMigrations: MapMigration[],
-    mapVersion: MapVersion
-}
-
 export interface MapMigrationFunction {
     (map: any, options?: any): any;
 }
@@ -196,7 +192,7 @@ interface ProjectMigrationFunction {
     async (): Promise<void>;
 }
 
-interface VersionFile {
+export interface VersionFile {
     projectVersion: MapVersion,
     editorVersion: string,
     mapMigrations: MapMigration[]

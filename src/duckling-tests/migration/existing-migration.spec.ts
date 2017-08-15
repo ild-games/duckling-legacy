@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { MigrationService, ProjectVersionInfo } from '../../duckling/migration/migration.service';
+import { MigrationService, VersionFile } from '../../duckling/migration/migration.service';
 import { PathService } from '../../duckling/util/path.service';
 import { ChangeType, changeType } from '../../duckling/state/object-diff';
 import { ExistingCodeMigration } from '../../duckling/migration/existing-code-migration';
@@ -9,8 +9,9 @@ import { MigrationTools } from '../../duckling/migration/migration-tools';
 import { ParsedMap } from '../../duckling/project/map-parser.service';
 import { EntitySystem, Entity, EntityKey } from '../../duckling/entitysystem/entity';
 
-const MIGRATION_FILE: ProjectVersionInfo = {
-    mapVersion: "1.0",
+const MIGRATION_FILE: VersionFile = {
+    projectVersion: "1.0",
+    editorVersion: "0.1",
     mapMigrations: [
         {
             type: "existing-code",
@@ -77,8 +78,9 @@ describe("MigrationService", function () {
 
     describe("updateVersionInfoWithExistingCodeMigration", () => {
 
-        const PRE_MIGRATION_VERSION_INFO : ProjectVersionInfo = {
-            mapVersion: "1.0",
+        const PRE_MIGRATION_VERSION_INFO : VersionFile = {
+            projectVersion: "1.0",
+            editorVersion: "0.1",
             mapMigrations: [
                 {
                     type: "code",
@@ -88,8 +90,9 @@ describe("MigrationService", function () {
             ]
         };
 
-        const EXPECTED_VERSION_INFO = {
-            mapVersion: "2.0",
+        const EXPECTED_VERSION_INFO : VersionFile = {
+            projectVersion: "2.0",
+            editorVersion: "0.1",            
             mapMigrations: [
                 {
                     type: "code",
@@ -108,7 +111,7 @@ describe("MigrationService", function () {
             ]
         };
 
-        let versionInfo: any;
+        let versionInfo: VersionFile;
 
         beforeEach(() => {
             versionInfo = Object.assign({}, PRE_MIGRATION_VERSION_INFO);
@@ -120,7 +123,7 @@ describe("MigrationService", function () {
 
         describe("the existing-code migration that it adds", () => {
             it("has an 'updateTo' equal to the new project version in the file", () => {
-                expect(versionInfo.mapMigrations[1].updateTo).to.eql(EXPECTED_VERSION_INFO.mapVersion);
+                expect(versionInfo.mapMigrations[1].updateTo).to.eql(EXPECTED_VERSION_INFO.projectVersion);
             });
 
             it("has the options that were provided", () => {
@@ -129,7 +132,7 @@ describe("MigrationService", function () {
         });
 
         it("increments the project version", () => {
-            expect(versionInfo.mapVersion).to.eql(EXPECTED_VERSION_INFO.mapVersion);
+            expect(versionInfo.projectVersion).to.eql(EXPECTED_VERSION_INFO.projectVersion);
         });
     });
 

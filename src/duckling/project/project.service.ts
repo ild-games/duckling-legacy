@@ -13,7 +13,7 @@ import { DialogService } from '../util/dialog.service';
 import { glob } from '../util/glob';
 import { JsonSchema } from '../util/json-schema';
 import { Vector } from '../math/vector';
-import { MigrationService, ProjectVersionInfo } from '../migration/migration.service';
+import { MigrationService, VersionFile } from '../migration/migration.service';
 import { incrementMajorVersion, compareVersions, EDITOR_VERSION } from '../util/version';
 import { replaceSystemAction } from '../entitysystem/entity-system.reducer';
 
@@ -121,7 +121,13 @@ export class ProjectService {
     }
 
     private async _saveProjectMetaData() {
+        await this._saveProjectVersionInfo();
         await this._saveCustomAttributes();
+    }
+
+    private async _saveProjectVersionInfo() {
+
+
     }
 
     private async _saveCustomAttributes() {
@@ -291,17 +297,17 @@ export class ProjectService {
     }
 
     private async _parseMapJson(json: any, key: string) {
-        let rawMap = json ? JSON.parse(json) : createRawMap(this._project.versionInfo.mapVersion);
+        let rawMap = json ? JSON.parse(json) : createRawMap(this._project.versionInfo.projectVersion);
         rawMap = await this._migrationService.migrateMap(rawMap, this._project.versionInfo, this.projectMetaDataDir);
 
         let parsedMap = await this._mapParser.rawMapToParsedMap(rawMap);
 
         this._entitySystem.replaceSystem(parsedMap.entitySystem);
         if (!parsedMap.dimension) {
-            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.mapVersion));
+            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
         }
         if (!parsedMap.gridSize) {
-            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.mapVersion));
+            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
         }
 
         this._storeService.dispatch(openMapAction({

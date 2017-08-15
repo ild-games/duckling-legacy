@@ -1,11 +1,12 @@
 import {expect} from 'chai';
 
-import {MigrationService, ProjectVersionInfo} from '../../duckling/migration/migration.service';
+import {MigrationService, VersionFile} from '../../duckling/migration/migration.service';
 import {PathService} from '../../duckling/util/path.service';
 import {ChangeType, changeType} from '../../duckling/state/object-diff';
 
-const MIGRATION_FILE : ProjectVersionInfo = {
-    mapVersion : "5.0",
+const MIGRATION_FILE : VersionFile = {
+    projectVersion : "5.0",
+    editorVersion: "0.1",
     mapMigrations : [
         {
             type : "code",
