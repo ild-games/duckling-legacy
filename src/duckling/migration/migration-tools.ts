@@ -5,7 +5,7 @@ interface AttributeMigration {
 }
 
 interface EntityMigration {
-    (entity : Entity) : Entity;
+    (entity : Entity, entityKey: string) : Entity;
 }
 
 interface MigrationTest {
@@ -79,7 +79,7 @@ export class MigrationTools {
         return (map : Map) : Map => {
             let systems : {[systemName : string] : System} = {};
             for (let entityKey of map.entities) {
-                let migratedEntity = entityMigration(this.getEntity(map, entityKey));
+                let migratedEntity = entityMigration(this.getEntity(map, entityKey), entityKey);
                 for (let systemKey in migratedEntity) {
 
                     if (!systems[systemKey]) {
