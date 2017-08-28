@@ -2,7 +2,6 @@ import {Component, ViewContainerRef} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
 
-import {openDialog} from '../../util/md-dialog';
 import {StoreService} from '../../state/store.service';
 import {ProjectService} from '../../project/project.service';
 
@@ -41,13 +40,6 @@ import {CollisionTypesService} from './collision-types.service';
     `
 })
 export class EditCollisionTypesComponent {
-
-    /**
-     * Open a dialog and return an observable that resolves to the name of the map to open.
-     */
-    static open(viewContainer : ViewContainerRef) : Observable<String> {
-        return openDialog<string>(viewContainer, EditCollisionTypesComponent);
-    }
 
     newCollisionType : string = "";
 

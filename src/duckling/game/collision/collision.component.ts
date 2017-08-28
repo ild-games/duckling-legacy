@@ -7,6 +7,7 @@ import {
     OnDestroy,
     ChangeDetectorRef
 } from '@angular/core';
+import {MdDialog} from '@angular/material';
 import {Subscriber} from 'rxjs';
 
 import {VectorInputComponent, FormLabelComponent} from '../../controls';
@@ -80,7 +81,8 @@ export class CollisionComponent implements OnDestroy {
 
     constructor(private _viewContainer: ViewContainerRef,
                 private _collisionTypes : CollisionTypesService,
-                private _changeDetector : ChangeDetectorRef) {
+                private _changeDetector : ChangeDetectorRef,
+                private _dialog : MdDialog) {
         this.collisionTypeOptions = this._buildCollisionTypeOptions();
 
         this._collisionTypeSubscription = this._collisionTypes.collisionTypes.subscribe(() => {
@@ -111,7 +113,7 @@ export class CollisionComponent implements OnDestroy {
     }
 
     onEditCollisionTypesClicked() {
-        EditCollisionTypesComponent.open(this._viewContainer);
+        this._dialog.open(EditCollisionTypesComponent);
     }
 
     onCollisionTypeInput(collisionType : string) {

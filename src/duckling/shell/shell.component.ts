@@ -6,6 +6,7 @@ import {
     OnInit,
     ViewContainerRef
 } from '@angular/core';
+import {MdDialog} from '@angular/material';
 import {Subscriber} from 'rxjs';
 
 import {Entity} from '../entitysystem';
@@ -62,7 +63,8 @@ export class ShellComponent implements OnInit, OnDestroy {
                 private _windowService : WindowService,
                 private _fileToolbar : FileToolbarService,
                 private _store : StoreService,
-                private _viewContainer : ViewContainerRef) {
+                private _viewContainer : ViewContainerRef,
+                private _dialog : MdDialog) {
     }
 
     ngOnDestroy() {
@@ -109,7 +111,7 @@ export class ShellComponent implements OnInit, OnDestroy {
             menuPath: ["Project"],
             label: "Edit Custom Attributes",
             shortcut: "CmdOrCtrl+Shift+E",
-            callback: () => CustomAttributesComponent.open(this._viewContainer)
+            callback: () => this._dialog.open(CustomAttributesComponent)
         });
 
         this._fileToolbar.bootstrapMenu();

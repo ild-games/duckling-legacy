@@ -7,7 +7,7 @@ import {
 }  from '@angular/core';
 import {Observable} from 'rxjs';
 
-import {openDialog, removePadding} from '../util/md-dialog';
+import {removePadding} from '../util/md-dialog';
 import {JsonSchemaEdit, schemaEditToJson} from '../controls/json-schema-edit.component';
 import {ProjectService} from './project.service';
 import {CustomAttribute} from './custom-attribute';
@@ -79,13 +79,6 @@ export class CustomAttributesComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         removePadding(this._viewContainerRef);
-    }
-     
-    /**
-     * Open a dialog and return an observable that resolves to the name of the map to open.
-     */
-    static open(viewContainer : ViewContainerRef) : Observable<String> {
-        return openDialog<string>(viewContainer, CustomAttributesComponent);
     }
 
     onNewAttributeClicked() {

@@ -115,14 +115,19 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             this._renderer = new WebGLRenderer(
                 this.elementDimensions.x,
                 this.elementDimensions.y,
-                {view: this.canvasRoot.nativeElement});
+                {
+                    view: this.canvasRoot.nativeElement,
+                    backgroundColor: 0xDFDFDF
+                });
         } else {
             this._renderer = new CanvasRenderer(
                 this.elementDimensions.x,
                 this.elementDimensions.y,
-                {view: this.canvasRoot.nativeElement});
+                {
+                    view: this.canvasRoot.nativeElement,
+                    backgroundColor: 0xDFDFDF
+                });
         }
-        this._renderer.backgroundColor = 0xDFDFDF;
 
         this._resizeCanvasElements();
         if (this.initialScrollPosition.x === 0 && this.initialScrollPosition.y === 0) {
