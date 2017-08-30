@@ -1,13 +1,13 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import {createEntitySystem, Entity, EntitySystem, EntityKey} from '../entitysystem';
-import {MapVersion} from '../util/version';
-import {Vector} from '../math/vector';
-import {ProjectVersionInfo} from '../migration/migration.service';
+import { createEntitySystem, Entity, EntitySystem, EntityKey } from '../entitysystem';
+import { MapVersion } from '../util/version';
+import { Vector } from '../math/vector';
+import { VersionFile } from '../migration/migration.service';
 
-import {Asset, AssetService, LoadingAsset} from './asset.service'
-import {RequiredAssetService} from './required-asset.service'
-import {ProjectLifecycleService} from './project-lifecycle.service';
+import { Asset, AssetService, LoadingAsset } from './asset.service'
+import { RequiredAssetService } from './required-asset.service'
+import { ProjectLifecycleService } from './project-lifecycle.service';
 
 /**
  * Interface describing the structure of an attribute in the map file.
@@ -18,29 +18,29 @@ export type RawAttribute = any;
  * Interface describing the structure of a system in a map file.
  */
 export interface RawSystem {
-    components : {[entityName : string] : RawAttribute};
+    components: { [entityName: string]: RawAttribute };
 }
 
 /**
  * Interface describing the structure of a map file.
  */
 export interface RawMapFile {
-    key : string,
-    entities : string [],
+    key: string,
+    entities: string[],
     assets: Asset[],
-    systems : {[systemName : string] : RawSystem},
+    systems: { [systemName: string]: RawSystem },
     version: string,
     dimension: Vector,
     gridSize: number
 }
-export function createRawMap(version : MapVersion) : RawMapFile {
+export function createRawMap(version: MapVersion): RawMapFile {
     return {
         key: "",
         version, // REPLACE WITH A FUNCTION OR SOMETHING.
         systems: {},
         assets: [],
         entities: [],
-        dimension: {x: 1200, y: 800},
+        dimension: { x: 1200, y: 800 },
         gridSize: 16
     }
 };
@@ -60,9 +60,10 @@ export interface ParsedMap {
 
 @Injectable()
 export class MapParserService {
-    constructor(private _assets : AssetService,
-                private _requiredAssets : RequiredAssetService,
-                private _projectLifecycle : ProjectLifecycleService) {
+    constructor(
+        private _assets: AssetService,
+        private _requiredAssets: RequiredAssetService,
+        private _projectLifecycle: ProjectLifecycleService) {
     }
 
     /**
@@ -70,9 +71,9 @@ export class MapParserService {
      * @param  map Object deserialized from a map file.
      * @return A ParsedMap with the entities and other information about the map
      */
-    async rawMapToParsedMap(map : RawMapFile) : Promise<ParsedMap> {
+    async rawMapToParsedMap(map: RawMapFile): Promise<ParsedMap> {
         map = await this._projectLifecycle.executePostLoadMapHooks(map);
-        let entities : {[entityKey : string] : Entity} = {};
+        let entities: { [entityKey: string]: Entity } = {};
 
         for (let entityKey of map.entities) {
             entities[entityKey] = {};
@@ -88,9 +89,9 @@ export class MapParserService {
             }
         }
 
-        let assetsToLoad : LoadingAsset[] = [];
+        let assetsToLoad: LoadingAsset[] = [];
         for (let asset of map.assets) {
-            assetsToLoad.push({asset});
+            assetsToLoad.push({ asset });
         }
         this._assets.add(assetsToLoad);
 
@@ -114,34 +115,34 @@ export class MapParserService {
      * @param  parsedMap The parsed map
      * @return An object that can be serialized into a map.
      */
-    async parsedMapToRawMap(parsedMap : ParsedMap, versionInfo : ProjectVersionInfo) : Promise<RawMapFile> {
-        let systems : {[systemKey : string] : RawSystem} = {};
-        let entities : EntityKey[] = [];
+    async parsedMapToRawMap(parsedMap: ParsedMap, versionInfo: VersionFile): Promise<RawMapFile> {
+        let systems: { [systemKey: string]: RawSystem } = {};
+        let entities: EntityKey[] = [];
 
-        parsedMap.entitySystem.forEach((entity : Entity, entityKey : EntityKey) => {
+        parsedMap.entitySystem.forEach((entity: Entity, entityKey: EntityKey) => {
             entities.push(entityKey);
             for (let systemKey in entity) {
                 if (!systems[systemKey]) {
-                    systems[systemKey] = {components: {}};
+                    systems[systemKey] = { components: {} };
                 }
                 systems[systemKey].components[entityKey] = entity[systemKey];
             }
         });
 
-        let assetList : Asset[] = [];
+        let assetList: Asset[] = [];
         let assetMap = this._requiredAssets.assetsForEntitySystem(parsedMap.entitySystem);
         for (let assetKey in assetMap) {
             assetList.push(assetMap[assetKey]);
         }
 
         let rawMap = {
-            key : parsedMap.key,
-            systems : systems,
-            entities : entities,
-            assets : assetList,
-            dimension : parsedMap.dimension,
-            gridSize : parsedMap.gridSize,
-            version: versionInfo.mapVersion
+            key: parsedMap.key,
+            systems: systems,
+            entities: entities,
+            assets: assetList,
+            dimension: parsedMap.dimension,
+            gridSize: parsedMap.gridSize,
+            version: versionInfo.projectVersion
         }
         return await this._projectLifecycle.executePreSaveMapHooks(rawMap);
     }

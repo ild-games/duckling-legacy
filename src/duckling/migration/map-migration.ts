@@ -3,9 +3,9 @@ import {MapVersion, compareVersions, versionCompareFunction, VersionCompatibilit
  * Represents a single migration that needs to be run when updating to the specified version.
  */
 export interface MapMigration {
-    type : "code" | "editor-version"; // | "editor-built-in",
     updateTo : MapVersion;
-    name : string; // "migrations/updatecoins" or "2"
+    name?: string; // e.g. "ExistingCodeMigration.EditCollisionTypes" 
+    path?: string; // e.g. "migrations/updatecoins"
     options? : any;
 }
 

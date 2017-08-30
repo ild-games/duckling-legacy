@@ -15,7 +15,7 @@ import {immutableAssign, PathService} from '../../duckling/util';
 
 const MAP_VERSION = "1.0";
 const PROJECT_VERSION_INFO = {
-    mapVersion : MAP_VERSION
+    projectVersion : MAP_VERSION
 }
 
 let emptyMap : RawMapFile = {

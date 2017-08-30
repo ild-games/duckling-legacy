@@ -8,14 +8,12 @@ Your duckling project has a `project/version.json` file that describes the proje
     editorVersion : "0.1",
     migrations : [
         {
-            "type" : "code", // This indicates the migration is custom code written for the project.
             "updateTo" : "2.0", // Run the migration when updating maps to project version "2.0"
-            "name" : "migrations/make-collision100" // The migration script is {ProjectRoot}/project/migrations/make-collision100.js
+            "path" : "migrations/make-collision100" // The migration script is {ProjectRoot}/project/migrations/make-collision100.js
         },
         {
-            "type" : "code",
             "updateTo" : "3.0",
-            "name" : "migrations/add-drawable"
+            "path" : "migrations/add-drawable"
         }
     ]
 }
