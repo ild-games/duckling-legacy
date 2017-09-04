@@ -242,6 +242,7 @@ export class EntityMoveTool extends BaseTool {
         for (let selection of this._selectionService.selections.value) {
             let initialPosition = this._initialPositions[selection.key];
             let finalPosition = vectorAdd(dragDistance, initialPosition);
+            finalPosition = vectorRound(finalPosition);
             let updatedEntity = this._entityPositionService.setPosition(selection.entity, finalPosition);
             entities = entities.set(selection.key, updatedEntity);
         }
@@ -250,12 +251,17 @@ export class EntityMoveTool extends BaseTool {
 
     private _getDragDistanceWithSnapping(dragDistance: Vector): Vector {
         let initialBox = this._entityBoxService.getEntityBox(this._entityKeyAtMouseDownPosition);
+        let dimensionModulus = vectorModulus(initialBox.dimension, this._snapToGridService.grid);
+        if (dimensionModulus.x !== 0 && dimensionModulus.y !== 0) {
+            return dragDistance;
+        }
+
         let destination = vectorAdd(initialBox.position, dragDistance);
         let snappedDestination = this._snapToGridService.snapBox(destination, initialBox);
         dragDistance = vectorSubtract(snappedDestination, initialBox.position);
         let selectionInitialDiff = vectorSubtract(
-            vectorModulus(this._initialPositions[this._entityKeyAtMouseDownPosition], vectorMultiply(this._snapToGridService._grid, { x: 0.5, y: 0.5 })),
-            vectorModulus(initialBox.position, vectorMultiply(this._snapToGridService._grid, { x: 0.5, y: 0.5 })));
+            vectorModulus(this._initialPositions[this._entityKeyAtMouseDownPosition], vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 })),
+            vectorModulus(initialBox.position, vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 })));
         dragDistance = vectorSubtract(dragDistance, selectionInitialDiff);
         return dragDistance;
     }
