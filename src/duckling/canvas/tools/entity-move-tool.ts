@@ -251,8 +251,8 @@ export class EntityMoveTool extends BaseTool {
 
     private _getDragDistanceWithSnapping(dragDistance: Vector): Vector {
         let initialBox = this._entityBoxService.getEntityBox(this._entityKeyAtMouseDownPosition);
-        let dimensionModulus = vectorModulus(initialBox.dimension, this._snapToGridService.grid);
-        if (dimensionModulus.x !== 0 && dimensionModulus.y !== 0) {
+        let dimensionModulus = vectorModulus(initialBox.dimension, vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 }));
+        if (dimensionModulus.x !== 0 || dimensionModulus.y !== 0) {
             return dragDistance;
         }
 
