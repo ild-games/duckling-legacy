@@ -16,6 +16,11 @@ import { ProjectService } from '../../project/project.service';
     selector: "dk-sound",
     styleUrls: ['./duckling/game/audio/sound.component.css'],
     template: `
+        <dk-number-input
+            label="Pitch"
+            [value]="sound.pitch"
+            (validInput)="onPitchChanged($event)">
+        </dk-number-input>
         <div class="topRow">
             Volume
             <mat-slider
@@ -56,6 +61,10 @@ export class SoundComponent {
 
     onSliderChanged(event: MatSliderChange) {
         this.soundChanged.emit(immutableAssign(this.sound, { volume: event.value / 100 }));
+    }
+
+    onPitchChanged(newPitch : number) {
+        this.soundChanged.emit(immutableAssign(this.sound, {pitch: newPitch}));
     }
 
     onPlaySound(index: number) {
