@@ -31,7 +31,6 @@ export class PathService {
         return npath.dirname(path);
     }
 
-
     /**
      * Get the base name from the path (i.e. last directory or file name)
      * @param path Path to get the basename for.

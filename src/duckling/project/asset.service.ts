@@ -113,7 +113,16 @@ export class AssetService {
     }
     
     private _getFilePath(assetToLoad : LoadingAsset) : string {
-        let filePath = assetToLoad.filePath || this._store.getState().project.home + "/resources/" + assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type);
+        let filePath = "";
+        if (assetToLoad.filePath) {
+            filePath = assetToLoad.filePath;
+        } else {
+            filePath = this._path.join(
+                this._store.getState().project.home,
+                this.resourceFolderName,
+                assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type)
+            );
+        }
         return filePath;
     }
 
@@ -218,7 +227,8 @@ export class AssetService {
      * Load the images that are used by the internal editor
      */
     loadPreloadedEditorAssets() {
-        this._path.walk("resources/preloaded-editor").then((files : string[]) => {
+        let preloadAssetsPath = this._path.join("resources", "preloaded-editor");
+        this._path.walk(preloadAssetsPath).then((files : string[]) => {
             this._preloadEditorAssets(files);
         });
     }
@@ -248,6 +258,10 @@ export class AssetService {
 
     get assets() : {[key : string] : Asset} {
         return this._assets;
+    }
+
+    get resourceFolderName() {
+        return "resources";
     }
 
     private _onLoaderComplete() {
@@ -327,6 +341,5 @@ export class AssetService {
             default:
                 throw new Error("Unknown asset type: " + type);
         }
-
     }
 }

@@ -11,6 +11,7 @@ import {immutableAssign, DialogService} from '../../util';
 import {Box2} from '../../math';
 import {Vector} from '../../math/vector';
 import {AssetService, ProjectService} from '../../project';
+import {PathService} from '../../util/path.service';
 
 import {ImageDrawable} from './image-drawable';
 
@@ -61,7 +62,8 @@ export class ImageDrawableComponent {
 
     constructor(private _dialog : DialogService,
                 private _assets : AssetService,
-                private _project : ProjectService) {
+                private _project : ProjectService,
+                private _path : PathService) {
     }
 
     onImageFilePicked(imageKey : string) {
@@ -103,7 +105,6 @@ export class ImageDrawableComponent {
 
     get dialogOptions() {
         return {
-            defaultPath: this._project.home,
             properties: [
                 'openFile'
             ],

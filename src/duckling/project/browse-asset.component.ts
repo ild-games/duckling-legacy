@@ -8,6 +8,7 @@ import {
 
 import {immutableAssign, DialogService, PathService} from '../util';
 import {ProjectService} from './project.service';
+import {AssetService} from './asset.service';
 
 /**
  * Component for loading asset files.
@@ -47,6 +48,7 @@ export class BrowseAssetComponent {
 
     constructor(private _path : PathService,
                 private _project : ProjectService,
+                private _assets : AssetService,
                 private _dialog : DialogService) {
     }
 
@@ -60,7 +62,9 @@ export class BrowseAssetComponent {
         // NOTE: This currently does not work unless the symlink is the leaf of the path, 
         // this is because of a macOS bug: http://www.openradar.me/11398659
         this.dialogOptions.properties.push('noResolveAliases');
-        
+
+        this.dialogOptions.defaultPath = this.dialogOptions.defaultPath || this._openDialogPath;
+
         this._dialog.showOpenDialog(
             this.dialogOptions,
             (fileNames : string[]) => {
@@ -76,7 +80,7 @@ export class BrowseAssetComponent {
         }
         file = this._path.normalize(file);
 
-        let resourceDirectory = this._path.join(this._project.home, 'resources');
+        let resourceDirectory = this._path.join(this._project.home, this._assets.resourceFolderName);
         if (!this._path.isSubOfDir(file, resourceDirectory)) {
             this._dialog.showErrorDialog(
                 "Unable to load asset",
@@ -92,6 +96,16 @@ export class BrowseAssetComponent {
             return this.selectedFile;
         } else {
             return "No file selected";
+        }
+    }
+
+    private get _openDialogPath() : string {
+        let openDialogPath = this._path.join(this._project.home, this._assets.resourceFolderName); 
+
+        if (!this.selectedFile || this.selectedFile === "") {
+            return openDialogPath;
+        } else {
+            return this._path.join(openDialogPath, this._path.dirname(this.selectedFile));
         }
     }
 }
