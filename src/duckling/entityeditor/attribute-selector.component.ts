@@ -11,8 +11,7 @@ import {
 import {Subscriber} from 'rxjs';
 
 import {ArrayChoiceComponent, SelectOption} from '../controls';
-import {Entity, AvailableAttributeService, AttributeKey} from '../entitysystem';
-import {toTitleCase} from '../util';
+import {Entity, AvailableAttributeService, AttributeKey, attributeDisplayName} from '../entitysystem';
 import {changeType, ChangeType} from '../state';
 import {ProjectService} from '../project/project.service';
 
@@ -77,7 +76,8 @@ export class AttributeSelectorComponent implements OnChanges, AfterViewInit, OnI
 
     newOptions() : SelectOption[] {
         return this._availableAttribute.availableAttributes(this.entity).map(key => {
-            return {title: toTitleCase(key), value: key};
+            //return {title: key, value: key};
+            return {title: attributeDisplayName(key), value: key};
         });
     }
 

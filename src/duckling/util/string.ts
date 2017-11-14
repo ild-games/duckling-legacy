@@ -5,5 +5,24 @@
  * @return {string}       Title cased result
  */
 export function toTitleCase(input : string) : string {
+    if (isAllCaps(input)) {
+        return input;
+    }
+
     return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+}
+
+/**
+ * Determines if the given string is in all caps (SCREAMING_CASE)
+ * @param str  string to test for
+ * @return True if the string is all caps, else false
+ */
+export function isAllCaps(str : string) : boolean {
+    for (let i = 0; i < str.length; i++) {
+        let char = str.charAt(i);
+        if (char === char.toLowerCase()) {
+            return false;
+        }
+    }
+    return true;
 }
