@@ -76,7 +76,6 @@ export class AttributeSelectorComponent implements OnChanges, AfterViewInit, OnI
 
     newOptions() : SelectOption[] {
         return this._availableAttribute.availableAttributes(this.entity).map(key => {
-            //return {title: key, value: key};
             return {title: attributeDisplayName(key), value: key};
         });
     }
