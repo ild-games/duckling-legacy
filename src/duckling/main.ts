@@ -3,7 +3,6 @@ import {
     ApplicationRef,
     Type
 } from '@angular/core';
-import {MATERIAL_COMPATIBILITY_MODE} from '@angular/material';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
@@ -51,8 +50,7 @@ let storeService = new StoreService(mainReducer, mergeEntityAction);
         MigrationModule
     ],
     providers: [
-        {provide: StoreService, useValue: storeService},
-        {provide: MATERIAL_COMPATIBILITY_MODE, useValue: true}
+        {provide: StoreService, useValue: storeService}
     ],
     entryComponents: [
         ShellComponent
