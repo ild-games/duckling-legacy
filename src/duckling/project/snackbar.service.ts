@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {MdSnackBar} from '@angular/material';
+import {MatSnackBar} from '@angular/material';
 
 interface SnackBar {
     message: string,
@@ -13,7 +13,7 @@ interface SnackBar {
 export class SnackBarService {
     private _snacks : SnackBar[] = [];
 
-    constructor(private _snackbar? : MdSnackBar) {
+    constructor(private _snackbar? : MatSnackBar) {
     }
 
     /**

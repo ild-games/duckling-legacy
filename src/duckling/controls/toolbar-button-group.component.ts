@@ -9,7 +9,7 @@ import {ToolbarButtonComponent} from './toolbar-button.component';
 
 @Component({
     selector: "dk-toolbar-button-group",
-    styleUrls: ['../build/duckling/controls/toolbar-button-group.component.css'],
+    styleUrls: ['./duckling/controls/toolbar-button-group.component.css'],
     template: `
         <span *ngFor="let option of options">
             <dk-toolbar-button

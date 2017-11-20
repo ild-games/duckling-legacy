@@ -1,5 +1,5 @@
 import {Component, ViewContainerRef} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
 
 import {StoreService} from '../../state/store.service';
@@ -13,8 +13,8 @@ import {CollisionTypesService} from './collision-types.service';
 @Component({
     selector: "dk-edit-collision-types",
     styleUrls: [
-        "../build/duckling/layout.css", 
-        "../build/duckling/game/collision/edit-collision-types.component.css"
+        "./duckling/layout.css", 
+        "./duckling/game/collision/edit-collision-types.component.css"
     ],
     template: `
         <dk-section headerText="Create Collision Type">
@@ -33,12 +33,12 @@ import {CollisionTypesService} from './collision-types.service';
             </div>
         </dk-section>
         <dk-section headerText="Current Collision Types">
-            <md-list class="current-collision-types">
-                <md-list-item
+            <mat-list class="current-collision-types">
+                <mat-list-item
                     *ngFor="let collisionType of collisionTypes">
                     {{collisionType}}
-                </md-list-item>
-            </md-list>
+                </mat-list-item>
+            </mat-list>
         </dk-section>
     `
 })
@@ -48,7 +48,7 @@ export class EditCollisionTypesComponent {
 
     constructor(private _collisionTypes : CollisionTypesService,
                 private _storeService : StoreService,
-                private _dialogRef : MdDialogRef<EditCollisionTypesComponent>) {
+                private _dialogRef : MatDialogRef<EditCollisionTypesComponent>) {
     }
 
     createCollisionType() {

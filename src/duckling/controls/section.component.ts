@@ -7,9 +7,9 @@ import {
 
 @Component({
     selector: "dk-section",
-    styleUrls: ['../build/duckling/controls/section.component.css'],
+    styleUrls: ['./duckling/controls/section.component.css'],
     template: `
-        <md-card>
+        <mat-card>
             <dk-section-header
                 *ngIf="collapsible"
                 [checkboxMode]="checkboxMode"
@@ -29,7 +29,7 @@ import {
                 *ngIf="isSectionOpen">
                 <ng-content></ng-content>
             </div>
-        </md-card>
+        </mat-card>
     `
 })
 export class SectionComponent {

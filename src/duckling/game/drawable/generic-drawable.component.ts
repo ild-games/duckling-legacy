@@ -16,7 +16,7 @@ import {Drawable} from './drawable';
  */
 @Component({
     selector: "dk-generic-drawable",
-    styleUrls: ['../build/duckling/game/drawable/generic-drawable.component.css'],
+    styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
     template: `
         <dk-edit-input
             [value]="drawable.key"
@@ -29,12 +29,12 @@ import {Drawable} from './drawable';
         </dk-edit-input>
         
         <div class="inactive-checkbox">
-            <md-checkbox
+            <mat-checkbox
                 class="inactive-checkbox"
                 [checked]="drawable.inactive"
                 (change)="onInactivePressed($event.checked)">
                 Inactive?
-            </md-checkbox>
+            </mat-checkbox>
         </div>
 
         <dk-number-input

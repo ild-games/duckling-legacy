@@ -14,14 +14,14 @@ import {IconComponent} from './icon.component';
  */
 @Component({
     selector: "dk-accordion-element",
-    styleUrls: ['../build/duckling/controls/accordion-element.component.css'],
+    styleUrls: ['./duckling/controls/accordion-element.component.css'],
     template: `
         <dk-section-header
             [sectionOpen]="opened"
             [headerText]="title"
             (sectionOpenChanged)="onToggle(!opened)">
             <button
-                md-button
+                mat-button
                 *ngIf="clone"
                 class="display-on-hover"
                 title="Copy"
@@ -30,7 +30,7 @@ import {IconComponent} from './icon.component';
                 <dk-icon iconClass="clone"></dk-icon>
             </button>
             <button
-                md-button
+                mat-button
                 *ngIf="!first"
                 class="display-on-hover"
                 title="Move up"
@@ -39,7 +39,7 @@ import {IconComponent} from './icon.component';
                 <dk-icon iconClass="arrow-up"></dk-icon>
             </button>
             <button
-                md-button
+                mat-button
                 *ngIf="!last"
                 class="display-on-hover"
                 title="Move down"
@@ -48,7 +48,7 @@ import {IconComponent} from './icon.component';
                 <dk-icon iconClass="arrow-down"></dk-icon>
             </button>
             <button
-                md-button
+                mat-button
                 class="display-on-hover"
                 title="Delete"
                 [disableRipple]=true

@@ -25,7 +25,7 @@ import {
  */
 @Component({
     selector: "dk-container-drawable",
-    styleUrls: ['../build/duckling/game/drawable/container-drawable.component.css'],
+    styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
     template: `
         <dk-form-label title="Add Drawable"></dk-form-label>
         <dk-enum-choice
@@ -34,7 +34,7 @@ import {
             (addClicked)="onNewDrawableClicked($event)">
         </dk-enum-choice>
 
-        <md-card
+        <mat-card
             *ngIf="containerDrawable?.drawables?.length > 0"
             class="drawables-card">
             <dk-accordion
@@ -54,7 +54,7 @@ import {
                     </dk-drawable>
                 </ng-template>
             </dk-accordion>
-        </md-card>
+        </mat-card>
     `
 })
 export class ContainerDrawableComponent {

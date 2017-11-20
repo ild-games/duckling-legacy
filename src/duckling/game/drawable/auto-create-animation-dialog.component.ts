@@ -8,7 +8,7 @@ import {
     OnInit,
     OnDestroy
 } from '@angular/core';
-import {MdDialogConfig, MdDialogRef} from '@angular/material';
+import {MatDialogConfig, MatDialogRef} from '@angular/material';
 import {Observable, Subscriber} from 'rxjs';
 import {Rectangle} from 'pixi.js';
 
@@ -25,7 +25,7 @@ export type AutoCreateDialogResult = {
 
 @Component({
     selector: 'dk-auto-create-animation-dialog',
-    styleUrls: ['../build/duckling/game/drawable/auto-create-animation-dialog.component.css'],
+    styleUrls: ['./duckling/game/drawable/auto-create-animation-dialog.component.css'],
     template: `
         <div class="body">
             <dk-number-input
@@ -50,13 +50,13 @@ export type AutoCreateDialogResult = {
 
         <div class="footer">
             <button
-                md-button
+                mat-button
                 type="button"
                 (click)="onAcceptClicked()">
                 Accept
             </button>
             <button
-                md-button
+                mat-button
                 type="button"
                 (click)="onCancelClicked()">
                 Cancel
@@ -71,7 +71,7 @@ export class AutoCreateAnimationDialogComponent {
 
     private _assetServiceSubscription : Subscriber<any>;
 
-    constructor(private _dialogRef : MdDialogRef<AutoCreateAnimationDialogComponent>,
+    constructor(private _dialogRef : MatDialogRef<AutoCreateAnimationDialogComponent>,
                 private _dialog : DialogService,
                 private _assets : AssetService,
                 private _project : ProjectService) {

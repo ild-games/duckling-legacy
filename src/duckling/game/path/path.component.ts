@@ -13,7 +13,7 @@ import {PathAttribute} from './path-attribute';
 
 @Component({
     selector: "dk-path",
-    styleUrls: ['../build/duckling/game/path/path.component.css'],
+    styleUrls: ['./duckling/game/path/path.component.css'],
     template: `
         <dk-number-input
             label="Time To Complete Path"
@@ -22,14 +22,14 @@ import {PathAttribute} from './path-attribute';
             (validInput)="onCycleTimeChanged($event)">
         </dk-number-input>
         
-        <md-checkbox
+        <mat-checkbox
             [checked]="attribute.isLoop"
             (change)="onIsLoopChanged($event.checked)">
             Is a Loop?
-        </md-checkbox>
+        </mat-checkbox>
             
         <button
-            md-raised-button
+            mat-raised-button
             class="add-vertex-button"
             [disableRipple]="true"
             (click)="onNewVertexClicked()">
@@ -38,7 +38,7 @@ import {PathAttribute} from './path-attribute';
         </button>
         
         <div class="form-label">Vertices</div>
-        <md-card class="vertices-card">
+        <mat-card class="vertices-card">
             <dk-accordion
                 [elements]="attribute?.vertices"
                 [clone]="true"
@@ -55,7 +55,7 @@ import {PathAttribute} from './path-attribute';
                     </dk-vector-input>
                 </ng-template>
             </dk-accordion>
-        </md-card> 
+        </mat-card> 
     `
 })
 export class PathComponent {

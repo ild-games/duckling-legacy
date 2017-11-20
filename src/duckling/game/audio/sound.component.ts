@@ -4,7 +4,7 @@ import {
     Output,
     EventEmitter
 } from '@angular/core';
-import { MdSliderModule, MdSliderChange } from '@angular/material';
+import { MatSliderModule, MatSliderChange } from '@angular/material';
 
 import {immutableAssign, immutableArrayAssign} from '../../util/model';
 
@@ -14,17 +14,17 @@ import { ProjectService } from '../../project/project.service';
 
 @Component({
     selector: "dk-sound",
-    styleUrls: ['../build/duckling/game/audio/sound.component.css'],
+    styleUrls: ['./duckling/game/audio/sound.component.css'],
     template: `
         <div class="topRow">
             Volume
-            <md-slider
+            <mat-slider
                 label="Volume"
                 min="0"
                 max="100" 
                 [value]="displayVolume(sound.volume)"
                 (change)="onSliderChanged($event)">
-            </md-slider>
+            </mat-slider>
             {{displayVolume(sound.volume)}}
             <dk-icon-button
                 tooltip="Play Sound"
@@ -54,7 +54,7 @@ export class SoundComponent {
         return Math.round(volume * 100);
     }
 
-    onSliderChanged(event: MdSliderChange) {
+    onSliderChanged(event: MatSliderChange) {
         this.soundChanged.emit(immutableAssign(this.sound, { volume: event.value / 100 }));
     }
 

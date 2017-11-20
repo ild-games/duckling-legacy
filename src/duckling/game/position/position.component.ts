@@ -17,7 +17,7 @@ import {immutableAssign} from '../../util/model';
  */
 @Component({
     selector: "dk-position",
-    styleUrls: ['../build/duckling/game/position/position.component.css'],
+    styleUrls: ['./duckling/game/position/position.component.css'],
     template: `
         <dk-vector-input
             xLabel="Position X"

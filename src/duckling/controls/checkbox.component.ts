@@ -11,11 +11,11 @@ import {
 @Component({
     selector: "dk-checkbox",
     template:`
-        <md-checkbox
+        <mat-checkbox
             [checked]="checked"
             (change)="onValueChanged($event.checked)">
             {{text}}
-        </md-checkbox>
+        </mat-checkbox>
     `
 })
 export class CheckboxComponent {

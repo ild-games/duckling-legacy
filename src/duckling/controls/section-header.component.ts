@@ -10,7 +10,7 @@ import {
  */
 @Component({
     selector: "dk-section-header",
-    styleUrls: ['../build/duckling/controls/section-header.component.css'],
+    styleUrls: ['./duckling/controls/section-header.component.css'],
     template: `
         <div
             [class]="headerCssClasses"

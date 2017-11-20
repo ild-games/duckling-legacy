@@ -25,8 +25,8 @@ export type JsonSchemaEditValue = "number" | "string" | "boolean" | JsonSchemaEd
 @Component({
     selector: "dk-json-schema-edit",
     styleUrls: [
-        '../build/duckling/layout.css',
-        '../build/duckling/controls/json-schema-edit.component.css'
+        './duckling/layout.css',
+        './duckling/controls/json-schema-edit.component.css'
     ],
     template: `
         <div class="json-content">
@@ -75,7 +75,7 @@ export type JsonSchemaEditValue = "number" | "string" | "boolean" | JsonSchemaEd
             </div>
             <div class="json-key">
                 <button
-                    md-raised-button
+                    mat-raised-button
                     title="Add new property"
                     (click)="onNewPropertyAdded()">
                     Add New Property

@@ -1,13 +1,13 @@
 $listContainerWidth: 248px;
 
-md-nav-list {
+mat-nav-list {
     max-height: 60vh;
     overflow-y: auto;
     overflow-x: hidden;
     width: $listContainerWidth;
 }
 
-md-list-item {
+mat-list-item {
     width: $listContainerWidth - 16px;
 }
 

@@ -14,11 +14,11 @@ import {ProjectService} from './project.service';
  */
 @Component({
     selector: "dk-browse-asset",
-    styleUrls: ['../build/duckling/project/browse-asset.component.css'],
+    styleUrls: ['./duckling/project/browse-asset.component.css'],
     template:`
         <div class="wrapper">
             <button
-                md-raised-button
+                mat-raised-button
                 disableRipple="true"
                 [title]="buttonText"
                 (click)="onBrowseClicked()">

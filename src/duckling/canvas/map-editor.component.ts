@@ -48,9 +48,9 @@ type DrawableCache = {
  */
 @Component({
     selector: "dk-map-editor",
-    styleUrls: ['../build/duckling/canvas/map-editor.component.css'],
+    styleUrls: ['./duckling/canvas/map-editor.component.css'],
     template: `
-        <md-card>
+        <mat-card>
             <dk-top-toolbar
                 class="canvas-top-toolbar mat-elevation-z4"
                 [selectedToolKey]="tool.key"
@@ -85,7 +85,7 @@ type DrawableCache = {
                 (scaleChanged)="onScaleChanged($event)"
                 (showGridChanged)="onShowGridChanged($event)">
             </dk-bottom-toolbar>
-        </md-card>
+        </mat-card>
     `
 })
 export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {

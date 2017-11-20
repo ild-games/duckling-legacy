@@ -17,7 +17,7 @@ import {Validator} from '../controls/validated-input.component';
  */
 @Component({
     selector: "dk-entity-name",
-    styleUrls: ['../build/duckling/entityeditor/entity-name.component.css'],
+    styleUrls: ['./duckling/entityeditor/entity-name.component.css'],
     template: `
         <div class="entity-name-row">
             <dk-edit-input

@@ -12,18 +12,18 @@ import {
  */
 @Component({
     selector: "dk-input",
-    styleUrls: ['../build/duckling/controls/input.component.css'],
+    styleUrls: ['./duckling/controls/input.component.css'],
     template:`
-        <md-input-container
+        <mat-form-field
             dividerColor="{{dividerColor}}"
             (input)="onUserInput($event.target.value)"
             (focus)="onFocus()">
             <input #rawInputElement
-                mdInput
+                matInput
                 [disabled]="disabled"
                 placeholder={{label}}
                 value="{{value}}">
-        </md-input-container>
+        </mat-form-field>
     `
 })
 export class InputComponent {

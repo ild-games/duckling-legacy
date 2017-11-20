@@ -18,7 +18,7 @@ import { defaultSound, Sound } from './sound';
 
 @Component({
     selector: "dk-sound-attribute",
-    styleUrls: ['../build/duckling/game/audio/sound-attribute.component.css'],
+    styleUrls: ['./duckling/game/audio/sound-attribute.component.css'],
     template: `
         <dk-button
             tooltip="Add new sound"
@@ -26,7 +26,7 @@ import { defaultSound, Sound } from './sound';
             icon="plus"
             (click)="onAddSoundClicked()">
         </dk-button>
-        <md-card class="sounds-card">
+        <mat-card class="sounds-card">
             <dk-accordion
                 [elements]="attribute.sounds"
                 titleProperty="soundKey"
@@ -41,7 +41,7 @@ import { defaultSound, Sound } from './sound';
                     </dk-sound>
                 </ng-template>
             </dk-accordion>
-        </md-card>
+        </mat-card>
     `
 })
 export class SoundAttributeComponent {

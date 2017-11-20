@@ -27,8 +27,8 @@ export enum JsonValueType {
 @Component({
     selector: "dk-json",
     styleUrls: [
-        '../build/duckling/controls/json.component.css',
-        '../build/duckling/layout.css'
+        './duckling/controls/json.component.css',
+        './duckling/layout.css'
     ],
     template: `
         <div
@@ -64,13 +64,13 @@ export enum JsonValueType {
             <div *ngSwitchCase="JsonValueType.Array">
                 <span>{{key}}</span>
                 <button
-                    md-icon-button
+                    mat-icon-button
                     class="dk-inline"
                     [disableRipple]="true"
                     (click)="onArrayAddClicked(key)">
                     <dk-icon iconClass="plus"></dk-icon>
                 </button>
-                <md-card class="array-card">
+                <mat-card class="array-card">
                     <dk-accordion
                         [elements]="value[key]"
                         [titlePrefix]="key + ': '"
@@ -87,7 +87,7 @@ export enum JsonValueType {
                             </dk-json>
                         </ng-template>
                     </dk-accordion>
-                </md-card>
+                </mat-card>
             </div>
         </div>
     `

@@ -7,7 +7,7 @@ import {
     OnDestroy,
     ChangeDetectorRef
 } from '@angular/core';
-import {MdDialog} from '@angular/material';
+import {MatDialog} from '@angular/material';
 import {Subscriber} from 'rxjs';
 
 import {VectorInputComponent, FormLabelComponent} from '../../controls';
@@ -28,7 +28,7 @@ import {CollisionTypesService} from './collision-types.service';
  */
 @Component({
     selector: "dk-collision",
-    styleUrls: ['../build/duckling/game/collision/collision.component.css'],
+    styleUrls: ['./duckling/game/collision/collision.component.css'],
     template: `
         <dk-vector-input
             xLabel="Width"
@@ -63,7 +63,7 @@ import {CollisionTypesService} from './collision-types.service';
             (selection)="onCollisionTypeInput($event)">
         </dk-array-select>
         <button
-            md-icon-button
+            mat-icon-button
             [disableRipple]="true"
             (click)="onEditCollisionTypesClicked()">
             <dk-icon iconClass="pencil"></dk-icon>
@@ -82,7 +82,7 @@ export class CollisionComponent implements OnDestroy {
     constructor(private _viewContainer: ViewContainerRef,
                 private _collisionTypes : CollisionTypesService,
                 private _changeDetector : ChangeDetectorRef,
-                private _dialog : MdDialog) {
+                private _dialog : MatDialog) {
         this.collisionTypeOptions = this._buildCollisionTypeOptions();
 
         this._collisionTypeSubscription = this._collisionTypes.collisionTypes.subscribe(() => {
