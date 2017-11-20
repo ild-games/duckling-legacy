@@ -162,6 +162,6 @@ export class JsonComponent implements OnInit {
         for (let keyInSchema in this.schema) {
             keys.add(keyInSchema);
         }
-        return Array.from(keys);
+        return Array.from(keys).sort();
     }
 }
