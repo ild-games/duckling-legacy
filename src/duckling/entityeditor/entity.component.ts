@@ -7,8 +7,8 @@ import {
     ChangeDetectionStrategy
 } from '@angular/core';
 
-import {Entity, AttributeKey, Attribute, TaggedAttribute}  from '../entitysystem';
-import {immutableAssign, immutableDelete, toTitleCase} from '../util';
+import {Entity, AttributeKey, Attribute, TaggedAttribute, attributeDisplayName}  from '../entitysystem';
+import {immutableAssign, immutableDelete} from '../util';
 import {DeleteButtonComponent} from '../controls';
 import {AttributeComponent} from '../entityeditor';
 
@@ -63,6 +63,6 @@ export class EntityComponent {
     }
 
     formatCardTitle(title : string) : string {
-        return toTitleCase(title);
+        return attributeDisplayName(title);
     }
 }
