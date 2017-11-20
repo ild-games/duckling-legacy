@@ -5,10 +5,6 @@
  * @return {string}       Title cased result
  */
 export function toTitleCase(input : string) : string {
-    if (isAllCaps(input)) {
-        return input;
-    }
-
     return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
 }
 

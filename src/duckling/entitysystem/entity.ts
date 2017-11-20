@@ -1,6 +1,6 @@
 import {Map} from 'immutable';
 
-import {toTitleCase} from '../util/string';
+import {toTitleCase, isAllCaps} from '../util/string';
 
 export type Attribute = Object;
 export type AttributeKey = string;
@@ -44,6 +44,11 @@ export function attributeDisplayName(attributeKey : AttributeKey) : string {
     }
     words.push(attributeKey.substring(startOfNextWord));
 
-    return words.map(word => toTitleCase(word)).join(" ");
+    return words.map((word) => {
+        if (isAllCaps(word)) {
+            return word;
+        }
+        return toTitleCase(word);
+    }).join(" ");
 }
 
