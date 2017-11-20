@@ -154,10 +154,14 @@ export class JsonComponent implements OnInit {
     }
 
     get jsonKeys() : string[] {
-        let keys : string[] = [];
+        let keys : Set<string> = new Set<string>();
         for (let key in this.value) {
-            keys.push(key);
+            keys.add(key)
         }
-        return keys;
+
+        for (let keyInSchema in this.schema) {
+            keys.add(keyInSchema);
+        }
+        return Array.from(keys).sort();
     }
 }
