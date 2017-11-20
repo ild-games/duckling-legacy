@@ -2,69 +2,69 @@
 # yarn lockfile v1
 
 
-"@angular/animations@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.3.4.tgz#02c726b3b70ae3d2e155704c8c60e9baf01547ef"
+"@angular/animations@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.4.3.tgz#396c4a5bfb22847f9e458245ba995f9c130c0cf3"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/cdk@2.0.0-beta.8":
-  version "2.0.0-beta.8"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-2.0.0-beta.8.tgz#71961c851dfbeb19e085e898bf5e4461408f8b57"
+"@angular/cdk@2.0.0-beta.11":
+  version "2.0.0-beta.11"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-2.0.0-beta.11.tgz#b9e799574786272c63b6334c837c5ee2445bc933"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/common@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-4.3.4.tgz#98fb7d6e8da633ba56844d5c00986ca407aea950"
+"@angular/common@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/common/-/common-4.4.3.tgz#f92ac68b02bec5f0e6d3603a843294dc96c96074"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/compiler@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-4.3.4.tgz#9b16ae785f22b918aa168db0555c05304baf9d77"
+"@angular/compiler@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-4.4.3.tgz#8f01163dad7db3408497d99d387554b6b185ad66"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/core@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-4.3.4.tgz#42dd8046600f5a080a4e1212116b12fe97bcfcb4"
+"@angular/core@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/core/-/core-4.4.3.tgz#e71d2b07beaacbab48ab7f51d4e2286ea5d70e15"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/forms@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.3.4.tgz#57fa07b7bf9103f1b948fbfe4cfed314092c9e96"
+"@angular/forms@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.4.3.tgz#25b41bbab58bf1da872411c8517c10d7c5373d8e"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/http@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/http/-/http-4.3.4.tgz#762cb7c032059f41dfd0553f574e9ce0d5ecc0a9"
+"@angular/http@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/http/-/http-4.4.3.tgz#b557ed24144aacc44b136cd477e84d2f57808903"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/material@2.0.0-beta.8":
-  version "2.0.0-beta.8"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-2.0.0-beta.8.tgz#a92852abc9261aea26c2401f576645470be2cf38"
+"@angular/material@2.0.0-beta.11":
+  version "2.0.0-beta.11"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-2.0.0-beta.11.tgz#9124a1f50f3eb7dc28640317ee1e875f71da753a"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser-dynamic@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.3.4.tgz#bf7b841f2fc8d20efe756fe1e50aa028c95eb57c"
+"@angular/platform-browser-dynamic@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.4.3.tgz#e41ddd8252432775310eab5940cdd8df0618f084"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.3.4.tgz#dede8ff31441a2452f202ed798a0822ebc5a9153"
+"@angular/platform-browser@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.4.3.tgz#23f9a45bd3dc7f44d97877fbf8e6032decfc9dcb"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/upgrade@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/upgrade/-/upgrade-4.3.4.tgz#eb963405cb0e44f1c2bb4dcbb48c5b176c22fa32"
+"@angular/upgrade@4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@angular/upgrade/-/upgrade-4.4.3.tgz#3d3fa1f55ae1da09c1d9e6dfb3a494af7db0f230"
   dependencies:
     tslib "^1.7.1"
 
@@ -81,12 +81,6 @@
 "@types/chai@4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.0.3.tgz#6c2264b195cd2bb4c95c108487e13df0c8567c3e"
-
-"@types/electron@1.6.10":
-  version "1.6.10"
-  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.6.10.tgz#7e87888ed3888767cca68e92772c2c8ea46bc873"
-  dependencies:
-    electron "*"
 
 "@types/glob@5.0.30":
   version "5.0.30"
@@ -615,14 +609,6 @@ electron-window@^0.8.0:
   resolved "https://registry.yarnpkg.com/electron-window/-/electron-window-0.8.1.tgz#16ca187eb4870b0679274fc8299c5960e6ab2c5e"
   dependencies:
     is-electron-renderer "^2.0.0"
-
-electron@*:
-  version "1.7.6"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-1.7.6.tgz#fb69ea31bd03df0eff247f26f0b538bd29b6ee72"
-  dependencies:
-    "@types/node" "^7.0.18"
-    electron-download "^3.0.1"
-    extract-zip "^1.0.3"
 
 electron@1.7.5:
   version "1.7.5"
