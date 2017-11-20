@@ -1,5 +1,5 @@
 import {Component, ViewContainerRef} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
 
 import {ProjectService} from './project.service';
@@ -10,16 +10,19 @@ import {ProjectService} from './project.service';
  */
 @Component({
     selector: "dk-map-select",
-    styleUrls: ["./duckling/layout.css", "./duckling/project/map-select.component.css"],
+    styleUrls: [
+        "./duckling/layout.css", 
+        "./duckling/project/map-select.component.css"
+    ],
     template: `
         <div *ngIf="!listLoaded">
-            <md-spinner></md-spinner>
+            <mat-spinner></mat-spinner>
         </div>
         <div *ngIf="listLoaded">
             <dk-section 
                 headerText="Select an Existing Map">
-                <md-nav-list>
-                    <md-list-item
+                <mat-nav-list>
+                    <mat-list-item
                         *ngFor="let map of maps"
                         (click)="selectMap(map)">
                         <div 
@@ -27,8 +30,8 @@ import {ProjectService} from './project.service';
                             [title]="map">
                         {{map}}
                         </div>
-                    </md-list-item>
-                </md-nav-list>
+                    </mat-list-item>
+                </mat-nav-list>
             </dk-section>
             <div class="new-map-name-field">
                 <dk-input class="dk-inline"
@@ -54,7 +57,7 @@ export class MapSelectComponent {
     newMapName : string = "";
 
     constructor(private _project : ProjectService,
-                private _dialogRef : MdDialogRef<MapSelectComponent>) {
+                private _dialogRef : MatDialogRef<MapSelectComponent>) {
     }
 
     ngOnInit() {

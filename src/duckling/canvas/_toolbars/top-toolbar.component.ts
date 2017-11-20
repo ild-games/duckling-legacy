@@ -6,7 +6,7 @@ import {
     EventEmitter,
     ViewContainerRef
 } from '@angular/core';
-import {MdDialog} from '@angular/material';
+import {MatDialog} from '@angular/material';
 
 import {BaseTool, ToolService} from '../tools';
 import {StoreService} from '../../state';
@@ -78,7 +78,7 @@ export class TopToolbarComponent {
     constructor(public store : StoreService,
                 public toolService : ToolService,
                 private _viewContainer : ViewContainerRef,
-                private _dialog : MdDialog) {
+                private _dialog : MatDialog) {
         this.toolOptions = this.toolService.toolOptions;
     }
 

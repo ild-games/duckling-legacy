@@ -42,15 +42,15 @@ const MAX_SPLASH_ENTRIES : number = 7;
             </div>
 
             <div class="left-section mat-elevation-z8">
-                <md-nav-list>
-                    <md-list-item
-                    md-list-item
+                <mat-nav-list>
+                    <mat-list-item
+                    mat-list-item
                     *ngFor="let project of _projects"
                     (click)="openProject({title: project.title, path: project.path})">
-                        <p md-line class="project-title"> {{project.title}} </p>
-                        <p md-line class="project-path"> {{project.path}} </p>
-                    </md-list-item>
-                </md-nav-list>
+                        <p matLine class="project-title"> {{project.title}} </p>
+                        <p matLine class="project-path"> {{project.path}} </p>
+                    </mat-list-item>
+                </mat-nav-list>
 
                 <div class="actions">
                     <a (click)="onNewProjectClick($event)">

@@ -18,7 +18,7 @@ import {ProjectService} from './project.service';
     template:`
         <div class="wrapper">
             <button
-                md-raised-button
+                mat-raised-button
                 disableRipple="true"
                 [title]="buttonText"
                 (click)="onBrowseClicked()">

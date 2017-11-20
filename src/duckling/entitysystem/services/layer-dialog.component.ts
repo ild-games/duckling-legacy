@@ -7,7 +7,7 @@ import {
     OnDestroy,
     ViewContainerRef
 } from '@angular/core';
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {Subscriber} from 'rxjs';
 
 import {ProjectService} from '../../project/project.service';
@@ -23,8 +23,8 @@ import {PathService} from '../../util/path.service';
     template: `
         <div>
             <dk-section headerText="Attributes">
-                <md-list class="attributes-list">
-                    <md-list-item
+                <mat-list class="attributes-list">
+                    <mat-list-item
                         *ngFor="let attributeLayer of attributeLayers">
                         <dk-icon-button *ngIf="attributeLayer.isVisible"
                             tooltip="Hide attribute"
@@ -38,12 +38,12 @@ import {PathService} from '../../util/path.service';
                         </dk-icon-button>
 
                         <h2>{{attributeLayer.attributeName}}</h2>
-                    </md-list-item>
-                </md-list>
+                    </mat-list-item>
+                </mat-list>
             </dk-section>
             <dk-section headerText="Layers">
-                <md-list class="layers-list">
-                    <md-list-item
+                <mat-list class="layers-list">
+                    <mat-list-item
                         *ngFor="let layer of layers">
                         <dk-icon-button *ngIf="layer.isVisible"
                             tooltip="Hide layer"
@@ -57,8 +57,8 @@ import {PathService} from '../../util/path.service';
                         </dk-icon-button>
 
                         <h2>{{layer.layerName}}</h2>
-                    </md-list-item>
-                </md-list>
+                    </mat-list-item>
+                </mat-list>
             </dk-section>
         </div>
     `

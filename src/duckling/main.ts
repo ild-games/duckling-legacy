@@ -50,7 +50,7 @@ let storeService = new StoreService(mainReducer, mergeEntityAction);
         MigrationModule
     ],
     providers: [
-        {provide: StoreService, useValue: storeService},
+        {provide: StoreService, useValue: storeService}
     ],
     entryComponents: [
         ShellComponent

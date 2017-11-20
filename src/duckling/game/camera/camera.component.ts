@@ -22,11 +22,11 @@ import {CameraAttribute} from './camera-attribute';
     styleUrls: ['./duckling/game/camera/camera.component.css'],
     template: `
         <div class="default-checkbox">
-            <md-checkbox
+            <mat-checkbox
                 [checked]="attribute.default"
                 (change)="onDefaultPressed($event.checked)">
                 Default?
-            </md-checkbox>
+            </mat-checkbox>
         </div>
 
         <dk-vector-input

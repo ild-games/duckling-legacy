@@ -6,7 +6,7 @@
     display: block;
 }
 
-md-card {
+mat-card {
     padding: 0;
     margin-top: $spacer-unit;
 
@@ -18,7 +18,7 @@ md-card {
         display: flex;
         align-items: center;
 
-        md-checkbox {
+        mat-checkbox {
             display: inline-block;
         }
     }

@@ -15,6 +15,6 @@ $listContainerWidth: 248px;
     @include layer-list(40vh);
 }
 
-md-list-item {
+mat-list-item {
     width: $listContainerWidth - 16px;
 }

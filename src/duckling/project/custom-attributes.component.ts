@@ -7,7 +7,7 @@ import {
 }  from '@angular/core';
 import {Observable} from 'rxjs';
 
-import {removePadding} from '../util/md-dialog';
+import {removePadding} from '../util/mat-dialog';
 import {JsonSchemaEdit, schemaEditToJson} from '../controls/json-schema-edit.component';
 import {ProjectService} from './project.service';
 import {CustomAttribute} from './custom-attribute';
@@ -18,18 +18,21 @@ import {CustomAttribute} from './custom-attribute';
  */
 @Component({
     selector: "dk-custom-attributes",
-    styleUrls: ["./duckling/layout.css", "./duckling/project/custom-attributes.component.css"],
+    styleUrls: [
+        "./duckling/layout.css", 
+        "./duckling/project/custom-attributes.component.css"
+    ],
     template: `
         <div 
             #container 
             class="container">
             
             <div class="left-section">
-                <md-list>
-                    <md-list-item *ngFor="let attribute of customAttributes">
+                <mat-list>
+                    <mat-list-item *ngFor="let attribute of customAttributes">
                         <span [title]="attribute.key">{{attribute.key}}</span>
-                    </md-list-item>
-                </md-list>
+                    </mat-list-item>
+                </mat-list>
             </div>
             
             <div class="right-section mat-elevation-z8">
@@ -47,13 +50,13 @@ import {CustomAttribute} from './custom-attribute';
                 <div class="adding-section-footer">
                     <div>
                         <button 
-                            md-raised-button
+                            mat-raised-button
                             class="dk-inline"
                             (click)="onNewAttributeClicked()">
                             Clear
                         </button>
                         <button 
-                            md-raised-button
+                            mat-raised-button
                             class="dk-inline"
                             color="primary"
                             [disabled]="!isValidAttributeName(curAddingName)"

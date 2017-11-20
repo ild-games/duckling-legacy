@@ -12,11 +12,11 @@ import {ActionAttribute} from './action-attribute';
 @Component({
     selector: "dk-action",
     template: `
-        <md-checkbox
+        <mat-checkbox
             [checked]="attribute.actions.affectedByGravity"
             (change)="onAffectedByGravityChanged($event.checked)">
             Affected by Gravity?
-        </md-checkbox>
+        </mat-checkbox>
     `
 })
 export class ActionComponent {

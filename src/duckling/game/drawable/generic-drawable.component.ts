@@ -29,12 +29,12 @@ import {Drawable} from './drawable';
         </dk-edit-input>
         
         <div class="inactive-checkbox">
-            <md-checkbox
+            <mat-checkbox
                 class="inactive-checkbox"
                 [checked]="drawable.inactive"
                 (change)="onInactivePressed($event.checked)">
                 Inactive?
-            </md-checkbox>
+            </mat-checkbox>
         </div>
 
         <dk-number-input

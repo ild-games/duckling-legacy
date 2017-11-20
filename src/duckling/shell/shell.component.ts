@@ -6,7 +6,7 @@ import {
     OnInit,
     ViewContainerRef
 } from '@angular/core';
-import {MdDialog} from '@angular/material';
+import {MatDialog} from '@angular/material';
 import {Subscriber} from 'rxjs';
 
 import {Entity} from '../entitysystem';
@@ -35,7 +35,7 @@ import {OptionsService} from '../state/options.service';
         </div>
 
         <div *ngIf="showLoading" class="dk-centered-container">
-            <md-spinner></md-spinner>
+            <mat-spinner></mat-spinner>
         </div>
 
         <div class="shell" *ngIf="showProject">
@@ -64,7 +64,7 @@ export class ShellComponent implements OnInit, OnDestroy {
                 private _fileToolbar : FileToolbarService,
                 private _store : StoreService,
                 private _viewContainer : ViewContainerRef,
-                private _dialog : MdDialog) {
+                private _dialog : MatDialog) {
     }
 
     ngOnDestroy() {

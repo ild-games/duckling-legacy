@@ -21,11 +21,11 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
     selector: "dk-entity-editor",
     template: `
         <div *ngIf="selections?.length === 0">
-            <md-card>
-                <md-card-title>
+            <mat-card>
+                <mat-card-title>
                     No Single Entity Selected
-                </md-card-title>
-            </md-card>
+                </mat-card-title>
+            </mat-card>
         </div>
         
         <div *ngIf="selections?.length === 1">
@@ -45,18 +45,18 @@ import {AttributeSelectorComponent} from './attribute-selector.component';
         </div>
         
         <div *ngIf="selections?.length > 1">
-            <md-card>
-                <md-card-title>
+            <mat-card>
+                <mat-card-title>
                     Selected Entities
-                </md-card-title>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item *ngFor="let selection of selections">
+                </mat-card-title>
+                <mat-card-content>
+                    <mat-list>
+                        <mat-list-item *ngFor="let selection of selections">
                             {{selection.key}}
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-card-content>
+            </mat-card>
         </div>
     `
 })

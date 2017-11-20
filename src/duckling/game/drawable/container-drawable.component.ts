@@ -34,7 +34,7 @@ import {
             (addClicked)="onNewDrawableClicked($event)">
         </dk-enum-choice>
 
-        <md-card
+        <mat-card
             *ngIf="containerDrawable?.drawables?.length > 0"
             class="drawables-card">
             <dk-accordion
@@ -54,7 +54,7 @@ import {
                     </dk-drawable>
                 </ng-template>
             </dk-accordion>
-        </md-card>
+        </mat-card>
     `
 })
 export class ContainerDrawableComponent {

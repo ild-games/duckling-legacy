@@ -20,19 +20,19 @@ import {AttributeComponent} from '../entityeditor';
     styleUrls: ['./duckling/entityeditor/entity.component.css'],
     template: `
         <div *ngFor="let key of keys()">
-            <md-card>
-                <md-card-title>
+            <mat-card>
+                <mat-card-title>
                     {{formatCardTitle(key)}}
                     <dk-delete-button (deleteClick)="deleteAttribute(key)"></dk-delete-button>
-                </md-card-title>
-                <md-card-content>
+                </mat-card-title>
+                <mat-card-content>
                     <dk-attribute
                         [key]="key"
                         [attribute]="entity[key]"
                         (attributeChanged)="onAttributeChanged(key, $event)">
                     </dk-attribute>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
     `,
     changeDetection : ChangeDetectionStrategy.OnPush

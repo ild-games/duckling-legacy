@@ -13,7 +13,7 @@ import {
     styleUrls: ['./duckling/controls/button.component.css'],
     template: `
         <button
-            md-button
+            mat-button
             [title]="tooltip"
             [disableRipple]=true
             [disabled]="disabled"

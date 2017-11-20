@@ -15,7 +15,7 @@ import {IconComponent} from './icon.component';
     styleUrls: ['./duckling/controls/toolbar-button.component.css'],
     template: `
         <button
-            md-button
+            mat-button
             [disableRipple]=true
             title="{{tooltip}}"
             color="{{color}}">

@@ -29,12 +29,12 @@ import {Vector} from '../../math/vector';
             (validInput)="onGridSizeInput($event)">
         </dk-number-input>
 
-        <md-checkbox
+        <mat-checkbox
             class="show-grid"
             [checked]="showGrid"
             (change)="onShowGridPressed($event.checked)">
             Show Grid?
-        </md-checkbox>
+        </mat-checkbox>
 
         <dk-canvas-scale
             [scale]="scale"

@@ -6,7 +6,7 @@ import {
     AfterViewInit,
     ViewContainerRef
 } from '@angular/core';
-import {MdDialog} from '@angular/material';
+import {MatDialog} from '@angular/material';
 
 import {AccordionComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
 import {immutableAssign, immutableArrayAssign} from '../../util';
@@ -50,7 +50,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
         </span>
         <button
             *ngIf="!hasAnyFrames"
-            md-raised-button
+            mat-raised-button
             class="create-from-tilesheet-button"
             title="Create from tilesheet"
             disableRipple="true"
@@ -58,7 +58,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
             Create from tilesheet
         </button>
 
-        <md-card
+        <mat-card
             *ngIf="hasAnyFrames"
             class="drawables-card">
             <dk-accordion
@@ -78,7 +78,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
                     </dk-drawable>
                 </ng-template>
             </dk-accordion>
-        </md-card>
+        </mat-card>
     `
 })
 export class AnimatedDrawableComponent {
@@ -91,7 +91,7 @@ export class AnimatedDrawableComponent {
 
     constructor(private _viewContainerRef : ViewContainerRef,
                 private _assets : AssetService,
-                private _dialog : MdDialog) {
+                private _dialog : MatDialog) {
     }
 
     onChildDrawableChanged(index : number, newDrawable : Drawable) {
