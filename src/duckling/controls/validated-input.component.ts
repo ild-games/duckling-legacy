@@ -20,7 +20,7 @@ export type Validator = (value : string) => boolean;
  */
 @Component({
     selector: "dk-validated-input",
-    styleUrls: ['./duckling/controls/validated-input.component.css'],
+    styleUrls: ['../build/duckling/controls/validated-input.component.css'],
     template:`
         <dk-input #inputComponent
             [disabled]="disabled"

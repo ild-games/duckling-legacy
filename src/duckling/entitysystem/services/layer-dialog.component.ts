@@ -19,7 +19,7 @@ import {PathService} from '../../util/path.service';
 
 @Component({
     selector: 'dk-layer-dialog',
-    styleUrls: ["./duckling/entitysystem/services/layer-dialog.component.css"],
+    styleUrls: ["../build/duckling/entitysystem/services/layer-dialog.component.css"],
     template: `
         <div>
             <dk-section headerText="Attributes">

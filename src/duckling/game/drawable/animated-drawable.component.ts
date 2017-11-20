@@ -31,7 +31,7 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
  */
 @Component({
     selector: "dk-animated-drawable",
-    styleUrls: ['./duckling/game/drawable/animated-drawable.component.css'],
+    styleUrls: ['../build/duckling/game/drawable/animated-drawable.component.css'],
     template: `
         <dk-number-input
             label="Duration (seconds)"

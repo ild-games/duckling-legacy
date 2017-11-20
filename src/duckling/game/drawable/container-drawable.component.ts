@@ -25,7 +25,7 @@ import {
  */
 @Component({
     selector: "dk-container-drawable",
-    styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
+    styleUrls: ['../build/duckling/game/drawable/container-drawable.component.css'],
     template: `
         <dk-form-label title="Add Drawable"></dk-form-label>
         <dk-enum-choice

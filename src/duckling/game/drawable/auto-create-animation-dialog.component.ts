@@ -25,7 +25,7 @@ export type AutoCreateDialogResult = {
 
 @Component({
     selector: 'dk-auto-create-animation-dialog',
-    styleUrls: ['./duckling/game/drawable/auto-create-animation-dialog.component.css'],
+    styleUrls: ['../build/duckling/game/drawable/auto-create-animation-dialog.component.css'],
     template: `
         <div class="body">
             <dk-number-input

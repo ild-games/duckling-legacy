@@ -14,7 +14,7 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
 
 @Component({
     selector: "dk-edit-input",
-    styleUrls: ['./duckling/controls/edit-input.component.css'],
+    styleUrls: ['../build/duckling/controls/edit-input.component.css'],
     template: `
         <div class="container">
             <div *ngIf="!isEditingValue" class="edit-label">

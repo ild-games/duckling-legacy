@@ -16,7 +16,7 @@ import {Drawable} from './drawable';
  */
 @Component({
     selector: "dk-generic-drawable",
-    styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
+    styleUrls: ['../build/duckling/game/drawable/generic-drawable.component.css'],
     template: `
         <dk-edit-input
             [value]="drawable.key"

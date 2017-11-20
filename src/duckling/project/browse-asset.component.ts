@@ -14,7 +14,7 @@ import {ProjectService} from './project.service';
  */
 @Component({
     selector: "dk-browse-asset",
-    styleUrls: ['./duckling/project/browse-asset.component.css'],
+    styleUrls: ['../build/duckling/project/browse-asset.component.css'],
     template:`
         <div class="wrapper">
             <button

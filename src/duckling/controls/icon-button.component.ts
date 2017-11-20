@@ -12,7 +12,7 @@ import {IconComponent} from './icon.component';
  */
 @Component({
     selector: "dk-icon-button",
-    styleUrls: ['./duckling/controls/icon-button.component.css'],
+    styleUrls: ['../build/duckling/controls/icon-button.component.css'],
     template: `
         <button
             *ngIf="!isRaised"

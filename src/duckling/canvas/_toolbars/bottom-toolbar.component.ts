@@ -12,7 +12,7 @@ import {Vector} from '../../math/vector';
  */
 @Component({
     selector: "dk-bottom-toolbar",
-    styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
+    styleUrls: ['../build/duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
         <dk-vector-input
             title="Dimension"

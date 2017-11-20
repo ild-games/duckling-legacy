@@ -28,7 +28,7 @@ import {CollisionTypesService} from './collision-types.service';
  */
 @Component({
     selector: "dk-collision",
-    styleUrls: ['./duckling/game/collision/collision.component.css'],
+    styleUrls: ['../build/duckling/game/collision/collision.component.css'],
     template: `
         <dk-vector-input
             xLabel="Width"

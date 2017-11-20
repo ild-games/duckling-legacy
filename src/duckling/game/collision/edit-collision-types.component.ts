@@ -12,7 +12,10 @@ import {CollisionTypesService} from './collision-types.service';
  */
 @Component({
     selector: "dk-edit-collision-types",
-    styleUrls: ["./duckling/layout.css", "./duckling/game/collision/edit-collision-types.component.css"],
+    styleUrls: [
+        "../build/duckling/layout.css", 
+        "../build/duckling/game/collision/edit-collision-types.component.css"
+    ],
     template: `
         <dk-section headerText="Create Collision Type">
             <div>

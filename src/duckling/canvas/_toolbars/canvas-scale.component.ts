@@ -13,7 +13,7 @@ export const DEFAULT_ZOOM_LEVEL = ZOOM_LEVELS.indexOf(1);
  */
 @Component({
     selector: "dk-canvas-scale",
-    styleUrls: ['./duckling/canvas/_toolbars/canvas-scale.component.css'],
+    styleUrls: ['../build/duckling/canvas/_toolbars/canvas-scale.component.css'],
     template: `
         <dk-toolbar-button
             icon="minus"

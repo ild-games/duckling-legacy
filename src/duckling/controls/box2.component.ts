@@ -18,7 +18,7 @@ import {Validator} from './validated-input.component';
  */
 @Component({
     selector: "dk-box2",
-    styleUrls: ['./duckling/controls/box2.component.css'],
+    styleUrls: ['../build/duckling/controls/box2.component.css'],
     template: `
         <dk-vector-input
             xLabel="Starting X"

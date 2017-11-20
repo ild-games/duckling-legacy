@@ -10,7 +10,7 @@ import {
  */
 @Component({
     selector: "dk-button",
-    styleUrls: ['./duckling/controls/button.component.css'],
+    styleUrls: ['../build/duckling/controls/button.component.css'],
     template: `
         <button
             md-button

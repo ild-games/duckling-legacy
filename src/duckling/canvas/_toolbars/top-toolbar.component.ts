@@ -17,7 +17,7 @@ import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.com
 
 @Component({
     selector: "dk-top-toolbar",
-    styleUrls: ['./duckling/canvas/_toolbars/top-toolbar.component.css'],
+    styleUrls: ['../build/duckling/canvas/_toolbars/top-toolbar.component.css'],
     template: `
         <dk-toolbar-button
             icon="floppy-o"

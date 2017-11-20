@@ -48,7 +48,7 @@ type DrawableCache = {
  */
 @Component({
     selector: "dk-map-editor",
-    styleUrls: ['./duckling/canvas/map-editor.component.css'],
+    styleUrls: ['../build/duckling/canvas/map-editor.component.css'],
     template: `
         <md-card>
             <dk-top-toolbar

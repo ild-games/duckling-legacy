@@ -27,8 +27,8 @@ export enum JsonValueType {
 @Component({
     selector: "dk-json",
     styleUrls: [
-        './duckling/controls/json.component.css',
-        './duckling/layout.css'
+        '../build/duckling/controls/json.component.css',
+        '../build/duckling/layout.css'
     ],
     template: `
         <div

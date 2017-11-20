@@ -18,7 +18,7 @@ import { defaultSound, Sound } from './sound';
 
 @Component({
     selector: "dk-sound-attribute",
-    styleUrls: ['./duckling/game/audio/sound-attribute.component.css'],
+    styleUrls: ['../build/duckling/game/audio/sound-attribute.component.css'],
     template: `
         <dk-button
             tooltip="Add new sound"

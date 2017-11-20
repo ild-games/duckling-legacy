@@ -14,7 +14,7 @@ import {IconComponent} from './icon.component';
  */
 @Component({
     selector: "dk-accordion-element",
-    styleUrls: ['./duckling/controls/accordion-element.component.css'],
+    styleUrls: ['../build/duckling/controls/accordion-element.component.css'],
     template: `
         <dk-section-header
             [sectionOpen]="opened"

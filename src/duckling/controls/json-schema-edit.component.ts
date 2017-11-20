@@ -25,8 +25,8 @@ export type JsonSchemaEditValue = "number" | "string" | "boolean" | JsonSchemaEd
 @Component({
     selector: "dk-json-schema-edit",
     styleUrls: [
-        './duckling/layout.css',
-        './duckling/controls/json-schema-edit.component.css'
+        '../build/duckling/layout.css',
+        '../build/duckling/controls/json-schema-edit.component.css'
     ],
     template: `
         <div class="json-content">

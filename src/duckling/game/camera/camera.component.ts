@@ -19,7 +19,7 @@ import {CameraAttribute} from './camera-attribute';
  */
 @Component({
     selector: "dk-camera",
-    styleUrls: ['./duckling/game/camera/camera.component.css'],
+    styleUrls: ['../build/duckling/game/camera/camera.component.css'],
     template: `
         <div class="default-checkbox">
             <md-checkbox

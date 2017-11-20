@@ -14,7 +14,7 @@ import { ProjectService } from '../../project/project.service';
 
 @Component({
     selector: "dk-sound",
-    styleUrls: ['./duckling/game/audio/sound.component.css'],
+    styleUrls: ['../build/duckling/game/audio/sound.component.css'],
     template: `
         <div class="topRow">
             Volume

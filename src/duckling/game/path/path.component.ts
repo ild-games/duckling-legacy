@@ -13,7 +13,7 @@ import {PathAttribute} from './path-attribute';
 
 @Component({
     selector: "dk-path",
-    styleUrls: ['./duckling/game/path/path.component.css'],
+    styleUrls: ['../build/duckling/game/path/path.component.css'],
     template: `
         <dk-number-input
             label="Time To Complete Path"

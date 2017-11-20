@@ -18,7 +18,10 @@ import {CustomAttribute} from './custom-attribute';
  */
 @Component({
     selector: "dk-custom-attributes",
-    styleUrls: ["./duckling/layout.css", "./duckling/project/custom-attributes.component.css"],
+    styleUrls: [
+        "../build/duckling/layout.css", 
+        "../build/duckling/project/custom-attributes.component.css"
+    ],
     template: `
         <div 
             #container 

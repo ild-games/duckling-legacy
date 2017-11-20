@@ -24,8 +24,8 @@ import {OptionsService} from '../state/options.service';
 @Component({
     selector: 'dk-shell',
     styleUrls: [
-        './duckling/shell/shell.component.css', 
-        './duckling/layout.css'
+        '../build/duckling/shell/shell.component.css', 
+        '../build/duckling/layout.css'
     ],
     template: `
         <div *ngIf="showSplash">

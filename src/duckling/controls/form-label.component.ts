@@ -8,7 +8,7 @@ import {
  */
 @Component({
     selector: "dk-form-label",
-    styleUrls: ['./duckling/controls/form-label.component.css'],
+    styleUrls: ['../build/duckling/controls/form-label.component.css'],
     template:`
         <div class="form-label">{{title}}</div>
     `

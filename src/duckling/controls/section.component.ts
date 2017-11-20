@@ -7,7 +7,7 @@ import {
 
 @Component({
     selector: "dk-section",
-    styleUrls: ['./duckling/controls/section.component.css'],
+    styleUrls: ['../build/duckling/controls/section.component.css'],
     template: `
         <md-card>
             <dk-section-header

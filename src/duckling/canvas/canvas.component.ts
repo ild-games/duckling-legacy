@@ -34,7 +34,7 @@ import {BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent} fr
  */
 @Component({
     selector: 'dk-canvas',
-    styleUrls: ['./duckling/canvas/canvas.component.css'],
+    styleUrls: ['../build/duckling/canvas/canvas.component.css'],
     template: `
         <div #canvasContainerDiv
             class="canvas-container"

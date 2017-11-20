@@ -12,7 +12,7 @@ import {
  */
 @Component({
     selector: "dk-input",
-    styleUrls: ['./duckling/controls/input.component.css'],
+    styleUrls: ['../build/duckling/controls/input.component.css'],
     template:`
         <md-input-container
             dividerColor="{{dividerColor}}"
