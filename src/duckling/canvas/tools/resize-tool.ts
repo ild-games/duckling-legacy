@@ -42,6 +42,7 @@ export class EntityResizeTool extends BaseTool {
 
     onStageDown(event : CanvasMouseEvent) {
         if (!this._onlyOneSelectedEntity()) {
+            this._selectedAnchor = null;
             return;
         }
         
