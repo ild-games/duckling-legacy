@@ -35,7 +35,9 @@ export class StoreService {
         this._store.subscribe(() => {
             this.state.next(this.getState());
         });
+        this._disableBrowserUndoRedo();
     }
+
 
     /**
      * Dispatch an action to the store.
@@ -67,5 +69,34 @@ export class StoreService {
      */
     redo() {
         this.dispatch(redoAction());
+    }
+
+    private _disableBrowserUndoRedo() {
+        document.onkeydown = event => {
+            if (this._undoKeyCombination(event)) {
+                event.preventDefault();
+                this.undo();
+            }
+
+            if (this._redoKeyCombination(event)) {
+                event.preventDefault();
+                this.redo();
+            }
+        }
+    }
+
+    private _undoKeyCombination(event : KeyboardEvent) : boolean {
+        return (
+            (event.ctrlKey || event.metaKey) && 
+            String.fromCharCode(event.which).toLowerCase() === 'z'
+        );
+    }
+
+    private _redoKeyCombination(event : KeyboardEvent) : boolean {
+        return (
+            (event.ctrlKey || event.metaKey) && 
+            event.shiftKey && 
+            String.fromCharCode(event.which).toLowerCase() === 'z'
+        );
     }
 }
