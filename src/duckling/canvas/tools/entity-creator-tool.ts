@@ -16,10 +16,12 @@ import {newMergeKey} from '../../state';
 import {BaseTool, CanvasMouseEvent} from './base-tool';
 import {drawRectangle} from '../drawing';
 import {DrawnConstruct} from '../drawing/drawn-construct';
+import { AttributeDefaultAugmentationService } from '../../entitysystem/services/attribute-default-augmentation.service';
 
 @Injectable()
 export class EntityCreatorTool extends BaseTool {
     constructor(private _attributeDefaultService : AttributeDefaultService,
+                private _attributeDefaultAugmentationService : AttributeDefaultAugmentationService,
                 private _entitySystemService : EntitySystemService,
                 private _entityPositionService : EntityPositionService,
                 private _entityBoxService : EntityBoxService,
@@ -52,6 +54,8 @@ export class EntityCreatorTool extends BaseTool {
         let entity = this._attributeDefaultService.createEntity();
         entity = this._entityPositionService.setPosition(entity, event.stageCoords);
         let key = this._entitySystemService.addNewEntity(entity, mergeKey);
+        entity = this._attributeDefaultAugmentationService.augmentEntity({entity, key});
+        this._entitySystemService.updateEntity(key, entity, mergeKey);
         this._selection.deselect(mergeKey);
         this._selection.select([key], mergeKey);
     }

@@ -11,12 +11,14 @@ import {
     EntityLayerService
 } from './index';
 import {LayerDialogComponent} from './services/layer-dialog.component';
+import { AttributeDefaultAugmentationService } from './services/attribute-default-augmentation.service';
 
 @NgModule({
     providers: [
-        AttributeDefaultService,
         AvailableAttributeService,
         EntityBoxService,
+        AttributeDefaultService,
+        AttributeDefaultAugmentationService,
         EntityPositionService,
         EntityLayerService,
         BaseAttributeService,

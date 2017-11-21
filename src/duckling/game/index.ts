@@ -15,7 +15,7 @@ import {ButtonComponent} from './button/button.component';
 import {defaultPosition, POSITION_KEY} from './position/position-attribute';
 import {setPosition} from './position/set-position';
 import {getPosition} from './position/get-position';
-import {defaultCollision, COLLISION_KEY} from './collision/collision-attribute';
+import {defaultCollision, COLLISION_KEY, defaultCollisionAugmentation} from './collision/collision-attribute';
 import {PositionComponent} from './position/position.component';
 import {CollisionComponent} from './collision/collision.component';
 import {getCollisionAttributeDrawnConstruct} from './collision/collision-drawer';
@@ -55,9 +55,11 @@ import {entityRequiredSoundAssets} from './audio/sound-required-assets';
 import {SoundAttributeComponent} from './audio/sound-attribute.component';
 
 import {JsonComponent} from '../controls/json.component';
+import { AttributeDefaultAugmentationService } from '../entitysystem/services/attribute-default-augmentation.service';
 
 type Services = {
     attributeDefaultService : AttributeDefaultService;
+    attributeDefaultAugmentationService : AttributeDefaultAugmentationService;
     entityPositionService : EntityPositionService,
     entityBoxService: EntityBoxService,
     attributeComponentService: AttributeComponentService,
@@ -103,6 +105,7 @@ function _bootstrapCollisionAttribute(services : Services) {
     services.entityDrawerService.register(COLLISION_KEY, getCollisionAttributeDrawnConstruct);
     services.entityBoxService.register(COLLISION_KEY, collisionBoundingBox);
     services.attributeDefaultService.register(COLLISION_KEY, {createByDefault: true, default: defaultCollision});
+    services.attributeDefaultAugmentationService.register(COLLISION_KEY, defaultCollisionAugmentation);
 }
 
 function _bootstrapCameraAttribute(services : Services) {

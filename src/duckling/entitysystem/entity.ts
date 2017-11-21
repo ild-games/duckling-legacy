@@ -6,7 +6,6 @@ export type Attribute = Object;
 export type AttributeKey = string;
 export type Entity = {[key:string]:Attribute};
 export type EntityKey = string;
-
 export type EntitySystem = Map<EntityKey,Entity>;
 
 export function createEntitySystem() : EntitySystem {
@@ -51,4 +50,3 @@ export function attributeDisplayName(attributeKey : AttributeKey) : string {
         return toTitleCase(word);
     }).join(" ");
 }
-

@@ -7,12 +7,13 @@ export const UNDO_ACTION = "UndoRedo.Undo";
 export const REDO_ACTION = "UndoRedo.Redo";
 export const CLEAR_HISTORY_ACTION = "UndoRedo.Clear";
 
+export type MergeKey = number;
 let key = 1;
 /**
  * Create a new unique merge key.
  * @return A merge key that can be used to merge actions.
  */
-export function newMergeKey() {
+export function newMergeKey() : MergeKey {
     return key++;
 }
 
