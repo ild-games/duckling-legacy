@@ -1,7 +1,11 @@
-import {Attribute, Entity, TaggedEntity} from '../../entitysystem/entity';
-import {immutableAssign} from '../../util';
+import { Attribute, Entity, TaggedEntity } from '../../entitysystem/entity';
+import { immutableAssign } from '../../util';
 
-import {Drawable, defaultDrawable} from './drawable';
+import { Drawable } from './drawable';
+import { defaultContainerDrawable } from './container-drawable';
+import { defaultShapeDrawable } from './shape-drawable';
+import { defaultShape } from './shape';
+import { defaultRectangle } from './rectangle';
 
 export const DRAWABLE_KEY = "drawable";
 
@@ -18,9 +22,21 @@ export interface DrawableAttribute extends Attribute {
 }
 
 export let defaultDrawableAttribute : DrawableAttribute = immutableAssign({}, {
-    topDrawable: defaultDrawable,
+    topDrawable: _defaultTopDrawable(),
     camEntity: ""
 }) as DrawableAttribute;
+
+function _defaultTopDrawable() : Drawable {
+    let innerShape = immutableAssign(defaultRectangle, {});
+    let innerShapeDrawable = immutableAssign(defaultShapeDrawable, { 
+        key: "ShapeDrawable1",
+        shape: innerShape 
+    });
+    return immutableAssign(defaultContainerDrawable, { 
+        key: "TopDrawable",
+        drawables: [innerShapeDrawable] 
+    });
+}
 
 /**
  * Retrieve the drawable attribute from the entity.

@@ -2,6 +2,9 @@ import {Attribute, Entity} from '../../entitysystem/entity';
 import {Vector} from '../../math/vector';
 import {Box2} from '../../math/box2';
 import {SelectOption, toSelectOptions} from '../../controls';
+import { immutableAssign } from '../../util/index';
+import { AugmentedServices } from '../../entitysystem/services/attribute-default-augmentation.service';
+import { TaggedEntity } from '../../entitysystem/index';
 
 export const COLLISION_KEY = "collision";
 
@@ -41,8 +44,8 @@ export interface CollisionAttribute extends Attribute {
 export let defaultCollision : CollisionAttribute = {
     dimension: {
         dimension: {
-            x: 10,
-            y: 10
+            x: 32,
+            y: 32
         },
         position: {
             x: 0,
@@ -58,8 +61,16 @@ export let defaultCollision : CollisionAttribute = {
     },
     anchor: {
         x: 0,
-        y: 0    
+        y: 0
     }
+}
+
+export function defaultCollisionAugmentation(taggedEntity : TaggedEntity, defaultAttribute : CollisionAttribute, services : AugmentedServices) : CollisionAttribute {
+    let boundingBox = services.boxService.getEntityBox(taggedEntity.key);
+    if (boundingBox) {
+        defaultAttribute = {...defaultAttribute, dimension: {...defaultAttribute.dimension, dimension: boundingBox.dimension}};
+    }
+    return defaultAttribute;
 }
 
 /**

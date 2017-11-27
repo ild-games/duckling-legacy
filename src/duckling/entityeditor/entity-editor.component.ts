@@ -4,7 +4,7 @@ import {
 
 import {Entity, EntityKey, EntitySystemService, AttributeDefaultService, AttributeKey} from '../entitysystem';
 import {SelectionService, Selection} from '../selection';
-import {newMergeKey} from '../state';
+import {newMergeKey, MergeKey} from '../state';
 import {immutableAssign} from '../util';
 import {DeleteButtonComponent, ToolbarButtonComponent, InputComponent} from '../controls';
 import {ProjectService} from '../project/project.service';
@@ -13,6 +13,7 @@ import {getDefaultCustomAttributeValue} from '../project/custom-attribute';
 import {EntityComponent} from './entity.component';
 import {EntityNameComponent} from './_entity-name.component';
 import {AttributeSelectorComponent} from './attribute-selector.component';
+import { AttributeDefaultAugmentationService } from '../entitysystem/services/attribute-default-augmentation.service';
 
 /**
  * Component that allows the user to modify an entity.
@@ -66,6 +67,7 @@ export class EntityEditorComponent {
     constructor(private _selection : SelectionService,
                 private _entitySystem : EntitySystemService,
                 private _attributeDefault : AttributeDefaultService,
+                private _attributeDefaultAugmentation : AttributeDefaultAugmentationService,
                 private _projectService : ProjectService) {
         _selection.selections.subscribe((selections) => {
             if (!selections) {
@@ -76,12 +78,12 @@ export class EntityEditorComponent {
         });
     }
 
-    onEntityChanged(entity : Entity) {
+    onEntityChanged(entity : Entity, mergeKey : MergeKey) {
         if (this.selections.length !== 1) {
             return;
         }
         
-        this._entitySystem.updateEntity(this.selections[0].key, entity);
+        this._entitySystem.updateEntity(this.selections[0].key, entity, mergeKey);
     }
 
     onDeleteEntity() {
@@ -120,6 +122,12 @@ export class EntityEditorComponent {
         let patch : any = {};
         patch[key] = defaultAttribute;
         let newEntity = immutableAssign(this.selections[0].entity, patch);
-        this.onEntityChanged(newEntity);
+        let mergeKey = newMergeKey();
+        this.onEntityChanged(newEntity, mergeKey);
+
+        patch = {};
+        patch[key] = this._attributeDefaultAugmentation.augmentAttribute(key, {entity: this.selections[0].entity, key: this.selections[0].key});
+        newEntity = immutableAssign(this.selections[0].entity, patch);
+        this.onEntityChanged(newEntity, mergeKey);
     }
 }

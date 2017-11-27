@@ -49,6 +49,7 @@ import {RequiredAssetService} from '../project';
 import {ProjectLifecycleService} from '../project/project-lifecycle.service';
 
 import {bootstrapGameComponents} from './index';
+import { AttributeDefaultAugmentationService } from '../entitysystem/services/attribute-default-augmentation.service';
 
 const ATTRIBUTE_COMPONENTS = [
     ActionComponent,
@@ -102,6 +103,7 @@ const ATTRIBUTE_COMPONENTS = [
 })
 export class GameModule {
     constructor(public attributeDefaultService : AttributeDefaultService,
+                public attributeDefaultAugmentationService : AttributeDefaultAugmentationService,
                 public entityPositionService : EntityPositionService,
                 public entityBoxService : EntityBoxService,
                 public attributeComponentService : AttributeComponentService,

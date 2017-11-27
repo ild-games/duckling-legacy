@@ -31,9 +31,9 @@ export interface Shape {
 export let defaultShape : Shape = {
     __cpp_type: "",
     fillColor: {
-        r: 0,
-        g: 0,
-        b: 0,
+        r: 67,
+        g: 154,
+        b: 202,
         a: 255
     }
 };
