@@ -104,6 +104,7 @@ export class EntityEditorComponent {
         
         let mergeKey = newMergeKey();
         this._entitySystem.renameEntity(this.selections[0].key, newName, mergeKey);
+        this._selection.deselect(mergeKey);
         this._selection.select([newName], mergeKey);
     }
 
