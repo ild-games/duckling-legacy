@@ -35,6 +35,7 @@ import {GenericShapeComponent} from './drawable/generic-shape.component';
 
 import {CollisionTypesService} from './collision/collision-types.service';
 import {EditCollisionTypesComponent} from './collision/edit-collision-types.component';
+import {editCollisionTypeMigration} from './collision/collision-migration';
 
 import {
     AttributeDefaultService,
@@ -47,6 +48,7 @@ import {AttributeComponentService} from '../entityeditor';
 import {EntityDrawerService} from '../canvas/drawing/entity-drawer.service';
 import {RequiredAssetService} from '../project';
 import {ProjectLifecycleService} from '../project/project-lifecycle.service';
+import {MigrationService} from '../migration/migration.service';
 
 import {bootstrapGameComponents} from './index';
 import { AttributeDefaultAugmentationService } from '../entitysystem/services/attribute-default-augmentation.service';
@@ -111,9 +113,11 @@ export class GameModule {
                 public requiredAssetService : RequiredAssetService,
                 public entityLayerService : EntityLayerService,
                 private _collisionTypesService : CollisionTypesService,
-                private _projectLifecycleService : ProjectLifecycleService) {
+                private _projectLifecycleService : ProjectLifecycleService,
+                private _migrationService : MigrationService) {
         bootstrapGameComponents(this);
         this._bootstrapLifecycle();
+        this._registerExistingCodeMigrations();
     }
 
     private _bootstrapLifecycle() {
@@ -127,5 +131,9 @@ export class GameModule {
 
     private _bootstrapBeforeMapSaveLifecycle() {
         this._projectLifecycleService.addPreSaveMapHook(map => this._collisionTypesService.preSaveMapHook(map));
+    }
+
+    private _registerExistingCodeMigrations() {
+        this._migrationService.registerExistingCodeMigration(editCollisionTypeMigration);
     }
 }

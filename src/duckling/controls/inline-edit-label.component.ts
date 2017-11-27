@@ -12,6 +12,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
         </div>
         <dk-icon-button
             icon="pencil"
+            [class]="iconClasses"
             [tooltip]="tooltip"
             (click)="onEditClicked()">
         </dk-icon-button>
@@ -27,6 +28,7 @@ export class InlineEditLabelComponent {
      * Tootlip the user sees when they hover over the pencil.
      */
     @Input() tooltip : string;
+    @Input() floatIconRight : boolean;
 
     /**
      * Event that fires when the user clicks on the pencil to start editing the value.
@@ -35,5 +37,12 @@ export class InlineEditLabelComponent {
 
     onEditClicked() {
         this.startEdit.emit(true);
+    }
+
+    get iconClasses() : string {
+        if (this.floatIconRight) {
+            return "float-icon-right";
+        }
+        return "";
     }
 }

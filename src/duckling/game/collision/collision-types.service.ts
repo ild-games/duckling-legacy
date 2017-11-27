@@ -67,6 +67,28 @@ export class CollisionTypesService {
         this._registerCollisionTypes([collisionType]);
     }
 
+    editCollisionType(oldValue : string, newValue : string) {
+        if (!this.collisionTypes.value.has(oldValue)) {
+            throw new Error(`Attempt to edit collision type that is not registered: ${oldValue}`);
+        }
+        let newCollisionTypes = Array.from(this.collisionTypes.value.values());
+        for (let i = 0; i < newCollisionTypes.length; i++) {
+            if (newCollisionTypes[i] === oldValue) {
+                newCollisionTypes[i] = newValue;
+            }
+        }
+        this._store.dispatch(_collisionTypesAction(new Set<string>(newCollisionTypes)));
+    }
+
+    removeCollisionType(collisionType : string) {
+        if (!this.collisionTypes.value.has(collisionType)) {
+            throw new Error(`Attempt to delete collision type that is not registered: ${collisionType}`);
+        }
+        let newCollisionTypes = new Set<string>(this.collisionTypes.value);
+        newCollisionTypes.delete(collisionType);
+        this._store.dispatch(_collisionTypesAction(new Set<string>(newCollisionTypes)));
+    }
+
     private _registerAnconaCollisionTypes(collisionTypeMetaData : CollisionTypeMetaData) {
         let collisionTypes = [NONE_COLLISION_TYPE];
         if (collisionTypeMetaData) {
