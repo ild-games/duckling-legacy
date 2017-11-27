@@ -18,7 +18,13 @@ import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
 import {StoreService} from '../state';
 import {AssetService, Asset, ProjectService} from '../project';
-import {setScrollPositionsAction, setInitialMap, setScaleAction} from '../project/user-meta-data';
+import {
+    setScrollPositionsAction, 
+    setInitialMap, 
+    setScaleAction,
+    setHiddenLayers,
+    setHiddenAttributes
+} from '../project/user-meta-data';
 import {ArraySelectComponent, SelectOption} from '../controls';
 import {EntitySystemService, Entity} from '../entitysystem/';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
@@ -156,12 +162,18 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     onSave() {
+        this._saveMetaData();
+        this.projectService.save();
+    }
+
+    private _saveMetaData() {
         let scrollLeft = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollLeft;
         let scrollTop = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollTop;
         this._storeService.dispatch(setScrollPositionsAction(this.projectService.project.value.currentMap.key, {scrollLeft, scrollTop}));
         this._storeService.dispatch(setInitialMap(this.projectService.project.value.currentMap.key));
         this._storeService.dispatch(setScaleAction(this.projectService.project.value.currentMap.key, this.scale));
-        this.projectService.save();
+        this._storeService.dispatch(setHiddenLayers(this.projectService.project.value.currentMap.key, this._entityLayerService.hiddenLayers.value.hiddenLayers));
+        this._storeService.dispatch(setHiddenAttributes(this._entityLayerService.hiddenLayers.value.hiddenAttributes));
     }
 
     private _drawFrame() {
@@ -210,6 +222,21 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _loadMetaData() {
+        this._loadGlobalMetaData();
+        this._loadMapMetaData();
+    }
+
+    private _loadGlobalMetaData() {
+        let curGlobalMetaData = this.projectService.project.value.userMetaData;
+
+        if (curGlobalMetaData.hiddenAttributes) {
+            for (let curAttribute in curGlobalMetaData.hiddenAttributes) {
+                this._entityLayerService.setAttributeVisibility(curAttribute, curGlobalMetaData.hiddenAttributes[curAttribute]);
+            }
+        }
+    }
+
+    private _loadMapMetaData() {
         let curMapUserMetaData = this.projectService.project.value.userMetaData.mapMetaData[this.projectService.project.value.currentMap.key];
         if (!curMapUserMetaData) {
             return;
@@ -217,6 +244,11 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.scale = curMapUserMetaData.scale;
         this.initialScrollPosition = {x: curMapUserMetaData.scrollLeft, y: curMapUserMetaData.scrollTop};
+        if (curMapUserMetaData.hiddenLayers) {
+            for (let curLayer in curMapUserMetaData.hiddenLayers) {
+                this._entityLayerService.setLayerVisibility(curLayer, curMapUserMetaData.hiddenLayers[curLayer]);
+            }
+        }
     }
 
     private _redrawAllDisplayObjects() {

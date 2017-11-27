@@ -17,7 +17,7 @@ export function mainReducer(state : any = {}, action : Action) {
         selections : selectionReducer(state.selections, action),
         clipboard : copyPasteReducer(state.clipboard, action),
         options : optionsReducer(state.options, action),
-        layers : layerReducer(state.layers, action),
+        hiddenLayers : layerReducer(state.hiddenLayers, action),
         collision: collisionTypesReducer(state.collision, action)
     };
 }

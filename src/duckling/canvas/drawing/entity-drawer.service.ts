@@ -9,7 +9,7 @@ import {TaggedEntity, Entity, EntitySystem, Attribute, AttributeKey} from '../..
 import {EntitySystemService} from '../../entitysystem/entity-system.service';
 import {EntityPositionService} from '../../entitysystem/services/entity-position.service';
 import {drawMissingAsset} from '../../canvas/drawing/util';
-import {EntityLayerService, HiddenAttributes, AttributeLayer, layerAttributeAction} from '../../entitysystem/services/entity-layer.service';
+import {EntityLayerService, HiddenAttributes, AttributeLayer} from '../../entitysystem/services/entity-layer.service';
 import {AvailableAttributeService} from '../../entitysystem/services/available-attribute.service';
 import {StoreService} from '../../state/store.service';
 import {immutableAssign} from '../../util/model';
@@ -49,7 +49,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
 
         _assets.assetLoaded.subscribe(() => this._redraw());
         _assets.preloadAssetsLoaded.subscribe(() => this._redraw());
-        _layers.layers.subscribe(() => this._redraw());
+        _layers.hiddenLayers.subscribe(() => this._redraw());
         _entitySystem.entitySystem.subscribe(() => this._redraw(true));
     }
 
@@ -156,7 +156,7 @@ export class EntityDrawerService extends BaseAttributeService<AttributeDrawer<At
         }
 
 
-        return (!this._layers.layers.value.hiddenAttributes[attributeKey]);
+        return (!this._layers.hiddenLayers.value.hiddenAttributes[attributeKey]);
     }
 
     private _getImplementedAttributes() : AttributeKey[] {

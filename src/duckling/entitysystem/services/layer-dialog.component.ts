@@ -77,7 +77,7 @@ export class LayerDialogComponent implements AfterViewInit, OnDestroy{
     }
 
     ngAfterViewInit() {
-        this._layerSubscription = this._entityLayerService.layers.subscribe(() => {
+        this._layerSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
             this._refreshLayers();
             this._refreshAttributes();
         }) as Subscriber<any>;
