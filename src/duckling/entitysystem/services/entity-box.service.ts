@@ -6,7 +6,8 @@ import {AttributeKey, Attribute, Entity, EntityKey} from '../entity';
 import {EntitySystemService} from '../entity-system.service';
 import {EntityPositionService} from '../services/entity-position.service';
 import {AssetService} from '../../project/asset.service';
-import {Box2, boxUnion, vectorSubtract, vectorAdd} from '../../math';
+import {vectorSubtract, vectorAdd} from '../../math';
+import {Box2, boxUnion, EMPTY_BOX} from '../../math/box2';
 import {immutableAssign} from '../../util';
 import {drawMissingAsset} from '../../canvas/drawing/util';
 import {drawnConstructBounds} from '../../canvas/drawing/drawn-construct';
@@ -103,9 +104,13 @@ export class EntityBoxService extends BaseAttributeService<AttributeBoundingBox<
         if (this._entityBoxCache[entityKey]) {
             return this._entityBoxCache[entityKey];
         }
+
+        let entity = this._entitySystem.getEntity(entityKey);
+        if (!this._entityDrawerService.isEntityVisible(entity)) {
+            return null;
+        }
         
         let box : Box2;
-        let entity = this._entitySystem.getEntity(entityKey);
         for (let key in entity) {
             if (!this._entityDrawerService.isAttributeVisible(key, entity)) {
                 continue;

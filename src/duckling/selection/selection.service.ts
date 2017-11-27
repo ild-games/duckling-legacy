@@ -106,16 +106,18 @@ export class SelectionService {
     }
 
     private _getSelections(selectedEntityKeys: string[]): Selection[] {
+        // NOTE: This used to filter the selected entities by their visibility. This
+        //       seems to be incorrect behavior, but if you're ever back here thinking
+        //       that's what should be happening then please test that the entity editor
+        //       is still visible after selecting an entity.
         selectedEntityKeys = selectedEntityKeys || [];
 
-        let filteredEntities: Selection[] = [];
+        let selections: Selection[] = [];
         for (let key of selectedEntityKeys) {
             let entity = this._entitySystem.getEntity(key);
-            if (this._drawerService.isEntityVisible(entity)) {
-                filteredEntities.push({ key, entity });
-            }
+            selections.push({ key, entity });
         }
-        return filteredEntities;
+        return selections;
     }
 
 }
