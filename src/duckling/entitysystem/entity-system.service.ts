@@ -66,8 +66,14 @@ export class EntitySystemService {
      * @param  mergeKey Used to merge updates.
      * @return The key of the newly created entity.
      */
-    addNewEntity(entity: Entity, mergeKey?: any): EntityKey {
-        let key = this._generateNextKey();
+    addNewEntity(entity: Entity, preferredKey? : string, mergeKey?: any): EntityKey {
+        let key : string = "";
+        if (preferredKey != "" && !this._system.get(preferredKey)) {
+            key = preferredKey;
+        }
+        if (key == "") {
+            key = this._generateNextKey();
+        }
         this.updateEntity(key, entity, mergeKey);
         return key;
     }
