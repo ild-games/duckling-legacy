@@ -1,9 +1,11 @@
 export interface Sound {
-    volume: number;
     soundKey: string;
+    volume: number;
+    pitch: number;
 }
 
 export let defaultSound = {
+    soundKey: "",
     volume: 1.0,
-    soundKey: ""
+    pitch: 1.0
 }
