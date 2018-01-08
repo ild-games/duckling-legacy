@@ -79,8 +79,8 @@ describe("CopyPasteService", function() {
 
     it("copying an entity updates the store with that entity", function() {
         this.entitySystem.updateEntity(ENTITY_KEY, entity);
-        this.copyPaste.copy([entity]);
-        expect(this.copyPaste.clipboard.value).to.eql({copiedEntities: [entity]});
+        this.copyPaste.copy([{entity: entity, key: ENTITY_KEY}]);
+        expect(this.copyPaste.clipboard.value).to.eql({copiedEntities: [{entity: entity, key: ENTITY_KEY}]});
     });
 
     describe("pasting an enitity", function() {
@@ -95,9 +95,11 @@ describe("CopyPasteService", function() {
         }
 
         it("creates a new entity at the specified location", function() {
-            this.copyPaste.copy([this.entitySystem.getEntity(ENTITY_KEY)]);
+            this.copyPaste.copy([{entity: this.entitySystem.getEntity(ENTITY_KEY), key: ENTITY_KEY}]);
             let keys = this.copyPaste.paste(this.newPosition);
             let entity = this.entitySystem.getEntity(keys[0]);
+            console.log(entity);
+            console.log(this.movedEntity);
             expect(entity).to.eql(this.movedEntity);
         });
 
@@ -113,7 +115,7 @@ describe("CopyPasteService", function() {
         });
 
         it("can be undone with one call to undo", function() {
-            this.copyPaste.copy(ENTITY_KEY);
+            this.copyPaste.copy([{entity: entity, key: ENTITY_KEY}]);
             let key = this.copyPaste.paste(this.newPosition);
             this.store.undo();
             expect(!!this.entitySystem.getEntity(key)).not.to.eql(true);

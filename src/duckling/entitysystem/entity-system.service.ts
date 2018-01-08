@@ -68,10 +68,10 @@ export class EntitySystemService {
      */
     addNewEntity(entity: Entity, preferredKey? : string, mergeKey?: any): EntityKey {
         let key : string = "";
-        if (preferredKey != "" && !this._system.get(preferredKey)) {
+        if (preferredKey !== "" && !this._system.get(preferredKey)) {
             key = preferredKey;
         }
-        if (key == "") {
+        if (key === "") {
             key = this._generateNextKey();
         }
         this.updateEntity(key, entity, mergeKey);
