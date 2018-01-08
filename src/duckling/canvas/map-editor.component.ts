@@ -26,7 +26,7 @@ import {
     setHiddenAttributes
 } from '../project/user-meta-data';
 import {ArraySelectComponent, SelectOption} from '../controls';
-import {EntitySystemService, Entity} from '../entitysystem/';
+import {EntitySystemService, Entity, TaggedEntity} from '../entitysystem/';
 import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
 import {Vector} from '../math';
 import {KeyboardService} from '../util';
@@ -183,7 +183,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 
     copyEntity() {
         let selections = this._selection.selections.value;
-        this._copyPaste.copy(selections.map((selection: Selection) => { return selection.entity; }));
+        this._copyPaste.copy(selections.map((selection: Selection) => { return selection as TaggedEntity; }));
     }
 
     pasteEntity(position : Vector) {

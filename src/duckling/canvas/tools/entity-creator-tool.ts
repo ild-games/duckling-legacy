@@ -53,7 +53,7 @@ export class EntityCreatorTool extends BaseTool {
         let mergeKey = newMergeKey();
         let entity = this._attributeDefaultService.createEntity();
         entity = this._entityPositionService.setPosition(entity, event.stageCoords);
-        let key = this._entitySystemService.addNewEntity(entity, mergeKey);
+        let key = this._entitySystemService.addNewEntity(entity, "", mergeKey);
         entity = this._attributeDefaultAugmentationService.augmentEntity({entity, key});
         this._entitySystemService.updateEntity(key, entity, mergeKey);
         this._selection.deselect(mergeKey);
