@@ -90,7 +90,6 @@ export class SoundComponent {
 
     get dialogOptions() {
         return {
-            defaultPath: this._project.home,
             properties: [
                 'openFile'
             ],

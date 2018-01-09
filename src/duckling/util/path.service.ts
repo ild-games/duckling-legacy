@@ -31,7 +31,6 @@ export class PathService {
         return npath.dirname(path);
     }
 
-
     /**
      * Get the base name from the path (i.e. last directory or file name)
      * @param path Path to get the basename for.
@@ -117,6 +116,10 @@ export class PathService {
      */
     isSubOfDir(subFileOrDir : string, possibleParentDir : string) : boolean {
         return subFileOrDir.length >= possibleParentDir.length && subFileOrDir.substring(0, possibleParentDir.length) === possibleParentDir;
+    }
+
+    addExtension(path : string, extension : string) : string {
+        return path + "." + extension;
     }
 
     /**

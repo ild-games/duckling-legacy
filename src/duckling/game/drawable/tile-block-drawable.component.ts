@@ -128,7 +128,6 @@ export class TileBlockDrawableComponent implements OnInit, OnDestroy {
     
     get dialogOptions() {
         return {
-            defaultPath: this._project.home,
             properties: [
                 'openFile'
             ],
