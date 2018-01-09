@@ -118,6 +118,10 @@ export class PathService {
         return subFileOrDir.length >= possibleParentDir.length && subFileOrDir.substring(0, possibleParentDir.length) === possibleParentDir;
     }
 
+    addExtension(path : string, extension : string) : string {
+        return path + "." + extension;
+    }
+
     /**
      * Make a directory.
      * @param path Path to the directory.  The directory's parents must exist.

@@ -120,8 +120,7 @@ export class AssetService {
             filePath = this._path.join(
                 this._store.getState().project.home,
                 this.resourceFolderName,
-                assetToLoad.asset.key + "." + this._fileExtensionFromType(assetToLoad.asset.type)
-            );
+                this._path.addExtension(assetToLoad.asset.key, this._fileExtensionFromType(assetToLoad.asset.type)));
         }
         return filePath;
     }
