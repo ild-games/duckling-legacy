@@ -46,6 +46,8 @@ export class BrowseAssetComponent {
     @Output()
     filePicked = new EventEmitter<string>();
 
+    private static _lastFilePath : string = "";
+
     constructor(private _path : PathService,
                 private _project : ProjectService,
                 private _assets : AssetService,
@@ -81,6 +83,7 @@ export class BrowseAssetComponent {
         file = this._path.normalize(file);
 
         let resourceDirectory = this._path.join(this._project.home, this._assets.resourceFolderName);
+        BrowseAssetComponent._lastFilePath = this._path.dirname(file);
         if (!this._path.isSubOfDir(file, resourceDirectory)) {
             this._dialog.showErrorDialog(
                 "Unable to load asset",
@@ -102,10 +105,12 @@ export class BrowseAssetComponent {
     private get _openDialogPath() : string {
         let openDialogPath = this._path.join(this._project.home, this._assets.resourceFolderName); 
 
-        if (!this.selectedFile || this.selectedFile === "") {
-            return openDialogPath;
-        } else {
+        if (this.selectedFile) {
             return this._path.join(openDialogPath, this._path.dirname(this.selectedFile));
+        } else if (BrowseAssetComponent._lastFilePath) {
+            return BrowseAssetComponent._lastFilePath;
+        } else {
+            return openDialogPath;
         }
     }
 }
