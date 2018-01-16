@@ -14,6 +14,9 @@ import {PathComponent} from './path/path.component';
 import {PathFollowerComponent} from './path/path-follower.component';
 import {SoundAttributeComponent} from './audio/sound-attribute.component';
 import {SoundComponent} from './audio/sound.component';
+import {MusicAttributeComponent} from './audio/music-attribute.component';
+import {MusicComponent} from './audio/music.component';
+import {AutoStartMusicAttributeComponent} from './audio/auto-start-music-attribute.component';
 
 
 import {AnconaSFMLRenderPriorityService} from './ancona-sfml-render-priority.service';		
@@ -64,7 +67,9 @@ const ATTRIBUTE_COMPONENTS = [
     ButtonComponent,
     PathComponent,
     PathFollowerComponent,
-    SoundAttributeComponent
+    SoundAttributeComponent,
+    MusicAttributeComponent,
+    AutoStartMusicAttributeComponent
 ]
 
 @NgModule({
@@ -88,7 +93,8 @@ const ATTRIBUTE_COMPONENTS = [
         GenericShapeComponent,
         AutoCreateAnimationDialogComponent,
         EditCollisionTypesComponent,
-        SoundComponent
+        SoundComponent,
+        MusicComponent
     ],
     exports: [
         ATTRIBUTE_COMPONENTS

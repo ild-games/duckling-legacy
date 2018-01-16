@@ -50,12 +50,22 @@ import {drawableBoundingBox} from './drawable/drawable-bounding-box';
 import {entityRequiredDrawableAssets} from './drawable/drawable-required-assets';
 import {getDrawableLayer} from './drawable/drawable-get-layer';
 
-import {SoundAttribute, SOUND_KEY, defaultSound} from './audio/sound-attribute';
+import {SoundAttribute, SOUND_KEY, defaultSound, getSoundAttribute} from './audio/sound-attribute';
 import {entityRequiredSoundAssets} from './audio/sound-required-assets';
 import {SoundAttributeComponent} from './audio/sound-attribute.component';
+import {getSoundAttributeDrawnConstruct} from './audio/sound-drawer';
+import {soundBoundingBox} from './audio/sound-box';
+
+import {MusicAttribute, MUSIC_KEY, defaultMusic} from './audio/music-attribute';
+import {MusicAttributeComponent} from './audio/music-attribute.component';
+import {getMusicAttributeDrawnConstruct} from './audio/music-drawer';
+import {musicBoundingBox} from './audio/music-box';
+
+import {AutoStartMusicAttribute, AUTO_START_MUSIC_KEY, defaultAutoStartMusic} from './audio/auto-start-music-attribute';
+import {AutoStartMusicAttributeComponent} from './audio/auto-start-music-attribute.component';
 
 import {JsonComponent} from '../controls/json.component';
-import { AttributeDefaultAugmentationService } from '../entitysystem/services/attribute-default-augmentation.service';
+import {AttributeDefaultAugmentationService} from '../entitysystem/services/attribute-default-augmentation.service';
 
 type Services = {
     attributeDefaultService : AttributeDefaultService;
@@ -79,7 +89,9 @@ let _bootstrapFunctions : Function[] = [
     _bootstrapTriggerDeathAttribute,
     _bootstrapPathAttribute,
     _bootstrapPathFollowerAttribute,
-    _bootstrapSoundAttribute
+    _bootstrapSoundAttribute,
+    _bootstrapMusicAttribute,
+    _bootstrapAutoStartMusicAttribute
 ];
 
 /**
@@ -155,4 +167,18 @@ function _bootstrapSoundAttribute(services: Services) {
     services.attributeComponentService.register(SOUND_KEY, SoundAttributeComponent);
     services.attributeDefaultService.register(SOUND_KEY, { createByDefault: false, default: defaultSound });
     services.requiredAssetService.register(SOUND_KEY, entityRequiredSoundAssets);
+    services.entityDrawerService.register(SOUND_KEY, getSoundAttributeDrawnConstruct);
+    services.entityBoxService.register(SOUND_KEY, soundBoundingBox);
+}
+
+function _bootstrapMusicAttribute(services: Services) {
+    services.attributeComponentService.register(MUSIC_KEY, MusicAttributeComponent);
+    services.attributeDefaultService.register(MUSIC_KEY, { createByDefault: false, default: defaultMusic });
+    services.entityDrawerService.register(MUSIC_KEY, getMusicAttributeDrawnConstruct);
+    services.entityBoxService.register(MUSIC_KEY, musicBoundingBox);
+}
+
+function _bootstrapAutoStartMusicAttribute(services: Services) {
+    services.attributeComponentService.register(AUTO_START_MUSIC_KEY, AutoStartMusicAttributeComponent);
+    services.attributeDefaultService.register(AUTO_START_MUSIC_KEY, { createByDefault: false, default: defaultAutoStartMusic });
 }

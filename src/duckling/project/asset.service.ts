@@ -11,7 +11,7 @@ import {Vector} from '../math/vector';
 
 import {RequiredAssetService} from './required-asset.service';
 
-export type AssetType = "TexturePNG" | "FontTTF" | "SoundWAV";
+export type AssetType = "TexturePNG" | "FontTTF" | "SoundWAV" | "MusicOGG";
 
 export interface Asset {
     type : AssetType,
@@ -143,7 +143,7 @@ export class AssetService {
     }
 
     private _assetTypeIsSound(type : AssetType) {
-        return type === "SoundWAV";
+        return type === "SoundWAV" || type === "MusicOGG";
     }
 
     private _pixiLoadedAsset(type : AssetType) {
@@ -162,6 +162,7 @@ export class AssetService {
             case "TexturePNG":
                 return this._getTexture(fullKey);
             case "SoundWAV":
+            case "MusicOGG":
                 return this._getSound(fullKey);
             case "FontTTF":
                 throw new Error("Can't get fonts out of the asset service, they are loaded into the browser window");
@@ -318,6 +319,8 @@ export class AssetService {
                 return "FontTTF";
             case ".wav":
                 return "SoundWAV";
+            case ".ogg":
+                return "MusicOGG";
             default:
                 throw new Error(`Unknown extension: ${extension}`);
         }
@@ -337,6 +340,8 @@ export class AssetService {
                 return "ttf";
             case "SoundWAV":
                 return "wav";
+            case "MusicOGG":
+                return "ogg";
             default:
                 throw new Error("Unknown asset type: " + type);
         }
