@@ -18,7 +18,6 @@
         // exclude .js and .js.map files, when in a TypeScript project
         "**/*.js": { "when": "$(basename).ts"},
         "**/*.js.map": true
-    }
-,
-"typescript.tsdk": "./node_modules/typescript/lib"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
