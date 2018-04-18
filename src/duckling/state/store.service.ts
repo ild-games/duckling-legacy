@@ -9,7 +9,8 @@ import {
     AutoMerger,
     undoAction,
     redoAction,
-    UndoRedoState
+    UndoRedoState,
+    getLastMergeKey
 } from './undo-redo';
 
 /**
@@ -55,6 +56,10 @@ export class StoreService {
      */
     getState() {
         return getCurrentState(this._store);
+    }
+
+    getLastMergeKey() {
+        return getLastMergeKey(this._store);
     }
 
     /**

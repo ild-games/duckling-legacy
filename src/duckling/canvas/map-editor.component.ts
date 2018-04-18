@@ -16,7 +16,7 @@ import {
 import {Subscriber} from 'rxjs';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
 
-import {StoreService} from '../state';
+import {StoreService} from '../state/store.service';
 import {AssetService, Asset, ProjectService} from '../project';
 import {
     setScrollPositionsAction, 
@@ -169,11 +169,12 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     private _saveMetaData() {
         let scrollLeft = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollLeft;
         let scrollTop = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollTop;
-        this._storeService.dispatch(setScrollPositionsAction(this.projectService.project.value.currentMap.key, {scrollLeft, scrollTop}));
-        this._storeService.dispatch(setInitialMap(this.projectService.project.value.currentMap.key));
-        this._storeService.dispatch(setScaleAction(this.projectService.project.value.currentMap.key, this.scale));
-        this._storeService.dispatch(setHiddenLayers(this.projectService.project.value.currentMap.key, this._entityLayerService.hiddenLayers.value.hiddenLayers));
-        this._storeService.dispatch(setHiddenAttributes(this._entityLayerService.hiddenLayers.value.hiddenAttributes));
+        let mergeKey = this._storeService.getLastMergeKey();
+        this._storeService.dispatch(setScrollPositionsAction(this.projectService.project.value.currentMap.key, {scrollLeft, scrollTop}), mergeKey);
+        this._storeService.dispatch(setInitialMap(this.projectService.project.value.currentMap.key), mergeKey);
+        this._storeService.dispatch(setScaleAction(this.projectService.project.value.currentMap.key, this.scale), mergeKey);
+        this._storeService.dispatch(setHiddenLayers(this.projectService.project.value.currentMap.key, this._entityLayerService.hiddenLayers.value.hiddenLayers), mergeKey);
+        this._storeService.dispatch(setHiddenAttributes(this._entityLayerService.hiddenLayers.value.hiddenAttributes), mergeKey);
     }
 
     private _drawFrame() {

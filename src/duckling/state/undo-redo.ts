@@ -17,6 +17,15 @@ export function newMergeKey() : MergeKey {
     return key++;
 }
 
+export function getLastMergeKey(undoRedoStore: Store<UndoRedoState<any>>) : MergeKey {
+    let state = undoRedoStore.getState();
+    if (state && state.lastAction && state.lastAction.mergeKey) {
+        return state.lastAction.mergeKey;
+    }
+
+    return newMergeKey();
+}
+
 /**
  * Create a new undo action.
  */
