@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core';
 import {Subscriber, BehaviorSubject, Observable} from 'rxjs';
 import {DisplayObject} from 'pixi.js';
 
-import {KeyboardService} from '../../util';
+import {KeyboardService, KeyboardCode} from '../../util/keyboard.service';
+import {MouseService, MouseButton} from '../../util/mouse.service';
 
 import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
 import {MultiModeTool} from './multi-mode-tool';
@@ -15,7 +16,8 @@ import {MultiModeTool} from './multi-mode-tool';
 export class BimodalTool extends MultiModeTool {
     constructor(private _primaryTool : BaseTool,
                 private _secondaryTool : BaseTool,
-                private _keyboardService : KeyboardService) {
+                private _keyboardService : KeyboardService,
+                private _mouseService : MouseService) {
         super();
 
         this.drawnConstructChanged = Observable.merge(
@@ -25,15 +27,18 @@ export class BimodalTool extends MultiModeTool {
     }
 
     protected get selectedTool() {
-        if (!this._isSpacePressed()) {
-            return this._primaryTool;
-        } else {
+        if (this._isSecondaryToolActive()) {
             return this._secondaryTool;
+        } else {
+            return this._primaryTool;
         }
     }
 
-    private _isSpacePressed() {
-        return this._keyboardService.isKeyDown(32);
+    private _isSecondaryToolActive() {
+        return (
+            this._keyboardService.isKeyDown(KeyboardCode.CTRL) ||
+            this._mouseService.isButtonDown(MouseButton.Middle)
+        );
     }
 
     get key() {

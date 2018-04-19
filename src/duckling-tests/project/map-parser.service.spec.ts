@@ -24,7 +24,6 @@ let emptyMap : RawMapFile = {
     assets : [],
     systems : {},
     version: "1.0",
-    dimension: {x: 0, y: 0},
     gridSize: 0
 };
 
@@ -68,13 +67,11 @@ let basicMap : RawMapFile = {
         }
     },
     version: MAP_VERSION,
-    dimension: {x: 1200, y: 800},
     gridSize: 16
 }
 
 let emptyParsedMap : ParsedMap = {
     entitySystem: createEntitySystem(),
-    dimension: {x: 0, y: 0},
     gridSize: 0,
     key: "",
     version: ""

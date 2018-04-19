@@ -13,40 +13,41 @@ import {
     Sprite,
     Texture
 } from 'pixi.js';
-import {Subscriber} from 'rxjs';
-import {TimerObservable} from 'rxjs/observable/TimerObservable';
+import { Subscriber } from 'rxjs';
+import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
-import {StoreService} from '../state/store.service';
-import {AssetService, Asset, ProjectService} from '../project';
+import { StoreService } from '../state/store.service';
+import { AssetService, Asset, ProjectService } from '../project';
 import {
-    setScrollPositionsAction, 
-    setInitialMap, 
+    setScrollPositionsAction,
+    setInitialMap,
     setScaleAction,
     setHiddenLayers,
     setHiddenAttributes
 } from '../project/user-meta-data';
-import {ArraySelectComponent, SelectOption} from '../controls';
-import {EntitySystemService, Entity, TaggedEntity} from '../entitysystem/';
-import {EntityLayerService} from '../entitysystem/services/entity-layer.service';
-import {Vector} from '../math';
-import {KeyboardService} from '../util';
-import {CopyPasteService, SelectionService, Selection} from '../selection';
+import { ArraySelectComponent, SelectOption } from '../controls';
+import { EntitySystemService, Entity, TaggedEntity } from '../entitysystem/';
+import { EntityLayerService } from '../entitysystem/services/entity-layer.service';
+import { Vector } from '../math';
+import { KeyboardService } from '../util/keyboard.service';
+import { MouseService } from '../util/mouse.service';
+import { CopyPasteService, SelectionService, Selection } from '../selection';
 
-import {EntityDrawerService, EntityCache, DrawnConstruct} from './drawing';
-import {RenderPriorityService} from './drawing/render-priority.service';
-import {TopToolbarComponent, BottomToolbarComponent} from './_toolbars';
-import {CanvasComponent} from './canvas.component';
-import {drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground} from './drawing/util';
-import {BaseTool, ToolService, MapMoveTool, BimodalTool} from './tools';
+import { EntityDrawerService, EntityCache, DrawnConstruct } from './drawing';
+import { RenderPriorityService } from './drawing/render-priority.service';
+import { TopToolbarComponent, BottomToolbarComponent } from './_toolbars';
+import { CanvasComponent } from './canvas.component';
+import { drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground } from './drawing/util';
+import { BaseTool, ToolService, MapMoveTool, BimodalTool } from './tools';
 
 type LayerCache = {
-    graphics : Graphics;
-    drawnConstructs : DrawnConstruct[]
+    graphics: Graphics;
+    drawnConstructs: DrawnConstruct[]
 };
 
 type DrawableCache = {
     layers: LayerCache[];
-    entityCache : EntityCache;
+    entityCache: EntityCache;
 };
 
 /**
@@ -69,11 +70,12 @@ type DrawableCache = {
             <dk-canvas #canvasElement
                 class="canvas"
                 [tool]="tool"
-                [stageDimensions]="projectService.project.getValue().currentMap.dimension"
                 [gridSize]="projectService.project.getValue().currentMap.gridSize"
                 [scale]="scale"
                 [showGrid]="showGrid"
-                [canvasDisplayObject]="canvasDisplayObject"
+                [entitySystemDisplayObject]="entitySystemDisplayObject"
+                [gridDisplayObject]="gridDisplayObject"
+                [toolDisplayObject]="toolDisplayObject"
                 [initialScrollPosition]="initialScrollPosition"
                 (elementCopy)="copyEntity()"
                 (elementPaste)="pasteEntity($event)"
@@ -82,11 +84,9 @@ type DrawableCache = {
 
             <dk-bottom-toolbar
                 class="canvas-bottom-toolbar mat-elevation-z4"
-                [stageDimensions]="projectService.project.getValue().currentMap.dimension"
                 [gridSize]="projectService.project.getValue().currentMap.gridSize"
                 [scale]="scale"
                 [showGrid]="showGrid"
-                (stageDimensionsChanged)="onStageDimensonsChanged($event)"
                 (gridSizeChanged)="onGridSizeChanged($event)"
                 (scaleChanged)="onScaleChanged($event)"
                 (showGridChanged)="onShowGridChanged($event)">
@@ -98,46 +98,50 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     /**
      * Current tool in use
      */
-    tool : BaseTool;
+    tool: BaseTool;
 
     /**
      * Scale of the map elements
      */
-    scale : number = 1;
+    scale: number = 1;
 
     /**
      * Determines if the grid should be rendered with the map
      */
-    showGrid : boolean = true;
+    showGrid: boolean = true;
 
     /**
-     * The display object sent to the canvas with all the visual aspects of the map editor
+     * The display object sent to the canvas with all the visual aspects of the entity systems
      */
-    canvasDisplayObject : Container = new Container();
+    entitySystemDisplayObject: Container = new Container();
+    gridDisplayObject: Container = new Container();
+    toolDisplayObject: Container = new Container();
 
-    initialScrollPosition : Vector = {x: 0, y: 0};
+    initialScrollPosition: Vector = { x: 0, y: 0 };
 
     private _framesPerSecond = 30;
     private _totalMillis = 0;
-    private _redrawInterval : Subscriber<any>;
-    private _drawerServiceSubscription : Subscriber<any>;
-    private _toolDrawnConstructChangedSubscription : Subscriber<any>;
-    private _drawingCache : DrawableCache = {layers: [], entityCache : {}};
+    private _redrawInterval: Subscriber<any>;
+    private _drawerServiceSubscription: Subscriber<any>;
+    private _toolDrawnConstructChangedSubscription: Subscriber<any>;
+    private _drawingCache: DrawableCache = { layers: [], entityCache: {} };
 
-    @ViewChild('canvasElement') canvasElement : ElementRef;
-    @ViewChild('canvasElement') canvasComponent : CanvasComponent;
+    @ViewChild('canvasElement') canvasElement: ElementRef;
+    @ViewChild('canvasElement') canvasComponent: CanvasComponent;
 
-    constructor(private _entitySystemService : EntitySystemService,
-                private _selection : SelectionService,
-                private _copyPaste : CopyPasteService,
-                private _toolService : ToolService,
-                private _assetService : AssetService,
-                public projectService : ProjectService,
-                private _entityDrawerService : EntityDrawerService,
-                private _keyboardService : KeyboardService,
-                private _entityLayerService : EntityLayerService,
-                private _renderPriorityService : RenderPriorityService,
-                private _storeService : StoreService) {
+    constructor(
+        public projectService: ProjectService,
+        private _entitySystemService: EntitySystemService,
+        private _selection: SelectionService,
+        private _copyPaste: CopyPasteService,
+        private _toolService: ToolService,
+        private _assetService: AssetService,
+        private _entityDrawerService: EntityDrawerService,
+        private _keyboardService: KeyboardService,
+        private _mouseService: MouseService,
+        private _entityLayerService: EntityLayerService,
+        private _renderPriorityService: RenderPriorityService,
+        private _storeService: StoreService) {
         this._setTool(this._toolService.defaultTool);
     }
 
@@ -167,10 +171,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _saveMetaData() {
-        let scrollLeft = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollLeft;
-        let scrollTop = (this.canvasElement as any).canvasContainerDiv.nativeElement.parentElement.scrollTop;
         let mergeKey = this._storeService.getLastMergeKey();
-        this._storeService.dispatch(setScrollPositionsAction(this.projectService.project.value.currentMap.key, {scrollLeft, scrollTop}), mergeKey);
+        this._storeService.dispatch(setScrollPositionsAction(this.projectService.project.value.currentMap.key, this.canvasComponent.scrollPosition), mergeKey);
         this._storeService.dispatch(setInitialMap(this.projectService.project.value.currentMap.key), mergeKey);
         this._storeService.dispatch(setScaleAction(this.projectService.project.value.currentMap.key, this.scale), mergeKey);
         this._storeService.dispatch(setHiddenLayers(this.projectService.project.value.currentMap.key, this._entityLayerService.hiddenLayers.value.hiddenLayers), mergeKey);
@@ -187,36 +189,31 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         this._copyPaste.copy(selections.map((selection: Selection) => { return selection as TaggedEntity; }));
     }
 
-    pasteEntity(position : Vector) {
+    pasteEntity(position: Vector) {
         this._copyPaste.paste(position);
     }
 
-    onToolSelected(newTool : BaseTool) {
+    onToolSelected(newTool: BaseTool) {
         this._setTool(newTool);
         this._clearCache();
     }
 
-    onStageDimensonsChanged(stageDimensions : Vector) {
-        this.projectService.changeDimension(stageDimensions);
-        this._clearCache();
-    }
-
-    onGridSizeChanged(gridSize : number) {
+    onGridSizeChanged(gridSize: number) {
         this.projectService.changeGridSize(gridSize);
         this._clearCache();
     }
 
-    onScaleChanged(scale : number) {
+    onScaleChanged(scale: number) {
         this.scale = scale;
         this._clearCache();
     }
 
-    onShowGridChanged(showGrid : boolean) {
+    onShowGridChanged(showGrid: boolean) {
         this.showGrid = showGrid;
         this._clearCache();
     }
 
-    async openMap(mapKey : string) {
+    async openMap(mapKey: string) {
         await this.projectService.openMap(mapKey);
         this._loadMetaData();
         this._clearCache();
@@ -244,7 +241,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         }
 
         this.scale = curMapUserMetaData.scale;
-        this.initialScrollPosition = {x: curMapUserMetaData.scrollLeft, y: curMapUserMetaData.scrollTop};
+        this.initialScrollPosition = curMapUserMetaData.scrollPosition || { x: 0, y: 0 };
         if (curMapUserMetaData.hiddenLayers) {
             for (let curLayer in curMapUserMetaData.hiddenLayers) {
                 this._entityLayerService.setLayerVisibility(curLayer, curMapUserMetaData.hiddenLayers[curLayer]);
@@ -253,13 +250,11 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _redrawAllDisplayObjects() {
+        let grid = this._buildGrid();
+        let tool = this.tool.drawTool(this.scale);
+
         if (this._drawingCache.layers.length === 0) {
-            let drawnConstructs : DrawnConstruct[] = [
-                this._buildCanvasBackground(),
-                ...this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value, this._drawingCache.entityCache),
-                this._buildGrid(),
-                this.tool.drawTool(this.scale)
-            ];
+            let drawnConstructs: DrawnConstruct[] = this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value, this._drawingCache.entityCache);
 
             let layeredDrawnConstructs = this._renderPriorityService.sortDrawnConstructs(drawnConstructs);
             for (let layer = 0; layer < layeredDrawnConstructs.length; layer++) {
@@ -270,37 +265,41 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
             }
             this._paintDrawableCache();
         }
-        this._buildCanvasDisplayObject();
+        this._buildCanvasDisplayObject(grid, tool);
     }
 
-    private _buildCanvasBackground() : DrawnConstruct {
-        let drawnConstruct = new CanvasBackgroundDrawnConstruct(this.projectService.project.value.currentMap.dimension);
-        drawnConstruct.layer = Number.NEGATIVE_INFINITY;
-        return drawnConstruct;
-    }
-
-    private _buildGrid() : DrawnConstruct {
+    private _buildGrid(): DrawnConstruct {
         if (!this.showGrid) {
             return new DrawnConstruct();
         }
 
-        let drawnConstruct = new GridDrawnConstruct(this.scale, this.projectService.project.value.currentMap.dimension, this.projectService.project.value.currentMap.gridSize);
-        drawnConstruct.layer = Number.POSITIVE_INFINITY;
+        let topLeft = { x: 0, y: 0 };
+        let bottomRight = { x: this.canvasComponent.elementDimensions.x, y: this.canvasComponent.elementDimensions.y };
+        let drawnConstruct = new GridDrawnConstruct(bottomRight, this.projectService.project.value.currentMap.gridSize);
         return drawnConstruct;
     }
 
-    private _buildCanvasDisplayObject() {
-        let canvasDrawnElements = new Container();
+    private _buildCanvasDisplayObject(grid: DrawnConstruct, tool: DrawnConstruct) {
+        this.entitySystemDisplayObject = new Container();
+
         for (let layerCache of this._drawingCache.layers) {
             for (let drawnConstruct of layerCache.drawnConstructs) {
                 let displayObject = drawnConstruct.draw(this._totalMillis);
                 if (displayObject) {
-                    canvasDrawnElements.addChild(displayObject);
+                    this.entitySystemDisplayObject.addChild(displayObject);
                 }
-                canvasDrawnElements.addChild(layerCache.graphics);
+                this.entitySystemDisplayObject.addChild(layerCache.graphics);
             }
         }
-        this.canvasDisplayObject = canvasDrawnElements;
+
+        this.gridDisplayObject = new Container();
+        this.gridDisplayObject.addChild(grid.draw(this._totalMillis));
+
+        this.toolDisplayObject = new Container();
+        let toolDisplayObjectInstance = tool.draw(this._totalMillis);
+        if (toolDisplayObjectInstance) {
+            this.toolDisplayObject.addChild(toolDisplayObjectInstance);
+        }
     }
 
     private _paintDrawableCache() {
@@ -311,8 +310,8 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         }
     }
 
-    private _setTool(tool : BaseTool) {
-        this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService);
+    private _setTool(tool: BaseTool) {
+        this.tool = new BimodalTool(tool, this._toolService.getTool("MapMoveTool"), this._keyboardService, this._mouseService);
 
         if (this._toolDrawnConstructChangedSubscription) {
             this._toolDrawnConstructChangedSubscription.unsubscribe();
@@ -322,10 +321,10 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
         }) as Subscriber<any>;
     }
 
-    private _clearCache(entityCacheValid : boolean = false) {
+    private _clearCache(entityCacheValid: boolean = false) {
         this._drawingCache = {
-            layers : [],
-            entityCache : entityCacheValid ? this._drawingCache.entityCache : {}
+            layers: [],
+            entityCache: entityCacheValid ? this._drawingCache.entityCache : {}
         }
     }
 }
@@ -333,15 +332,15 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 class CanvasBackgroundDrawnConstruct extends DrawnConstruct {
     private _graphics = new Graphics();
 
-    constructor(private _dimension : Vector) {
+    constructor(private _topLeftPoint: Vector, private _dimension: Vector) {
         super();
         drawCanvasBackground(
-            {x: 0, y: 0},
+            this._topLeftPoint,
             this._dimension,
             this._graphics);
-        }
+    }
 
-    draw(totalMillis : number) {
+    draw(totalMillis: number) {
         return this._graphics;
     }
 }
@@ -349,24 +348,24 @@ class CanvasBackgroundDrawnConstruct extends DrawnConstruct {
 class GridDrawnConstruct extends DrawnConstruct {
     private _graphics = new Graphics();
 
-    constructor(private _scale : number,
-                private _dimension : Vector,
-                private _gridSize : number) {
+    constructor(
+        private _dimension: Vector,
+        private _gridSize: number) {
         super();
 
-        this._graphics.lineStyle(1 / this._scale, 0xEEEEEE, 0.5);
+        this._graphics.lineStyle(1, 0xEEEEEE, 0.5);
         drawGrid(
-            {x: 0, y: 0},
+            { x: 0, y: 0 },
             this._dimension,
-            {x: this._gridSize, y: this._gridSize},
+            { x: this._gridSize, y: this._gridSize },
             this._graphics);
         drawCanvasBorder(
-            {x: 0, y: 0},
+            { x: 0, y: 0 },
             this._dimension,
             this._graphics);
     }
 
-    draw(totalMillis : number) {
+    draw(totalMillis: number) {
         return this._graphics;
     }
 }

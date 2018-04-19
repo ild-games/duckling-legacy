@@ -1,9 +1,9 @@
-import {Graphics, Sprite, DisplayObject} from 'pixi.js';
+import { Graphics, Sprite, DisplayObject } from 'pixi.js';
 
-import {Vector} from '../../math/vector';
-import {AssetService} from '../../project/asset.service';
+import { Vector } from '../../math/vector';
+import { AssetService } from '../../project/asset.service';
 
-import {DrawnConstruct} from './drawn-construct';
+import { DrawnConstruct } from './drawn-construct';
 
 
 /**
@@ -12,7 +12,7 @@ import {DrawnConstruct} from './drawn-construct';
  * @param dimension Dimensions of the rectangle
  * @param graphics  Graphics object used to draw
  */
-export function drawRectangle(position : Vector, dimension : Vector, graphics : Graphics) {
+export function drawRectangle(position: Vector, dimension: Vector, graphics: Graphics) {
     graphics.drawRect(
         position.x,
         position.y,
@@ -28,7 +28,7 @@ export function drawRectangle(position : Vector, dimension : Vector, graphics : 
  * @param yRadius  Radius of the ellipse on the y axis
  * @param graphics Graphics object used to draw.
  */
-export function drawEllipse(position : Vector, xRadius : number, yRadius : number, graphics : Graphics) {
+export function drawEllipse(position: Vector, xRadius: number, yRadius: number, graphics: Graphics) {
     graphics.drawEllipse(
         position.x + xRadius,
         position.y + yRadius,
@@ -43,13 +43,13 @@ export function drawEllipse(position : Vector, xRadius : number, yRadius : numbe
  * @param dimension Dimensions of the x
  * @param graphics  Graphics object used to draw
  */
-export function drawX(position : Vector, dimension : Vector, graphics : Graphics) {
+export function drawX(position: Vector, dimension: Vector, graphics: Graphics) {
     let halfX = dimension.x / 2;
     let halfY = dimension.y / 2;
 
     graphics.moveTo(position.x, position.y);
     graphics.lineTo(position.x + dimension.x, position.y + dimension.y);
-    
+
     graphics.moveTo(position.x, position.y + dimension.y);
     graphics.lineTo(position.x + dimension.x, position.y);
 }
@@ -61,15 +61,15 @@ export function drawX(position : Vector, dimension : Vector, graphics : Graphics
  * @param  cellDimension  Dimensions of a cell
  * @param  graphics       Graphics object used to draw
  */
-export function drawGrid(position : Vector, gridDimension : Vector, cellDimension : Vector, graphics : Graphics) {
+export function drawGrid(position: Vector, gridDimension: Vector, cellDimension: Vector, graphics: Graphics) {
     let endX = gridDimension.x;
     let endY = gridDimension.y;
-    
+
     for (let curY = 0; curY <= endY; curY += cellDimension.y) {
         graphics.moveTo(0, curY);
         graphics.lineTo(endX, curY);
     }
-    
+
     for (let curX = 0; curX <= endX; curX += cellDimension.x) {
         graphics.moveTo(curX, 0);
         graphics.lineTo(curX, endY);
@@ -78,14 +78,14 @@ export function drawGrid(position : Vector, gridDimension : Vector, cellDimensio
 
 /**
  * Draws the background to a canvas
- * @param  centerPosition  Center point of the background
+ * @param  topLeftPosition  Top left point of the background
  * @param  stageDimensions Dimensions of the stage on the canvas
  * @param  graphics        Graphics object used to draw
  */
-export function drawCanvasBackground(centerPosition : Vector, stageDimensions : Vector, graphics : Graphics) {
+export function drawCanvasBackground(topLeftPosition: Vector, stageDimensions: Vector, graphics: Graphics) {
     graphics.beginFill(0xFFFFFF, 1);
     drawRectangle(
-        centerPosition,
+        topLeftPosition,
         stageDimensions,
         graphics);
     graphics.endFill();
@@ -97,7 +97,7 @@ export function drawCanvasBackground(centerPosition : Vector, stageDimensions : 
  * @param  stageDimensions Dimensions of the stage on the canvas
  * @param  graphics        Graphics object used to draw
  */
-export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vector, graphics : Graphics) {
+export function drawCanvasBorder(centerPosition: Vector, stageDimensions: Vector, graphics: Graphics) {
     graphics.lineColor = 0xAAAAAA;
     drawRectangle(
         centerPosition,
@@ -106,14 +106,14 @@ export function drawCanvasBorder(centerPosition : Vector, stageDimensions : Vect
 }
 
 class MissingDrawnConstruct extends DrawnConstruct {
-    private _sprite : Sprite;
+    private _sprite: Sprite;
 
-    constructor(private _missingTexture : any) {
+    constructor(private _missingTexture: any) {
         super();
         this._sprite = new Sprite(this._missingTexture);
     }
 
-    draw(totalMillis : number) : DisplayObject {
+    draw(totalMillis: number): DisplayObject {
         return this._sprite;
     }
 }
@@ -123,8 +123,8 @@ class MissingDrawnConstruct extends DrawnConstruct {
  * @param  assetService Instance of the asset service to get the missing image from
  * @return Sprite with the missing images
  */
-export function drawMissingAsset(assetService : AssetService) : DrawnConstruct {
-    let missingTexture = assetService.get({key: "fa-missing-image", type: "TexturePNG"}, true);
+export function drawMissingAsset(assetService: AssetService): DrawnConstruct {
+    let missingTexture = assetService.get({ key: "fa-missing-image", type: "TexturePNG" }, true);
 
     let drawnConstruct = new MissingDrawnConstruct(missingTexture);
     drawnConstruct.layer = Number.POSITIVE_INFINITY;

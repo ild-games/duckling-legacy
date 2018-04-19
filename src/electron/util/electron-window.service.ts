@@ -31,16 +31,32 @@ export class ElectronWindowService extends WindowService {
         window.onkeydown = (event : KeyboardEvent) => handler(event);
     }
 
-    removeKeyDownEvent() {
-        window.onkeydown = null;
-    }
-
     onKeyUp(handler: Function) {
         window.onkeyup = (event : KeyboardEvent) => handler(event);
     }
 
+    removeKeyDownEvent() {
+        window.onkeydown = null;
+    }
+
     removeKeyUpEvent() {
         window.onkeyup = null;
+    }
+
+    onMouseDown(handler: Function) {
+        window.onmousedown = (event: MouseEvent) => handler(event);
+    }
+
+    onMouseUp(handler: Function) {
+        window.onmouseup = (event: MouseEvent) => handler(event);
+    }
+
+    removeMouseDownEvent() {
+        window.onmousedown = null;
+    }
+
+    removeMouseUpEvent() {
+        window.onmouseup = null;
     }
 
     setSize(width : number, height : number) : void {

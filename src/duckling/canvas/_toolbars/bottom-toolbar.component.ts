@@ -14,14 +14,6 @@ import {Vector} from '../../math/vector';
     selector: "dk-bottom-toolbar",
     styleUrls: ['./duckling/canvas/_toolbars/bottom-toolbar.component.css'],
     template: `
-        <dk-vector-input
-            title="Dimension"
-            xLabel="Stage Width"
-            yLabel="Stage Height"
-            [value]="stageDimensions"
-            (validInput)="onStageDimensionsInput($event)">
-        </dk-vector-input>
-
         <dk-number-input
             class="grid-size"
             label="Grid Size"
@@ -43,19 +35,13 @@ import {Vector} from '../../math/vector';
     `
 })
 export class BottomToolbarComponent {
-    @Input() stageDimensions : Vector;
     @Input() gridSize : number;
     @Input() scale : number;
     @Input() showGrid : boolean;
 
-    @Output() stageDimensionsChanged = new EventEmitter<Vector>();
     @Output() gridSizeChanged = new EventEmitter<number>();
     @Output() scaleChanged = new EventEmitter<number>();
     @Output() showGridChanged = new EventEmitter<boolean>();
-
-    onStageDimensionsInput(stageDimensions : Vector) {
-        this.stageDimensionsChanged.emit(stageDimensions);
-    }
 
     onGridSizeInput(gridSize : number) {
         this.gridSizeChanged.emit(gridSize);

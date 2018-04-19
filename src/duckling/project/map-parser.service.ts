@@ -30,7 +30,6 @@ export interface RawMapFile {
     assets: Asset[],
     systems: { [systemName: string]: RawSystem },
     version: string,
-    dimension: Vector,
     gridSize: number
 }
 export function createRawMap(version: MapVersion): RawMapFile {
@@ -40,7 +39,6 @@ export function createRawMap(version: MapVersion): RawMapFile {
         systems: {},
         assets: [],
         entities: [],
-        dimension: { x: 1200, y: 800 },
         gridSize: 16
     }
 };
@@ -53,7 +51,6 @@ export interface ParsedMap {
     key: string,
     version: string,
     entitySystem: EntitySystem,
-    dimension: Vector,
     gridSize: number,
 }
 
@@ -105,7 +102,6 @@ export class MapParserService {
             key: map.key,
             version: map.version,
             entitySystem: entitySystem,
-            dimension: map.dimension,
             gridSize: map.gridSize
         });
     }
@@ -140,7 +136,6 @@ export class MapParserService {
             systems: systems,
             entities: entities,
             assets: assetList,
-            dimension: parsedMap.dimension,
             gridSize: parsedMap.gridSize,
             version: versionInfo.projectVersion
         }

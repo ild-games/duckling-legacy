@@ -287,9 +287,6 @@ export class ProjectService {
         let parsedMap = await this._mapParser.rawMapToParsedMap(rawMap);
 
         this._entitySystem.replaceSystem(parsedMap.entitySystem);
-        if (!parsedMap.dimension) {
-            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
-        }
         if (!parsedMap.gridSize) {
             parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
         }
@@ -297,7 +294,6 @@ export class ProjectService {
         this._storeService.dispatch(openMapAction({
             key: key,
             version: parsedMap.version,
-            dimension: parsedMap.dimension,
             gridSize: parsedMap.gridSize
         }));
         this._storeService.dispatch(doneLoadingProjectAction());

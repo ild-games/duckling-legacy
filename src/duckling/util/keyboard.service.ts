@@ -43,5 +43,6 @@ export const KeyboardCode = {
     RIGHT: 39,
     DOWN: 40,
     LEFT: 37,
-    DELETE: 46
+    DELETE: 46,
+    CTRL: 17 
 }

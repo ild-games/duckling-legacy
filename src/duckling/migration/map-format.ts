@@ -1,3 +1,5 @@
+import { Vector } from "../math";
+
 /**
  * Interface describing the structure of an attribute in the map file.
  */
@@ -37,13 +39,5 @@ export interface Asset {
     type : string,
     key : string
 };
-
-/**
- * The structure of a vector in the map file.
- */
-export interface Vector {
-    x : number,
-    y : number
-}
 
 type Entity = any;

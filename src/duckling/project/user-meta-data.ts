@@ -1,6 +1,7 @@
 import {Action} from '../state';
 import {immutableAssign} from '../util';
 import {HiddenAttributes, HiddenLayers} from '../entitysystem/services/entity-layer.service';
+import { Vector } from '../math';
 
 export interface UserMetaData {
     mapMetaData: {[mapName : string] : MapMetaData};
@@ -10,7 +11,7 @@ export interface UserMetaData {
 
 export interface MapMetaData {
     scrollTop?: number;
-    scrollLeft?: number;
+    scrollPosition?: Vector;
     scale?: number;
     hiddenLayers?: HiddenLayers;
 }
@@ -33,26 +34,23 @@ function _updateUserMetaData(userMetaData : UserMetaData, action : UpdateUserMet
 
 ///////////////////
 // Scroll Positions
-export function setScrollPositionsAction(mapName : string, newScrollPosition : {scrollTop: number, scrollLeft: number}) : SetScrollPositionsAction {
+export function setScrollPositionsAction(mapName : string, newScrollPosition : Vector) : SetScrollPositionsAction {
     return {
         type: ACTION_SET_SCROLL_POSITIONS,
         mapName,
-        scrollTop: newScrollPosition.scrollTop,
-        scrollLeft: newScrollPosition.scrollLeft
+        scrollPosition: newScrollPosition
     }
 }
 export const ACTION_SET_SCROLL_POSITIONS = "UserMetaData.SetScrollPositions";
 interface SetScrollPositionsAction extends Action {
     mapName: string,
-    scrollTop: number,
-    scrollLeft : number
+    scrollPosition: Vector
 }
 function _setScrollPositions(userMetaData : UserMetaData, action : SetScrollPositionsAction) : UserMetaData {
     let newMapMetaData = {...userMetaData.mapMetaData};
     newMapMetaData[action.mapName] = {
         ...userMetaData.mapMetaData[action.mapName],
-        scrollLeft: action.scrollLeft,
-        scrollTop: action.scrollTop,
+        scrollPosition: action.scrollPosition,
     };
     return immutableAssign(
         userMetaData, 

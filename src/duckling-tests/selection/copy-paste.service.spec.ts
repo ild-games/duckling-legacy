@@ -98,8 +98,6 @@ describe("CopyPasteService", function() {
             this.copyPaste.copy([{entity: this.entitySystem.getEntity(ENTITY_KEY), key: ENTITY_KEY}]);
             let keys = this.copyPaste.paste(this.newPosition);
             let entity = this.entitySystem.getEntity(keys[0]);
-            console.log(entity);
-            console.log(this.movedEntity);
             expect(entity).to.eql(this.movedEntity);
         });
 
