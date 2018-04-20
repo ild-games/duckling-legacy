@@ -171,7 +171,6 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         };
 
         this._zoomInCanvasCoords = null;
-        //this._resizeCanvasElements();
         this._zoomLevel = ZOOM_LEVELS.indexOf(newScale);
         this.scrollPan(offsetPan);
     }
@@ -303,7 +302,9 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _resizeCanvasElements() {
         this.elementDimensions.x = this.canvasElement.nativeElement.parentElement.offsetWidth;
 
-        // This 95 is 
+        // This 95 is the hardcoded height from the top and bottom toolbars. This is necessary because seemingly the
+        // reported height of the flex element that houses the canvas lies about the size when resized. So the idea
+        // is to look at the flex container's height and subtract the amount in the toolbars
         this.elementDimensions.y = this.canvasElement.nativeElement.parentElement.parentElement.offsetHeight - 95;
 
         this.canvasElement.nativeElement.width = this.elementDimensions.x;
