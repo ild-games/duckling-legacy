@@ -27,9 +27,10 @@ import { MouseButton } from '../util/mouse.service';
 import { OptionsService } from '../state/options.service';
 
 import { ZOOM_LEVELS, DEFAULT_ZOOM_LEVEL } from './_toolbars/canvas-scale.component';
-import { drawRectangle } from './drawing/util';
+import { drawRectangle, drawGrid } from './drawing/util';
 import { BaseTool, ToolService, MapMoveTool, CanvasMouseEvent, CanvasKeyEvent } from './tools';
 import { MouseService } from '../util/mouse.service';
+import { DrawnConstruct } from './drawing';
 
 /**
  * The Canvas Component is used to render pixijs display objects and wire up Tools.
@@ -38,25 +39,17 @@ import { MouseService } from '../util/mouse.service';
     selector: 'dk-canvas',
     styleUrls: ['./duckling/canvas/canvas.component.css'],
     template: `
-        <div #canvasContainerDiv
-            class="canvas-container"
+        <canvas
+            #canvas
+            class="canvas"
             (copy)="onCopy($event)"
             (paste)="onPaste($event)"
-            (wheel)="forwardContainingDivWheelEvent($event)"
-            (mousedown)="forwardContainingDivMouseEvent($event)"
-            (mouseup)="forwardContainingDivMouseEvent($event)"
-            (mousemove)="forwardContainingDivMouseEvent($event)"
-            (mouseout)="forwardContainingDivMouseEvent($event)">
-            <canvas
-                #canvas
-                class="canvas"
-                (mousedown)="onMouseDown($event)"
-                (mouseup)="onMouseUp($event)"
-                (mousemove)="onMouseDrag($event)"
-                (mouseout)="onMouseOut()"
-                (wheel)="onMouseWheel($event)">
-            </canvas>
-        </div>
+            (mousedown)="onMouseDown($event)"
+            (mouseup)="onMouseUp($event)"
+            (mousemove)="onMouseDrag($event)"
+            (mouseout)="onMouseOut()"
+            (wheel)="onMouseWheel($event)">
+        </canvas>
     `
 })
 export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
@@ -67,12 +60,10 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     @Input() scale: number;
     @Input() showGrid: boolean;
     @Input() entitySystemDisplayObject: DisplayObject;
-    @Input() gridDisplayObject: DisplayObject;
     @Input() toolDisplayObject: DisplayObject;
     @Input() tool: BaseTool;
 
-    @ViewChild('canvas') canvasRoot: ElementRef;
-    @ViewChild('canvasContainerDiv') canvasContainerDiv: ElementRef;
+    @ViewChild('canvas') canvasElement: ElementRef;
 
     /**
      * Event that is published when a user trys to copy something in the canvas.
@@ -116,16 +107,16 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
                 this.elementDimensions.x,
                 this.elementDimensions.y,
                 {
-                    view: this.canvasRoot.nativeElement,
-                    backgroundColor: 0xDFDFDF
+                    view: this.canvasElement.nativeElement,
+                    backgroundColor: 0xFFFFFF
                 });
         } else {
             this._renderer = new CanvasRenderer(
                 this.elementDimensions.x,
                 this.elementDimensions.y,
                 {
-                    view: this.canvasRoot.nativeElement,
-                    backgroundColor: 0xDFDFDF
+                    view: this.canvasElement.nativeElement,
+                    backgroundColor: 0xFFFFFF
                 });
         }
 
@@ -141,11 +132,11 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     setupContainingElementEvents() {
         this._window.onResize(() => this.onResize());
 
-        this.canvasContainerDiv.nativeElement.parentElement.tabIndex = "1";
+        this.canvasElement.nativeElement.parentElement.tabIndex = "1";
 
-        this.canvasContainerDiv.nativeElement.parentElement.onmousemove = (event: MouseEvent) => event.preventDefault();
-        this.canvasContainerDiv.nativeElement.parentElement.onkeyup = (event: KeyboardEvent) => this.onKeyUp(event);
-        this.canvasContainerDiv.nativeElement.parentElement.onkeydown = (event: KeyboardEvent) => this.onKeyDown(event);
+        this.canvasElement.nativeElement.parentElement.onmousemove = (event: MouseEvent) => event.preventDefault();
+        this.canvasElement.nativeElement.parentElement.onkeyup = (event: KeyboardEvent) => this.onKeyUp(event);
+        this.canvasElement.nativeElement.parentElement.onkeydown = (event: KeyboardEvent) => this.onKeyDown(event);
     }
 
     ngOnChanges(changes: { scale?: SimpleChange, initialScrollPosition?: SimpleChange }) {
@@ -180,7 +171,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         };
 
         this._zoomInCanvasCoords = null;
-        this._resizeCanvasElements();
+        //this._resizeCanvasElements();
         this._zoomLevel = ZOOM_LEVELS.indexOf(newScale);
         this.scrollPan(offsetPan);
     }
@@ -220,7 +211,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
         event.stopPropagation();
         this._window.clearSelection();
-        this.canvasContainerDiv.nativeElement.focus();
+        this.canvasElement.nativeElement.focus();
         if (this.tool && !this._mouseService.isButtonDown(MouseButton.Right)) {
             this.tool.onStageDown(this._createCanvasMouseEvent(event));
         }
@@ -277,11 +268,11 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     forwardContainingDivMouseEvent(event: MouseEvent) {
-        this.canvasRoot.nativeElement.dispatchEvent(new MouseEvent(event.type, event));
+        this.canvasElement.nativeElement.dispatchEvent(new MouseEvent(event.type, event));
     }
 
     forwardContainingDivWheelEvent(event: WheelEvent) {
-        this.canvasRoot.nativeElement.dispatchEvent(new WheelEvent(event.type, event));
+        this.canvasElement.nativeElement.dispatchEvent(new WheelEvent(event.type, event));
     }
 
     scrollTo(scrollToCoords: Vector) {
@@ -293,14 +284,31 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this._scrollPosition.y += scrollPanAmount.y;
     }
 
+    stageCoordsFromCanvasCoords(canvasCoords: Vector): Vector {
+        if (!this.entitySystemDisplayObject) {
+            return canvasCoords;
+        }
+
+        return this.entitySystemDisplayObject.toLocal(new Point(canvasCoords.x, canvasCoords.y));
+    }
+
+    canvasCoordsFromStageCoords(stageCoords: Vector): Vector {
+        if (!this.entitySystemDisplayObject) {
+            return stageCoords;
+        }
+
+        return this.entitySystemDisplayObject.toGlobal(new Point(stageCoords.x, stageCoords.y));
+    }
+
     private _resizeCanvasElements() {
-        this.elementDimensions.x = this.canvasContainerDiv.nativeElement.parentElement.offsetWidth;
-        this.elementDimensions.y = this.canvasContainerDiv.nativeElement.parentElement.offsetHeight;
+        this.elementDimensions.x = this.canvasElement.nativeElement.parentElement.offsetWidth;
+
+        // This 95 is 
+        this.elementDimensions.y = this.canvasElement.nativeElement.parentElement.parentElement.offsetHeight - 95;
+
+        this.canvasElement.nativeElement.width = this.elementDimensions.x;
+        this.canvasElement.nativeElement.height = this.elementDimensions.y;
         if (this._renderer) {
-            this._renderer.view.style.width = this.elementDimensions.x + "px";
-            this._renderer.view.style.height = this.elementDimensions.y + "px";
-            this._renderer.view.parentElement.style.width = this.elementDimensions.x + "px";
-            this._renderer.view.parentElement.style.height = this.elementDimensions.y + "px";
             this._renderer.resize(this.elementDimensions.x, this.elementDimensions.y);
             this._changeDetector.detectChanges();
         }
@@ -311,10 +319,6 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             x: 0,
             y: 0
         });
-    }
-
-    public stageCoordsFromCanvasCoords(canvasCoords: Vector): Vector {
-        return this.entitySystemDisplayObject.toLocal(new Point(canvasCoords.x, canvasCoords.y));
     }
 
     private _canvasCoordsFromEvent(event: MouseEvent): Vector {
@@ -330,7 +334,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             let stage = new Container();
 
             this._addDisplayObjectToStageLocal(stage, this.entitySystemDisplayObject);
-            this._addDisplayObjectToStageWorld(stage, this.gridDisplayObject);
+            this._addDisplayObjectToStageWorld(stage, this._buildGridDisplayObject());
             this._addDisplayObjectToStageLocal(stage, this.toolDisplayObject);
 
             this._renderer.preserveDrawingBuffer = false;
@@ -350,6 +354,28 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     private _addDisplayObjectToStageWorld(stage: Container, displayObjectToAdd: DisplayObject) {
         stage.addChild(displayObjectToAdd);
+    }
+
+    private _buildGridDisplayObject(): DisplayObject {
+        if (!this.showGrid) {
+            return new DisplayObject();
+        }
+
+        let stageZero = this.canvasCoordsFromStageCoords({ x: 0, y: 0 });
+        let startingPosition = {
+            x: stageZero.x % (this.gridSize * this.scale),
+            y: stageZero.y % (this.gridSize * this.scale)
+        };
+        let bottomRight = { x: this.elementDimensions.x, y: this.elementDimensions.y };
+
+        let graphics = new Graphics();
+        graphics.lineStyle(1, 0xEEEEEE, 0.5);
+        drawGrid(
+            startingPosition,
+            bottomRight,
+            { x: this.gridSize * this.scale, y: this.gridSize * this.scale },
+            graphics);
+        return graphics;
     }
 
     /**

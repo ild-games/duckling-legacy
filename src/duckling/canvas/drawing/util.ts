@@ -65,44 +65,15 @@ export function drawGrid(position: Vector, gridDimension: Vector, cellDimension:
     let endX = gridDimension.x;
     let endY = gridDimension.y;
 
-    for (let curY = 0; curY <= endY; curY += cellDimension.y) {
+    for (let curY = position.y; curY <= endY; curY += cellDimension.y) {
         graphics.moveTo(0, curY);
         graphics.lineTo(endX, curY);
     }
 
-    for (let curX = 0; curX <= endX; curX += cellDimension.x) {
+    for (let curX = position.x; curX <= endX; curX += cellDimension.x) {
         graphics.moveTo(curX, 0);
         graphics.lineTo(curX, endY);
     }
-}
-
-/**
- * Draws the background to a canvas
- * @param  topLeftPosition  Top left point of the background
- * @param  stageDimensions Dimensions of the stage on the canvas
- * @param  graphics        Graphics object used to draw
- */
-export function drawCanvasBackground(topLeftPosition: Vector, stageDimensions: Vector, graphics: Graphics) {
-    graphics.beginFill(0xFFFFFF, 1);
-    drawRectangle(
-        topLeftPosition,
-        stageDimensions,
-        graphics);
-    graphics.endFill();
-}
-
-/**
- * Draws the border to a canvas
- * @param  centerPosition  Center point of the border
- * @param  stageDimensions Dimensions of the stage on the canvas
- * @param  graphics        Graphics object used to draw
- */
-export function drawCanvasBorder(centerPosition: Vector, stageDimensions: Vector, graphics: Graphics) {
-    graphics.lineColor = 0xAAAAAA;
-    drawRectangle(
-        centerPosition,
-        stageDimensions,
-        graphics);
 }
 
 class MissingDrawnConstruct extends DrawnConstruct {

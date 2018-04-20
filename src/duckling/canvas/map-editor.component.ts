@@ -37,7 +37,7 @@ import { EntityDrawerService, EntityCache, DrawnConstruct } from './drawing';
 import { RenderPriorityService } from './drawing/render-priority.service';
 import { TopToolbarComponent, BottomToolbarComponent } from './_toolbars';
 import { CanvasComponent } from './canvas.component';
-import { drawRectangle, drawGrid, drawCanvasBorder, drawCanvasBackground } from './drawing/util';
+import { drawRectangle, drawGrid } from './drawing/util';
 import { BaseTool, ToolService, MapMoveTool, BimodalTool } from './tools';
 
 type LayerCache = {
@@ -74,7 +74,6 @@ type DrawableCache = {
                 [scale]="scale"
                 [showGrid]="showGrid"
                 [entitySystemDisplayObject]="entitySystemDisplayObject"
-                [gridDisplayObject]="gridDisplayObject"
                 [toolDisplayObject]="toolDisplayObject"
                 [initialScrollPosition]="initialScrollPosition"
                 (elementCopy)="copyEntity()"
@@ -114,7 +113,6 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
      * The display object sent to the canvas with all the visual aspects of the entity systems
      */
     entitySystemDisplayObject: Container = new Container();
-    gridDisplayObject: Container = new Container();
     toolDisplayObject: Container = new Container();
 
     initialScrollPosition: Vector = { x: 0, y: 0 };
@@ -250,9 +248,6 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private _redrawAllDisplayObjects() {
-        let grid = this._buildGrid();
-        let tool = this.tool.drawTool(this.scale);
-
         if (this._drawingCache.layers.length === 0) {
             let drawnConstructs: DrawnConstruct[] = this._entityDrawerService.drawEntitySystem(this._entitySystemService.entitySystem.value, this._drawingCache.entityCache);
 
@@ -265,21 +260,12 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
             }
             this._paintDrawableCache();
         }
-        this._buildCanvasDisplayObject(grid, tool);
+
+        this._buildEntitySystemDisplayObject();
+        this._buildToolDisplayObject(this.tool.drawTool(this.scale));
     }
 
-    private _buildGrid(): DrawnConstruct {
-        if (!this.showGrid) {
-            return new DrawnConstruct();
-        }
-
-        let topLeft = { x: 0, y: 0 };
-        let bottomRight = { x: this.canvasComponent.elementDimensions.x, y: this.canvasComponent.elementDimensions.y };
-        let drawnConstruct = new GridDrawnConstruct(bottomRight, this.projectService.project.value.currentMap.gridSize);
-        return drawnConstruct;
-    }
-
-    private _buildCanvasDisplayObject(grid: DrawnConstruct, tool: DrawnConstruct) {
+    private _buildEntitySystemDisplayObject() {
         this.entitySystemDisplayObject = new Container();
 
         for (let layerCache of this._drawingCache.layers) {
@@ -291,15 +277,17 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
                 this.entitySystemDisplayObject.addChild(layerCache.graphics);
             }
         }
+    }
 
-        this.gridDisplayObject = new Container();
-        this.gridDisplayObject.addChild(grid.draw(this._totalMillis));
-
+    private _buildToolDisplayObject(tool: DrawnConstruct) {
         this.toolDisplayObject = new Container();
+        let graphics = new Graphics();
         let toolDisplayObjectInstance = tool.draw(this._totalMillis);
         if (toolDisplayObjectInstance) {
             this.toolDisplayObject.addChild(toolDisplayObjectInstance);
         }
+        tool.paint(graphics);
+        this.toolDisplayObject.addChild(graphics);
     }
 
     private _paintDrawableCache() {
@@ -326,46 +314,6 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
             layers: [],
             entityCache: entityCacheValid ? this._drawingCache.entityCache : {}
         }
-    }
-}
-
-class CanvasBackgroundDrawnConstruct extends DrawnConstruct {
-    private _graphics = new Graphics();
-
-    constructor(private _topLeftPoint: Vector, private _dimension: Vector) {
-        super();
-        drawCanvasBackground(
-            this._topLeftPoint,
-            this._dimension,
-            this._graphics);
-    }
-
-    draw(totalMillis: number) {
-        return this._graphics;
-    }
-}
-
-class GridDrawnConstruct extends DrawnConstruct {
-    private _graphics = new Graphics();
-
-    constructor(
-        private _dimension: Vector,
-        private _gridSize: number) {
-        super();
-
-        this._graphics.lineStyle(1, 0xEEEEEE, 0.5);
-        drawGrid(
-            { x: 0, y: 0 },
-            this._dimension,
-            { x: this._gridSize, y: this._gridSize },
-            this._graphics);
-        drawCanvasBorder(
-            { x: 0, y: 0 },
-            this._dimension,
-            this._graphics);
-    }
-
-    draw(totalMillis: number) {
-        return this._graphics;
+        this._buildToolDisplayObject(this.tool.drawTool(this.scale));
     }
 }
