@@ -17,3 +17,6 @@ npm-debug.log
 
 # Ignore TODO file
 TODO
+
+# yarn erro
+yarn-error.log
