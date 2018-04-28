@@ -219,14 +219,14 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         event.stopPropagation();
         this._window.clearSelection();
         this.canvasElement.nativeElement.focus();
-        if (this.tool && !this._mouseService.isButtonDown(MouseButton.Right)) {
+        if (this.tool) {
             this.tool.onStageDown(this._createCanvasMouseEvent(event));
         }
     }
 
     onMouseUp(event: MouseEvent) {
         event.stopPropagation();
-        if (this.tool && !this._mouseService.isButtonDown(MouseButton.Right)) {
+        if (this.tool) {
             this.tool.onStageUp(this._createCanvasMouseEvent(event));
         }
 
@@ -240,7 +240,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         let canvasMouseEvent = this._createCanvasMouseEvent(event);
         let stageCoords = canvasMouseEvent.stageCoords;
         this._mouseLocation = canvasMouseEvent.canvasCoords;
-        if (this.tool && !this._mouseService.isButtonDown(MouseButton.Right)) {
+        if (this.tool) {
             this.tool.onStageMove(canvasMouseEvent);
         }
     }

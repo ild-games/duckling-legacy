@@ -37,7 +37,7 @@ export class BimodalTool extends MultiModeTool {
     private _isSecondaryToolActive() {
         return (
             this._keyboardService.isKeyDown(KeyboardCode.CTRL) ||
-            this._mouseService.isButtonDown(MouseButton.Middle)
+            this._mouseService.isButtonDown(MouseButton.Right)
         );
     }
 

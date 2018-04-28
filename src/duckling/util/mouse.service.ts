@@ -1,15 +1,15 @@
-import {Injectable, OnDestroy} from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
-import {WindowService} from './window.service';
+import { WindowService } from './window.service';
 
 @Injectable()
 export class MouseService implements OnDestroy {
 
-    private _heldButtons : {[button : number] : boolean} = {};
+    private _heldButtons: { [button: number]: boolean } = {};
 
-    constructor(private _window : WindowService) {
-        this._window.onMouseDown((event : MouseEvent) => this.onMouseDown(event));
-        this._window.onMouseUp((event : MouseEvent) => this.onMouseUp(event));
+    constructor(private _window: WindowService) {
+        this._window.onMouseDown((event: MouseEvent) => this.onMouseDown(event));
+        this._window.onMouseUp((event: MouseEvent) => this.onMouseUp(event));
     }
 
     ngOnDestroy() {
@@ -17,15 +17,15 @@ export class MouseService implements OnDestroy {
         this._window.removeMouseUpEvent();
     }
 
-    isButtonDown(button : number) {
+    isButtonDown(button: number) {
         return this._heldButtons[button];
     }
 
-    onMouseDown(event : MouseEvent) {
+    onMouseDown(event: MouseEvent) {
         this._heldButtons[event.button] = true;
     }
 
-    onMouseUp(event : MouseEvent) {
+    onMouseUp(event: MouseEvent) {
         this._heldButtons[event.button] = false;
     }
 }
