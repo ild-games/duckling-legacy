@@ -91,7 +91,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _viewInitialized = false;
     private _scrollPosition: Vector = { x: 0, y: 0 };
 
-    constructor(private _changeDetector: ChangeDetectorRef,
+    constructor(
+        private _changeDetector: ChangeDetectorRef,
         private _optionsService: OptionsService,
         private _window: WindowService,
         private _mouseService: MouseService,
@@ -127,6 +128,9 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             this.scrollTo(this.initialScrollPosition);
         }
         this._render();
+
+        document.addEventListener('copy', (event: ClipboardEvent) => this.onCopy(event));
+        document.addEventListener('paste', (event: ClipboardEvent) => this.onPaste(event));
     }
 
     setupContainingElementEvents() {
@@ -181,11 +185,15 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     onCopy(event: ClipboardEvent) {
-        this.elementCopy.emit(null);
+        if (document.activeElement === this.canvasElement.nativeElement.parentElement) {
+            this.elementCopy.emit(null);
+        }
     }
 
     onPaste(event: ClipboardEvent) {
-        this.elementPaste.emit(this.stageCoordsFromCanvasCoords(this._mouseLocation));
+        if (document.activeElement === this.canvasElement.nativeElement.parentElement) {
+            this.elementPaste.emit(this.stageCoordsFromCanvasCoords(this._mouseLocation));
+        }
     }
 
     onKeyDown(event: KeyboardEvent) {
