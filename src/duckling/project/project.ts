@@ -5,8 +5,8 @@ import { Vector } from '../math/vector';
 import { MapVersion } from '../util/version';
 import { VersionFile } from '../migration/migration.service';
 
-import {CustomAttribute} from './custom-attribute';
-import {UserMetaData, userMetaDataReducer} from './user-meta-data';
+import { CustomAttribute } from './custom-attribute';
+import { UserMetaData, userMetaDataReducer } from './user-meta-data';
 
 interface ProjectMap {
     key: string,
@@ -18,12 +18,12 @@ interface ProjectMap {
  * State that describes the currently selected project.
  */
 export interface Project {
-    home? : string,
-    loaded? : boolean,
-    currentMap? : ProjectMap,
-    versionInfo? : VersionFile,
-    userMetaData : UserMetaData
-    customAttributes : CustomAttribute[]
+    home?: string,
+    loaded?: boolean,
+    currentMap?: ProjectMap,
+    versionInfo?: VersionFile,
+    userMetaData: UserMetaData
+    customAttributes: CustomAttribute[]
 }
 
 /**
@@ -43,11 +43,11 @@ interface SwitchProjectAction extends Action {
     home: string,
 }
 
-function _switchProject(project : Project, action : SwitchProjectAction) : Project {
+function _switchProject(project: Project, action: SwitchProjectAction): Project {
     return {
         ...project,
-        loaded: false, 
-        home : action.home, 
+        loaded: false,
+        home: action.home,
     };
 }
 
@@ -79,31 +79,11 @@ interface OpenMapAction extends Action {
     map: {
         key: string,
         version: string,
-        dimension: Vector,
         gridSize: number
     }
 }
 function _openMap(project: Project, action: OpenMapAction) {
     return immutableAssign(project, { currentMap: action.map, loaded: false });
-}
-
-/**
- * Create an action that changes the dimension of the current map.
- * @param newDimension The new dimensions of the map
- */
-export function changeCurrentMapDimensionAction(newDimension: Vector) {
-    return {
-        type: ACTION_CHANGE_MAP_DIMENSION,
-        newDimension: newDimension
-    }
-}
-export const ACTION_CHANGE_MAP_DIMENSION = "Project.ChangeCurrentMapDimension";
-interface ChangeCurrentMapDimensionAction extends Action {
-    newDimension: Vector
-}
-function _changeCurrentMapDimension(project: Project, action: ChangeCurrentMapDimensionAction) {
-    let map = immutableAssign(project.currentMap, { dimension: action.newDimension });
-    return immutableAssign(project, { currentMap: map });
 }
 
 /**
@@ -156,20 +136,17 @@ function _changeCustomAttributes(project: Project, action: ChangeCustomAttribute
 /**
  * Reducer used to update the state of the selected project.
  */
-export function projectReducer(state : Project = {customAttributes: [], userMetaData: {mapMetaData: {}}}, action : Action) {
+export function projectReducer(state: Project = { customAttributes: [], userMetaData: { mapMetaData: {} } }, action: Action) {
     let newState = state;
     switch (action.type) {
         case ACTION_SWITCH_PROJECT:
             newState = _switchProject(state, action as SwitchProjectAction);
             break;
         case ACTION_DONE_LOADING:
-            newState = immutableAssign(state, {loaded: true});
+            newState = immutableAssign(state, { loaded: true });
             break;
         case ACTION_OPEN_MAP:
             newState = _openMap(state, action as OpenMapAction);
-            break;
-        case ACTION_CHANGE_MAP_DIMENSION:
-            newState = _changeCurrentMapDimension(state, action as ChangeCurrentMapDimensionAction);
             break;
         case ACTION_CHANGE_MAP_GRID:
             newState = _changeCurrentMapGrid(state, action as ChangeCurrentMapGridAction);

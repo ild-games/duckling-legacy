@@ -22,15 +22,14 @@ import {
     switchProjectAction,
     doneLoadingProjectAction,
     openMapAction,
-    changeCurrentMapDimensionAction,
     changeCurrentMapGridAction,
     changeCustomAttributes,
     Project,
     setVersionInfo
 } from './project';
-import {UserMetaData, updateUserMetaDataAction} from './user-meta-data';
-import {SnackBarService} from './snackbar.service';
-import {CustomAttribute} from './custom-attribute';
+import { UserMetaData, updateUserMetaDataAction } from './user-meta-data';
+import { SnackBarService } from './snackbar.service';
+import { CustomAttribute } from './custom-attribute';
 
 const MAP_DIR = "maps";
 const DEFAULT_INITIAL_MAP = "map1";
@@ -44,14 +43,14 @@ export class ProjectService {
     project: BehaviorSubject<Project>;
 
     constructor(
-            private _entitySystem: EntitySystemService,
-            private _storeService: StoreService,
-            private _migrationService: MigrationService,
-            private _jsonLoader: JsonLoaderService,
-            private _pathService: PathService,
-            private _mapParser: MapParserService,
-            private _dialog: DialogService,
-            private _snackbar: SnackBarService) {
+        private _entitySystem: EntitySystemService,
+        private _storeService: StoreService,
+        private _migrationService: MigrationService,
+        private _jsonLoader: JsonLoaderService,
+        private _pathService: PathService,
+        private _mapParser: MapParserService,
+        private _dialog: DialogService,
+        private _snackbar: SnackBarService) {
         this.project = new BehaviorSubject(this._project);
         this._storeService.state.subscribe((state) => {
             this.project.next(state.project);
@@ -114,7 +113,7 @@ export class ProjectService {
             ...this._project.currentMap
         }, this._project.versionInfo);
         let json = JSON.stringify(map, null, 4);
-        await this._migrationService.saveProject(this.projectMetaDataDir, this.project.value.versionInfo);     
+        await this._migrationService.saveProject(this.projectMetaDataDir, this.project.value.versionInfo);
         await this._saveProjectMetaData();
         await this._saveUserMetaData(this.project.value.userMetaData);
         await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
@@ -148,7 +147,7 @@ export class ProjectService {
 
     private async _loadUserMetaData(): Promise<UserMetaData> {
         let fileExists = await this._pathService.pathExists(this.getUserMetaDataPath(USER_META_DATA_FILE));
-        let userPreferences : UserMetaData = {mapMetaData: {}};
+        let userPreferences: UserMetaData = { mapMetaData: {} };
         if (fileExists) {
             let json = await this._jsonLoader.getJsonFromPath(this.getUserMetaDataPath(USER_META_DATA_FILE));
             userPreferences = JSON.parse(json);
@@ -199,14 +198,6 @@ export class ProjectService {
             }
         }
         return null;
-    }
-
-    /**
-     * Change the dimension of the map
-     * @param newDimension new dimensions of the map
-     */
-    changeDimension(newDimension: Vector) {
-        this._storeService.dispatch(changeCurrentMapDimensionAction(newDimension));
     }
 
     /**
@@ -286,16 +277,16 @@ export class ProjectService {
 
         let parsedMap = await this._mapParser.rawMapToParsedMap(rawMap);
 
-        this._entitySystem.replaceSystem(parsedMap.entitySystem);
-        if (!parsedMap.gridSize) {
-            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
-        }
-
         this._storeService.dispatch(openMapAction({
             key: key,
             version: parsedMap.version,
             gridSize: parsedMap.gridSize
         }));
+
+        this._entitySystem.replaceSystem(parsedMap.entitySystem);
+        if (!parsedMap.gridSize) {
+            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
+        }
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());
     }

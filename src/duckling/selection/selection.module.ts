@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import {
     CopyPasteService,
@@ -12,5 +12,4 @@ import {
     ]
 })
 export class SelectionModule {
-    
 }
