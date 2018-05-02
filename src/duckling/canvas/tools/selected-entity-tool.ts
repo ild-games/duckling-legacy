@@ -1,24 +1,24 @@
-import {Injectable} from '@angular/core';
-import {Subscriber, BehaviorSubject, Observable} from 'rxjs';
-import {Container, DisplayObject, Graphics} from 'pixi.js';
+import { Injectable } from '@angular/core';
+import { Subscriber, BehaviorSubject, Observable } from 'rxjs';
+import { Container, DisplayObject, Graphics } from 'pixi.js';
 
-import {DrawnConstruct} from '../drawing/drawn-construct';
+import { DrawnConstruct } from '../drawing/drawn-construct';
 
-import {MultiModeTool} from './multi-mode-tool';
-import {EntityMoveTool, EntityMoveToolDrawnConstruct} from './entity-move-tool';
-import {EntityResizeTool, ResizeToolDrawnConstruct} from './resize-tool';
-import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
+import { MultiModeTool } from './multi-mode-tool';
+import { EntityMoveTool, EntityMoveToolDrawnConstruct } from './entity-move-tool';
+import { EntityResizeTool, ResizeToolDrawnConstruct } from './resize-tool';
+import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from './base-tool';
 
 @Injectable()
 export class SelectedEntityTool extends MultiModeTool {
     private _resizing: Boolean;
 
-    constructor(private _entityMoveTool : EntityMoveTool,
-                private _entityResizeTool : EntityResizeTool) {
+    constructor(private _entityMoveTool: EntityMoveTool,
+        private _entityResizeTool: EntityResizeTool) {
         super();
 
         this.drawnConstructChanged = Observable.merge(
-            this._entityMoveTool.drawnConstructChanged, 
+            this._entityMoveTool.drawnConstructChanged,
             this._entityResizeTool.drawnConstructChanged
         ) as BehaviorSubject<boolean>;
     }
@@ -31,7 +31,11 @@ export class SelectedEntityTool extends MultiModeTool {
         }
     }
 
-    drawTool(canvasZoom : number) : DrawnConstruct {
+    protected get primaryTool() {
+        return this._entityMoveTool;
+    }
+
+    drawTool(canvasZoom: number): DrawnConstruct {
         let drawnConstruct = new SelectedEntityToolDrawnConstruct(
             this._entityResizeTool.createDrawnConstruct(canvasZoom),
             this._entityMoveTool.createDrawnConstruct(canvasZoom));
@@ -39,12 +43,12 @@ export class SelectedEntityTool extends MultiModeTool {
         return drawnConstruct;
     }
 
-    onStageDown(event : CanvasMouseEvent) {
+    onStageDown(event: CanvasMouseEvent) {
         this._resizing = !!this._entityResizeTool.clickedInAnchor(event);
         super.onStageDown(event);
     }
 
-    onStageUp(event : CanvasMouseEvent) {
+    onStageUp(event: CanvasMouseEvent) {
         this._resizing = false;
         super.onStageUp(event);
     }
@@ -70,12 +74,12 @@ export class SelectedEntityTool extends MultiModeTool {
 class SelectedEntityToolDrawnConstruct extends DrawnConstruct {
     private _container = new Container();
 
-    constructor(private _resizeToolConstruct : DrawnConstruct,
-                private _moveToolConstruct : DrawnConstruct) {
+    constructor(private _resizeToolConstruct: DrawnConstruct,
+        private _moveToolConstruct: DrawnConstruct) {
         super();
     }
 
-    draw(totalMillis : number) : DisplayObject {
+    draw(totalMillis: number): DisplayObject {
         this._container.removeChildren();
         let resizeToolDisplayObject = this._resizeToolConstruct.draw(totalMillis);
         if (resizeToolDisplayObject) {
@@ -88,7 +92,7 @@ class SelectedEntityToolDrawnConstruct extends DrawnConstruct {
         return this._container;
     }
 
-    paint(graphics : Graphics) {
+    paint(graphics: Graphics) {
         this._resizeToolConstruct.paint(graphics);
         this._moveToolConstruct.paint(graphics);
     }

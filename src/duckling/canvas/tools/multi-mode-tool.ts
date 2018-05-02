@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {DisplayObject, Graphics} from 'pixi.js';
+import { Injectable } from '@angular/core';
+import { DisplayObject, Graphics } from 'pixi.js';
 
-import {KeyboardService} from '../../util';
-import {DrawnConstruct} from '../drawing/drawn-construct';
+import { KeyboardService } from '../../util';
+import { DrawnConstruct } from '../drawing/drawn-construct';
 
-import {BaseTool, CanvasMouseEvent, CanvasKeyEvent} from './base-tool';
+import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from './base-tool';
 
 /**
  * A multi-mode-tool is a base class used for tools that are a composite of other
@@ -16,39 +16,40 @@ export abstract class MultiModeTool extends BaseTool {
         super();
     }
 
-    protected abstract get selectedTool() : BaseTool;
+    protected abstract get selectedTool(): BaseTool;
+    protected abstract get primaryTool(): BaseTool;
 
-    drawTool(canvasZoom : number) : DrawnConstruct {
-        if (this.selectedTool) {
-            return this.selectedTool.drawTool(canvasZoom);
+    drawTool(canvasZoom: number): DrawnConstruct {
+        if (this.primaryTool) {
+            return this.primaryTool.drawTool(canvasZoom);
         }
     }
 
-    onStageDown(event : CanvasMouseEvent) {
+    onStageDown(event: CanvasMouseEvent) {
         if (this.selectedTool) {
             return this.selectedTool.onStageDown(event);
         }
     }
 
-    onStageMove(event : CanvasMouseEvent) {
+    onStageMove(event: CanvasMouseEvent) {
         if (this.selectedTool) {
             this.selectedTool.onStageMove(event);
         }
     }
 
-    onStageUp(event : CanvasMouseEvent) {
+    onStageUp(event: CanvasMouseEvent) {
         if (this.selectedTool) {
             this.selectedTool.onStageUp(event);
         }
     }
 
-    onKeyDown(event : CanvasKeyEvent) {
+    onKeyDown(event: CanvasKeyEvent) {
         if (this.selectedTool) {
             this.selectedTool.onKeyDown(event);
         }
     }
 
-    onKeyUp(event : CanvasKeyEvent) {
+    onKeyUp(event: CanvasKeyEvent) {
         if (this.selectedTool) {
             this.selectedTool.onKeyUp(event);
         }

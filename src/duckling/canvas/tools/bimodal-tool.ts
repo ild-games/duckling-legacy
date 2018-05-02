@@ -34,6 +34,10 @@ export class BimodalTool extends MultiModeTool {
         }
     }
 
+    protected get primaryTool() {
+        return this._primaryTool;
+    }
+
     private _isSecondaryToolActive() {
         return (
             this._keyboardService.isKeyDown(KeyboardCode.CTRL) ||
