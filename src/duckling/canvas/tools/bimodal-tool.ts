@@ -14,7 +14,8 @@ import { MultiModeTool } from './multi-mode-tool';
  */
 @Injectable()
 export class BimodalTool extends MultiModeTool {
-    constructor(private _primaryTool: BaseTool,
+    constructor(
+        private _primaryTool: BaseTool,
         private _secondaryTool: BaseTool,
         private _keyboardService: KeyboardService,
         private _mouseService: MouseService) {
