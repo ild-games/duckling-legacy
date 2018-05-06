@@ -12,6 +12,7 @@ import {BrowseAssetComponent} from './browse-asset.component';
 import {ProjectLifecycleService} from './project-lifecycle.service';
 import {CustomAttributesComponent} from './custom-attributes.component';
 import {CustomAttributeComponent} from './custom-attribute.component';
+import {MigrateAllMapsComponent} from './migrate-all-maps.component';
 
 import {ControlsModule} from '../controls/controls.module';
 
@@ -31,7 +32,8 @@ import {ControlsModule} from '../controls/controls.module';
         MapSelectComponent,
         BrowseAssetComponent,
         CustomAttributesComponent,
-        CustomAttributeComponent
+        CustomAttributeComponent,
+        MigrateAllMapsComponent
     ],
     exports: [
         BrowseAssetComponent
@@ -39,7 +41,8 @@ import {ControlsModule} from '../controls/controls.module';
     entryComponents: [
         MapSelectComponent,
         CustomAttributesComponent,
-        CustomAttributeComponent
+        CustomAttributeComponent,
+        MigrateAllMapsComponent
     ]
 })
 export class ProjectModule {

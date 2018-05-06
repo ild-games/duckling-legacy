@@ -17,6 +17,7 @@ import {FileToolbarService} from './file-toolbar.service';
 import {Asset, AssetService} from '../project/asset.service';
 import {ProjectService} from '../project/project.service';
 import {CustomAttributesComponent} from '../project/custom-attributes.component';
+import {MigrateAllMapsComponent} from '../project/migrate-all-maps.component';
 import {WindowService, PathService} from '../util';
 import {StoreService} from '../state';
 import {OptionsService} from '../state/options.service';
@@ -112,6 +113,13 @@ export class ShellComponent implements OnInit, OnDestroy {
             label: "Edit Custom Attributes",
             shortcut: "CmdOrCtrl+Shift+E",
             callback: () => this._dialog.open(CustomAttributesComponent)
+        });
+
+        this._fileToolbar.addAction({
+            menuPath: ["Project"],
+            label: "Run Migrations For All Maps",
+            shortcut: "CmdOrCtrl+Shift+M",
+            callback: () => this._dialog.open(MigrateAllMapsComponent, {disableClose: true})
         });
 
         this._fileToolbar.bootstrapMenu();
