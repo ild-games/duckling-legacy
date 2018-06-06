@@ -40,6 +40,11 @@ import { ProjectService } from '../../project/project.service';
             [selectedFile]="music.musicKey"
             (filePicked)="onMusicFilePicked($event)">
         </dk-browse-asset>
+        <dk-number-input
+            label="Second to start loop on"
+            [value]="music.loopStart"
+            (validInput)="onLoopStartChanged($event)">
+        </dk-number-input>
     `
 })
 export class MusicComponent {
@@ -52,6 +57,10 @@ export class MusicComponent {
 
     displayVolume(volume: number) {
         return Math.round(volume * 100);
+    }
+
+    onLoopStartChanged(newLoopStart: number) {
+        this.musicChanged.emit(immutableAssign(this.music, { loopStart: newLoopStart }));
     }
 
     onSliderChanged(event: MatSliderChange) {
