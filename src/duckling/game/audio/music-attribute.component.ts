@@ -55,7 +55,9 @@ export class MusicAttributeComponent {
 
     onAddMusicClicked() {
         let newMusic = immutableAssign(defaultMusic, {});
-        this.attributeChanged.emit(immutableAssign(this.attribute, {musics: this.attribute.musics.concat(newMusic)}));
+        this.attributeChanged.emit(immutableAssign(this.attribute, {
+            musics: this.attribute.musics.concat(newMusic)
+        }));
     }
 
     onMusicChanged(event: Music, index: number) {
