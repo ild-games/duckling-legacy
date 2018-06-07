@@ -21,6 +21,7 @@ import {MigrateAllMapsComponent} from '../project/migrate-all-maps.component';
 import {WindowService, PathService} from '../util';
 import {StoreService} from '../state';
 import {OptionsService} from '../state/options.service';
+import {MinifyAllMapsComponent} from '../project/minify-all-maps.component';
 
 @Component({
     selector: 'dk-shell',
@@ -120,6 +121,13 @@ export class ShellComponent implements OnInit, OnDestroy {
             label: "Run Migrations For All Maps",
             shortcut: "CmdOrCtrl+Shift+M",
             callback: () => this._dialog.open(MigrateAllMapsComponent, {disableClose: true})
+        });
+
+        this._fileToolbar.addAction({
+            menuPath: ["Project"],
+            label: "Minify Maps",
+            shortcut: "",
+            callback: () => this._dialog.open(MinifyAllMapsComponent, {disableClose: true})
         });
 
         this._fileToolbar.bootstrapMenu();

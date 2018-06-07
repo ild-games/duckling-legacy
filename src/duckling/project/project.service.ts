@@ -107,12 +107,12 @@ export class ProjectService {
     /**
      * Save the projects current state.
      */
-    async save() {
+    async save(minify: boolean = false) {
         let map = await this._mapParser.parsedMapToRawMap({
             entitySystem: this._entitySystem.entitySystem.value,
             ...this._project.currentMap
         }, this._project.versionInfo);
-        let json = JSON.stringify(map, null, 4);
+        let json = JSON.stringify(map, null, (minify ? null : 4));
         await this._migrationService.saveProject(this.projectMetaDataDir, this.project.value.versionInfo);
         await this._saveProjectMetaData();
         await this._saveUserMetaData(this.project.value.userMetaData);
