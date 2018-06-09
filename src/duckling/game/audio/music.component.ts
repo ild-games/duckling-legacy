@@ -40,6 +40,11 @@ import { ProjectService } from '../../project/project.service';
             [selectedFile]="music.musicKey"
             (filePicked)="onMusicFilePicked($event)">
         </dk-browse-asset>
+        <mat-checkbox
+            [checked]="music.loop"
+            (change)="onLoopPressed($event.checked)">
+            Loop?
+        </mat-checkbox>
         <dk-number-input
             label="Second to start loop on"
             [value]="music.loopStart"
@@ -57,6 +62,10 @@ export class MusicComponent {
 
     displayVolume(volume: number) {
         return Math.round(volume * 100);
+    }
+
+    onLoopPressed(newLoop : boolean) {
+        this.musicChanged.emit(immutableAssign(this.music, {loop: newLoop}));
     }
 
     onLoopStartChanged(newLoopStart: number) {
