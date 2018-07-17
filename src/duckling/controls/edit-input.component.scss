@@ -1,17 +1,17 @@
-@import '../forms';
-@import '../fonts';
+@import "../forms";
+@import "../fonts";
 
 .edit-label {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-    dk-validated-input {
-        height: 50px;
-        font-size: $font-size-normal;
-    }
+  dk-validated-input {
+    height: 50px;
+    font-size: $font-size-normal;
+  }
 }
 
 .edit-label-text {
-    margin-right: $spacer-unit / 2;
+  margin-right: $spacer-unit / 2;
 }

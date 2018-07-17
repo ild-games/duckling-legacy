@@ -1,18 +1,15 @@
-import {
-    Component,
-    Input
-} from '@angular/core';
+import { Component, Input } from "@angular/core";
 
 /**
  * Component used to render a font-icon
  */
 @Component({
-    selector: "dk-icon",
-    template: `
+  selector: "dk-icon",
+  template: `
         <i class="fa fa-{{iconClass}}">
         </i>
     `
 })
 export class IconComponent {
-    @Input() iconClass : string;
+  @Input() iconClass: string;
 }

@@ -1,22 +1,17 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {VectorInputComponent, FormLabelComponent} from '../../controls';
-import {immutableAssign} from '../../util';
-import {Vector} from '../../math';
+import { VectorInputComponent, FormLabelComponent } from "../../controls";
+import { immutableAssign } from "../../util";
+import { Vector } from "../../math";
 
-import {Rectangle} from './rectangle';
+import { Rectangle } from "./rectangle";
 
 /**
  * Component used to edit a Rectangle shape
  */
 @Component({
-    selector: "dk-rectangle-drawable",
-    template: `
+  selector: "dk-rectangle-drawable",
+  template: `
         <dk-vector-input
             xLabel="Width"
             yLabel="Height"
@@ -26,10 +21,12 @@ import {Rectangle} from './rectangle';
     `
 })
 export class RectangleComponent {
-    @Input() rectangle : Rectangle;
-    @Output() rectangleChanged = new EventEmitter<Rectangle>();
+  @Input() rectangle: Rectangle;
+  @Output() rectangleChanged = new EventEmitter<Rectangle>();
 
-    onDimensionInput(newDimension : Vector) {
-        this.rectangleChanged.emit(immutableAssign(this.rectangle, {dimension: newDimension}));
-    }
+  onDimensionInput(newDimension: Vector) {
+    this.rectangleChanged.emit(
+      immutableAssign(this.rectangle, { dimension: newDimension })
+    );
+  }
 }

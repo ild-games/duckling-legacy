@@ -1,89 +1,83 @@
-import {DisplayObject, Graphics} from 'pixi.js';
-import {BehaviorSubject} from 'rxjs';
+import { DisplayObject, Graphics } from "pixi.js";
+import { BehaviorSubject } from "rxjs";
 
-import {Vector} from '../../math';
-import {CanvasComponent} from '../canvas.component';
-import {DrawnConstruct} from '../drawing/drawn-construct';
+import { Vector } from "../../math";
+import { CanvasComponent } from "../canvas.component";
+import { DrawnConstruct } from "../drawing/drawn-construct";
 
 export class BaseTool {
-    drawnConstructChanged : BehaviorSubject<boolean> = new BehaviorSubject(false);
+  drawnConstructChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-    drawTool(canvasZoom : number) : DrawnConstruct {
-        return new DrawnConstruct();
-    }
+  drawTool(canvasZoom: number): DrawnConstruct {
+    return new DrawnConstruct();
+  }
 
-    onStageDown(event : CanvasMouseEvent) {
-    }
+  onStageDown(event: CanvasMouseEvent) {}
 
-    onStageUp(event : CanvasMouseEvent) {
-    }
+  onStageUp(event: CanvasMouseEvent) {}
 
-    onStageMove(event : CanvasMouseEvent) {
-    }
+  onStageMove(event: CanvasMouseEvent) {}
 
-    onKeyDown(event : CanvasKeyEvent) {
-    }
+  onKeyDown(event: CanvasKeyEvent) {}
 
-    onKeyUp(event : CanvasKeyEvent) {
-    }
+  onKeyUp(event: CanvasKeyEvent) {}
 
-    onLeaveStage() {
-    }
+  onLeaveStage() {}
 
-    get key() : string {
-        throw new Error("Not yet implemented");
-    }
+  get key(): string {
+    throw new Error("Not yet implemented");
+  }
 
-    get label() : string {
-        throw new Error("Not yet implemented");
-    }
+  get label(): string {
+    throw new Error("Not yet implemented");
+  }
 
-    get icon() : string {
-        throw new Error("Not yet implemented");
-    }
+  get icon(): string {
+    throw new Error("Not yet implemented");
+  }
 }
 
 /**
  * Event describing a mouse action on the canvas
  */
 export interface CanvasMouseEvent {
-    /**
-     * Coordinate of the mouse event in respect to the canvas element
-     */
-    canvasCoords : Vector;
+  /**
+   * Coordinate of the mouse event in respect to the canvas element
+   */
+  canvasCoords: Vector;
 
-    /**
-     * Coordinate of the mouse event in respect to the virtual stage
-     */
-    stageCoords : Vector;
+  /**
+   * Coordinate of the mouse event in respect to the virtual stage
+   */
+  stageCoords: Vector;
 
-    /**
-     * Canvas component the event came from
-     */
-    canvas : CanvasComponent;
+  /**
+   * Canvas component the event came from
+   */
+  canvas: CanvasComponent;
 
-    /**
-     * Boolean determining if the ctrl key modifier was down
-     */
-    ctrlKey : boolean;
+  /**
+   * Boolean determining if the ctrl key modifier was down
+   */
+  ctrlKey: boolean;
 
-    /**
-     * Boolean determining if the shift key modifier was down
-     */
-    shiftKey : boolean;
+  /**
+   * Boolean determining if the shift key modifier was down
+   */
+  shiftKey: boolean;
 
-    /**
-     * Boolean determining if the alt key modifier was down
-     */
-    altKey : boolean;
+  /**
+   * Boolean determining if the alt key modifier was down
+   */
+  altKey: boolean;
 }
 
 /**
  * Event describing a keyboard action on the canvas
  */
 export interface CanvasKeyEvent extends CanvasMouseEvent {
-    /**
-     * Key that was pressed during the event
-     */
-    keyCode : number;
+  /**
+   * Key that was pressed during the event
+   */
+  keyCode: number;
 }

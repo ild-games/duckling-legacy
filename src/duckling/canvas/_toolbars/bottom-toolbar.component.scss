@@ -1,19 +1,19 @@
-@import '../../forms';
-@import '../../colors';
+@import "../../forms";
+@import "../../colors";
 
 :host {
-    display: flex;
+  display: flex;
 }
 
 .grid-size {
-    width: 75px;
-    margin-right: $spacer-unit / 2;
+  width: 75px;
+  margin-right: $spacer-unit / 2;
 }
 
 .show-grid {
-    align-self: center;
+  align-self: center;
 }
 
 dk-canvas-scale {
-    margin-left: auto;
+  margin-left: auto;
 }

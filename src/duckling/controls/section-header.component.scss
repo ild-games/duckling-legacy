@@ -1,29 +1,29 @@
-@import '../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css';
-@import '../colors';
+@import "../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@import "../colors";
 
 $height: 32px;
 
 :host {
-    display: block;
+  display: block;
 }
 
 .header {
-    padding: 2px 8px;
-    background-color: $header-color;
-    height: $height;
-    line-height: $height;
-    display: flex;
-    align-items: center;
+  padding: 2px 8px;
+  background-color: $header-color;
+  height: $height;
+  line-height: $height;
+  display: flex;
+  align-items: center;
 
-    .title {
-        font-size: 14px;
-    }
+  .title {
+    font-size: 14px;
+  }
 
-    .right-content {
-        margin-left: auto;
-    }
+  .right-content {
+    margin-left: auto;
+  }
 }
 
 .pointer {
-    cursor: pointer;
+  cursor: pointer;
 }

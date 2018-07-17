@@ -1,14 +1,14 @@
-@import '../../forms';
+@import "../../forms";
 
 .add-vertex-button {
-    margin-top: $spacer-unit;
-    display: block;
+  margin-top: $spacer-unit;
+  display: block;
 
-    span {
-        margin-left: 8px;
-    }
+  span {
+    margin-left: 8px;
+  }
 }
 
 .vertices-card {
-    padding: 0;
+  padding: 0;
 }

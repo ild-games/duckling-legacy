@@ -1,8 +1,8 @@
-import {Color} from '../../canvas/drawing/color';
+import { Color } from "../../canvas/drawing/color";
 
 export interface SFMLText {
-    text: string,
-    fontKey: string,
-    characterSize: number
-    color: Color
+  text: string;
+  fontKey: string;
+  characterSize: number;
+  color: Color;
 }

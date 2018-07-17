@@ -1,13 +1,8 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {ButtonAttribute} from './button-attribute';
-import {InputComponent} from '../../controls';
-import {immutableAssign} from '../../util/model';
+import { ButtonAttribute } from "./button-attribute";
+import { InputComponent } from "../../controls";
+import { immutableAssign } from "../../util/model";
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -15,8 +10,8 @@ import {immutableAssign} from '../../util/model';
  * @see AttributeComponent
  */
 @Component({
-    selector: "dk-button-attribute",
-    template: `
+  selector: "dk-button-attribute",
+  template: `
         <dk-input
             label="Button Key"
             [value]="attribute.key"
@@ -33,12 +28,11 @@ import {immutableAssign} from '../../util/model';
     `
 })
 export class ButtonComponent {
+  @Input() attribute: ButtonAttribute;
 
-    @Input() attribute : ButtonAttribute;
+  @Output() attributeChanged = new EventEmitter<ButtonAttribute>();
 
-    @Output() attributeChanged = new EventEmitter<ButtonAttribute>();
-
-    keyChanged(key : string) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {key}));
-    }
+  keyChanged(key: string) {
+    this.attributeChanged.emit(immutableAssign(this.attribute, { key }));
+  }
 }

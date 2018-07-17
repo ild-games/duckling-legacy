@@ -1,18 +1,8 @@
-import {NgModule} from '@angular/core';
+import { NgModule } from "@angular/core";
 
-import {
-    JsonLoaderService,
-    PathService,
-    KeyboardService
-} from './index';
+import { JsonLoaderService, PathService, KeyboardService } from "./index";
 
 @NgModule({
-    providers: [
-        JsonLoaderService,
-        PathService,
-        KeyboardService
-    ]
+  providers: [JsonLoaderService, PathService, KeyboardService]
 })
-export class UtilModule {
-
-}
+export class UtilModule {}

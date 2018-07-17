@@ -1,32 +1,30 @@
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+
+import { Validator } from "../../controls/validated-input.component";
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-} from '@angular/core';
+  AccordionComponent,
+  FormLabelComponent,
+  EnumChoiceComponent
+} from "../../controls";
+import { immutableAssign, immutableArrayAssign } from "../../util";
 
-import {Validator} from '../../controls/validated-input.component';
-import {AccordionComponent, FormLabelComponent, EnumChoiceComponent} from '../../controls';
-import {immutableAssign, immutableArrayAssign} from '../../util';
-
-
-import {ContainerDrawable} from './container-drawable';
-import {DrawableComponent} from './drawable.component';
-import {Drawable, DrawableType} from './drawable';
+import { ContainerDrawable } from "./container-drawable";
+import { DrawableComponent } from "./drawable.component";
+import { Drawable, DrawableType } from "./drawable";
 import {
-    drawableTypeToCppType, 
-    cppTypeToDrawableType,
-    cloneDrawable,
-    newDrawable
-} from './drawable-helpers';
+  drawableTypeToCppType,
+  cppTypeToDrawableType,
+  cloneDrawable,
+  newDrawable
+} from "./drawable-helpers";
 
 /**
  * Component used to edit a Container Drawable including all its children drawables
  */
 @Component({
-    selector: "dk-container-drawable",
-    styleUrls: ['./duckling/game/drawable/container-drawable.component.css'],
-    template: `
+  selector: "dk-container-drawable",
+  styleUrls: ["./duckling/game/drawable/container-drawable.component.css"],
+  template: `
         <dk-form-label title="Add Drawable"></dk-form-label>
         <dk-enum-choice
             [enum]="DrawableType"
@@ -58,40 +56,60 @@ import {
     `
 })
 export class ContainerDrawableComponent {
-    // hoist DrawableType so template can access it
-    DrawableType = DrawableType;
+  // hoist DrawableType so template can access it
+  DrawableType = DrawableType;
 
-    @Input() keyValidator : Validator;
-    @Input() containerDrawable : ContainerDrawable;
-    @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
+  @Input() keyValidator: Validator;
+  @Input() containerDrawable: ContainerDrawable;
+  @Output() drawableChanged = new EventEmitter<ContainerDrawable>();
 
-    onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        let newDrawablesPatch : Drawable[] = [];
-        newDrawablesPatch[index] = newDrawable;
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
-            drawables: immutableArrayAssign(this.containerDrawable.drawables, newDrawablesPatch)
-        }));
-    }
+  onChildDrawableChanged(index: number, newDrawable: Drawable) {
+    let newDrawablesPatch: Drawable[] = [];
+    newDrawablesPatch[index] = newDrawable;
+    this.drawableChanged.emit(
+      immutableAssign(this.containerDrawable, {
+        drawables: immutableArrayAssign(
+          this.containerDrawable.drawables,
+          newDrawablesPatch
+        )
+      })
+    );
+  }
 
-    onChildDrawablesChanged(newDrawables : Drawable[]) {
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
-            drawables: newDrawables
-        }));
-    }
+  onChildDrawablesChanged(newDrawables: Drawable[]) {
+    this.drawableChanged.emit(
+      immutableAssign(this.containerDrawable, {
+        drawables: newDrawables
+      })
+    );
+  }
 
-    onNewDrawableClicked(pickedType : DrawableType) {
-        let newDrawablesPatch : Drawable[] = [];
-        newDrawablesPatch[this.containerDrawable.drawables.length] = newDrawable(pickedType, this.containerDrawable.drawables);
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
-            drawables: immutableArrayAssign(this.containerDrawable.drawables, newDrawablesPatch)
-        }));
-    }
+  onNewDrawableClicked(pickedType: DrawableType) {
+    let newDrawablesPatch: Drawable[] = [];
+    newDrawablesPatch[this.containerDrawable.drawables.length] = newDrawable(
+      pickedType,
+      this.containerDrawable.drawables
+    );
+    this.drawableChanged.emit(
+      immutableAssign(this.containerDrawable, {
+        drawables: immutableArrayAssign(
+          this.containerDrawable.drawables,
+          newDrawablesPatch
+        )
+      })
+    );
+  }
 
-    onChildDrawableCloned(newDrawables : Drawable[]) {
-        let newDrawablesPatch : Drawable[] = [];
-        newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(newDrawables[newDrawables.length - 1], this.containerDrawable.drawables);
-        this.drawableChanged.emit(immutableAssign(this.containerDrawable, {
-            drawables: immutableArrayAssign(newDrawables, newDrawablesPatch)
-        }));
-    }
+  onChildDrawableCloned(newDrawables: Drawable[]) {
+    let newDrawablesPatch: Drawable[] = [];
+    newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(
+      newDrawables[newDrawables.length - 1],
+      this.containerDrawable.drawables
+    );
+    this.drawableChanged.emit(
+      immutableAssign(this.containerDrawable, {
+        drawables: immutableArrayAssign(newDrawables, newDrawablesPatch)
+      })
+    );
+  }
 }

@@ -1,38 +1,38 @@
-@import '../misc-mixins';
-@import '../colors';
+@import "../misc-mixins";
+@import "../colors";
 
 $shell-padding: 16px;
 .shell {
-    @include fill;
+  @include fill;
 
-    padding: $shell-padding;
-    box-sizing: border-box;
-    flex-flow: row;
-    display: flex;
-    background-color: $ultra-light-primary-color;
-    z-index: -2;
+  padding: $shell-padding;
+  box-sizing: border-box;
+  flex-flow: row;
+  display: flex;
+  background-color: $ultra-light-primary-color;
+  z-index: -2;
 
-    .canvas-container {
-        width: 800px;
-        flex: 1 1 auto;
-        min-width: 800px;
-        margin-right: $shell-padding / 2;
-        padding: 0;
-    }
+  .canvas-container {
+    width: 800px;
+    flex: 1 1 auto;
+    min-width: 800px;
+    margin-right: $shell-padding / 2;
+    padding: 0;
+  }
 
-    .entity-editor-container {
-        flex: 0 1 450px;
-        margin-left: $shell-padding / 2;
-        overflow-y: auto;
-    }
+  .entity-editor-container {
+    flex: 0 1 450px;
+    margin-left: $shell-padding / 2;
+    overflow-y: auto;
+  }
 
-    .the-duck-bg-img {
-        position: absolute;
-        width: 300px;
-        height: 350px;
-        bottom: 0;
-        right: 0;
-        background: url(./resources/images/entity-editor-duck-bg.svg) no-repeat;
-        z-index: -1;
-    }
+  .the-duck-bg-img {
+    position: absolute;
+    width: 300px;
+    height: 350px;
+    bottom: 0;
+    right: 0;
+    background: url(./resources/images/entity-editor-duck-bg.svg) no-repeat;
+    z-index: -1;
+  }
 }

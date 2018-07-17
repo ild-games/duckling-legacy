@@ -1,19 +1,14 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {IconComponent} from './icon.component';
+import { IconComponent } from "./icon.component";
 
 /**
  * Component for a general purpose icon button
  */
 @Component({
-    selector: "dk-icon-button",
-    styleUrls: ['./duckling/controls/icon-button.component.css'],
-    template: `
+  selector: "dk-icon-button",
+  styleUrls: ["./duckling/controls/icon-button.component.css"],
+  template: `
         <button
             *ngIf="!isRaised"
             mat-icon-button
@@ -41,14 +36,14 @@ import {IconComponent} from './icon.component';
     `
 })
 export class IconButtonComponent {
-    @Input() icon : string = "";
-    @Input() color : string = "";
-    @Input() tooltip : string = "";
-    @Input() isRaised : boolean = false;
-    @Input() disabled : boolean = false;
-    @Output() iconClick = new EventEmitter<boolean>();
+  @Input() icon: string = "";
+  @Input() color: string = "";
+  @Input() tooltip: string = "";
+  @Input() isRaised: boolean = false;
+  @Input() disabled: boolean = false;
+  @Output() iconClick = new EventEmitter<boolean>();
 
-    onButtonClicked() {
-        this.iconClick.emit(true);
-    }
+  onButtonClicked() {
+    this.iconClick.emit(true);
+  }
 }

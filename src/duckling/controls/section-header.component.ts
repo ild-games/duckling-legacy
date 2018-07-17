@@ -1,17 +1,12 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
 /**
  * Component for the generic header for sections
  */
 @Component({
-    selector: "dk-section-header",
-    styleUrls: ['./duckling/controls/section-header.component.css'],
-    template: `
+  selector: "dk-section-header",
+  styleUrls: ["./duckling/controls/section-header.component.css"],
+  template: `
         <div
             [class]="headerCssClasses"
             (click)="onWholeHeaderClicked(!sectionOpen)">
@@ -33,35 +28,30 @@ import {
     `
 })
 export class SectionHeaderComponent {
-    @Input()
-    checkboxMode : boolean = false;
+  @Input() checkboxMode: boolean = false;
 
-    @Input()
-    sectionOpen : boolean = false;
+  @Input() sectionOpen: boolean = false;
 
-    @Input()
-    headerText : string = "";
+  @Input() headerText: string = "";
 
-    @Input()
-    collapsible : boolean = true;
+  @Input() collapsible: boolean = true;
 
-    @Output()
-    sectionOpenChanged = new EventEmitter<boolean>();
+  @Output() sectionOpenChanged = new EventEmitter<boolean>();
 
-    onSectionOpenChanged(sectionOpened : boolean) {
-        this.sectionOpenChanged.emit(sectionOpened);
+  onSectionOpenChanged(sectionOpened: boolean) {
+    this.sectionOpenChanged.emit(sectionOpened);
+  }
+
+  onWholeHeaderClicked(sectionOpened: boolean) {
+    if (!this.checkboxMode) {
+      this.sectionOpenChanged.emit(sectionOpened);
     }
+  }
 
-    onWholeHeaderClicked(sectionOpened : boolean) {
-        if (!this.checkboxMode) {
-            this.sectionOpenChanged.emit(sectionOpened);
-        }
+  get headerCssClasses(): string {
+    if (this.collapsible) {
+      return "header mat-elevation-z3 pointer";
     }
-
-    get headerCssClasses() : string {
-        if (this.collapsible) {
-            return "header mat-elevation-z3 pointer";
-        }
-        return "header mat-elevation-z3";
-    }
+    return "header mat-elevation-z3";
+  }
 }

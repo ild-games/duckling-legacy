@@ -1,15 +1,15 @@
-@import '../forms';
+@import "../forms";
 
 .wrapper {
-    width: 100%;
-    display: flex;
+  width: 100%;
+  display: flex;
 
-    button {
-        height: 40px;
-    }
+  button {
+    height: 40px;
+  }
 
-    dk-input {
-        flex: 1 1 auto;
-        margin-left: $spacer-unit;
-    }
+  dk-input {
+    flex: 1 1 auto;
+    margin-left: $spacer-unit;
+  }
 }

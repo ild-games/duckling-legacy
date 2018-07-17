@@ -1,20 +1,20 @@
 $listContainerWidth: 248px;
 
 @mixin layer-list($viewHeight) {
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: $listContainerWidth;
-    max-height: $viewHeight;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: $listContainerWidth;
+  max-height: $viewHeight;
 }
 
 .attributes-list {
-    @include layer-list(25vh);
+  @include layer-list(25vh);
 }
 
 .layers-list {
-    @include layer-list(40vh);
+  @include layer-list(40vh);
 }
 
 mat-list-item {
-    width: $listContainerWidth - 16px;
+  width: $listContainerWidth - 16px;
 }

@@ -1,26 +1,30 @@
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    OnInit,
-    OnDestroy
-} from '@angular/core';
-import {Subscriber} from 'rxjs';
-import {Rectangle} from 'pixi.js';
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy
+} from "@angular/core";
+import { Subscriber } from "rxjs";
+import { Rectangle } from "pixi.js";
 
-import {DialogService} from '../../util/dialog.service';
-import {Validator} from '../../controls/validated-input.component';
-import {immutableAssign} from '../../util/model';
-import {AssetService, Asset} from '../../project/asset.service';
-import {ProjectService} from '../../project/project.service';
-import {Vector} from '../../math/vector';
+import { DialogService } from "../../util/dialog.service";
+import { Validator } from "../../controls/validated-input.component";
+import { immutableAssign } from "../../util/model";
+import { AssetService, Asset } from "../../project/asset.service";
+import { ProjectService } from "../../project/project.service";
+import { Vector } from "../../math/vector";
 
-import {TileBlockDrawable, getTileWidth, getTileHeight} from './tile-block-drawable';
+import {
+  TileBlockDrawable,
+  getTileWidth,
+  getTileHeight
+} from "./tile-block-drawable";
 
 @Component({
-    selector: "dk-tile-block-drawable",
-    template: `
+  selector: "dk-tile-block-drawable",
+  template: `
         <dk-vector-input
             xLabel="Size Width"
             yLabel="Size Height"
@@ -40,106 +44,120 @@ import {TileBlockDrawable, getTileWidth, getTileHeight} from './tile-block-drawa
     `
 })
 export class TileBlockDrawableComponent implements OnInit, OnDestroy {
-    @Input() tileBlockDrawable : TileBlockDrawable;
-    @Output() drawableChanged = new EventEmitter<TileBlockDrawable>();
+  @Input() tileBlockDrawable: TileBlockDrawable;
+  @Output() drawableChanged = new EventEmitter<TileBlockDrawable>();
 
-    private _assetServiceSubscription : Subscriber<any>;
-    private _pickedAssetKey : string = "";
+  private _assetServiceSubscription: Subscriber<any>;
+  private _pickedAssetKey: string = "";
 
-    constructor(private _dialog : DialogService,
-                private _assets : AssetService,
-                private _project : ProjectService) {
+  constructor(
+    private _dialog: DialogService,
+    private _assets: AssetService,
+    private _project: ProjectService
+  ) {}
+
+  ngOnInit() {
+    this._assetServiceSubscription = this._assets.assetLoaded.subscribe(asset =>
+      this._onAssetLoaded(asset)
+    ) as Subscriber<any>;
+  }
+
+  ngOnDestroy() {
+    this._assetServiceSubscription.unsubscribe();
+  }
+
+  onImageFilePicked(imageKey: string) {
+    this._pickedAssetKey = imageKey;
+    let asset: Asset = { type: "TexturePNG", key: imageKey };
+    if (this._assets.get(asset)) {
+      this._onAssetLoaded(asset);
+    } else {
+      this._assets.add([{ asset: { type: "TexturePNG", key: imageKey } }]);
+    }
+  }
+
+  private _onAssetLoaded(asset: Asset) {
+    if (
+      !this._pickedAssetKey ||
+      this._pickedAssetKey === "" ||
+      asset.key !== this._pickedAssetKey
+    ) {
+      return;
     }
 
-    ngOnInit() {
-        this._assetServiceSubscription = this._assets.assetLoaded.subscribe(asset => this._onAssetLoaded(asset)) as Subscriber<any>;
+    this._pickedAssetKey = "";
+    if (this._validDimension(this._assets.getImageAssetDimensions(asset))) {
+      this.drawableChanged.emit(
+        immutableAssign(this.tileBlockDrawable, {
+          textureKey: asset.key,
+          size: this._getStartingSize(
+            this._assets.getImageAssetDimensions(asset)
+          )
+        })
+      );
+    } else {
+      this._dialog.showErrorDialog(
+        "Unable to load tile block image",
+        "A tile block's image must be the same width and height and the dimensions must be a power of 2 (ex: 64x64)"
+      );
     }
+  }
 
-    ngOnDestroy() {
-        this._assetServiceSubscription.unsubscribe();
-    }
-
-    onImageFilePicked(imageKey : string) {
-        this._pickedAssetKey = imageKey;
-        let asset : Asset = {type: "TexturePNG", key: imageKey};
-        if (this._assets.get(asset)) {
-            this._onAssetLoaded(asset);
-        } else {
-            this._assets.add([{asset: {type: "TexturePNG", key: imageKey}}]);
+  onSizeInput(newSize: Vector) {
+    this.drawableChanged.emit(
+      immutableAssign(this.tileBlockDrawable, {
+        size: {
+          x: newSize.x * getTileWidth(this.tileBlockDrawable, this._assets),
+          y: newSize.y * getTileHeight(this.tileBlockDrawable, this._assets)
         }
+      })
+    );
+  }
+
+  getDisplaySize(): Vector {
+    if (!this.tileBlockDrawable.textureKey) {
+      return { x: 10, y: 10 };
     }
 
-    private _onAssetLoaded(asset : Asset) {
-        if (!this._pickedAssetKey || this._pickedAssetKey === "" || asset.key !== this._pickedAssetKey) {
-            return;
-        }
-        
-        this._pickedAssetKey = "";
-        if (this._validDimension(this._assets.getImageAssetDimensions(asset))) {
-            this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {
-                textureKey: asset.key,
-                size: this._getStartingSize(this._assets.getImageAssetDimensions(asset))
-            }));
-        } else {
-            this._dialog.showErrorDialog(
-                "Unable to load tile block image",
-                "A tile block's image must be the same width and height and the dimensions must be a power of 2 (ex: 64x64)");
-        }
+    return {
+      x:
+        this.tileBlockDrawable.size.x /
+        getTileWidth(this.tileBlockDrawable, this._assets),
+      y:
+        this.tileBlockDrawable.size.y /
+        getTileHeight(this.tileBlockDrawable, this._assets)
+    };
+  }
+
+  private _getStartingSize(assetDimension: Vector): Vector {
+    return {
+      x: (assetDimension.x / 4) * 6,
+      y: (assetDimension.y / 4) * 6
+    };
+  }
+
+  private _validDimension(dimension: Vector): boolean {
+    if (dimension.x !== dimension.y) {
+      return false;
     }
 
-    onSizeInput(newSize : Vector) {
-        this.drawableChanged.emit(immutableAssign(this.tileBlockDrawable, {
-            size: {
-                x: newSize.x * getTileWidth(this.tileBlockDrawable, this._assets),
-                y: newSize.y * getTileHeight(this.tileBlockDrawable, this._assets)
-            }
-        }));
+    if (!Number.isInteger(Math.sqrt(dimension.x))) {
+      return false;
     }
 
-    getDisplaySize() : Vector {
-        if (!this.tileBlockDrawable.textureKey) {
-            return {x: 10, y: 10};
-        }
-        
-        return {
-            x: this.tileBlockDrawable.size.x / getTileWidth(this.tileBlockDrawable, this._assets),
-            y: this.tileBlockDrawable.size.y / getTileHeight(this.tileBlockDrawable, this._assets)
-        };
-    }
+    return true;
+  }
 
-    private _getStartingSize(assetDimension : Vector) : Vector {
-        return {
-            x: (assetDimension.x / 4) * 6,
-            y: (assetDimension.y / 4) * 6
-        }
-    }
+  get dialogOptions() {
+    return {
+      properties: ["openFile"],
+      filters: [{ name: "Images", extensions: ["png"] }]
+    };
+  }
 
-    private _validDimension(dimension : Vector) : boolean {
-        if (dimension.x !== dimension.y) {
-            return false;
-        }
-
-        if (!Number.isInteger(Math.sqrt(dimension.x))) {
-            return false;
-        }
-
-        return true;
-    }
-    
-    get dialogOptions() {
-        return {
-            properties: [
-                'openFile'
-            ],
-            filters: [
-                {name: 'Images', extensions: ['png']},
-            ]
-        }
-    }
-
-    get sizeValidator() : Validator {
-        return (value : string) => {
-            return Number.isInteger(parseInt(value)) && parseInt(value) > 0;
-        }
-    }
+  get sizeValidator(): Validator {
+    return (value: string) => {
+      return Number.isInteger(parseInt(value)) && parseInt(value) > 0;
+    };
+  }
 }
