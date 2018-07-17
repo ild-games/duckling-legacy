@@ -1,17 +1,17 @@
 .hover {
-    .non-hover-button {
-        display: block;
-    }
-    .hover-button {
-        display: none;
-    }
+  .non-hover-button {
+    display: block;
+  }
+  .hover-button {
+    display: none;
+  }
 }
 
 .hover:hover {
-    .non-hover-button {
-        display: none;
-    }
-    .hover-button {
-        display: block;
-    }
+  .non-hover-button {
+    display: none;
+  }
+  .hover-button {
+    display: block;
+  }
 }

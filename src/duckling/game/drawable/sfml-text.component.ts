@@ -1,21 +1,21 @@
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    AfterViewInit
-} from '@angular/core';
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  AfterViewInit
+} from "@angular/core";
 
-import {immutableAssign} from '../../util/model';
-import {Color} from '../../canvas/drawing/color';
-import {ProjectService} from '../../project/project.service';
-import {AssetService} from '../../project/asset.service';
+import { immutableAssign } from "../../util/model";
+import { Color } from "../../canvas/drawing/color";
+import { ProjectService } from "../../project/project.service";
+import { AssetService } from "../../project/asset.service";
 
-import {SFMLText} from './sfml-text';
+import { SFMLText } from "./sfml-text";
 
 @Component({
-    selector: "dk-sfml-text",
-    template: `
+  selector: "dk-sfml-text",
+  template: `
         <dk-input
             label="Text"
             [value]="sfmlText.text"
@@ -38,39 +38,44 @@ import {SFMLText} from './sfml-text';
     `
 })
 export class SFMLTextComponent {
-    @Input() sfmlText : SFMLText;
+  @Input() sfmlText: SFMLText;
 
-    @Output() sfmlTextChanged = new EventEmitter<SFMLText>();
+  @Output() sfmlTextChanged = new EventEmitter<SFMLText>();
 
-    constructor(private _project : ProjectService,
-                private _assets : AssetService) {
-    }
+  constructor(
+    private _project: ProjectService,
+    private _assets: AssetService
+  ) {}
 
-    onTextChanged(newText : string) {
-        this.sfmlTextChanged.emit(immutableAssign(this.sfmlText, {text: newText}));
-    }
+  onTextChanged(newText: string) {
+    this.sfmlTextChanged.emit(
+      immutableAssign(this.sfmlText, { text: newText })
+    );
+  }
 
-    onFontFilePicked(newFontKey : string) {
-        this._assets.add([{asset: {type: "FontTTF", key: newFontKey}}]);
-        this.sfmlTextChanged.emit(immutableAssign(this.sfmlText, {fontKey: newFontKey}));
-    }
+  onFontFilePicked(newFontKey: string) {
+    this._assets.add([{ asset: { type: "FontTTF", key: newFontKey } }]);
+    this.sfmlTextChanged.emit(
+      immutableAssign(this.sfmlText, { fontKey: newFontKey })
+    );
+  }
 
-    onCharacterSizeChanged(newCharacterSize : number) {
-        this.sfmlTextChanged.emit(immutableAssign(this.sfmlText, {characterSize: newCharacterSize}));
-    }
+  onCharacterSizeChanged(newCharacterSize: number) {
+    this.sfmlTextChanged.emit(
+      immutableAssign(this.sfmlText, { characterSize: newCharacterSize })
+    );
+  }
 
-    onColorChanged(newColor : Color) {
-        this.sfmlTextChanged.emit(immutableAssign(this.sfmlText, {color: newColor}));
-    }
+  onColorChanged(newColor: Color) {
+    this.sfmlTextChanged.emit(
+      immutableAssign(this.sfmlText, { color: newColor })
+    );
+  }
 
-    get dialogOptions() {
-        return {
-            properties: [
-                'openFile'
-            ],
-            filters: [
-                {name: 'Fonts', extensions: ['ttf']},
-            ]
-        }
-    }
+  get dialogOptions() {
+    return {
+      properties: ["openFile"],
+      filters: [{ name: "Fonts", extensions: ["ttf"] }]
+    };
+  }
 }

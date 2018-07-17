@@ -1,13 +1,8 @@
-import {
-    Component,
-    EventEmitter,
-    Output,
-    Input
-} from '@angular/core';
+import { Component, EventEmitter, Output, Input } from "@angular/core";
 
 @Component({
-    selector: "dk-default-attribute",
-    template: `
+  selector: "dk-default-attribute",
+  template: `
         <dk-json
             [value]="attribute"
             (valueChanged)="onValueChanged($event)">
@@ -15,11 +10,11 @@ import {
     `
 })
 export class DefaultAttributeComponent {
-    @Input() attribute : any;
+  @Input() attribute: any;
 
-    @Output() attributeChanged = new EventEmitter<any>();
+  @Output() attributeChanged = new EventEmitter<any>();
 
-    onValueChanged(newValue : any) {
-        this.attributeChanged.emit(newValue);
-    }
+  onValueChanged(newValue: any) {
+    this.attributeChanged.emit(newValue);
+  }
 }

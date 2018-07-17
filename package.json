@@ -68,6 +68,7 @@
     "electron": "1.8.6",
     "electron-mocha": "6.0.2",
     "mocha": "5.1.1",
+    "prettier": "1.13.7",
     "typescript": "2.8.3"
   }
 }

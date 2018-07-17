@@ -1,23 +1,18 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {Validator} from '../../controls/validated-input.component';
-import {Vector} from '../../math/vector';
-import {immutableAssign} from '../../util/model';
+import { Validator } from "../../controls/validated-input.component";
+import { Vector } from "../../math/vector";
+import { immutableAssign } from "../../util/model";
 
-import {Drawable} from './drawable';
+import { Drawable } from "./drawable";
 
 /**
  * Component to edit the shared properties of all shapes
  */
 @Component({
-    selector: "dk-generic-drawable",
-    styleUrls: ['./duckling/game/drawable/generic-drawable.component.css'],
-    template: `
+  selector: "dk-generic-drawable",
+  styleUrls: ["./duckling/game/drawable/generic-drawable.component.css"],
+  template: `
         <dk-edit-input
             [value]="drawable.key"
             [validator]="combinedValidators"
@@ -65,41 +60,51 @@ import {Drawable} from './drawable';
     `
 })
 export class GenericDrawableComponent {
-    @Input() keyValidator : Validator;
-    @Input() drawable : Drawable;
-    @Output() drawableChanged = new EventEmitter<Drawable>();
-    
-    onSaveDrawableKey(newKey : string) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {key: newKey}));
-    }
+  @Input() keyValidator: Validator;
+  @Input() drawable: Drawable;
+  @Output() drawableChanged = new EventEmitter<Drawable>();
 
-    onRenderPriorityInput(newRenderPriority : number) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {renderPriority: newRenderPriority}));
-    }
+  onSaveDrawableKey(newKey: string) {
+    this.drawableChanged.emit(immutableAssign(this.drawable, { key: newKey }));
+  }
 
-    onScaleInput(newScale : Vector) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {scale: newScale}));
-    }
+  onRenderPriorityInput(newRenderPriority: number) {
+    this.drawableChanged.emit(
+      immutableAssign(this.drawable, { renderPriority: newRenderPriority })
+    );
+  }
 
-    onAnchorInput(newAnchor : Vector) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {anchor: newAnchor}));
-    }
+  onScaleInput(newScale: Vector) {
+    this.drawableChanged.emit(
+      immutableAssign(this.drawable, { scale: newScale })
+    );
+  }
 
-    onRotationInput(newRotation : number) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {rotation: newRotation}));
-    }
+  onAnchorInput(newAnchor: Vector) {
+    this.drawableChanged.emit(
+      immutableAssign(this.drawable, { anchor: newAnchor })
+    );
+  }
 
-    onInactivePressed(inactive : boolean) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, {inactive: inactive}));
-    }
+  onRotationInput(newRotation: number) {
+    this.drawableChanged.emit(
+      immutableAssign(this.drawable, { rotation: newRotation })
+    );
+  }
 
-    get combinedValidators() : Validator {
-        return (value : string) => {
-            if (value === this.drawable.key) {
-                return true;
-            }
+  onInactivePressed(inactive: boolean) {
+    this.drawableChanged.emit(
+      immutableAssign(this.drawable, { inactive: inactive })
+    );
+  }
 
-            return this.keyValidator(value);
-        }
-    }
+  get combinedValidators(): Validator {
+    return (value: string) => {
+      if (value === this.drawable.key) {
+        return true;
+      }
+
+      return this.keyValidator(value);
+    };
+  }
 }

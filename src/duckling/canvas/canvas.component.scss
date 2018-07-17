@@ -1,23 +1,23 @@
 :host {
-    display: block;
+  display: block;
 }
 
 ::selection {
-    background: transparent;
+  background: transparent;
 }
 
 .canvas-container {
-    cursor: default;
-    height: 0;
+  cursor: default;
+  height: 0;
 }
 
 .canvas-container canvas {
-    cursor: default;
+  cursor: default;
 }
 
 .canvas {
-    position: absolute;
-    z-index: -1;
+  position: absolute;
+  z-index: -1;
 }
 
 .canvas-scroll {

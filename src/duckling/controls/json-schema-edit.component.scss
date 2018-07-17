@@ -1,13 +1,13 @@
-@import '../forms';
+@import "../forms";
 
 .json-content {
-    font-family: "Courier", sans-serif !important;
+  font-family: "Courier", sans-serif !important;
 
-    .json-key {
-        margin-left: $spacer-unit * 2;
-    }
+  .json-key {
+    margin-left: $spacer-unit * 2;
+  }
 }
 
 .array-type {
-    margin-left: $spacer-unit * 2;
+  margin-left: $spacer-unit * 2;
 }

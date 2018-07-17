@@ -1,23 +1,18 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {Vector} from '../math/vector';
-import {immutableAssign} from '../util/model';
+import { Vector } from "../math/vector";
+import { immutableAssign } from "../util/model";
 
-import {NumberInputComponent} from './number-input.component';
-import {Validator} from './validated-input.component';
+import { NumberInputComponent } from "./number-input.component";
+import { Validator } from "./validated-input.component";
 
 /**
  * Component that allows a user to input values for a vector.
  */
 @Component({
-    selector: "dk-vector-input",
-    styleUrls: ['./duckling/controls/vector-input.component.css'],
-    template:`
+  selector: "dk-vector-input",
+  styleUrls: ["./duckling/controls/vector-input.component.css"],
+  template: `
         <dk-number-input
             [label]="xLabel"
             [value]="value?.x"
@@ -35,24 +30,24 @@ import {Validator} from './validated-input.component';
     `
 })
 export class VectorInputComponent {
-    @Input() xLabel : string = "X";
-    @Input() yLabel : string = "Y";
-    @Input() value : Vector;
-    @Input() xValidator : Validator;
-    @Input() yValidator : Validator;
-    @Input() xDisabled : boolean = false;
-    @Input() yDisabled : boolean = false;
+  @Input() xLabel: string = "X";
+  @Input() yLabel: string = "Y";
+  @Input() value: Vector;
+  @Input() xValidator: Validator;
+  @Input() yValidator: Validator;
+  @Input() xDisabled: boolean = false;
+  @Input() yDisabled: boolean = false;
 
-    /**
-     * Event published when the user enters a valid input.
-     */
-    @Output() validInput = new EventEmitter<Vector>();
+  /**
+   * Event published when the user enters a valid input.
+   */
+  @Output() validInput = new EventEmitter<Vector>();
 
-    onXInput(x : number) {
-        this.validInput.emit(immutableAssign(this.value, {x}));
-    }
+  onXInput(x: number) {
+    this.validInput.emit(immutableAssign(this.value, { x }));
+  }
 
-    onYInput(y : number) {
-        this.validInput.emit(immutableAssign(this.value, {y}));
-    }
+  onYInput(y: number) {
+    this.validInput.emit(immutableAssign(this.value, { y }));
+  }
 }

@@ -22,6 +22,7 @@ Your duckling project has a `project/version.json` file that describes the proje
 # Entity Migration
 
 Entity migrations run over every entity in the map. It can be used to add, remove, and modify the entity's attributes. The entity migration accepts an entity as the first argument and must return the migrated entity. The type of the entity argument and return value is:
+
 ```
 interface Entity {
     [attributeName] : Attribute
@@ -85,6 +86,7 @@ module.exports = function (tools) {
 ```
 
 # Attribute Migrations
+
 Attribute migrations run over all the attributes in a system. You write a function that takes an attribute and returns a post migration attribute. It is possible to delete an attribute by returning null. Here is an example migration that changes the size of all collision attributes to 100. In the sample project above this would be in `project/migrations/make-collision100.js`
 
 ```

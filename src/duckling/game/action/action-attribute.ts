@@ -1,25 +1,25 @@
-import {Entity, Attribute} from '../../entitysystem/entity';
+import { Entity, Attribute } from "../../entitysystem/entity";
 
 export const ACTION_KEY = "action";
 
 export interface ActionAttribute extends Attribute {
-    actions: Actions;
+  actions: Actions;
 }
 
 export interface Actions {
-    platformVelocityActions: Array<any>;
-    platformPositionActions: Array<any>;
-    affectedByGravity: boolean
+  platformVelocityActions: Array<any>;
+  platformPositionActions: Array<any>;
+  affectedByGravity: boolean;
 }
 
-export let defaultAction : ActionAttribute = {
-    actions: {
-        platformVelocityActions: [],
-        platformPositionActions: [],
-        affectedByGravity: true
-    }
-}
+export let defaultAction: ActionAttribute = {
+  actions: {
+    platformVelocityActions: [],
+    platformPositionActions: [],
+    affectedByGravity: true
+  }
+};
 
-export function getAction(entity : Entity) : ActionAttribute {
-    return <ActionAttribute>entity[ACTION_KEY];
+export function getAction(entity: Entity): ActionAttribute {
+  return <ActionAttribute>entity[ACTION_KEY];
 }

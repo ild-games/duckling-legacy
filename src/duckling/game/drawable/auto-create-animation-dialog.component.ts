@@ -1,32 +1,34 @@
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    AfterViewInit,
-    ViewContainerRef,
-    OnInit,
-    OnDestroy
-} from '@angular/core';
-import {MatDialogConfig, MatDialogRef} from '@angular/material';
-import {Observable, Subscriber} from 'rxjs';
-import {Rectangle} from 'pixi.js';
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  AfterViewInit,
+  ViewContainerRef,
+  OnInit,
+  OnDestroy
+} from "@angular/core";
+import { MatDialogConfig, MatDialogRef } from "@angular/material";
+import { Observable, Subscriber } from "rxjs";
+import { Rectangle } from "pixi.js";
 
-import {Vector} from '../../math';
-import {ProjectService} from '../../project';
-import {AssetService, Asset} from '../../project/asset.service';
-import {DialogService} from '../../util';
+import { Vector } from "../../math";
+import { ProjectService } from "../../project";
+import { AssetService, Asset } from "../../project/asset.service";
+import { DialogService } from "../../util";
 
 export type AutoCreateDialogResult = {
-    numFrames : number,
-    frameDimensions : Vector,
-    imageKey : string
-}
+  numFrames: number;
+  frameDimensions: Vector;
+  imageKey: string;
+};
 
 @Component({
-    selector: 'dk-auto-create-animation-dialog',
-    styleUrls: ['./duckling/game/drawable/auto-create-animation-dialog.component.css'],
-    template: `
+  selector: "dk-auto-create-animation-dialog",
+  styleUrls: [
+    "./duckling/game/drawable/auto-create-animation-dialog.component.css"
+  ],
+  template: `
         <div class="body">
             <dk-number-input
                 label="Number of frames"
@@ -65,73 +67,71 @@ export type AutoCreateDialogResult = {
     `
 })
 export class AutoCreateAnimationDialogComponent {
-    numFrames : number = 0;
-    frameDimensions : Vector = {x: 0, y: 0};
-    imageKey : string;
+  numFrames: number = 0;
+  frameDimensions: Vector = { x: 0, y: 0 };
+  imageKey: string;
 
-    private _assetServiceSubscription : Subscriber<any>;
+  private _assetServiceSubscription: Subscriber<any>;
 
-    constructor(private _dialogRef : MatDialogRef<AutoCreateAnimationDialogComponent>,
-                private _dialog : DialogService,
-                private _assets : AssetService,
-                private _project : ProjectService) {
+  constructor(
+    private _dialogRef: MatDialogRef<AutoCreateAnimationDialogComponent>,
+    private _dialog: DialogService,
+    private _assets: AssetService,
+    private _project: ProjectService
+  ) {}
+
+  ngOnInit() {
+    this._assetServiceSubscription = this._assets.assetLoaded.subscribe(asset =>
+      this._onAssetLoaded(asset)
+    ) as Subscriber<any>;
+  }
+
+  ngOnDestroy() {
+    this._assetServiceSubscription.unsubscribe();
+  }
+
+  onAcceptClicked() {
+    let asset: Asset = { type: "TexturePNG", key: this.imageKey };
+    if (this._assets.get(asset)) {
+      this._onAssetLoaded(asset);
+    } else {
+      this._assets.add([{ asset }]);
+    }
+  }
+
+  onCancelClicked() {
+    this._dialogRef.close(null);
+  }
+
+  onDimensionInput(newFrameDimensions: Vector) {
+    this.frameDimensions = newFrameDimensions;
+  }
+
+  onNumFramesInput(newNumFrames: number) {
+    this.numFrames = newNumFrames;
+  }
+
+  onImageFilePicked(imageKey: string) {
+    this.imageKey = imageKey;
+  }
+
+  private _onAssetLoaded(asset: Asset) {
+    if (!this.imageKey || this.imageKey === "" || asset.key !== this.imageKey) {
+      return;
     }
 
-    ngOnInit() {
-        this._assetServiceSubscription = this._assets.assetLoaded.subscribe(asset => this._onAssetLoaded(asset)) as Subscriber<any>;
-    }
+    let result: AutoCreateDialogResult = {
+      numFrames: this.numFrames,
+      frameDimensions: this.frameDimensions,
+      imageKey: this.imageKey
+    };
+    this._dialogRef.close(result);
+  }
 
-    ngOnDestroy() {
-        this._assetServiceSubscription.unsubscribe();
-    }
-
-    onAcceptClicked() {
-        let asset : Asset = {type: "TexturePNG", key: this.imageKey};
-        if (this._assets.get(asset)) {
-            this._onAssetLoaded(asset);
-        } else {
-            this._assets.add([{asset}]);
-        }
-    }
-
-    onCancelClicked() {
-        this._dialogRef.close(null);
-    }
-
-    onDimensionInput(newFrameDimensions : Vector) {
-        this.frameDimensions = newFrameDimensions;
-    }
-
-    onNumFramesInput(newNumFrames : number) {
-        this.numFrames = newNumFrames;
-    }
-
-    onImageFilePicked(imageKey : string) {
-        this.imageKey = imageKey;
-    }
-
-    private _onAssetLoaded(asset : Asset) {
-        if (!this.imageKey || this.imageKey === "" || asset.key !== this.imageKey) {
-            return;
-        }
-        
-        let result : AutoCreateDialogResult = {
-            numFrames: this.numFrames,
-            frameDimensions: this.frameDimensions,
-            imageKey: this.imageKey
-        };
-        this._dialogRef.close(result);
-    }
-
-    get dialogOptions() {
-        return {
-            properties: [
-                'openFile'
-            ],
-            filters: [
-                {name: 'Images', extensions: ['png']},
-            ]
-        }
-    }
-
+  get dialogOptions() {
+    return {
+      properties: ["openFile"],
+      filters: [{ name: "Images", extensions: ["png"] }]
+    };
+  }
 }

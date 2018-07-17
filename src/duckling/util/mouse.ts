@@ -2,9 +2,9 @@
  * Enum describing the available mouse buttons.
  */
 export enum MouseButton {
-    None = 0,
-    Left = 1,
-    Right = 2
+  None = 0,
+  Left = 1,
+  Right = 2
 }
 
 /**
@@ -13,6 +13,6 @@ export enum MouseButton {
  * @param  button A button that may be pressed.
  * @return True if the button is pressed.  False otherwise.
  */
-export function isMouseButtonPressed(event : MouseEvent, button : MouseButton) {
-    return !!(event.buttons & button);
+export function isMouseButtonPressed(event: MouseEvent, button: MouseButton) {
+  return !!(event.buttons & button);
 }

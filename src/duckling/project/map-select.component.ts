@@ -1,20 +1,20 @@
-import {Component, ViewContainerRef} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {Observable} from 'rxjs';
+import { Component, ViewContainerRef } from "@angular/core";
+import { MatDialogRef } from "@angular/material";
+import { Observable } from "rxjs";
 
-import {ProjectService} from './project.service';
+import { ProjectService } from "./project.service";
 
 /**
  * Dialog that allows user to choose a map. The result of the dialog is the map key the
  * user has chosen. The Project service has the logic used to create or load the map.
  */
 @Component({
-    selector: "dk-map-select",
-    styleUrls: [
-        "./duckling/layout.css", 
-        "./duckling/project/map-select.component.css"
-    ],
-    template: `
+  selector: "dk-map-select",
+  styleUrls: [
+    "./duckling/layout.css",
+    "./duckling/project/map-select.component.css"
+  ],
+  template: `
         <div *ngIf="!listLoaded">
             <mat-spinner></mat-spinner>
         </div>
@@ -51,37 +51,37 @@ import {ProjectService} from './project.service';
     `
 })
 export class MapSelectComponent {
+  listLoaded: boolean = false;
+  maps: string[] = [];
+  newMapName: string = "";
 
-    listLoaded : boolean = false;
-    maps : string [] = [];
-    newMapName : string = "";
+  constructor(
+    private _project: ProjectService,
+    private _dialogRef: MatDialogRef<MapSelectComponent>
+  ) {}
 
-    constructor(private _project : ProjectService,
-                private _dialogRef : MatDialogRef<MapSelectComponent>) {
+  ngOnInit() {
+    this._project.getMaps().then(maps => {
+      this.maps = maps;
+      this.listLoaded = true;
+    });
+  }
+
+  onCancel() {
+    this._dialogRef.close(null);
+  }
+
+  selectMap(mapName: string) {
+    this._dialogRef.close(mapName);
+  }
+
+  createMap() {
+    if (this.newMapNameIsValid()) {
+      this.selectMap(this.newMapName);
     }
+  }
 
-    ngOnInit() {
-        this._project.getMaps().then((maps) => {
-            this.maps = maps;
-            this.listLoaded = true;
-        });
-    }
-
-    onCancel() {
-        this._dialogRef.close(null);
-    }
-
-    selectMap(mapName : string) {
-        this._dialogRef.close(mapName);
-    }
-
-    createMap() {
-        if (this.newMapNameIsValid()) {
-            this.selectMap(this.newMapName);
-        }
-    }
-
-    newMapNameIsValid() {
-        return this.newMapName !== "" && this.maps.indexOf(this.newMapName) === -1;
-    }
+  newMapNameIsValid() {
+    return this.newMapName !== "" && this.maps.indexOf(this.newMapName) === -1;
+  }
 }

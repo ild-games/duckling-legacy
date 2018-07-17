@@ -1,21 +1,16 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {immutableAssign} from '../util';
+import { immutableAssign } from "../util";
 
-import {IconComponent} from './icon.component';
+import { IconComponent } from "./icon.component";
 
 /**
  * Component used as an element within an accordion
  */
 @Component({
-    selector: "dk-accordion-element",
-    styleUrls: ['./duckling/controls/accordion-element.component.css'],
-    template: `
+  selector: "dk-accordion-element",
+  styleUrls: ["./duckling/controls/accordion-element.component.css"],
+  template: `
         <dk-section-header
             [sectionOpen]="opened"
             [headerText]="title"
@@ -70,33 +65,33 @@ import {IconComponent} from './icon.component';
     `
 })
 export class AccordionElementComponent {
-    @Input() title : string;
-    @Input() first : boolean;
-    @Input() last : boolean;
-    @Input() opened = false;
-    @Input() clone = false;
-    @Output() deleted = new EventEmitter<boolean>();
-    @Output() moved = new EventEmitter<boolean>();
-    @Output() cloned = new EventEmitter();
-    @Output() toggled = new EventEmitter<boolean>();
+  @Input() title: string;
+  @Input() first: boolean;
+  @Input() last: boolean;
+  @Input() opened = false;
+  @Input() clone = false;
+  @Output() deleted = new EventEmitter<boolean>();
+  @Output() moved = new EventEmitter<boolean>();
+  @Output() cloned = new EventEmitter();
+  @Output() toggled = new EventEmitter<boolean>();
 
-    onToggle(opened : boolean) {
-        this.opened = opened;
-        this.toggled.emit(opened);
-    }
+  onToggle(opened: boolean) {
+    this.opened = opened;
+    this.toggled.emit(opened);
+  }
 
-    onDelete(event : MouseEvent) {
-        event.stopPropagation();
-        this.deleted.emit(true);
-    }
+  onDelete(event: MouseEvent) {
+    event.stopPropagation();
+    this.deleted.emit(true);
+  }
 
-    onMoved(down : boolean, event : MouseEvent) {
-        event.stopPropagation();
-        this.moved.emit(down);
-    }
+  onMoved(down: boolean, event: MouseEvent) {
+    event.stopPropagation();
+    this.moved.emit(down);
+  }
 
-    onCloned() {
-        event.stopPropagation();
-        this.cloned.emit(true);
-    }
+  onCloned() {
+    event.stopPropagation();
+    this.cloned.emit(true);
+  }
 }

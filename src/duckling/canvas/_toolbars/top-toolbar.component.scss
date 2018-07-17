@@ -1,19 +1,19 @@
 @import "../../colors";
-@import '../../fonts';
+@import "../../fonts";
 
 :host {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .map-name {
-    float: right;
-    overflow: hidden;
-    margin-left: auto;
+  float: right;
+  overflow: hidden;
+  margin-left: auto;
 }
 
 .separator {
-    border-left: 1px solid $light-primary-color;
-    padding: 1px 0 1px 0;
-    height: 80%;
+  border-left: 1px solid $light-primary-color;
+  padding: 1px 0 1px 0;
+  height: 80%;
 }

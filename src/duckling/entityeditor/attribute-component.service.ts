@@ -1,10 +1,10 @@
-import {Component, Injectable} from '@angular/core';
+import { Component, Injectable } from "@angular/core";
 
-import {AttributeKey, BaseAttributeService} from '../entitysystem';
-import {ProjectService} from '../project/project.service';
-import {CustomAttributeComponent} from '../project/custom-attribute.component';
+import { AttributeKey, BaseAttributeService } from "../entitysystem";
+import { ProjectService } from "../project/project.service";
+import { CustomAttributeComponent } from "../project/custom-attribute.component";
 
-import {DefaultAttributeComponent} from './_default-attribute.component';
+import { DefaultAttributeComponent } from "./_default-attribute.component";
 
 /**
  * The AttributeComponentService is used to find and instantiate a component class
@@ -12,26 +12,26 @@ import {DefaultAttributeComponent} from './_default-attribute.component';
  */
 @Injectable()
 export class AttributeComponentService extends BaseAttributeService<any> {
-    constructor(private _projectService : ProjectService) {
-        super();
-    }
-    
-    /**
-     * Get the component class for the attribute.
-     * @param  key The key of the attribute the component will be retrieved for.
-     * @return The component class to use for the attribute.
-     */
-    getComponentType(key : AttributeKey) : any {
-        let implementation = this.getImplementation(key);
+  constructor(private _projectService: ProjectService) {
+    super();
+  }
 
-        if (implementation) {
-            return implementation;
-        }
-        
-        if (this._projectService.isCustomAttribute(key)) {
-            return CustomAttributeComponent;
-        }
+  /**
+   * Get the component class for the attribute.
+   * @param  key The key of the attribute the component will be retrieved for.
+   * @return The component class to use for the attribute.
+   */
+  getComponentType(key: AttributeKey): any {
+    let implementation = this.getImplementation(key);
 
-        return DefaultAttributeComponent;
+    if (implementation) {
+      return implementation;
     }
+
+    if (this._projectService.isCustomAttribute(key)) {
+      return CustomAttributeComponent;
+    }
+
+    return DefaultAttributeComponent;
+  }
 }

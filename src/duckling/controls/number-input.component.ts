@@ -1,23 +1,26 @@
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    ViewChild
-} from '@angular/core';
-import * as math from 'mathjs';
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild
+} from "@angular/core";
+import * as math from "mathjs";
 
-import {ValidatedInputComponent, Validator} from './validated-input.component';
+import {
+  ValidatedInputComponent,
+  Validator
+} from "./validated-input.component";
 
-let numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
+let numberRegex = /^\-?[0-9]+(\.[0-9]+)?$/;
 
 /**
  * Validated input that only publishes events when the input contains a number.
  */
 @Component({
-    selector: "dk-number-input",
-    styleUrls: ['./duckling/controls/number-input.component.css'],
-    template:`
+  selector: "dk-number-input",
+  styleUrls: ["./duckling/controls/number-input.component.css"],
+  template: `
         <dk-validated-input #validatedInputComponent
             [disabled]="disabled"
             [label]="label"
@@ -29,63 +32,63 @@ let numberRegex=/^\-?[0-9]+(\.[0-9]+)?$/;
     `
 })
 export class NumberInputComponent {
-    /**
-     * Reference of the input component used to get the raw value for special calculations
-     */
-    @ViewChild('validatedInputComponent') validatedInputComponent : ValidatedInputComponent;
-    
-    /**
-     * Text label displayed to the user.
-     */
-    @Input() label : string;
-    /**
-     * The value stored in the control.
-     */
-    @Input() value : number;
-    /**
-     * True if the input is disabled, otherwise false
-     */
-    @Input() disabled : boolean;
-    /**
-     * Extra validator
-     */
-    @Input() validator : Validator;
+  /**
+   * Reference of the input component used to get the raw value for special calculations
+   */
+  @ViewChild("validatedInputComponent")
+  validatedInputComponent: ValidatedInputComponent;
 
-    /**
-     * Event published when the user enters a valid input.
-     */
-    @Output() validInput = new EventEmitter<number>();
+  /**
+   * Text label displayed to the user.
+   */
+  @Input() label: string;
+  /**
+   * The value stored in the control.
+   */
+  @Input() value: number;
+  /**
+   * True if the input is disabled, otherwise false
+   */
+  @Input() disabled: boolean;
+  /**
+   * Extra validator
+   */
+  @Input() validator: Validator;
 
-    onInput(value : string) {
-        this.validInput.emit(parseFloat(value));
-    }
+  /**
+   * Event published when the user enters a valid input.
+   */
+  @Output() validInput = new EventEmitter<number>();
 
-    onHitEnter() {
-        let rawValue = this.validatedInputComponent.rawValue;
-        try {
-            let evaluatedValue = math.eval(rawValue);
-            if (this.combinedValidators(evaluatedValue+"")) {
-                this.validInput.emit(evaluatedValue);
-            }
-        } catch (e) {
-        }
-    }
+  onInput(value: string) {
+    this.validInput.emit(parseFloat(value));
+  }
 
-    isNumber(value : string) {
-        return (value+"").match(numberRegex) !== null;
-    }
+  onHitEnter() {
+    let rawValue = this.validatedInputComponent.rawValue;
+    try {
+      let evaluatedValue = math.eval(rawValue);
+      if (this.combinedValidators(evaluatedValue + "")) {
+        this.validInput.emit(evaluatedValue);
+      }
+    } catch (e) {}
+  }
 
-    isFinite(value : string) {
-        return Number.isFinite(Number.parseFloat(value));
-    }
+  isNumber(value: string) {
+    return (value + "").match(numberRegex) !== null;
+  }
 
-    get combinedValidators() : Validator {
-        return (value : string) => {
-            return (
-                this.isNumber(value) && 
-                this.isFinite(value) &&
-                (!this.validator || this.validator(value))
-            );
-        };
-    }
+  isFinite(value: string) {
+    return Number.isFinite(Number.parseFloat(value));
+  }
+
+  get combinedValidators(): Validator {
+    return (value: string) => {
+      return (
+        this.isNumber(value) &&
+        this.isFinite(value) &&
+        (!this.validator || this.validator(value))
+      );
+    };
+  }
 }
