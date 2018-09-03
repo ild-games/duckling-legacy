@@ -1,15 +1,20 @@
-export type JsonSchemaValue  = "number" | "string" | "boolean" | JsonSchema | JsonSchema[];
-export type JsonSchema = {[key : string] : JsonSchemaValue};
+export type JsonSchemaValue =
+    | "number"
+    | "string"
+    | "boolean"
+    | JsonSchema
+    | JsonSchema[];
+export type JsonSchema = { [key: string]: JsonSchemaValue };
 
-export function getDefaultForSchema(schema : JsonSchema) : any {
-    let value : any = {};
+export function getDefaultForSchema(schema: JsonSchema): any {
+    let value: any = {};
     for (let key in schema) {
         value[key] = _defaultValueForType(schema[key]);
     }
     return value;
 }
 
-function _defaultValueForType(type : JsonSchemaValue) : any {
+function _defaultValueForType(type: JsonSchemaValue): any {
     if (type === "number") {
         return 0;
     } else if (type === "string") {

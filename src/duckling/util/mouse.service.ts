@@ -1,14 +1,15 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy } from "@angular/core";
 
-import { WindowService } from './window.service';
+import { WindowService } from "./window.service";
 
 @Injectable()
 export class MouseService implements OnDestroy {
-
     private _heldButtons: { [button: number]: boolean } = {};
 
     constructor(private _window: WindowService) {
-        this._window.onMouseDown((event: MouseEvent) => this.onMouseDown(event));
+        this._window.onMouseDown((event: MouseEvent) =>
+            this.onMouseDown(event)
+        );
         this._window.onMouseUp((event: MouseEvent) => this.onMouseUp(event));
     }
 
@@ -36,5 +37,5 @@ export class MouseService implements OnDestroy {
 export enum MouseButton {
     Left = 0,
     Middle = 1,
-    Right = 2
+    Right = 2,
 }

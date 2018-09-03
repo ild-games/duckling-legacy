@@ -13,17 +13,17 @@ export enum ChangeType {
     /**
      * The two objects are different and the difference is greater than the mutation of a primitive field.
      */
-    ComplexChange
+    ComplexChange,
 }
 
- /**
+/**
  * Given two objects determine what type of change was made to beforeObject to turn it
  * into afterObject. Assumes the objects were mutated in an immutable fashion.
-  * @param  beforeObject The object before a change was made.
-  * @param  afterObject The object after a change was made.
-  * @return The type of change that was made to beforeObject.
-  */
-export function changeType(beforeObject : any, afterObject : any) : ChangeType {
+ * @param  beforeObject The object before a change was made.
+ * @param  afterObject The object after a change was made.
+ * @return The type of change that was made to beforeObject.
+ */
+export function changeType(beforeObject: any, afterObject: any): ChangeType {
     if (Object.is(beforeObject, afterObject)) {
         return ChangeType.Equal;
     }
@@ -37,11 +37,20 @@ export function changeType(beforeObject : any, afterObject : any) : ChangeType {
     let changeA = _checkLeftKeys(beforeObject, afterObject);
     let changeB = _checkLeftKeys(afterObject, beforeObject, true);
 
-    if (changeA === ChangeType.ComplexChange || changeB === ChangeType.ComplexChange) {
+    if (
+        changeA === ChangeType.ComplexChange ||
+        changeB === ChangeType.ComplexChange
+    ) {
         return ChangeType.ComplexChange;
-    } else if (changeA === ChangeType.PrimitiveChange && changeB === ChangeType.PrimitiveChange) {
+    } else if (
+        changeA === ChangeType.PrimitiveChange &&
+        changeB === ChangeType.PrimitiveChange
+    ) {
         return ChangeType.ComplexChange;
-    } else if (changeA === ChangeType.PrimitiveChange || changeB === ChangeType.PrimitiveChange) {
+    } else if (
+        changeA === ChangeType.PrimitiveChange ||
+        changeB === ChangeType.PrimitiveChange
+    ) {
         return ChangeType.PrimitiveChange;
     } else if (changeA === ChangeType.Equal && changeB === ChangeType.Equal) {
         return ChangeType.Equal;
@@ -50,7 +59,11 @@ export function changeType(beforeObject : any, afterObject : any) : ChangeType {
     }
 }
 
-function _checkLeftKeys(leftObject : any, rightObject : any, ignoreSharedKeys : boolean = false) {
+function _checkLeftKeys(
+    leftObject: any,
+    rightObject: any,
+    ignoreSharedKeys: boolean = false
+) {
     let hasPrimitiveChange = false;
     for (let key in leftObject) {
         if (ignoreSharedKeys && key in rightObject) {
@@ -76,10 +89,10 @@ function _checkLeftKeys(leftObject : any, rightObject : any, ignoreSharedKeys : 
     }
 }
 
-function _isObject(value : any) {
+function _isObject(value: any) {
     return value !== null && typeof value === typeof {};
 }
 
-function _isPrimitive(value : any) {
+function _isPrimitive(value: any) {
     return !_isObject(value);
 }

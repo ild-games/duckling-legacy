@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import {RawMapFile} from './map-parser.service';
+import { RawMapFile } from "./map-parser.service";
 
 export interface MapLifecycleHook {
-    (map : RawMapFile) : Promise<RawMapFile>;
+    (map: RawMapFile): Promise<RawMapFile>;
 }
 
 /**
@@ -11,28 +11,28 @@ export interface MapLifecycleHook {
  */
 @Injectable()
 export class ProjectLifecycleService {
-    private _postLoadHooks : MapLifecycleHook[] = [];
-    private _preSaveHooks : MapLifecycleHook[] = []; 
+    private _postLoadHooks: MapLifecycleHook[] = [];
+    private _preSaveHooks: MapLifecycleHook[] = [];
 
-    async executePostLoadMapHooks(map : RawMapFile) : Promise<RawMapFile> {
+    async executePostLoadMapHooks(map: RawMapFile): Promise<RawMapFile> {
         for (let hook of this._postLoadHooks) {
             map = await hook(map);
         }
         return map;
     }
 
-    async executePreSaveMapHooks(map : RawMapFile) : Promise<RawMapFile> {
+    async executePreSaveMapHooks(map: RawMapFile): Promise<RawMapFile> {
         for (let hook of this._preSaveHooks) {
             map = await hook(map);
         }
         return map;
     }
 
-    addPostLoadMapHook(hook : MapLifecycleHook) {
+    addPostLoadMapHook(hook: MapLifecycleHook) {
         this._postLoadHooks.push(hook);
     }
-    
-    addPreSaveMapHook(hook : MapLifecycleHook) {
+
+    addPreSaveMapHook(hook: MapLifecycleHook) {
         this._preSaveHooks.push(hook);
     }
 }

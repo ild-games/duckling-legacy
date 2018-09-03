@@ -1,24 +1,26 @@
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+
+import { Vector } from "../../math/vector";
+
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+    FormLabelComponent,
+    InputComponent,
+    NumberInputComponent,
+    Box2Component,
+    CheckboxComponent,
+    Validator,
+} from "../../controls";
+import { immutableAssign, immutableArrayAssign } from "../../util/model";
+import { DialogService } from "../../util/dialog.service";
+import { AssetService, Asset } from "../../project/asset.service";
+import { ProjectService } from "../../project/project.service";
 
-import { Vector } from '../../math/vector';
-
-import {FormLabelComponent, InputComponent, NumberInputComponent, Box2Component, CheckboxComponent, Validator} from '../../controls';
-import {immutableAssign, immutableArrayAssign} from '../../util/model';
-import {DialogService} from '../../util/dialog.service';
-import {AssetService, Asset} from '../../project/asset.service';
-import {ProjectService} from '../../project/project.service';
-
-import { SoundAttribute } from './sound-attribute';
-import { defaultSound, Sound } from './sound';
+import { SoundAttribute } from "./sound-attribute";
+import { defaultSound, Sound } from "./sound";
 
 @Component({
     selector: "dk-sound-attribute",
-    styleUrls: ['./duckling/game/audio/sound-attribute.component.css'],
+    styleUrls: ["./duckling/game/audio/sound-attribute.component.css"],
     template: `
         <dk-button
             tooltip="Add new sound"
@@ -42,30 +44,42 @@ import { defaultSound, Sound } from './sound';
                 </ng-template>
             </dk-accordion>
         </mat-card>
-    `
+    `,
 })
 export class SoundAttributeComponent {
     @Input() attribute: SoundAttribute;
     @Output() attributeChanged = new EventEmitter<SoundAttribute>();
 
-    constructor(private _dialog : DialogService,
-                private _assets : AssetService,
-                private _project : ProjectService) {
-    }
+    constructor(
+        private _dialog: DialogService,
+        private _assets: AssetService,
+        private _project: ProjectService
+    ) {}
 
     onAddSoundClicked() {
         let newSound = immutableAssign(defaultSound, {});
-        this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: this.attribute.sounds.concat(newSound)}));
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, {
+                sounds: this.attribute.sounds.concat(newSound),
+            })
+        );
     }
 
     onSoundChanged(event: Sound, index: number) {
-        let newSounds : Sound[] = [];
+        let newSounds: Sound[] = [];
         newSounds[index] = immutableAssign(this.attribute.sounds[index], event);
-        let soundsPatch = immutableArrayAssign(this.attribute.sounds, newSounds);
-        this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: soundsPatch}));
+        let soundsPatch = immutableArrayAssign(
+            this.attribute.sounds,
+            newSounds
+        );
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { sounds: soundsPatch })
+        );
     }
 
-    onSoundsChanged(newSounds : Sound[]) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {sounds: newSounds}));
+    onSoundsChanged(newSounds: Sound[]) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { sounds: newSounds })
+        );
     }
 }

@@ -1,14 +1,9 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {NumberInputComponent} from '../../controls';
-import {immutableAssign} from '../../util';
+import { NumberInputComponent } from "../../controls";
+import { immutableAssign } from "../../util";
 
-import {Circle} from './circle';
+import { Circle } from "./circle";
 
 /**
  * Component used to edit a Circle shape
@@ -21,13 +16,15 @@ import {Circle} from './circle';
             [value]="circle.radius"
             (validInput)="onRadiusInput($event)">
         </dk-number-input>
-    `
+    `,
 })
 export class CircleComponent {
-    @Input() circle : Circle;
+    @Input() circle: Circle;
     @Output() circleChanged = new EventEmitter<Circle>();
 
-    onRadiusInput(newRadius : number) {
-        this.circleChanged.emit(immutableAssign(this.circle, {radius: newRadius}));
+    onRadiusInput(newRadius: number) {
+        this.circleChanged.emit(
+            immutableAssign(this.circle, { radius: newRadius })
+        );
     }
 }

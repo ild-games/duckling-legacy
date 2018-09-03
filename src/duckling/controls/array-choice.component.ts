@@ -1,13 +1,8 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {ArraySelectComponent} from './array-select.component';
-import {SelectOption} from './array-select.component';
-import {IconComponent} from './icon.component';
+import { ArraySelectComponent } from "./array-select.component";
+import { SelectOption } from "./array-select.component";
+import { IconComponent } from "./icon.component";
 
 /**
  * Component used to display a select element of the options in an array along with a
@@ -27,14 +22,14 @@ import {IconComponent} from './icon.component';
             (click)="onAddClicked()">
             <dk-icon iconClass="plus"></dk-icon>
         </button>
-    `
+    `,
 })
 export class ArrayChoiceComponent {
-    @Input() options : SelectOption[];
-    @Input() selected : string;
+    @Input() options: SelectOption[];
+    @Input() selected: string;
     @Output() addClicked = new EventEmitter<any>();
 
-    select(arraySelection : string) {
+    select(arraySelection: string) {
         this.selected = arraySelection;
     }
 

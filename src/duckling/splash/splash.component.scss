@@ -1,13 +1,13 @@
-@import '../colors';
-@import '../fonts';
-@import '../forms';
-@import '../misc-mixins';
-@import '../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css';
+@import "../colors";
+@import "../fonts";
+@import "../forms";
+@import "../misc-mixins";
+@import "../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
 $project-title-color: $primary-text-color;
 $project-path-color: $secondary-text-color;
 
-$splash-background-color: #FFFFFF;
+$splash-background-color: #ffffff;
 $project-list-background-color: $ultra-light-primary-color;
 $project-list-border-color: $light-primary-color;
 
@@ -59,7 +59,7 @@ $splash-small-font: $font-size-normal;
         background-color: $project-list-background-color;
 
         .duckling-title {
-            padding-left:2*$spacer-unit;
+            padding-left: 2 * $spacer-unit;
         }
 
         .duckling-name {

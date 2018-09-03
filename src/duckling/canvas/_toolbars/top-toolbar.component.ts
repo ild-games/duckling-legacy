@@ -4,20 +4,20 @@ import {
     Input,
     Output,
     EventEmitter,
-    ViewContainerRef
-} from '@angular/core';
-import {MatDialog} from '@angular/material';
+    ViewContainerRef,
+} from "@angular/core";
+import { MatDialog } from "@angular/material";
 
-import {BaseTool, ToolService} from '../tools';
-import {StoreService} from '../../state';
-import {ToolbarOption} from '../../controls';
-import {MapSelectComponent} from '../../project/map-select.component';
-import {EntityLayerService} from '../../entitysystem';
-import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.component';
+import { BaseTool, ToolService } from "../tools";
+import { StoreService } from "../../state";
+import { ToolbarOption } from "../../controls";
+import { MapSelectComponent } from "../../project/map-select.component";
+import { EntityLayerService } from "../../entitysystem";
+import { LayerDialogComponent } from "../../entitysystem/services/layer-dialog.component";
 
 @Component({
     selector: "dk-top-toolbar",
-    styleUrls: ['./duckling/canvas/_toolbars/top-toolbar.component.css'],
+    styleUrls: ["./duckling/canvas/_toolbars/top-toolbar.component.css"],
     template: `
         <dk-toolbar-button
             icon="floppy-o"
@@ -62,36 +62,41 @@ import {LayerDialogComponent} from '../../entitysystem/services/layer-dialog.com
             </dk-inline-edit-label>
         </span>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopToolbarComponent {
-    toolOptions : ToolbarOption[];
-    @Input() selectedToolKey : string;
+    toolOptions: ToolbarOption[];
+    @Input() selectedToolKey: string;
 
     @Output() toolSelection = new EventEmitter<BaseTool>();
 
-    @Input() mapName : string;
+    @Input() mapName: string;
 
     @Output() mapSelected = new EventEmitter<String>();
     @Output() saveClicked = new EventEmitter<void>();
 
-    constructor(public store : StoreService,
-                public toolService : ToolService,
-                private _viewContainer : ViewContainerRef,
-                private _dialog : MatDialog) {
+    constructor(
+        public store: StoreService,
+        public toolService: ToolService,
+        private _viewContainer: ViewContainerRef,
+        private _dialog: MatDialog
+    ) {
         this.toolOptions = this.toolService.toolOptions;
     }
 
-    onToolSelected(tool : ToolbarOption) {
+    onToolSelected(tool: ToolbarOption) {
         this.toolSelection.emit(this.toolService.getTool(tool.value));
     }
 
     onChangeMap() {
-        this._dialog.open(MapSelectComponent).afterClosed().subscribe((mapName : string) => {
-            if (mapName) {
-                this.mapSelected.emit(mapName);
-            }
-        });
+        this._dialog
+            .open(MapSelectComponent)
+            .afterClosed()
+            .subscribe((mapName: string) => {
+                if (mapName) {
+                    this.mapSelected.emit(mapName);
+                }
+            });
     }
 
     onSaveClicked() {

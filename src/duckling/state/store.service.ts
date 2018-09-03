@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {createStore, Store, Reducer} from 'redux';
-import {BehaviorSubject} from 'rxjs';
+import { Injectable } from "@angular/core";
+import { createStore, Store, Reducer } from "redux";
+import { BehaviorSubject } from "rxjs";
 
-import {Action} from './actions';
+import { Action } from "./actions";
 import {
     createUndoRedoReducer,
     getCurrentState,
@@ -10,27 +10,27 @@ import {
     undoAction,
     redoAction,
     UndoRedoState,
-    getLastMergeKey
-} from './undo-redo';
+    getLastMergeKey,
+} from "./undo-redo";
 
 /**
  * Provides access to the redux store used to maintain the applications state.
  */
 @Injectable()
 export class StoreService {
-    private _store : Store<UndoRedoState<any>>;
+    private _store: Store<UndoRedoState<any>>;
 
     /**
      * Observable that publishes updates to DucklingState.
      */
-    state : BehaviorSubject<any>;
+    state: BehaviorSubject<any>;
 
     /**
      * Initialize the store service. Should be constructed then injected into duckling.
      * @param  reducer    Reducer that is used to manage duckling's state.
      * @param  autoMerger Function that is used to determine when two actions should be merged.
      */
-    constructor(reducer : Reducer<any>, autoMerger : AutoMerger) {
+    constructor(reducer: Reducer<any>, autoMerger: AutoMerger) {
         this._store = createStore(createUndoRedoReducer(reducer, autoMerger));
         this.state = new BehaviorSubject(this.getState());
         this._store.subscribe(() => {
@@ -39,11 +39,10 @@ export class StoreService {
         this._disableBrowserUndoRedo();
     }
 
-
     /**
      * Dispatch an action to the store.
      */
-    dispatch(action : Action, mergeKey? : any) {
+    dispatch(action: Action, mergeKey?: any) {
         if (mergeKey) {
             action.mergeKey = mergeKey;
         }
@@ -77,7 +76,7 @@ export class StoreService {
     }
 
     private _disableBrowserUndoRedo() {
-        document.onkeydown = event => {
+        document.onkeydown = (event) => {
             if (this._undoKeyCombination(event)) {
                 event.preventDefault();
                 this.undo();
@@ -87,21 +86,21 @@ export class StoreService {
                 event.preventDefault();
                 this.redo();
             }
-        }
+        };
     }
 
-    private _undoKeyCombination(event : KeyboardEvent) : boolean {
+    private _undoKeyCombination(event: KeyboardEvent): boolean {
         return (
-            (event.ctrlKey || event.metaKey) && 
-            String.fromCharCode(event.which).toLowerCase() === 'z'
+            (event.ctrlKey || event.metaKey) &&
+            String.fromCharCode(event.which).toLowerCase() === "z"
         );
     }
 
-    private _redoKeyCombination(event : KeyboardEvent) : boolean {
+    private _redoKeyCombination(event: KeyboardEvent): boolean {
         return (
-            (event.ctrlKey || event.metaKey) && 
-            event.shiftKey && 
-            String.fromCharCode(event.which).toLowerCase() === 'z'
+            (event.ctrlKey || event.metaKey) &&
+            event.shiftKey &&
+            String.fromCharCode(event.which).toLowerCase() === "z"
         );
     }
 }

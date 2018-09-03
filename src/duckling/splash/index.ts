@@ -1,2 +1,2 @@
-export * from './splash.module';
-export * from './splash.component';
+export * from "./splash.module";
+export * from "./splash.component";

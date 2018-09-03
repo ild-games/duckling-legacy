@@ -1,23 +1,25 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import { Box2 } from '../../math/box2'
-import { Vector, vectorAdd } from '../../math/vector';
-import { ProjectService } from '../../project/project.service';
+import { Box2 } from "../../math/box2";
+import { Vector, vectorAdd } from "../../math/vector";
+import { ProjectService } from "../../project/project.service";
 
-import { CanvasMouseEvent } from './base-tool';
-import { snapPosition, minCornerSnapDistance } from './_grid-snap';
+import { CanvasMouseEvent } from "./base-tool";
+import { snapPosition, minCornerSnapDistance } from "./_grid-snap";
 
 @Injectable()
 export class SnapToGridService {
-    constructor(private _project: ProjectService) {
-    }
+    constructor(private _project: ProjectService) {}
 
     snapPosition(position: Vector): Vector {
         return snapPosition(position, this.grid);
     }
 
     snapBox(position: Vector, box: Box2): Vector {
-        return vectorAdd(position, minCornerSnapDistance(position, box, this.grid));
+        return vectorAdd(
+            position,
+            minCornerSnapDistance(position, box, this.grid)
+        );
     }
 
     shouldSnapToGrid(event: CanvasMouseEvent) {

@@ -1,20 +1,20 @@
-import {Attribute, Map, System, Components} from './map-format';
+import { Attribute, Map, System, Components } from "./map-format";
 
 interface AttributeMigration {
-    (attribute : Attribute, options?: any) : Attribute;
+    (attribute: Attribute, options?: any): Attribute;
 }
 
 interface EntityMigration {
-    (entity : Entity, entityKey: string, options?: any) : Entity;
+    (entity: Entity, entityKey: string, options?: any): Entity;
 }
 
 interface MigrationTest {
-    before : any,
-    after : any,
-    testName : string
+    before: any;
+    after: any;
+    testName: string;
 }
 
-type Entity = {[systemName:string]:Attribute};
+type Entity = { [systemName: string]: Attribute };
 
 /**
  * Instances of this class are passed to migration code in order to simplify creation
@@ -35,27 +35,32 @@ export class MigrationTools {
      * @param  migration A function that takes a pre-migration attribute and returns the post migration attribute.
      * @return A migration that runs over a map.
      */
-    attributeMigration(systemName : string, migration : AttributeMigration) {
-        return (map : Map, options?: any) : Map => {
+    attributeMigration(systemName: string, migration: AttributeMigration) {
+        return (map: Map, options?: any): Map => {
             if (!map.systems[systemName]) {
                 return map;
             }
 
-            let newComponents : Components = {};
-            let oldComponents : Components = map.systems[systemName].components;
-            for (let entityKey in oldComponents)
-            {
-                let migratedAttribute = migration(oldComponents[entityKey], options);
+            let newComponents: Components = {};
+            let oldComponents: Components = map.systems[systemName].components;
+            for (let entityKey in oldComponents) {
+                let migratedAttribute = migration(
+                    oldComponents[entityKey],
+                    options
+                );
                 if (migratedAttribute) {
                     newComponents[entityKey] = migratedAttribute;
                 }
             }
-            let newSystem: System = {...map.systems[systemName], components : newComponents};
-            let systemPatch : {[systemName : string]: System} = {};
+            let newSystem: System = {
+                ...map.systems[systemName],
+                components: newComponents,
+            };
+            let systemPatch: { [systemName: string]: System } = {};
             systemPatch[systemName] = newSystem;
-            let systems = {...map.systems, ...systemPatch};
-            return Object.assign({}, map, {systems});
-        }
+            let systems = { ...map.systems, ...systemPatch };
+            return Object.assign({}, map, { systems });
+        };
     }
 
     /**
@@ -75,22 +80,26 @@ export class MigrationTools {
      * @param  entityMigration Function that takes a pre-migration entity and returns a post migration entity.
      * @return a migration that runs over a map.
      */
-    entityMigration(entityMigration : EntityMigration) {
-        return (map : Map, options?: any) : Map => {
-            let systems : {[systemName : string] : System} = {};
+    entityMigration(entityMigration: EntityMigration) {
+        return (map: Map, options?: any): Map => {
+            let systems: { [systemName: string]: System } = {};
             for (let entityKey of map.entities) {
-                let migratedEntity = entityMigration(this.getEntity(map, entityKey), entityKey, options);
+                let migratedEntity = entityMigration(
+                    this.getEntity(map, entityKey),
+                    entityKey,
+                    options
+                );
                 for (let systemKey in migratedEntity) {
-
                     if (!systems[systemKey]) {
-                        systems[systemKey] = {components : {}};
+                        systems[systemKey] = { components: {} };
                     }
 
-                    systems[systemKey].components[entityKey] = migratedEntity[systemKey];
+                    systems[systemKey].components[entityKey] =
+                        migratedEntity[systemKey];
                 }
             }
-            return {...map, systems};
-        }
+            return { ...map, systems };
+        };
     }
 
     /**
@@ -99,8 +108,8 @@ export class MigrationTools {
      * @param  entityKey The key of the entity to find.
      * @return The entity corresponding to the key.
      */
-    getEntity(map : Map, entityKey : string) : Entity {
-        let entity : Entity = {};
+    getEntity(map: Map, entityKey: string): Entity {
+        let entity: Entity = {};
 
         for (let systemKey in map.systems) {
             let attribute = map.systems[systemKey].components[entityKey];

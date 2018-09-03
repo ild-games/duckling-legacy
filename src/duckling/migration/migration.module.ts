@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
+import { NgModule } from "@angular/core";
 
-import {MigrationService} from './migration.service';
+import { MigrationService } from "./migration.service";
 
 @NgModule({
-  imports: [],
-  declarations: [],
-  providers: [MigrationService]
+    imports: [],
+    declarations: [],
+    providers: [MigrationService],
 })
-export class MigrationModule { }
+export class MigrationModule {}

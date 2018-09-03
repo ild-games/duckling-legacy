@@ -1,11 +1,11 @@
-import {Color} from '../../canvas/drawing/color';
+import { Color } from "../../canvas/drawing/color";
 
 export enum ShapeType {
     Circle,
-    Rectangle
+    Rectangle,
 }
 
-export function cppTypeToShapeType(cppType : string) : ShapeType {
+export function cppTypeToShapeType(cppType: string): ShapeType {
     switch (cppType) {
         case "sf::CircleShape":
             return ShapeType.Circle;
@@ -14,7 +14,7 @@ export function cppTypeToShapeType(cppType : string) : ShapeType {
     }
 }
 
-export function shapeTypeToCppType(type : ShapeType) : string {
+export function shapeTypeToCppType(type: ShapeType): string {
     switch (type) {
         case ShapeType.Circle:
             return "sf::CircleShape";
@@ -24,16 +24,16 @@ export function shapeTypeToCppType(type : ShapeType) : string {
 }
 
 export interface Shape {
-    __cpp_type: string,
-    fillColor: Color,
+    __cpp_type: string;
+    fillColor: Color;
 }
 
-export let defaultShape : Shape = {
+export let defaultShape: Shape = {
     __cpp_type: "",
     fillColor: {
         r: 67,
         g: 154,
         b: 202,
-        a: 255
-    }
+        a: 255,
+    },
 };

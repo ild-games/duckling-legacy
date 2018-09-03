@@ -5,23 +5,23 @@ import {
     EventEmitter,
     OnChanges,
     SimpleChange,
-    ViewChild
-} from '@angular/core';
+    ViewChild,
+} from "@angular/core";
 
-import {InputComponent} from './input.component';
+import { InputComponent } from "./input.component";
 
 /**
  * Validator is a function that is run to determine if a given string input is valid
  */
-export type Validator = (value : string) => boolean;
+export type Validator = (value: string) => boolean;
 
 /**
  * Helper component used to implement input controls that only accept certain inputs.
  */
 @Component({
     selector: "dk-validated-input",
-    styleUrls: ['./duckling/controls/validated-input.component.css'],
-    template:`
+    styleUrls: ["./duckling/controls/validated-input.component.css"],
+    template: `
         <dk-input #inputComponent
             [disabled]="disabled"
             [label]="label"
@@ -29,63 +29,67 @@ export type Validator = (value : string) => boolean;
             [dividerColor]="color"
             (inputChanged)="onUserInput($event)">
         </dk-input>
-    `
+    `,
 })
 export class ValidatedInputComponent implements OnChanges {
     /**
      * Reference of the input component used to get the raw value for special calculations
      */
-    @ViewChild('inputComponent') inputComponent : InputComponent;
-    
+    @ViewChild("inputComponent") inputComponent: InputComponent;
+
     /**
      * Text label displayed to the user.
      */
-    @Input() label : string;
+    @Input() label: string;
     /**
      * The value stored in the control.
      */
-    @Input() value : string;
+    @Input() value: string;
     /**
      * Functions used to validate the users input. Should return true if the users input is valid.
      */
-    @Input() validator : Validator;
+    @Input() validator: Validator;
     /**
      * True if the input is disabled, otherwise false
      */
-    @Input() disabled : boolean;
+    @Input() disabled: boolean;
     /**
      * Color on the input field
      */
-    @Input() color : 'primary' | 'warn' = 'primary';
+    @Input() color: "primary" | "warn" = "primary";
 
     /**
      * Event published when the user enters a valid input.
      */
     @Output() validInput = new EventEmitter<String>();
 
-    ngOnChanges(changes : {value? : SimpleChange}) {
+    ngOnChanges(changes: { value?: SimpleChange }) {
         if (changes.value) {
             this._checkValidity(changes.value.currentValue);
         }
     }
 
-    onUserInput(newValue : string) {
+    onUserInput(newValue: string) {
         if (this._checkValidity(newValue)) {
             this.validInput.emit(newValue);
         }
     }
 
-    private _checkValidity(valueToCheck : string) {
-        if (valueToCheck !== undefined && valueToCheck !== null && this.validator(valueToCheck)) {
-            this.color = 'primary';
+    private _checkValidity(valueToCheck: string) {
+        if (
+            valueToCheck !== undefined &&
+            valueToCheck !== null &&
+            this.validator(valueToCheck)
+        ) {
+            this.color = "primary";
             return true;
         } else {
-            this.color = 'warn';
+            this.color = "warn";
             return false;
         }
     }
 
-    get rawValue() : string {
+    get rawValue(): string {
         return this.inputComponent.rawValue;
     }
 }

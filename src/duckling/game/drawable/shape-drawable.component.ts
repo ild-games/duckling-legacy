@@ -3,21 +3,25 @@ import {
     Input,
     Output,
     EventEmitter,
-    AfterViewInit
-} from '@angular/core';
-import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
+    AfterViewInit,
+} from "@angular/core";
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from "@angular/common";
 
-import {EnumChoiceComponent, SelectOption, FormLabelComponent} from '../../controls';
-import {immutableAssign} from '../../util/model';
-import {NumberInputComponent} from '../../controls/number-input.component';
+import {
+    EnumChoiceComponent,
+    SelectOption,
+    FormLabelComponent,
+} from "../../controls";
+import { immutableAssign } from "../../util/model";
+import { NumberInputComponent } from "../../controls/number-input.component";
 
-import {ShapeDrawable} from './shape-drawable';
-import {GenericShapeComponent} from './generic-shape.component';
-import {Shape, ShapeType, cppTypeToShapeType} from './shape';
-import {defaultCircle} from './circle';
-import {CircleComponent} from './circle.component';
-import {defaultRectangle} from './rectangle';
-import {RectangleComponent} from './rectangle.component';
+import { ShapeDrawable } from "./shape-drawable";
+import { GenericShapeComponent } from "./generic-shape.component";
+import { Shape, ShapeType, cppTypeToShapeType } from "./shape";
+import { defaultCircle } from "./circle";
+import { CircleComponent } from "./circle.component";
+import { defaultRectangle } from "./rectangle";
+import { RectangleComponent } from "./rectangle.component";
 
 /**
  * Component used to edit a ShapeDrawable
@@ -51,30 +55,36 @@ import {RectangleComponent} from './rectangle.component';
                 (rectangleChanged)="onShapeChanged($event)">
             </dk-rectangle-drawable>
         </div>
-    `
+    `,
 })
 export class ShapeDrawableComponent {
     // hoist ShapeType so template can access it
     ShapeType = ShapeType;
     cppTypeToShapeType = cppTypeToShapeType;
 
-    @Input() shapeDrawable : ShapeDrawable;
+    @Input() shapeDrawable: ShapeDrawable;
     @Output() drawableChanged = new EventEmitter<ShapeDrawable>();
 
-    specificShapeChanged(newShape : Shape) {
-        this.drawableChanged.emit(immutableAssign(this.shapeDrawable, {shape: newShape}));
+    specificShapeChanged(newShape: Shape) {
+        this.drawableChanged.emit(
+            immutableAssign(this.shapeDrawable, { shape: newShape })
+        );
     }
 
-    onShapeTypePicked(pickedType : ShapeType) {
-        let patch : Shape = this._getDefaultShape(pickedType);
-        this.drawableChanged.emit(immutableAssign(this.shapeDrawable, {shape: patch}));
+    onShapeTypePicked(pickedType: ShapeType) {
+        let patch: Shape = this._getDefaultShape(pickedType);
+        this.drawableChanged.emit(
+            immutableAssign(this.shapeDrawable, { shape: patch })
+        );
     }
 
-    onShapeChanged(shape : Shape) {
-        this.drawableChanged.emit(immutableAssign(this.shapeDrawable, {shape: shape}));
+    onShapeChanged(shape: Shape) {
+        this.drawableChanged.emit(
+            immutableAssign(this.shapeDrawable, { shape: shape })
+        );
     }
 
-    private _getDefaultShape(type : ShapeType) : Shape {
+    private _getDefaultShape(type: ShapeType): Shape {
         switch (type) {
             case ShapeType.Circle:
                 return defaultCircle;

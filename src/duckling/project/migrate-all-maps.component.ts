@@ -1,20 +1,17 @@
 import {
-    Component, 
+    Component,
     ViewContainerRef,
     ElementRef,
     ViewChild,
-    AfterViewInit
-}  from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+    AfterViewInit,
+} from "@angular/core";
+import { MatDialogRef } from "@angular/material";
 
-import {ProjectService} from './project.service';
-
+import { ProjectService } from "./project.service";
 
 @Component({
     selector: "dk-migrate-all-maps",
-    styleUrls: [
-        "./duckling/project/migrate-all-maps.component.css"
-    ],
+    styleUrls: ["./duckling/project/migrate-all-maps.component.css"],
     template: `
         <div class="container">
             <div>Currently migrating: {{curMapName}}</div>
@@ -24,7 +21,7 @@ import {ProjectService} from './project.service';
                 [value]="progressBarValue">
             </mat-progress-bar>
         </div>
-    `
+    `,
 })
 export class MigrateAllMapsComponent {
     private _curMapName = "";
@@ -32,9 +29,9 @@ export class MigrateAllMapsComponent {
     private _numMaps = 0;
 
     constructor(
-        private _project : ProjectService,
-        private _dialogRef : MatDialogRef<MigrateAllMapsComponent>) {
-    }
+        private _project: ProjectService,
+        private _dialogRef: MatDialogRef<MigrateAllMapsComponent>
+    ) {}
 
     ngAfterViewInit() {
         this._migrateAllMaps().then(() => {
@@ -53,11 +50,11 @@ export class MigrateAllMapsComponent {
         }
     }
 
-    get curMapName() : string {
+    get curMapName(): string {
         return this._curMapName;
     }
 
-    get progressBarValue() : number {
+    get progressBarValue(): number {
         return (this._curMapIndex / this._numMaps) * 100;
     }
 }

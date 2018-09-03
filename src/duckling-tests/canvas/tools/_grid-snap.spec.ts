@@ -1,7 +1,7 @@
-import 'mocha';
-import {expect} from 'chai';
+import "mocha";
+import { expect } from "chai";
 
-import {_getDistance} from '../../../duckling/canvas/tools/_grid-snap';
+import { _getDistance } from "../../../duckling/canvas/tools/_grid-snap";
 
 describe("Grid snap _getDistance", function() {
     it("Snaps a small box correctly to the left edge", function() {

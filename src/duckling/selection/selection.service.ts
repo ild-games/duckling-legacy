@@ -1,25 +1,25 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
-import { normalizeBox, boxContainsPoint, boxContainsBox } from '../math/box2';
-import { Vector } from '../math/vector';
+import { normalizeBox, boxContainsPoint, boxContainsBox } from "../math/box2";
+import { Vector } from "../math/vector";
 
-import { Action, StoreService } from '../state';
-import { ACTION_OPEN_MAP } from '../project/project';
-import { EntityKey, Entity } from '../entitysystem/entity';
-import { EntitySystemService } from '../entitysystem/entity-system.service';
-import { EntityLayerService } from '../entitysystem/services/entity-layer.service';
-import { EntityDrawerService } from '../canvas/drawing/entity-drawer.service';
-import { EntityBoxService } from '../entitysystem/services/entity-box.service';
-import { RenderPriorityService } from '../canvas/drawing/render-priority.service';
+import { Action, StoreService } from "../state";
+import { ACTION_OPEN_MAP } from "../project/project";
+import { EntityKey, Entity } from "../entitysystem/entity";
+import { EntitySystemService } from "../entitysystem/entity-system.service";
+import { EntityLayerService } from "../entitysystem/services/entity-layer.service";
+import { EntityDrawerService } from "../canvas/drawing/entity-drawer.service";
+import { EntityBoxService } from "../entitysystem/services/entity-box.service";
+import { RenderPriorityService } from "../canvas/drawing/render-priority.service";
 
 /**
  * Interface describing the currently selected entity. Will be an empty object
  * if there is no selection.
  */
 export interface Selection {
-    key?: EntityKey,
-    entity?: Entity
+    key?: EntityKey;
+    entity?: Entity;
 }
 
 /**
@@ -27,18 +27,21 @@ export interface Selection {
  */
 @Injectable()
 export class SelectionService {
-
     public selections: BehaviorSubject<Selection[]>;
 
-    constructor(private _store: StoreService,
+    constructor(
+        private _store: StoreService,
         private _entitySystem: EntitySystemService,
         private _drawerService: EntityDrawerService,
         private _layerService: EntityLayerService,
         private _entityBoxService: EntityBoxService,
-        private _renderPriority: RenderPriorityService) {
+        private _renderPriority: RenderPriorityService
+    ) {
         this.selections = new BehaviorSubject([]);
-        this._store.state.subscribe(state => {
-            this.selections.next(this._getSelections(state.selections.selectedEntities));
+        this._store.state.subscribe((state) => {
+            this.selections.next(
+                this._getSelections(state.selections.selectedEntities)
+            );
         });
     }
 
@@ -60,11 +63,17 @@ export class SelectionService {
     }
 
     getEntityKeyAtPosition(position: Vector): EntityKey {
-        let entities = Array.from(this._renderPriority.sortEntities(this._entitySystem.entitySystem.getValue()));
+        let entities = Array.from(
+            this._renderPriority.sortEntities(
+                this._entitySystem.entitySystem.getValue()
+            )
+        );
         entities.reverse();
         let taggedEntity = entities
-            .filter(entity => this._drawerService.isEntityVisible(entity.entity))
-            .find(entity => this._entityContainsPoint(entity.key, position));
+            .filter((entity) =>
+                this._drawerService.isEntityVisible(entity.entity)
+            )
+            .find((entity) => this._entityContainsPoint(entity.key, position));
 
         if (taggedEntity) {
             return taggedEntity.key;
@@ -73,36 +82,63 @@ export class SelectionService {
         }
     }
 
-    getEntityKeysInSelection(selectionPosition: Vector, selectionDimension: Vector): EntityKey[] {
-        let entities = Array.from(this._renderPriority.sortEntities(this._entitySystem.entitySystem.getValue()));
+    getEntityKeysInSelection(
+        selectionPosition: Vector,
+        selectionDimension: Vector
+    ): EntityKey[] {
+        let entities = Array.from(
+            this._renderPriority.sortEntities(
+                this._entitySystem.entitySystem.getValue()
+            )
+        );
         entities.reverse();
         let taggedEntities = entities
-            .filter(entity => this._drawerService.isEntityVisible(entity.entity))
-            .filter(entity => this._entityIsInsideSelection(entity.key, selectionPosition, selectionDimension));
+            .filter((entity) =>
+                this._drawerService.isEntityVisible(entity.entity)
+            )
+            .filter((entity) =>
+                this._entityIsInsideSelection(
+                    entity.key,
+                    selectionPosition,
+                    selectionDimension
+                )
+            );
 
         if (taggedEntities) {
-            return taggedEntities.map(entity => entity.key);
+            return taggedEntities.map((entity) => entity.key);
         } else {
             return null;
         }
     }
 
     isSelected(entityKey: EntityKey) {
-        return this.selections.value.find(selection => selection.key === entityKey) !== undefined;
+        return (
+            this.selections.value.find(
+                (selection) => selection.key === entityKey
+            ) !== undefined
+        );
     }
 
     private _entityContainsPoint(entityKey: EntityKey, position: Vector) {
-        return boxContainsPoint(this._entityBoxService.getEntityBox(entityKey), position);
+        return boxContainsPoint(
+            this._entityBoxService.getEntityBox(entityKey),
+            position
+        );
     }
 
-    private _entityIsInsideSelection(entityKey: EntityKey, selectionPosition: Vector, selectionDimension: Vector) {
+    private _entityIsInsideSelection(
+        entityKey: EntityKey,
+        selectionPosition: Vector,
+        selectionDimension: Vector
+    ) {
         return boxContainsBox(
             normalizeBox({
                 position: selectionPosition,
                 dimension: selectionDimension,
-                rotation: 0
+                rotation: 0,
             }),
-            this._entityBoxService.getEntityBox(entityKey));
+            this._entityBoxService.getEntityBox(entityKey)
+        );
     }
 
     private _getSelections(selectedEntityKeys: string[]): Selection[] {
@@ -119,7 +155,6 @@ export class SelectionService {
         }
         return selections;
     }
-
 }
 
 /**
@@ -132,7 +167,10 @@ export interface SelectionState {
 /**
  * Reducer for the SelectionState.
  */
-export function selectionReducer(state: SelectionState = {}, action: SelectionAction) {
+export function selectionReducer(
+    state: SelectionState = {},
+    action: SelectionAction
+) {
     if (action.type === ACTION_SELECT_ENTITY) {
         if (!state.selectedEntities) {
             return { selectedEntities: action.selectedEntities || [] };
@@ -142,13 +180,16 @@ export function selectionReducer(state: SelectionState = {}, action: SelectionAc
         }
         return {
             selectedEntities: state.selectedEntities.concat(
-                action.selectedEntities.filter(selectedKey => !state.selectedEntities.includes(selectedKey)))
+                action.selectedEntities.filter(
+                    (selectedKey) =>
+                        !state.selectedEntities.includes(selectedKey)
+                )
+            ),
         };
     } else if (action.type === ACTION_OPEN_MAP) {
-
         //Clear selection if the current map is changing.
         return {
-            selectedEntities: []
+            selectedEntities: [],
         };
     }
     return state;
@@ -161,6 +202,6 @@ interface SelectionAction extends Action {
 function _selectionAction(selectedEntities: EntityKey[]): SelectionAction {
     return {
         selectedEntities,
-        type: ACTION_SELECT_ENTITY
-    }
+        type: ACTION_SELECT_ENTITY,
+    };
 }

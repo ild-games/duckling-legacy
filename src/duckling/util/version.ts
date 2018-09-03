@@ -1,19 +1,18 @@
-
 export type MapVersion = string;
 export type EditorVersion = string;
 
-export const EDITOR_VERSION : EditorVersion = "0.4";
+export const EDITOR_VERSION: EditorVersion = "0.4";
 
 export interface ParsedVersion {
-    major : number,
-    minor : number
+    major: number;
+    minor: number;
 }
 
 export enum VersionCompatibility {
     Compatible,
     MinorIncompatible,
     MajorIncompatible,
-    NoVersionGiven
+    NoVersionGiven,
 }
 
 /**
@@ -22,7 +21,10 @@ export enum VersionCompatibility {
  * @param  expectedVersion Version to compare against, defaults to version.ts::MAP_VERSION constant
  * @return VersinoCompatibility describing the two versions compatibility to each other
  */
-export function compareVersions(actualVersion : string, expectedVersion : string) : VersionCompatibility {
+export function compareVersions(
+    actualVersion: string,
+    expectedVersion: string
+): VersionCompatibility {
     expectedVersion = expectedVersion;
     if (actualVersion === null || actualVersion === undefined) {
         return VersionCompatibility.NoVersionGiven;
@@ -46,7 +48,10 @@ export function compareVersions(actualVersion : string, expectedVersion : string
  * @param  expectedVersion Version to compare against.
  * @return Brief message explaining the incompatibility or simply describing the versions as compatible
  */
-export function incompatibleReason(versionCompatibility : VersionCompatibility, expectedVersion : string) : string {
+export function incompatibleReason(
+    versionCompatibility: VersionCompatibility,
+    expectedVersion: string
+): string {
     switch (versionCompatibility) {
         case VersionCompatibility.Compatible:
             return "Versions are compatible";
@@ -63,7 +68,10 @@ export function incompatibleReason(versionCompatibility : VersionCompatibility, 
  * Comparator used to sort versions.
  * @return -1 if the leftVersion sorts before the rightVersion, 0 if they are equal, and 1 if the leftVersion sorts to the right of the rightVersion.
  */
-export function versionCompareFunction(leftVersion : string, rightVersion : string) {
+export function versionCompareFunction(
+    leftVersion: string,
+    rightVersion: string
+) {
     let left = _mapVersionParts(leftVersion);
     let right = _mapVersionParts(rightVersion);
 
@@ -80,31 +88,35 @@ export function versionCompareFunction(leftVersion : string, rightVersion : stri
     }
 }
 
-export function incrementMajorVersion(mapVersion : string) : MapVersion {
+export function incrementMajorVersion(mapVersion: string): MapVersion {
     let versionParts = _mapVersionParts(mapVersion);
-    return (versionParts.major + 1) + "." + versionParts.minor;
+    return versionParts.major + 1 + "." + versionParts.minor;
 }
 
-function _mapVersionParts(mapVersion : string) : ParsedVersion {
+function _mapVersionParts(mapVersion: string): ParsedVersion {
     if (mapVersion === "") {
-        throw new Error("map version cannot be blank")
+        throw new Error("map version cannot be blank");
     }
 
     let mapVersionParts = mapVersion.split(".");
     if (mapVersionParts.length !== 2) {
-        throw new Error("map version format must be {MAJOR_NUMBER}.{MINOR_NUMBER}");
+        throw new Error(
+            "map version format must be {MAJOR_NUMBER}.{MINOR_NUMBER}"
+        );
     }
 
     if (!mapVersionParts.every(_isInteger)) {
-        throw new Error("Each version portion must be an integer with only digit characters");
+        throw new Error(
+            "Each version portion must be an integer with only digit characters"
+        );
     }
 
     return {
         major: parseInt(mapVersionParts[0]),
-        minor: parseInt(mapVersionParts[1])
+        minor: parseInt(mapVersionParts[1]),
     };
 }
 
-function _isInteger(input : string) : boolean {
+function _isInteger(input: string): boolean {
     return /^\d+$/.test(input);
 }

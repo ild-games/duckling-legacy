@@ -1,6 +1,13 @@
-import 'mocha';
-import {expect} from 'chai';
-import {isInteger, isNumber, degreesToRadians, radiansToDegrees, roundToMultiple, floorToMultiple} from '../../duckling/math/number-utils';
+import "mocha";
+import { expect } from "chai";
+import {
+    isInteger,
+    isNumber,
+    degreesToRadians,
+    radiansToDegrees,
+    roundToMultiple,
+    floorToMultiple,
+} from "../../duckling/math/number-utils";
 
 describe("isInteger", function() {
     it("0 is an integer", function() {
@@ -84,7 +91,7 @@ describe("degreesToRadians", function() {
     });
 
     it("handles over 360", function() {
-        expect(degreesToRadians(450)).to.eql((Math.PI * 2) + (Math.PI / 2));
+        expect(degreesToRadians(450)).to.eql(Math.PI * 2 + Math.PI / 2);
     });
 
     it("handles negatives", function() {
@@ -114,7 +121,7 @@ describe("radiansToDegrees", function() {
     });
 
     it("handles over 360", function() {
-        expect(radiansToDegrees((Math.PI * 2) + (Math.PI / 2))).to.eql(450);
+        expect(radiansToDegrees(Math.PI * 2 + Math.PI / 2)).to.eql(450);
     });
 
     it("handles negatives", function() {

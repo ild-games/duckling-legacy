@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { DisplayObject, Graphics } from 'pixi.js';
+import { Injectable } from "@angular/core";
+import { DisplayObject, Graphics } from "pixi.js";
 
-import { KeyboardService } from '../../util';
-import { DrawnConstruct } from '../drawing/drawn-construct';
+import { KeyboardService } from "../../util";
+import { DrawnConstruct } from "../drawing/drawn-construct";
 
-import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from './base-tool';
+import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from "./base-tool";
 
 /**
  * A multi-mode-tool is a base class used for tools that are a composite of other

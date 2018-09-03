@@ -1,5 +1,5 @@
-import {Action as ReduxAction} from 'redux';
+import { Action as ReduxAction } from "redux";
 
 export interface Action extends ReduxAction {
-    mergeKey? : any
+    mergeKey?: any;
 }

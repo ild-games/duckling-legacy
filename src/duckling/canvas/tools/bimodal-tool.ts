@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Subscriber, BehaviorSubject, Observable } from 'rxjs';
-import { DisplayObject } from 'pixi.js';
+import { Injectable } from "@angular/core";
+import { Subscriber, BehaviorSubject, Observable } from "rxjs";
+import { DisplayObject } from "pixi.js";
 
-import { KeyboardService, KeyboardCode } from '../../util/keyboard.service';
-import { MouseService, MouseButton } from '../../util/mouse.service';
+import { KeyboardService, KeyboardCode } from "../../util/keyboard.service";
+import { MouseService, MouseButton } from "../../util/mouse.service";
 
-import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from './base-tool';
-import { MultiModeTool } from './multi-mode-tool';
+import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from "./base-tool";
+import { MultiModeTool } from "./multi-mode-tool";
 
 /**
  * A bimodal tool manages a primary tool and a secondary tool that is activated whenever
@@ -18,7 +18,8 @@ export class BimodalTool extends MultiModeTool {
         private _primaryTool: BaseTool,
         private _secondaryTool: BaseTool,
         private _keyboardService: KeyboardService,
-        private _mouseService: MouseService) {
+        private _mouseService: MouseService
+    ) {
         super();
 
         this.drawnConstructChanged = Observable.merge(

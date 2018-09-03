@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import { Vector } from '../../math';
-import { BaseTool, CanvasMouseEvent } from './base-tool';
+import { Vector } from "../../math";
+import { BaseTool, CanvasMouseEvent } from "./base-tool";
 
 @Injectable()
 export class MapMoveTool extends BaseTool {
@@ -21,7 +21,7 @@ export class MapMoveTool extends BaseTool {
         if (this._isDown) {
             event.canvas.scrollPan({
                 x: this._curPos.x - event.canvasCoords.x,
-                y: this._curPos.y - event.canvasCoords.y
+                y: this._curPos.y - event.canvasCoords.y,
             });
             this._curPos = event.canvasCoords;
         }

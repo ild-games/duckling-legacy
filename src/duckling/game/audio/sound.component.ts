@@ -1,20 +1,15 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
-import { MatSliderModule, MatSliderChange } from '@angular/material';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { MatSliderModule, MatSliderChange } from "@angular/material";
 
-import {immutableAssign, immutableArrayAssign} from '../../util/model';
+import { immutableAssign, immutableArrayAssign } from "../../util/model";
 
-import { Sound } from './sound';
-import { AssetService, Asset } from '../../project/asset.service';
-import { ProjectService } from '../../project/project.service';
+import { Sound } from "./sound";
+import { AssetService, Asset } from "../../project/asset.service";
+import { ProjectService } from "../../project/project.service";
 
 @Component({
     selector: "dk-sound",
-    styleUrls: ['./duckling/game/audio/sound.component.css'],
+    styleUrls: ["./duckling/game/audio/sound.component.css"],
     template: `
         <dk-number-input
             label="Pitch"
@@ -45,36 +40,44 @@ import { ProjectService } from '../../project/project.service';
             [selectedFile]="sound.soundKey"
             (filePicked)="onSoundFilePicked($event)">
         </dk-browse-asset>
-    `
+    `,
 })
 export class SoundComponent {
     @Input() sound: Sound;
     @Output() soundChanged = new EventEmitter<Sound>();
 
-    constructor(private _assets: AssetService,
-                private _project: ProjectService) {
-    }
+    constructor(
+        private _assets: AssetService,
+        private _project: ProjectService
+    ) {}
 
     displayVolume(volume: number) {
         return Math.round(volume * 100);
     }
 
     onSliderChanged(event: MatSliderChange) {
-        this.soundChanged.emit(immutableAssign(this.sound, { volume: event.value / 100 }));
+        this.soundChanged.emit(
+            immutableAssign(this.sound, { volume: event.value / 100 })
+        );
     }
 
-    onPitchChanged(newPitch : number) {
-        this.soundChanged.emit(immutableAssign(this.sound, {pitch: newPitch}));
+    onPitchChanged(newPitch: number) {
+        this.soundChanged.emit(
+            immutableAssign(this.sound, { pitch: newPitch })
+        );
     }
 
     onPlaySound(index: number) {
         let asset: Asset = {
             type: "SoundWAV",
-            key: this.sound.soundKey
-        }
+            key: this.sound.soundKey,
+        };
         let sound = this._assets.get(asset);
         if (!sound) {
-            sound = this._assets.get({ type: "SoundWAV", key: "sound-not-found" }, true);
+            sound = this._assets.get(
+                { type: "SoundWAV", key: "sound-not-found" },
+                true
+            );
         } else {
             sound.volume(this.sound.volume);
         }
@@ -84,18 +87,16 @@ export class SoundComponent {
     }
 
     onSoundFilePicked(fileChosen: string) {
-        this._assets.add([{asset: { key: fileChosen, type: "SoundWAV" }}]);
-        this.soundChanged.emit(immutableAssign(this.sound, { soundKey: fileChosen }));
+        this._assets.add([{ asset: { key: fileChosen, type: "SoundWAV" } }]);
+        this.soundChanged.emit(
+            immutableAssign(this.sound, { soundKey: fileChosen })
+        );
     }
 
     get dialogOptions() {
         return {
-            properties: [
-                'openFile'
-            ],
-            filters: [
-                {name: 'SoundFiles', extensions: ['wav']},
-            ]
-        }
+            properties: ["openFile"],
+            filters: [{ name: "SoundFiles", extensions: ["wav"] }],
+        };
     }
 }

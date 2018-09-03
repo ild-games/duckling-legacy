@@ -5,21 +5,24 @@ import {
     EventEmitter,
     ViewContainerRef,
     OnDestroy,
-    ChangeDetectorRef
-} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {Subscriber} from 'rxjs';
+    ChangeDetectorRef,
+} from "@angular/core";
+import { MatDialog } from "@angular/material";
+import { Subscriber } from "rxjs";
 
-import {VectorInputComponent, FormLabelComponent} from '../../controls';
-import {SelectOption, ArraySelectComponent} from '../../controls/array-select.component';
-import {EnumSelectComponent} from '../../controls/enum-select.component';
-import {Vector} from '../../math/vector';
-import {immutableAssign} from '../../util/model';
-import {ProjectService} from '../../project/project.service';
+import { VectorInputComponent, FormLabelComponent } from "../../controls";
+import {
+    SelectOption,
+    ArraySelectComponent,
+} from "../../controls/array-select.component";
+import { EnumSelectComponent } from "../../controls/enum-select.component";
+import { Vector } from "../../math/vector";
+import { immutableAssign } from "../../util/model";
+import { ProjectService } from "../../project/project.service";
 
-import {CollisionAttribute, BodyTypeSelect} from './collision-attribute';
-import {EditCollisionTypesComponent} from './edit-collision-types.component';
-import {CollisionTypesService} from './collision-types.service';
+import { CollisionAttribute, BodyTypeSelect } from "./collision-attribute";
+import { EditCollisionTypesComponent } from "./edit-collision-types.component";
+import { CollisionTypesService } from "./collision-types.service";
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -28,7 +31,7 @@ import {CollisionTypesService} from './collision-types.service';
  */
 @Component({
     selector: "dk-collision",
-    styleUrls: ['./duckling/game/collision/collision.component.css'],
+    styleUrls: ["./duckling/game/collision/collision.component.css"],
     template: `
         <dk-vector-input
             xLabel="Width"
@@ -68,61 +71,77 @@ import {CollisionTypesService} from './collision-types.service';
             (click)="onEditCollisionTypesClicked()">
             <dk-icon iconClass="pencil"></dk-icon>
         </button>
-    `
+    `,
 })
 export class CollisionComponent implements OnDestroy {
-    @Input() attribute : CollisionAttribute;
+    @Input() attribute: CollisionAttribute;
     @Output() attributeChanged = new EventEmitter<CollisionAttribute>();
 
     bodyTypes = BodyTypeSelect;
-    collisionTypeOptions : SelectOption[] = [];
-    
-    private _collisionTypeSubscription : Subscriber<any>;
+    collisionTypeOptions: SelectOption[] = [];
 
-    constructor(private _viewContainer: ViewContainerRef,
-                private _collisionTypes : CollisionTypesService,
-                private _changeDetector : ChangeDetectorRef,
-                private _dialog : MatDialog) {
+    private _collisionTypeSubscription: Subscriber<any>;
+
+    constructor(
+        private _viewContainer: ViewContainerRef,
+        private _collisionTypes: CollisionTypesService,
+        private _changeDetector: ChangeDetectorRef,
+        private _dialog: MatDialog
+    ) {
         this.collisionTypeOptions = this._buildCollisionTypeOptions();
 
-        this._collisionTypeSubscription = this._collisionTypes.collisionTypes.subscribe(() => {
-            this.collisionTypeOptions = this._buildCollisionTypeOptions();
-            this._changeDetector.markForCheck();
-        }) as Subscriber<any>;
+        this._collisionTypeSubscription = this._collisionTypes.collisionTypes.subscribe(
+            () => {
+                this.collisionTypeOptions = this._buildCollisionTypeOptions();
+                this._changeDetector.markForCheck();
+            }
+        ) as Subscriber<any>;
     }
 
     ngOnDestroy() {
         this._collisionTypeSubscription.unsubscribe();
     }
 
-    onOneWayNormalInput(oneWayNormal : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {oneWayNormal}));
+    onOneWayNormalInput(oneWayNormal: Vector) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { oneWayNormal })
+        );
     }
 
-    onDimensionInput(dimension : Vector) {
-        let newBox = immutableAssign(this.attribute.dimension, {dimension});
-        this.attributeChanged.emit(immutableAssign(this.attribute, {dimension: newBox}));
+    onDimensionInput(dimension: Vector) {
+        let newBox = immutableAssign(this.attribute.dimension, { dimension });
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { dimension: newBox })
+        );
     }
 
-    onAnchorInput(newAnchor : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {anchor: newAnchor}));
+    onAnchorInput(newAnchor: Vector) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { anchor: newAnchor })
+        );
     }
 
-    onBodyTypeInput(bodyType : string) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {bodyType}));
+    onBodyTypeInput(bodyType: string) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { bodyType })
+        );
     }
 
     onEditCollisionTypesClicked() {
         this._dialog.open(EditCollisionTypesComponent);
     }
 
-    onCollisionTypeInput(collisionType : string) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {collisionType}));
+    onCollisionTypeInput(collisionType: string) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { collisionType })
+        );
     }
 
-    private _buildCollisionTypeOptions() : SelectOption[] {
-        return Array.from(this._collisionTypes.collisionTypes.getValue().values()).map(collisionType => {
-            return {value: collisionType, title: collisionType}
+    private _buildCollisionTypeOptions(): SelectOption[] {
+        return Array.from(
+            this._collisionTypes.collisionTypes.getValue().values()
+        ).map((collisionType) => {
+            return { value: collisionType, title: collisionType };
         });
     }
 }
