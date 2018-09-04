@@ -1,7 +1,9 @@
-@import '../resources/css/font-lato.css';
-@import './colors.scss';
+@import "../resources/css/font-lato.css";
+@import "./colors.scss";
 
-html, body, * {
+html,
+body,
+* {
     font-family: "Lato", sans-serif;
     padding: 0;
     margin: 0;
@@ -15,8 +17,9 @@ input {
     width: 8px;
     height: 8px;
 }
- 
-::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
     background-color: transparent;
 }
 

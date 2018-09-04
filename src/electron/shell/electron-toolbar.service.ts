@@ -1,8 +1,11 @@
-import {Injectable} from "@angular/core";
-import {remote, Menu, MenuItem} from "electron";
+import { Injectable } from "@angular/core";
+import { remote, Menu, MenuItem } from "electron";
 import * as _ from "lodash";
 
-import {FileToolbarAction, FileToolbarService} from "../../duckling/shell/file-toolbar.service";
+import {
+    FileToolbarAction,
+    FileToolbarService,
+} from "../../duckling/shell/file-toolbar.service";
 
 /**
  * Electron implementation of the FileToolbarService used to handle the menu at the top of the
@@ -14,22 +17,22 @@ export class ElectronToolbarService extends FileToolbarService {
         super();
 
         this.addAction({
-            menuPath : ["File"],
-            label : "Close Project",
+            menuPath: ["File"],
+            label: "Close Project",
             shortcut: "CmdOrCtrl+R",
-            callback : () => remote.getCurrentWindow().reload()
+            callback: () => remote.getCurrentWindow().reload(),
         });
         this.addAction({
-            menuPath : ["Edit"],
+            menuPath: ["Edit"],
             label: "Copy",
             shortcut: "CmdOrCtrl+C",
-            role: "copy"
+            role: "copy",
         });
         this.addAction({
-            menuPath : ["Edit"],
+            menuPath: ["Edit"],
             label: "Paste",
             shortcut: "CmdOrCtrl+V",
-            role: "paste"
+            role: "paste",
         });
     }
 
@@ -37,12 +40,12 @@ export class ElectronToolbarService extends FileToolbarService {
         remote.Menu.setApplicationMenu(this._toMenu(this.actions));
     }
 
-    private _toMenu(actions : FileToolbarAction []) {
-        function isSubMenu(action : FileToolbarAction) {
+    private _toMenu(actions: FileToolbarAction[]) {
+        function isSubMenu(action: FileToolbarAction) {
             return action.menuPath.length > 0;
         }
 
-        function subMenuName(action : FileToolbarAction) {
+        function subMenuName(action: FileToolbarAction) {
             return action.menuPath[0];
         }
 
@@ -52,10 +55,14 @@ export class ElectronToolbarService extends FileToolbarService {
         let subMenus = _.groupBy(subMenuActions, subMenuName);
 
         for (let menuName in subMenus) {
-            menu.append(new remote.MenuItem({
-                label : menuName,
-                submenu : this._toMenu(this._popMenuLevel(subMenus[menuName]))
-            }));
+            menu.append(
+                new remote.MenuItem({
+                    label: menuName,
+                    submenu: this._toMenu(
+                        this._popMenuLevel(subMenus[menuName])
+                    ),
+                })
+            );
         }
 
         for (let item of items) {
@@ -65,25 +72,25 @@ export class ElectronToolbarService extends FileToolbarService {
         return menu;
     }
 
-    private _toMenuItem(action : FileToolbarAction) {
+    private _toMenuItem(action: FileToolbarAction) {
         return new remote.MenuItem({
-            click : action.callback,
-            type : "normal",
-            label : action.label,
-            accelerator : action.shortcut,
-            role: action.role
+            click: action.callback,
+            type: "normal",
+            label: action.label,
+            accelerator: action.shortcut,
+            role: action.role,
         });
     }
 
-    private _popMenuLevel(actions : FileToolbarAction []) {
+    private _popMenuLevel(actions: FileToolbarAction[]) {
         return _.map(actions, (action) => {
             return {
-                menuPath : action.menuPath.slice(1),
-                label : action.label,
-                shortcut : action.shortcut,
-                callback : action.callback,
-                role: action.role
-            }
+                menuPath: action.menuPath.slice(1),
+                label: action.label,
+                shortcut: action.shortcut,
+                callback: action.callback,
+                role: action.role,
+            };
         });
     }
 }

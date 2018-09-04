@@ -1,24 +1,23 @@
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from "@angular/common";
+
+import { Validator } from "../../controls/validated-input.component";
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
-import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
+    EnumChoiceComponent,
+    VectorInputComponent,
+    FormLabelComponent,
+} from "../../controls";
+import { immutableAssign } from "../../util";
 
-import {Validator} from '../../controls/validated-input.component';
-import {EnumChoiceComponent, VectorInputComponent, FormLabelComponent} from '../../controls';
-import {immutableAssign} from '../../util';
-
-import {DrawableAttribute} from './drawable-attribute';
-import {Drawable, DrawableType} from './drawable';
-import {cppTypeToDrawableType, getDefaultDrawable} from './drawable-helpers';
-import {ShapeDrawableComponent} from './shape-drawable.component';
-import {ContainerDrawableComponent} from './container-drawable.component';
-import {AnimatedDrawableComponent} from './animated-drawable.component';
-import {ImageDrawableComponent} from './image-drawable.component';
-import {TileBlockDrawableComponent} from './tile-block-drawable.component';
-import {GenericDrawableComponent} from './generic-drawable.component';
+import { DrawableAttribute } from "./drawable-attribute";
+import { Drawable, DrawableType } from "./drawable";
+import { cppTypeToDrawableType, getDefaultDrawable } from "./drawable-helpers";
+import { ShapeDrawableComponent } from "./shape-drawable.component";
+import { ContainerDrawableComponent } from "./container-drawable.component";
+import { AnimatedDrawableComponent } from "./animated-drawable.component";
+import { ImageDrawableComponent } from "./image-drawable.component";
+import { TileBlockDrawableComponent } from "./tile-block-drawable.component";
+import { GenericDrawableComponent } from "./generic-drawable.component";
 
 /**
  * Component used to edit non-type specified drawable
@@ -79,22 +78,24 @@ import {GenericDrawableComponent} from './generic-drawable.component';
                 (drawableChanged)="specificDrawableChanged($event)">
             </dk-text-drawable>
         </div>
-    `
+    `,
 })
 export class DrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
     cppTypeToDrawableType = cppTypeToDrawableType;
 
-    @Input() keyValidator : Validator;
-    @Input() drawable : Drawable;
+    @Input() keyValidator: Validator;
+    @Input() drawable: Drawable;
     @Output() drawableChanged = new EventEmitter<Drawable>();
 
-    onDrawableTypePicked(pickedType : DrawableType) {
-        this.drawableChanged.emit(immutableAssign(this.drawable, getDefaultDrawable(pickedType)));
+    onDrawableTypePicked(pickedType: DrawableType) {
+        this.drawableChanged.emit(
+            immutableAssign(this.drawable, getDefaultDrawable(pickedType))
+        );
     }
 
-    specificDrawableChanged(newDrawable : Drawable) {
+    specificDrawableChanged(newDrawable: Drawable) {
         this.drawableChanged.emit(immutableAssign(this.drawable, newDrawable));
     }
 }

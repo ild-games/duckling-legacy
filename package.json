@@ -16,7 +16,10 @@
     "tsc:w": "tsc -w",
     "mocha": "electron-mocha --renderer \"build/duckling-tests/**/*.spec.js\"",
     "mocha-debug": "electron-mocha --interactive \"build/duckling-tests/**/*.spec.js\"",
-    "duckling": "electron build/electron/background-main.js"
+    "duckling": "electron build/electron/background-main.js",
+    "format": "npm run format:ts && npm run format:scss",
+    "format:ts": "prettier --parser typescript --config ./package.json --write \"src/**/*.ts\"",
+    "format:scss": "prettier --parser scss --config ./package.json --write \"src/**/*.scss\""
   },
   "license": "ISC",
   "dependencies": {
@@ -68,6 +71,12 @@
     "electron": "1.8.6",
     "electron-mocha": "6.0.2",
     "mocha": "5.1.1",
+    "prettier": "1.13.7",
     "typescript": "2.8.3"
+  },
+  "prettier": {
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "arrowParens": "always"
   }
 }

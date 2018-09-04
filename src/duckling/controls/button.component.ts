@@ -1,16 +1,11 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
 /**
  * Component for a general purpose button
  */
 @Component({
     selector: "dk-button",
-    styleUrls: ['./duckling/controls/button.component.css'],
+    styleUrls: ["./duckling/controls/button.component.css"],
     template: `
         <button
             mat-button
@@ -21,12 +16,12 @@ import {
             {{text}}
             <dk-icon [iconClass]="icon"></dk-icon>
         </button>
-    `
+    `,
 })
 export class ButtonComponent {
-    @Input() text : string = ""
-    @Input() icon : string = "";
-    @Input() color : string = "";
-    @Input() tooltip : string = "";
-    @Input() disabled : boolean = false;
+    @Input() text: string = "";
+    @Input() icon: string = "";
+    @Input() color: string = "";
+    @Input() tooltip: string = "";
+    @Input() disabled: boolean = false;
 }

@@ -5,20 +5,24 @@ import {
     EventEmitter,
     AfterViewInit,
     OnDestroy,
-    ViewContainerRef
-} from '@angular/core';
-import {MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
-import {Subscriber} from 'rxjs';
+    ViewContainerRef,
+} from "@angular/core";
+import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material";
+import { Subscriber } from "rxjs";
 
-import {ProjectService} from '../../project/project.service';
-import {AssetService} from '../../project/asset.service';
-import {EntityLayerService, Layer, AttributeLayer} from '../../entitysystem/services/entity-layer.service';
-import {EntityDrawerService} from '../../canvas/drawing/entity-drawer.service';
-import {DialogService} from '../../util/dialog.service';
-import {PathService} from '../../util/path.service';
+import { ProjectService } from "../../project/project.service";
+import { AssetService } from "../../project/asset.service";
+import {
+    EntityLayerService,
+    Layer,
+    AttributeLayer,
+} from "../../entitysystem/services/entity-layer.service";
+import { EntityDrawerService } from "../../canvas/drawing/entity-drawer.service";
+import { DialogService } from "../../util/dialog.service";
+import { PathService } from "../../util/path.service";
 
 @Component({
-    selector: 'dk-layer-dialog',
+    selector: "dk-layer-dialog",
     styleUrls: ["./duckling/entitysystem/services/layer-dialog.component.css"],
     template: `
         <div>
@@ -61,38 +65,43 @@ import {PathService} from '../../util/path.service';
                 </mat-list>
             </dk-section>
         </div>
-    `
+    `,
 })
-export class LayerDialogComponent implements AfterViewInit, OnDestroy{
+export class LayerDialogComponent implements AfterViewInit, OnDestroy {
+    layers: Layer[] = [];
+    attributeLayers: AttributeLayer[] = [];
 
-    layers : Layer[] = [];
-    attributeLayers : AttributeLayer[] = [];
+    private _layerSubscription: Subscriber<any>;
 
-    private _layerSubscription : Subscriber<any>;
-
-    constructor(private _entityLayerService : EntityLayerService,
-                private _entityDrawerService : EntityDrawerService) {
+    constructor(
+        private _entityLayerService: EntityLayerService,
+        private _entityDrawerService: EntityDrawerService
+    ) {
         this._refreshLayers();
         this._refreshAttributes();
     }
 
     ngAfterViewInit() {
-        this._layerSubscription = this._entityLayerService.hiddenLayers.subscribe(() => {
-            this._refreshLayers();
-            this._refreshAttributes();
-        }) as Subscriber<any>;
+        this._layerSubscription = this._entityLayerService.hiddenLayers.subscribe(
+            () => {
+                this._refreshLayers();
+                this._refreshAttributes();
+            }
+        ) as Subscriber<any>;
     }
 
     ngOnDestroy() {
         this._layerSubscription.unsubscribe;
     }
 
-    toggleLayerVisibility(layer : Layer) {
+    toggleLayerVisibility(layer: Layer) {
         this._entityLayerService.toggleLayerVisibility(layer.layerName);
     }
 
-    toggleAttributeVisibility(attributeLayer : AttributeLayer) {
-        this._entityLayerService.toggleAttributeVisibility(attributeLayer.attributeName);
+    toggleAttributeVisibility(attributeLayer: AttributeLayer) {
+        this._entityLayerService.toggleAttributeVisibility(
+            attributeLayer.attributeName
+        );
     }
 
     private _refreshLayers() {

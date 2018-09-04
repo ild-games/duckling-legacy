@@ -1,17 +1,19 @@
 import {
-    Component, 
+    Component,
     ViewContainerRef,
     ElementRef,
     ViewChild,
-    AfterViewInit
-}  from '@angular/core';
-import {Observable} from 'rxjs';
+    AfterViewInit,
+} from "@angular/core";
+import { Observable } from "rxjs";
 
-import {removePadding} from '../util/mat-dialog';
-import {JsonSchemaEdit, schemaEditToJson} from '../controls/json-schema-edit.component';
-import {ProjectService} from './project.service';
-import {CustomAttribute} from './custom-attribute';
-
+import { removePadding } from "../util/mat-dialog";
+import {
+    JsonSchemaEdit,
+    schemaEditToJson,
+} from "../controls/json-schema-edit.component";
+import { ProjectService } from "./project.service";
+import { CustomAttribute } from "./custom-attribute";
 
 /**
  * Component where the user can add, delete, and edit custom attributes
@@ -19,8 +21,8 @@ import {CustomAttribute} from './custom-attribute';
 @Component({
     selector: "dk-custom-attributes",
     styleUrls: [
-        "./duckling/layout.css", 
-        "./duckling/project/custom-attributes.component.css"
+        "./duckling/layout.css",
+        "./duckling/project/custom-attributes.component.css",
     ],
     template: `
         <div 
@@ -67,18 +69,17 @@ import {CustomAttribute} from './custom-attribute';
                 </div>
             </div>
         </div>
-    `
+    `,
 })
 export class CustomAttributesComponent implements AfterViewInit {
+    curAddingSchema: JsonSchemaEdit = { keys: [], contents: [] };
+    curAddingName: string = "";
+    @ViewChild("container") containerDiv: ElementRef;
 
-    curAddingSchema : JsonSchemaEdit = { keys: [], contents: [] };
-    curAddingName : string = "";
-    @ViewChild('container') containerDiv : ElementRef;
-
-    constructor(private _project : ProjectService,
-                private _viewContainerRef : ViewContainerRef) {
-        
-    }
+    constructor(
+        private _project: ProjectService,
+        private _viewContainerRef: ViewContainerRef
+    ) {}
 
     ngAfterViewInit() {
         removePadding(this._viewContainerRef);
@@ -86,24 +87,27 @@ export class CustomAttributesComponent implements AfterViewInit {
 
     onNewAttributeClicked() {
         this.curAddingName = "";
-        this.curAddingSchema = {keys: [], contents: []};
+        this.curAddingSchema = { keys: [], contents: [] };
     }
 
-    onAttributeNameInput(newCurAddingName : string) {
+    onAttributeNameInput(newCurAddingName: string) {
         this.curAddingName = newCurAddingName;
     }
 
-    onJsonSchemaChanged(newJsonSchema : JsonSchemaEdit) {
+    onJsonSchemaChanged(newJsonSchema: JsonSchemaEdit) {
         this.curAddingSchema = newJsonSchema;
     }
-    
+
     onAcceptCustomAttribute() {
-        this._project.addCustomAttribute(this.curAddingName, schemaEditToJson(this.curAddingSchema));
+        this._project.addCustomAttribute(
+            this.curAddingName,
+            schemaEditToJson(this.curAddingSchema)
+        );
         this.curAddingName = "";
-        this.curAddingSchema = {keys: [], contents: []};
+        this.curAddingSchema = { keys: [], contents: [] };
     }
-    
-    isValidAttributeName(newCurAddingName : string) : boolean {
+
+    isValidAttributeName(newCurAddingName: string): boolean {
         if (!newCurAddingName || newCurAddingName === "") {
             return false;
         }
@@ -113,12 +117,13 @@ export class CustomAttributesComponent implements AfterViewInit {
         return true;
     }
 
-    get customAttributes() : CustomAttribute[] {
-        let projectAttribute = this._project.project.getValue().customAttributes;
+    get customAttributes(): CustomAttribute[] {
+        let projectAttribute = this._project.project.getValue()
+            .customAttributes;
         return projectAttribute ? projectAttribute : [];
     }
 
-    get addingSectionHeader() : string {
+    get addingSectionHeader(): string {
         if (this.curAddingSchema !== undefined) {
             return this.curAddingName;
         }

@@ -1,15 +1,15 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, EventEmitter } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
-import { StoreService, clearUndoHistoryAction } from '../state';
-import { EntitySystem, Entity, EntityKey, createEntitySystem } from './entity';
+import { StoreService, clearUndoHistoryAction } from "../state";
+import { EntitySystem, Entity, EntityKey, createEntitySystem } from "./entity";
 import {
     updateEntityAction,
     updateEntitiesAction,
     replaceSystemAction,
     deleteEntityAction,
-    renameEntityAction
-} from './entity-system.reducer';
+    renameEntityAction,
+} from "./entity-system.reducer";
 
 /**
  * The EntitySystemService is used to provide convinient access to the EntitySystem.
@@ -66,8 +66,12 @@ export class EntitySystemService {
      * @param  mergeKey Used to merge updates.
      * @return The key of the newly created entity.
      */
-    addNewEntity(entity: Entity, preferredKey? : string, mergeKey?: any): EntityKey {
-        let key : string = "";
+    addNewEntity(
+        entity: Entity,
+        preferredKey?: string,
+        mergeKey?: any
+    ): EntityKey {
+        let key: string = "";
         if (preferredKey !== "" && !this._system.get(preferredKey)) {
             key = preferredKey;
         }
@@ -93,8 +97,15 @@ export class EntitySystemService {
      * @param  newEntityKey The new key of the entity to be renamed
      * @param  mergeKey     Used to merge updates.
      */
-    renameEntity(oldEntityKey: EntityKey, newEntityKey: EntityKey, mergeKey?: any) {
-        this._storeService.dispatch(renameEntityAction(oldEntityKey, newEntityKey), mergeKey);
+    renameEntity(
+        oldEntityKey: EntityKey,
+        newEntityKey: EntityKey,
+        mergeKey?: any
+    ) {
+        this._storeService.dispatch(
+            renameEntityAction(oldEntityKey, newEntityKey),
+            mergeKey
+        );
     }
 
     /**
@@ -121,4 +132,4 @@ export class EntitySystemService {
         }
         return String(next);
     }
-};
+}

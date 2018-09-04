@@ -1,20 +1,17 @@
 import {
-    Component, 
+    Component,
     ViewContainerRef,
     ElementRef,
     ViewChild,
-    AfterViewInit
-}  from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+    AfterViewInit,
+} from "@angular/core";
+import { MatDialogRef } from "@angular/material";
 
-import {ProjectService} from './project.service';
-
+import { ProjectService } from "./project.service";
 
 @Component({
     selector: "dk-minify-all-maps",
-    styleUrls: [
-        "./duckling/project/minify-all-maps.component.css"
-    ],
+    styleUrls: ["./duckling/project/minify-all-maps.component.css"],
     template: `
         <div class="container">
             <div>Currently minifying: {{curMapName}}</div>
@@ -24,7 +21,7 @@ import {ProjectService} from './project.service';
                 [value]="progressBarValue">
             </mat-progress-bar>
         </div>
-    `
+    `,
 })
 export class MinifyAllMapsComponent {
     private _curMapName = "";
@@ -32,9 +29,9 @@ export class MinifyAllMapsComponent {
     private _numMaps = 0;
 
     constructor(
-        private _project : ProjectService,
-        private _dialogRef : MatDialogRef<MinifyAllMapsComponent>) {
-    }
+        private _project: ProjectService,
+        private _dialogRef: MatDialogRef<MinifyAllMapsComponent>
+    ) {}
 
     ngAfterViewInit() {
         this._minifyAllMaps().then(() => {
@@ -53,11 +50,11 @@ export class MinifyAllMapsComponent {
         }
     }
 
-    get curMapName() : string {
+    get curMapName(): string {
         return this._curMapName;
     }
 
-    get progressBarValue() : number {
+    get progressBarValue(): number {
         return (this._curMapIndex / this._numMaps) * 100;
     }
 }

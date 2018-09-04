@@ -1,3 +1,3 @@
-export * from './copy-paste.service';
-export * from './selection.service';
-export * from './selection.module';
+export * from "./copy-paste.service";
+export * from "./selection.service";
+export * from "./selection.module";

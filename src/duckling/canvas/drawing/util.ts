@@ -1,10 +1,9 @@
-import { Graphics, Sprite, DisplayObject } from 'pixi.js';
+import { Graphics, Sprite, DisplayObject } from "pixi.js";
 
-import { Vector } from '../../math/vector';
-import { AssetService } from '../../project/asset.service';
+import { Vector } from "../../math/vector";
+import { AssetService } from "../../project/asset.service";
 
-import { DrawnConstruct } from './drawn-construct';
-
+import { DrawnConstruct } from "./drawn-construct";
 
 /**
  * Draw a rectangle at the given position
@@ -12,13 +11,12 @@ import { DrawnConstruct } from './drawn-construct';
  * @param dimension Dimensions of the rectangle
  * @param graphics  Graphics object used to draw
  */
-export function drawRectangle(position: Vector, dimension: Vector, graphics: Graphics) {
-    graphics.drawRect(
-        position.x,
-        position.y,
-        dimension.x,
-        dimension.y
-    );
+export function drawRectangle(
+    position: Vector,
+    dimension: Vector,
+    graphics: Graphics
+) {
+    graphics.drawRect(position.x, position.y, dimension.x, dimension.y);
 }
 
 /**
@@ -28,7 +26,12 @@ export function drawRectangle(position: Vector, dimension: Vector, graphics: Gra
  * @param yRadius  Radius of the ellipse on the y axis
  * @param graphics Graphics object used to draw.
  */
-export function drawEllipse(position: Vector, xRadius: number, yRadius: number, graphics: Graphics) {
+export function drawEllipse(
+    position: Vector,
+    xRadius: number,
+    yRadius: number,
+    graphics: Graphics
+) {
     graphics.drawEllipse(
         position.x + xRadius,
         position.y + yRadius,
@@ -61,7 +64,12 @@ export function drawX(position: Vector, dimension: Vector, graphics: Graphics) {
  * @param  cellDimension  Dimensions of a cell
  * @param  graphics       Graphics object used to draw
  */
-export function drawGrid(position: Vector, gridDimension: Vector, cellDimension: Vector, graphics: Graphics) {
+export function drawGrid(
+    position: Vector,
+    gridDimension: Vector,
+    cellDimension: Vector,
+    graphics: Graphics
+) {
     let endX = gridDimension.x;
     let endY = gridDimension.y;
 
@@ -95,7 +103,10 @@ class MissingDrawnConstruct extends DrawnConstruct {
  * @return Sprite with the missing images
  */
 export function drawMissingAsset(assetService: AssetService): DrawnConstruct {
-    let missingTexture = assetService.get({ key: "fa-missing-image", type: "TexturePNG" }, true);
+    let missingTexture = assetService.get(
+        { key: "fa-missing-image", type: "TexturePNG" },
+        true
+    );
 
     let drawnConstruct = new MissingDrawnConstruct(missingTexture);
     drawnConstruct.layer = Number.POSITIVE_INFINITY;

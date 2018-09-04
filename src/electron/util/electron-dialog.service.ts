@@ -1,16 +1,16 @@
-import {Injectable, NgZone} from '@angular/core';
-import {remote} from 'electron';
+import { Injectable, NgZone } from "@angular/core";
+import { remote } from "electron";
 
-import {DialogService} from '../../duckling/util/dialog.service';
+import { DialogService } from "../../duckling/util/dialog.service";
 
 /**
  * Service to use open, save, and error dialog boxes for Electron.
  */
 @Injectable()
 export class ElectronDialogService implements DialogService {
-    private _dialog : Electron.Dialog;
+    private _dialog: Electron.Dialog;
 
-    constructor(protected _zone : NgZone) {
+    constructor(protected _zone: NgZone) {
         this._dialog = remote.dialog;
     }
 
@@ -23,11 +23,12 @@ export class ElectronDialogService implements DialogService {
                     if (callback) {
                         this._zone.run(() => callback(fileNames));
                     }
-                });
+                }
+            );
         });
     }
 
-    showErrorDialog(title : string, content : string) {
+    showErrorDialog(title: string, content: string) {
         this._zone.runOutsideAngular(() => {
             this._dialog.showErrorBox(title, content);
         });

@@ -3,7 +3,7 @@
  * original or the patch.
  * @returns A new object of the same type as the original object.
  */
-export function immutableAssign<T>(existingObject : T, patch : any) : T {
+export function immutableAssign<T>(existingObject: T, patch: any): T {
     return Object.freeze(Object.assign({}, existingObject, patch)) as T;
 }
 
@@ -12,7 +12,7 @@ export function immutableAssign<T>(existingObject : T, patch : any) : T {
  * original or the patch
  * @returns A new array with the patch applied
  */
-export function immutableArrayAssign<T>(existingArray : T[], patch : T[]) : T[] {
+export function immutableArrayAssign<T>(existingArray: T[], patch: T[]): T[] {
     return Object.freeze(Object.assign([], existingArray, patch)) as T[];
 }
 
@@ -20,8 +20,8 @@ export function immutableArrayAssign<T>(existingArray : T[], patch : T[]) : T[] 
  * Create a new object that is a copy of the existingObject with the specific key removed.
  * @returns A new object of the same type as the original object with the key removed.
  */
-export function immutableDelete<T>(existingObject : T, keyToRemove : string) : T {
-    let copy : any = Object.assign({}, existingObject);
+export function immutableDelete<T>(existingObject: T, keyToRemove: string): T {
+    let copy: any = Object.assign({}, existingObject);
     delete copy[keyToRemove];
     return Object.freeze(copy) as T;
 }
@@ -30,7 +30,10 @@ export function immutableDelete<T>(existingObject : T, keyToRemove : string) : T
  * Create a new object that is a copy of the existingObject with the specific key removed.
  * @returns A new object of the same type as the original object with the key removed.
  */
-export function immutableArrayDelete<T>(existingArray : T[], elementToRemove : number) : T[] {
+export function immutableArrayDelete<T>(
+    existingArray: T[],
+    elementToRemove: number
+): T[] {
     let head = existingArray.slice(0, elementToRemove);
     let tail = existingArray.slice(elementToRemove + 1, existingArray.length);
     return Object.freeze(head.concat(tail)) as T[];
@@ -40,7 +43,11 @@ export function immutableArrayDelete<T>(existingArray : T[], elementToRemove : n
  * Create a new array with two indices swapped
  * @returns A new array with the two specified indices swapped
  */
-export function immutableSwapElements<T>(existingArray : T[], firstIndex : number, secondIndex : number) : T[] {
+export function immutableSwapElements<T>(
+    existingArray: T[],
+    firstIndex: number,
+    secondIndex: number
+): T[] {
     let copiedArray = Array.from(existingArray);
     let bankedItem = copiedArray[firstIndex];
     copiedArray[firstIndex] = copiedArray[secondIndex];

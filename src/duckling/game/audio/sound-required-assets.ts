@@ -1,12 +1,12 @@
-import {Entity} from '../../entitysystem/entity';
-import {Asset, AssetMap} from '../../project';
+import { Entity } from "../../entitysystem/entity";
+import { Asset, AssetMap } from "../../project";
 
-import {getSoundAttribute} from './sound-attribute';
+import { getSoundAttribute } from "./sound-attribute";
 
-export function entityRequiredSoundAssets(entity : Entity) : AssetMap {
+export function entityRequiredSoundAssets(entity: Entity): AssetMap {
     let soundAttribute = getSoundAttribute(entity);
 
-    let assets : AssetMap = {};
+    let assets: AssetMap = {};
     for (let sound of soundAttribute.sounds) {
         if (!sound.soundKey) {
             continue;
@@ -14,8 +14,8 @@ export function entityRequiredSoundAssets(entity : Entity) : AssetMap {
 
         assets[sound.soundKey] = {
             type: "SoundWAV",
-            key: sound.soundKey
-        }
+            key: sound.soundKey,
+        };
     }
     return assets;
 }

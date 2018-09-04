@@ -1,29 +1,29 @@
-import { Action } from '../state';
-import { AttributeKey } from '../entitysystem/entity';
-import { immutableAssign } from '../util';
-import { Vector } from '../math/vector';
-import { MapVersion } from '../util/version';
-import { VersionFile } from '../migration/migration.service';
+import { Action } from "../state";
+import { AttributeKey } from "../entitysystem/entity";
+import { immutableAssign } from "../util";
+import { Vector } from "../math/vector";
+import { MapVersion } from "../util/version";
+import { VersionFile } from "../migration/migration.service";
 
-import { CustomAttribute } from './custom-attribute';
-import { UserMetaData, userMetaDataReducer } from './user-meta-data';
+import { CustomAttribute } from "./custom-attribute";
+import { UserMetaData, userMetaDataReducer } from "./user-meta-data";
 
 interface ProjectMap {
-    key: string,
-    version: string,
-    gridSize: number,
+    key: string;
+    version: string;
+    gridSize: number;
 }
 
 /**
  * State that describes the currently selected project.
  */
 export interface Project {
-    home?: string,
-    loaded?: boolean,
-    currentMap?: ProjectMap,
-    versionInfo?: VersionFile,
-    userMetaData: UserMetaData
-    customAttributes: CustomAttribute[]
+    home?: string;
+    loaded?: boolean;
+    currentMap?: ProjectMap;
+    versionInfo?: VersionFile;
+    userMetaData: UserMetaData;
+    customAttributes: CustomAttribute[];
 }
 
 /**
@@ -34,16 +34,19 @@ export interface Project {
 export function switchProjectAction(home: string): SwitchProjectAction {
     return {
         type: ACTION_SWITCH_PROJECT,
-        home
-    }
+        home,
+    };
 }
 
 const ACTION_SWITCH_PROJECT = "Project.Switch";
 interface SwitchProjectAction extends Action {
-    home: string,
+    home: string;
 }
 
-function _switchProject(project: Project, action: SwitchProjectAction): Project {
+function _switchProject(
+    project: Project,
+    action: SwitchProjectAction
+): Project {
     return {
         ...project,
         loaded: false,
@@ -53,11 +56,11 @@ function _switchProject(project: Project, action: SwitchProjectAction): Project 
 
 const ACTION_SET_VERSION = "Project.SetVersion";
 interface SetVersionAction extends Action {
-    type: "Project.SetVersion",
-    version: VersionFile
+    type: "Project.SetVersion";
+    version: VersionFile;
 }
 function _setMapVersion(project: Project, action: SetVersionAction): Project {
-    return { ...project, versionInfo: action.version }
+    return { ...project, versionInfo: action.version };
 }
 export function setVersionInfo(version: VersionFile) {
     return { type: ACTION_SET_VERSION, version };
@@ -71,16 +74,16 @@ export function setVersionInfo(version: VersionFile) {
 export function openMapAction(map: ProjectMap) {
     return {
         type: ACTION_OPEN_MAP,
-        map: map
-    }
+        map: map,
+    };
 }
 export const ACTION_OPEN_MAP = "Project.OpenMap";
 interface OpenMapAction extends Action {
     map: {
-        key: string,
-        version: string,
-        gridSize: number
-    }
+        key: string;
+        version: string;
+        gridSize: number;
+    };
 }
 function _openMap(project: Project, action: OpenMapAction) {
     return immutableAssign(project, { currentMap: action.map, loaded: false });
@@ -93,15 +96,20 @@ function _openMap(project: Project, action: OpenMapAction) {
 export function changeCurrentMapGridAction(newGridSize: number) {
     return {
         type: ACTION_CHANGE_MAP_GRID,
-        newGridSize: newGridSize
-    }
+        newGridSize: newGridSize,
+    };
 }
 export const ACTION_CHANGE_MAP_GRID = "Project.ChangeCurrentMapGrid";
 interface ChangeCurrentMapGridAction extends Action {
-    newGridSize: number
+    newGridSize: number;
 }
-function _changeCurrentMapGrid(project: Project, action: ChangeCurrentMapGridAction) {
-    let map = immutableAssign(project.currentMap, { gridSize: action.newGridSize });
+function _changeCurrentMapGrid(
+    project: Project,
+    action: ChangeCurrentMapGridAction
+) {
+    let map = immutableAssign(project.currentMap, {
+        gridSize: action.newGridSize,
+    });
     return immutableAssign(project, { currentMap: map });
 }
 
@@ -110,8 +118,8 @@ function _changeCurrentMapGrid(project: Project, action: ChangeCurrentMapGridAct
  */
 export function doneLoadingProjectAction() {
     return {
-        type: ACTION_DONE_LOADING
-    }
+        type: ACTION_DONE_LOADING,
+    };
 }
 const ACTION_DONE_LOADING = "Project.DoneLoading";
 
@@ -122,21 +130,32 @@ const ACTION_DONE_LOADING = "Project.DoneLoading";
 export function changeCustomAttributes(newCustomAttributes: CustomAttribute[]) {
     return {
         type: ACTION_CHANGE_CUSTOM_ATTRIBUTES,
-        newCustomAttributes
-    }
+        newCustomAttributes,
+    };
 }
 export const ACTION_CHANGE_CUSTOM_ATTRIBUTES = "Project.ChangeCustomAttributes";
 interface ChangeCustomAttributesAction extends Action {
-    newCustomAttributes: CustomAttribute[]
+    newCustomAttributes: CustomAttribute[];
 }
-function _changeCustomAttributes(project: Project, action: ChangeCustomAttributesAction) {
-    return immutableAssign(project, { customAttributes: action.newCustomAttributes });
+function _changeCustomAttributes(
+    project: Project,
+    action: ChangeCustomAttributesAction
+) {
+    return immutableAssign(project, {
+        customAttributes: action.newCustomAttributes,
+    });
 }
 
 /**
  * Reducer used to update the state of the selected project.
  */
-export function projectReducer(state: Project = { customAttributes: [], userMetaData: { mapMetaData: {} } }, action: Action) {
+export function projectReducer(
+    state: Project = {
+        customAttributes: [],
+        userMetaData: { mapMetaData: {} },
+    },
+    action: Action
+) {
     let newState = state;
     switch (action.type) {
         case ACTION_SWITCH_PROJECT:
@@ -149,19 +168,25 @@ export function projectReducer(state: Project = { customAttributes: [], userMeta
             newState = _openMap(state, action as OpenMapAction);
             break;
         case ACTION_CHANGE_MAP_GRID:
-            newState = _changeCurrentMapGrid(state, action as ChangeCurrentMapGridAction);
+            newState = _changeCurrentMapGrid(
+                state,
+                action as ChangeCurrentMapGridAction
+            );
             break;
         case ACTION_SET_VERSION:
             newState = _setMapVersion(state, action as SetVersionAction);
             break;
         case ACTION_CHANGE_CUSTOM_ATTRIBUTES:
-            newState = _changeCustomAttributes(state, action as ChangeCustomAttributesAction);
+            newState = _changeCustomAttributes(
+                state,
+                action as ChangeCustomAttributesAction
+            );
             break;
     }
 
     let newUserMetaData = userMetaDataReducer(state.userMetaData, action);
     return {
         ...newState,
-        userMetaData: newUserMetaData
+        userMetaData: newUserMetaData,
     };
 }

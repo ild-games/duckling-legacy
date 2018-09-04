@@ -1,20 +1,15 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {immutableAssign} from '../util';
+import { immutableAssign } from "../util";
 
-import {IconComponent} from './icon.component';
+import { IconComponent } from "./icon.component";
 
 /**
  * Component used as an element within an accordion
  */
 @Component({
     selector: "dk-accordion-element",
-    styleUrls: ['./duckling/controls/accordion-element.component.css'],
+    styleUrls: ["./duckling/controls/accordion-element.component.css"],
     template: `
         <dk-section-header
             [sectionOpen]="opened"
@@ -67,12 +62,12 @@ import {IconComponent} from './icon.component';
         <div *ngIf="opened" class="body">
             <ng-content></ng-content>
         </div>
-    `
+    `,
 })
 export class AccordionElementComponent {
-    @Input() title : string;
-    @Input() first : boolean;
-    @Input() last : boolean;
+    @Input() title: string;
+    @Input() first: boolean;
+    @Input() last: boolean;
     @Input() opened = false;
     @Input() clone = false;
     @Output() deleted = new EventEmitter<boolean>();
@@ -80,17 +75,17 @@ export class AccordionElementComponent {
     @Output() cloned = new EventEmitter();
     @Output() toggled = new EventEmitter<boolean>();
 
-    onToggle(opened : boolean) {
+    onToggle(opened: boolean) {
         this.opened = opened;
         this.toggled.emit(opened);
     }
 
-    onDelete(event : MouseEvent) {
+    onDelete(event: MouseEvent) {
         event.stopPropagation();
         this.deleted.emit(true);
     }
 
-    onMoved(down : boolean, event : MouseEvent) {
+    onMoved(down: boolean, event: MouseEvent) {
         event.stopPropagation();
         this.moved.emit(down);
     }

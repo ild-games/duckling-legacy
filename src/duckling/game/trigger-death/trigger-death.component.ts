@@ -1,13 +1,8 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {immutableAssign} from '../../util';
+import { immutableAssign } from "../../util";
 
-import {TriggerDeathAttribute} from './trigger-death-attribute';
+import { TriggerDeathAttribute } from "./trigger-death-attribute";
 
 @Component({
     selector: "dk-trigger-death",
@@ -17,13 +12,17 @@ import {TriggerDeathAttribute} from './trigger-death-attribute';
             [value]="attribute.animationToWatch"
             (inputChanged)="onAnimationToWatchInput($event)">
         </dk-input>
-    `
+    `,
 })
 export class TriggerDeathComponent {
-    @Input() attribute : TriggerDeathAttribute;
+    @Input() attribute: TriggerDeathAttribute;
     @Output() attributeChanged = new EventEmitter<TriggerDeathAttribute>();
 
-    onAnimationToWatchInput(newAnimationToWatch : string) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {animationToWatch: newAnimationToWatch}))
+    onAnimationToWatchInput(newAnimationToWatch: string) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, {
+                animationToWatch: newAnimationToWatch,
+            })
+        );
     }
 }

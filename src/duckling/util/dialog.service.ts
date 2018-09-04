@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from "@angular/core";
 
 @Injectable()
 export class DialogService {
@@ -7,14 +7,15 @@ export class DialogService {
      * @param  options  Dialog box options.
      * @param  callback Optional callback function, first parameter is the files selected.
      */
-    showOpenDialog(options: any, callback?: (fileNames: string[]) => void) : void {
-    }
+    showOpenDialog(
+        options: any,
+        callback?: (fileNames: string[]) => void
+    ): void {}
 
     /**
      * Show an error message.
      * @param  title   Dialog box options.
      * @param  content Optional callback function, first parameter is the files selected.
      */
-    showErrorDialog(title : string, content : string) {
-    }
+    showErrorDialog(title: string, content: string) {}
 }

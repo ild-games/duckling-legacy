@@ -1,5 +1,5 @@
-import {Attribute, Entity} from '../../entitysystem/entity';
-import {Vector} from '../../math/vector';
+import { Attribute, Entity } from "../../entitysystem/entity";
+import { Vector } from "../../math/vector";
 
 export const POSITION_KEY = "position";
 
@@ -10,21 +10,21 @@ export interface PositionAttribute extends Attribute {
     /**
      * Vector containing the entities position.
      */
-    position : Vector,
+    position: Vector;
 
     /**
      * Vector containing the entities initial velocity.
      */
-    velocity : Vector
+    velocity: Vector;
 }
 
-export let defaultPosition : PositionAttribute = {
+export let defaultPosition: PositionAttribute = {
     position: {
         x: 0,
-        y: 0
+        y: 0,
     },
     velocity: {
         x: 0,
-        y: 0
-    }
+        y: 0,
+    },
 };
