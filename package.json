@@ -47,7 +47,7 @@
     "gulp-watch": "5.0.0",
     "howler": "2.0.9",
     "immutable": "3.8.2",
-    "lodash": "4.17.10",
+    "lodash": "4.17.13",
     "mathjs": "4.1.2",
     "open-iconic": "1.1.1",
     "pixi.js": "4.7.3",
