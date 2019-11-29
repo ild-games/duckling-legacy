@@ -1,3 +1,4 @@
+import 'hammerjs';
 import { NgModule, ApplicationRef, Type } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { BrowserModule } from "@angular/platform-browser";
