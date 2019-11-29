@@ -7,5 +7,5 @@ export interface Sound {
 export let defaultSound = {
     soundKey: "",
     volume: 1.0,
-    pitch: 1.0
-}
+    pitch: 1.0,
+};

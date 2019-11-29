@@ -1,13 +1,8 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
 @Component({
     selector: "dk-section",
-    styleUrls: ['./duckling/controls/section.component.css'],
+    styleUrls: ["./duckling/controls/section.component.css"],
     template: `
         <mat-card>
             <dk-section-header
@@ -30,25 +25,20 @@ import {
                 <ng-content></ng-content>
             </div>
         </mat-card>
-    `
+    `,
 })
 export class SectionComponent {
-    @Input()
-    collapsible : boolean = false;
+    @Input() collapsible: boolean = false;
 
-    @Input()
-    checkboxMode : boolean = false;
+    @Input() checkboxMode: boolean = false;
 
-    @Input()
-    sectionOpen : boolean = false;
+    @Input() sectionOpen: boolean = false;
 
-    @Input()
-    headerText : string = "";
+    @Input() headerText: string = "";
 
-    @Output()
-    sectionOpenChanged = new EventEmitter<boolean>();
+    @Output() sectionOpenChanged = new EventEmitter<boolean>();
 
-    onSectionOpenChanged(sectionOpened : boolean) {
+    onSectionOpenChanged(sectionOpened: boolean) {
         this.sectionOpenChanged.emit(sectionOpened);
     }
 

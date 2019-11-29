@@ -1,8 +1,8 @@
-import {Component, ViewContainerRef} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
-import {Observable} from 'rxjs';
+import { Component, ViewContainerRef } from "@angular/core";
+import { MatDialogRef } from "@angular/material";
+import { Observable } from "rxjs";
 
-import {ProjectService} from './project.service';
+import { ProjectService } from "./project.service";
 
 /**
  * Dialog that allows user to choose a map. The result of the dialog is the map key the
@@ -11,8 +11,8 @@ import {ProjectService} from './project.service';
 @Component({
     selector: "dk-map-select",
     styleUrls: [
-        "./duckling/layout.css", 
-        "./duckling/project/map-select.component.css"
+        "./duckling/layout.css",
+        "./duckling/project/map-select.component.css",
     ],
     template: `
         <div *ngIf="!listLoaded">
@@ -48,17 +48,17 @@ import {ProjectService} from './project.service';
             </div>
 
         </div>
-    `
+    `,
 })
 export class MapSelectComponent {
+    listLoaded: boolean = false;
+    maps: string[] = [];
+    newMapName: string = "";
 
-    listLoaded : boolean = false;
-    maps : string [] = [];
-    newMapName : string = "";
-
-    constructor(private _project : ProjectService,
-                private _dialogRef : MatDialogRef<MapSelectComponent>) {
-    }
+    constructor(
+        private _project: ProjectService,
+        private _dialogRef: MatDialogRef<MapSelectComponent>
+    ) {}
 
     ngOnInit() {
         this._project.getMaps().then((maps) => {
@@ -71,7 +71,7 @@ export class MapSelectComponent {
         this._dialogRef.close(null);
     }
 
-    selectMap(mapName : string) {
+    selectMap(mapName: string) {
         this._dialogRef.close(mapName);
     }
 
@@ -82,6 +82,8 @@ export class MapSelectComponent {
     }
 
     newMapNameIsValid() {
-        return this.newMapName !== "" && this.maps.indexOf(this.newMapName) === -1;
+        return (
+            this.newMapName !== "" && this.maps.indexOf(this.newMapName) === -1
+        );
     }
 }

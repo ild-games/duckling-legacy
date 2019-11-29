@@ -1,4 +1,4 @@
-import {Attribute, AttributeKey} from './entity';
+import { Attribute, AttributeKey } from "./entity";
 
 /**
  * None of the core behavior of duckling should depend on a specific attribute implementation.
@@ -11,14 +11,14 @@ import {Attribute, AttributeKey} from './entity';
  * @see AttributeDrawerService
  */
 export class BaseAttributeService<ImplementationType> {
-    private _attributeComponentType : {[key:string]:ImplementationType} = {};
+    private _attributeComponentType: { [key: string]: ImplementationType } = {};
 
     /**
      * Register an implementation for an attribute.
      * @param key Key for the attribute the implementation belongs to.
      * @param implementation The implementation that will be used for the attribute.
      */
-    register(key : AttributeKey, componentClass : ImplementationType) : void {
+    register(key: AttributeKey, componentClass: ImplementationType): void {
         this._attributeComponentType[key] = componentClass;
     }
 
@@ -27,12 +27,13 @@ export class BaseAttributeService<ImplementationType> {
      * @param  key The key of the attribute the implementation will be retrieved for.
      * @return The implementation to use for the attribute.
      */
-    getImplementation(key : AttributeKey) : any {
+    getImplementation(key: AttributeKey): any {
         return this._attributeComponentType[key];
     }
 
-
-    forEach(callback : (key : AttributeKey, implementation : ImplementationType) => any) {
+    forEach(
+        callback: (key: AttributeKey, implementation: ImplementationType) => any
+    ) {
         for (let key in this._attributeComponentType) {
             callback(key, this._attributeComponentType[key]);
         }

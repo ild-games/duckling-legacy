@@ -1,14 +1,9 @@
-import {
-    Component,
-    EventEmitter,
-    Output,
-    Input
-} from '@angular/core';
+import { Component, EventEmitter, Output, Input } from "@angular/core";
 
-import {JsonSchema} from '../util/json-schema';
+import { JsonSchema } from "../util/json-schema";
 
-import {CustomAttribute} from './custom-attribute';
-import {ProjectService} from './project.service';
+import { CustomAttribute } from "./custom-attribute";
+import { ProjectService } from "./project.service";
 
 @Component({
     selector: "dk-custom-attribute",
@@ -18,21 +13,20 @@ import {ProjectService} from './project.service';
             [schema]="schema"
             (valueChanged)="onValueChanged($event)">
         </dk-json>
-    `
+    `,
 })
 export class CustomAttributeComponent {
-    @Input() attribute : any;
-    @Input() key : string;
+    @Input() attribute: any;
+    @Input() key: string;
     @Output() attributeChanged = new EventEmitter<CustomAttribute>();
 
-    constructor(private _project : ProjectService) {
-    }
-    
-    onValueChanged(newValue : any) {
+    constructor(private _project: ProjectService) {}
+
+    onValueChanged(newValue: any) {
         this.attributeChanged.emit(newValue);
     }
 
-    get schema() : JsonSchema {
+    get schema(): JsonSchema {
         return this._project.getCustomAttribute(this.key).content;
     }
 }

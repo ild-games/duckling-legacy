@@ -1,10 +1,10 @@
-import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {JsonSchemaEditComponent} from './json-schema-edit.component';
-import {EditInputComponent} from './edit-input.component';
-import {DucklingMaterialModule} from './duckling-material.module';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { JsonSchemaEditComponent } from "./json-schema-edit.component";
+import { EditInputComponent } from "./edit-input.component";
+import { DucklingMaterialModule } from "./duckling-material.module";
 
 import {
     AccordionComponent,
@@ -30,11 +30,11 @@ import {
     VectorInputComponent,
     SectionComponent,
     SectionHeaderComponent,
-    InlineEditLabelComponent
-} from './index';
-import {ButtonComponent} from './button.component';
+    InlineEditLabelComponent,
+} from "./index";
+import { ButtonComponent } from "./button.component";
 
-const CONTROL_DECLARATIONS : Array<any> = [
+const CONTROL_DECLARATIONS: Array<any> = [
     AccordionComponent,
     AccordionElementComponent,
     ArrayChoiceComponent,
@@ -61,7 +61,7 @@ const CONTROL_DECLARATIONS : Array<any> = [
     SectionHeaderComponent,
     InlineEditLabelComponent,
     JsonSchemaEditComponent,
-    EditInputComponent
+    EditInputComponent,
 ];
 
 @NgModule({
@@ -69,22 +69,17 @@ const CONTROL_DECLARATIONS : Array<any> = [
         BrowserAnimationsModule,
         DucklingMaterialModule,
         CommonModule,
-        FormsModule
+        FormsModule,
     ],
-    declarations : CONTROL_DECLARATIONS,
-    exports : [
+    declarations: CONTROL_DECLARATIONS,
+    exports: [
         CONTROL_DECLARATIONS,
         BrowserAnimationsModule,
         DucklingMaterialModule,
         CommonModule,
-        FormsModule
+        FormsModule,
     ],
-    entryComponents: [
-    ],
-    schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
-    ]
+    entryComponents: [],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ControlsModule {
-
-}
+export class ControlsModule {}

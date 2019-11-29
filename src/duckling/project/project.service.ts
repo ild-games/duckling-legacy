@@ -1,36 +1,48 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
-import { createEntitySystem, EntitySystemService, EntityKey, EntitySystem } from '../entitysystem';
-import { AttributeKey } from '../entitysystem/entity'
-import { StoreService, clearUndoHistoryAction } from '../state';
-import { PathService } from '../util';
-import { rethrow } from '../util/rethrow';
+import {
+    createEntitySystem,
+    EntitySystemService,
+    EntityKey,
+    EntitySystem,
+} from "../entitysystem";
+import { AttributeKey } from "../entitysystem/entity";
+import { StoreService, clearUndoHistoryAction } from "../state";
+import { PathService } from "../util";
+import { rethrow } from "../util/rethrow";
 
-import { JsonLoaderService, SaveResult } from '../util/json-loader.service';
-import { immutableAssign } from '../util/model';
-import { DialogService } from '../util/dialog.service';
-import { glob } from '../util/glob';
-import { JsonSchema } from '../util/json-schema';
-import { Vector } from '../math/vector';
-import { MigrationService, VersionFile } from '../migration/migration.service';
-import { incrementMajorVersion, compareVersions, EDITOR_VERSION } from '../util/version';
-import { replaceSystemAction } from '../entitysystem/entity-system.reducer';
+import { JsonLoaderService, SaveResult } from "../util/json-loader.service";
+import { immutableAssign } from "../util/model";
+import { DialogService } from "../util/dialog.service";
+import { glob } from "../util/glob";
+import { JsonSchema } from "../util/json-schema";
+import { Vector } from "../math/vector";
+import { MigrationService, VersionFile } from "../migration/migration.service";
+import {
+    incrementMajorVersion,
+    compareVersions,
+    EDITOR_VERSION,
+} from "../util/version";
+import { replaceSystemAction } from "../entitysystem/entity-system.reducer";
 
-import { MapParserService, ParsedMap, createRawMap } from './map-parser.service';
+import {
+    MapParserService,
+    ParsedMap,
+    createRawMap,
+} from "./map-parser.service";
 import {
     switchProjectAction,
     doneLoadingProjectAction,
     openMapAction,
-    changeCurrentMapDimensionAction,
     changeCurrentMapGridAction,
     changeCustomAttributes,
     Project,
-    setVersionInfo
-} from './project';
-import {UserMetaData, updateUserMetaDataAction} from './user-meta-data';
-import {SnackBarService} from './snackbar.service';
-import {CustomAttribute} from './custom-attribute';
+    setVersionInfo,
+} from "./project";
+import { UserMetaData, updateUserMetaDataAction } from "./user-meta-data";
+import { SnackBarService } from "./snackbar.service";
+import { CustomAttribute } from "./custom-attribute";
 
 const MAP_DIR = "maps";
 const DEFAULT_INITIAL_MAP = "map1";
@@ -44,14 +56,15 @@ export class ProjectService {
     project: BehaviorSubject<Project>;
 
     constructor(
-            private _entitySystem: EntitySystemService,
-            private _storeService: StoreService,
-            private _migrationService: MigrationService,
-            private _jsonLoader: JsonLoaderService,
-            private _pathService: PathService,
-            private _mapParser: MapParserService,
-            private _dialog: DialogService,
-            private _snackbar: SnackBarService) {
+        private _entitySystem: EntitySystemService,
+        private _storeService: StoreService,
+        private _migrationService: MigrationService,
+        private _jsonLoader: JsonLoaderService,
+        private _pathService: PathService,
+        private _mapParser: MapParserService,
+        private _dialog: DialogService,
+        private _snackbar: SnackBarService
+    ) {
         this.project = new BehaviorSubject(this._project);
         this._storeService.state.subscribe((state) => {
             this.project.next(state.project);
@@ -65,14 +78,19 @@ export class ProjectService {
         projectPath = this._pathService.normalize(projectPath);
         this._storeService.dispatch(switchProjectAction(projectPath));
         try {
-            let versionInfo = await this._migrationService.openProject(projectPath);
+            let versionInfo = await this._migrationService.openProject(
+                projectPath
+            );
             this._storeService.dispatch(setVersionInfo(versionInfo));
             await this._loadProjectMetaData();
             let userMetaData = await this._loadUserMetaData();
             this._storeService.dispatch(updateUserMetaDataAction(userMetaData));
             await this.openMap(this.project.value.userMetaData.initialMap);
         } catch (error) {
-            this._dialog.showErrorDialog("Unable to Open the Project", error.message);
+            this._dialog.showErrorDialog(
+                "Unable to Open the Project",
+                error.message
+            );
         }
     }
 
@@ -84,9 +102,16 @@ export class ProjectService {
         let attributes = await glob(`${this._customAttributesRoot}/*.json`);
         let attributePromises: Promise<void>[] = [];
         for (let customAttribute of attributes) {
-            attributePromises.push(this._jsonLoader.getJsonFromPath(customAttribute).then(json => {
-                this.addCustomAttribute(this._customAttributeFileToName(customAttribute), JSON.parse(json))
-            }));
+            attributePromises.push(
+                this._jsonLoader
+                    .getJsonFromPath(customAttribute)
+                    .then((json) => {
+                        this.addCustomAttribute(
+                            this._customAttributeFileToName(customAttribute),
+                            JSON.parse(json)
+                        );
+                    })
+            );
         }
         return Promise.all(attributePromises);
     }
@@ -96,28 +121,42 @@ export class ProjectService {
      * @param mapKey Key of the map to open.
      */
     async openMap(mapKey: string) {
-        let json = await this._jsonLoader.getJsonFromPath(this.getMapPath(mapKey));
+        let json = await this._jsonLoader.getJsonFromPath(
+            this.getMapPath(mapKey)
+        );
         try {
             await this._parseMapJson(json, mapKey);
             this._snackbar.invokeSnacks();
         } catch (error) {
-            this._dialog.showErrorDialog("Unable to Open the Map", error.message);
+            this._dialog.showErrorDialog(
+                "Unable to Open the Map",
+                error.message
+            );
         }
     }
 
     /**
      * Save the projects current state.
      */
-    async save() {
-        let map = await this._mapParser.parsedMapToRawMap({
-            entitySystem: this._entitySystem.entitySystem.value,
-            ...this._project.currentMap
-        }, this._project.versionInfo);
-        let json = JSON.stringify(map, null, 4);
-        await this._migrationService.saveProject(this.projectMetaDataDir, this.project.value.versionInfo);     
+    async save(minify: boolean = false) {
+        let map = await this._mapParser.parsedMapToRawMap(
+            {
+                entitySystem: this._entitySystem.entitySystem.value,
+                ...this._project.currentMap,
+            },
+            this._project.versionInfo
+        );
+        let json = JSON.stringify(map, null, minify ? null : 4);
+        await this._migrationService.saveProject(
+            this.projectMetaDataDir,
+            this.project.value.versionInfo
+        );
         await this._saveProjectMetaData();
         await this._saveUserMetaData(this.project.value.userMetaData);
-        await this._jsonLoader.saveJsonToPath(this.getMapPath(this._project.currentMap.key), json);
+        await this._jsonLoader.saveJsonToPath(
+            this.getMapPath(this._project.currentMap.key),
+            json
+        );
 
         this._snackbar.invokeSnacks();
     }
@@ -133,32 +172,48 @@ export class ProjectService {
 
         for (let customAttribute of this._project.customAttributes) {
             await this._jsonLoader.saveJsonToPath(
-                this._pathService.join(this._customAttributesRoot, customAttribute.key + '.json'),
-                JSON.stringify(customAttribute.content, null, 4));
+                this._pathService.join(
+                    this._customAttributesRoot,
+                    customAttribute.key + ".json"
+                ),
+                JSON.stringify(customAttribute.content, null, 4)
+            );
         }
     }
 
     private async _saveUserMetaData(userMetaData: UserMetaData): Promise<void> {
         let json = JSON.stringify(userMetaData, null, 4);
-        let saveResult = await this._jsonLoader.saveJsonToPath(this.getUserMetaDataPath(USER_META_DATA_FILE), json);
+        let saveResult = await this._jsonLoader.saveJsonToPath(
+            this.getUserMetaDataPath(USER_META_DATA_FILE),
+            json
+        );
         if (!saveResult.isSuccess) {
-            this._snackbar.addSnack("Error: There was a problem saving last opened map!");
+            this._snackbar.addSnack(
+                "Error: There was a problem saving last opened map!"
+            );
         }
     }
 
     private async _loadUserMetaData(): Promise<UserMetaData> {
-        let fileExists = await this._pathService.pathExists(this.getUserMetaDataPath(USER_META_DATA_FILE));
-        let userPreferences : UserMetaData = {mapMetaData: {}};
+        let fileExists = await this._pathService.pathExists(
+            this.getUserMetaDataPath(USER_META_DATA_FILE)
+        );
+        let userPreferences: UserMetaData = { mapMetaData: {} };
         if (fileExists) {
-            let json = await this._jsonLoader.getJsonFromPath(this.getUserMetaDataPath(USER_META_DATA_FILE));
+            let json = await this._jsonLoader.getJsonFromPath(
+                this.getUserMetaDataPath(USER_META_DATA_FILE)
+            );
             userPreferences = JSON.parse(json);
         }
 
         return this._fillMissingUserPreferences(userPreferences);
     }
 
-    private async _fillMissingUserPreferences(metaData: UserMetaData): Promise<UserMetaData> {
-        metaData["initialMap"] = metaData["initialMap"] || await this._initialUserPreferenceMap();
+    private async _fillMissingUserPreferences(
+        metaData: UserMetaData
+    ): Promise<UserMetaData> {
+        metaData["initialMap"] =
+            metaData["initialMap"] || (await this._initialUserPreferenceMap());
         return metaData;
     }
 
@@ -179,7 +234,9 @@ export class ProjectService {
     addCustomAttribute(key: string, content: JsonSchema) {
         let currentAttributes = this._project.customAttributes;
         let newAttribute = { key, content };
-        let newAttributes = currentAttributes ? currentAttributes.concat([newAttribute]) : [].concat([newAttribute]);
+        let newAttributes = currentAttributes
+            ? currentAttributes.concat([newAttribute])
+            : [].concat([newAttribute]);
         this._storeService.dispatch(changeCustomAttributes(newAttributes));
     }
 
@@ -202,14 +259,6 @@ export class ProjectService {
     }
 
     /**
-     * Change the dimension of the map
-     * @param newDimension new dimensions of the map
-     */
-    changeDimension(newDimension: Vector) {
-        this._storeService.dispatch(changeCurrentMapDimensionAction(newDimension));
-    }
-
-    /**
      * Change the grid size of the map
      * @param newGridSize new grid size of the map
      */
@@ -223,7 +272,11 @@ export class ProjectService {
      * @return The Path that can be used to load the map.
      */
     getMapPath(mapName: string): string {
-        return this._pathService.join(this._project.home, "maps", mapName + ".map");
+        return this._pathService.join(
+            this._project.home,
+            "maps",
+            mapName + ".map"
+        );
     }
 
     /**
@@ -233,7 +286,9 @@ export class ProjectService {
     getMaps(): Promise<string[]> {
         let mapsRoot = this._mapRoot;
         let mapsPromise = glob(`${mapsRoot}/**/*.map`);
-        return mapsPromise.then(maps => maps.map(map => this._mapPathToRoot(mapsRoot, map)));
+        return mapsPromise.then((maps) =>
+            maps.map((map) => this._mapPathToRoot(mapsRoot, map))
+        );
     }
 
     /**
@@ -242,7 +297,10 @@ export class ProjectService {
      * @return the path that can be used to load the meta data file
      */
     getProjectMetaDataPath(metaDataFile: string): string {
-        return this._pathService.join(this.projectMetaDataDir, metaDataFile + ".json");
+        return this._pathService.join(
+            this.projectMetaDataDir,
+            metaDataFile + ".json"
+        );
     }
 
     /**
@@ -251,10 +309,16 @@ export class ProjectService {
      * @return the path that can be used to load the meta data file
      */
     getUserMetaDataPath(metaDataFile: string): string {
-        return this._pathService.join(this.userMetaDataDir, metaDataFile + ".json");
+        return this._pathService.join(
+            this.userMetaDataDir,
+            metaDataFile + ".json"
+        );
     }
 
-    async runExistingCodeMigration(migrationName: string, options: any): Promise<void> {
+    async runExistingCodeMigration(
+        migrationName: string,
+        options: any
+    ): Promise<void> {
         this._addMigrationToVersionInfo(migrationName, options);
         this._runMigrationOnOpenMap(migrationName, options);
     }
@@ -263,7 +327,8 @@ export class ProjectService {
         let newVersionInfo = this._migrationService.updateVersionInfoWithExistingCodeMigration(
             this.project.value.versionInfo,
             migrationName,
-            options);
+            options
+        );
         this._storeService.dispatch(setVersionInfo(newVersionInfo));
     }
 
@@ -271,53 +336,71 @@ export class ProjectService {
         let newEntitySystem = this._migrationService.migrateEntitySystem(
             this._entitySystem.entitySystem.value,
             migrationName,
-            options);
+            options
+        );
         this._storeService.dispatch(replaceSystemAction(newEntitySystem));
     }
 
     async saveVersionFile(versionFileContents: any): Promise<SaveResult> {
         let json = JSON.stringify(versionFileContents, null, 4);
-        return this._jsonLoader.saveJsonToPath(this._pathService.join(this.projectMetaDataDir, "version.json"), json);
+        return this._jsonLoader.saveJsonToPath(
+            this._pathService.join(this.projectMetaDataDir, "version.json"),
+            json
+        );
     }
 
     private async _parseMapJson(json: any, key: string) {
-        let rawMap = json ? JSON.parse(json) : createRawMap(this._project.versionInfo.projectVersion);
-        rawMap = await this._migrationService.migrateMap(rawMap, this._project.versionInfo, this.projectMetaDataDir);
+        let rawMap = json
+            ? JSON.parse(json)
+            : createRawMap(this._project.versionInfo.projectVersion);
+        rawMap = await this._migrationService.migrateMap(
+            rawMap,
+            this._project.versionInfo,
+            this.projectMetaDataDir
+        );
 
         let parsedMap = await this._mapParser.rawMapToParsedMap(rawMap);
 
-        this._entitySystem.replaceSystem(parsedMap.entitySystem);
-        if (!parsedMap.dimension) {
-            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
-        }
-        if (!parsedMap.gridSize) {
-            parsedMap = immutableAssign(parsedMap, createRawMap(this._project.versionInfo.projectVersion));
-        }
+        this._storeService.dispatch(
+            openMapAction({
+                key: key,
+                version: parsedMap.version,
+                gridSize: parsedMap.gridSize,
+            })
+        );
 
-        this._storeService.dispatch(openMapAction({
-            key: key,
-            version: parsedMap.version,
-            dimension: parsedMap.dimension,
-            gridSize: parsedMap.gridSize
-        }));
+        this._entitySystem.replaceSystem(parsedMap.entitySystem);
+        if (!parsedMap.gridSize) {
+            parsedMap = immutableAssign(
+                parsedMap,
+                createRawMap(this._project.versionInfo.projectVersion)
+            );
+        }
         this._storeService.dispatch(doneLoadingProjectAction());
         this._storeService.dispatch(clearUndoHistoryAction());
     }
 
     private _mapPathToRoot(root: string, path: string) {
-        return path.slice(root.length + 1, -(".map".length));
+        return path.slice(root.length + 1, -".map".length);
     }
 
     private _customAttributeFileToName(customAttributePath: string): string {
-        return customAttributePath.slice(this._customAttributesRoot.length + 1, -(".json".length));
+        return customAttributePath.slice(
+            this._customAttributesRoot.length + 1,
+            -".json".length
+        );
     }
 
     private get _mapRoot() {
-        return this._pathService.join(this._project.home, 'maps');
+        return this._pathService.join(this._project.home, "maps");
     }
 
     private get _customAttributesRoot() {
-        return this._pathService.join(this._project.home, 'project', 'custom-attributes');
+        return this._pathService.join(
+            this._project.home,
+            "project",
+            "custom-attributes"
+        );
     }
 
     private get _project(): Project {

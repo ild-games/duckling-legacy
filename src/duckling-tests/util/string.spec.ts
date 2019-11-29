@@ -1,8 +1,8 @@
-import 'reflect-metadata';
-import 'mocha';
-import {expect} from 'chai';
+import "reflect-metadata";
+import "mocha";
+import { expect } from "chai";
 
-import {toTitleCase} from '../../duckling/util';
+import { toTitleCase } from "../../duckling/util";
 
 describe("string utils", function() {
     describe("toTitleCase", function() {

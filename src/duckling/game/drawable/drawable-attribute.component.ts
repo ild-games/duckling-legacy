@@ -1,17 +1,12 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {immutableAssign} from '../../util';
-import {Validator} from '../../controls/validated-input.component';
+import { immutableAssign } from "../../util";
+import { Validator } from "../../controls/validated-input.component";
 
-import {DrawableAttribute} from './drawable-attribute';
-import {Drawable} from './drawable';
-import {getDrawableByKey} from './drawable-helpers';
-import {DrawableComponent} from './drawable.component';
+import { DrawableAttribute } from "./drawable-attribute";
+import { Drawable } from "./drawable";
+import { getDrawableByKey } from "./drawable-helpers";
+import { DrawableComponent } from "./drawable.component";
 
 /**
  * Top level component for the drawable attribute
@@ -30,28 +25,32 @@ import {DrawableComponent} from './drawable.component';
             [keyValidator]="drawableKeyValidator"
             (drawableChanged)="onDrawableChanged($event)">
         </dk-drawable>
-    `
+    `,
 })
 export class DrawableAttributeComponent {
-    @Input() attribute : DrawableAttribute;
+    @Input() attribute: DrawableAttribute;
     @Output() attributeChanged = new EventEmitter<DrawableAttribute>();
-    
-    onCamEntityInput(newCamEntity : string) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {camEntity: newCamEntity}));
+
+    onCamEntityInput(newCamEntity: string) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { camEntity: newCamEntity })
+        );
     }
 
-    onDrawableChanged(newDrawable : Drawable) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {topDrawable: newDrawable}));
+    onDrawableChanged(newDrawable: Drawable) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { topDrawable: newDrawable })
+        );
     }
 
-    get drawableKeyValidator() : Validator {
-        return (value : string) => {
+    get drawableKeyValidator(): Validator {
+        return (value: string) => {
             if (!value) {
                 return false;
             }
 
             let drawable = getDrawableByKey(this.attribute.topDrawable, value);
             return drawable === null;
-        }
+        };
     }
 }

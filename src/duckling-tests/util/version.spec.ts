@@ -1,8 +1,12 @@
-import 'mocha';
-import {expect} from 'chai';
+import "mocha";
+import { expect } from "chai";
 import "reflect-metadata";
 
-import {compareVersions, versionCompareFunction, VersionCompatibility} from '../../duckling/util/version';
+import {
+    compareVersions,
+    versionCompareFunction,
+    VersionCompatibility,
+} from "../../duckling/util/version";
 
 describe("compareVersions", function() {
     it("throws an error for a blank version", function() {
@@ -21,7 +25,9 @@ describe("compareVersions", function() {
         expect(() => compareVersions(".bad", "1.0")).to.throw(Error);
         expect(() => compareVersions("super_bad.", "1.0")).to.throw(Error);
         expect(() => compareVersions("why.are", "1.0")).to.throw(Error);
-        expect(() => compareVersions("why.are.you.doing.this", "1.0")).to.throw(Error);
+        expect(() => compareVersions("why.are.you.doing.this", "1.0")).to.throw(
+            Error
+        );
     });
 
     it("Returns incompatible if major versions mismatch", function() {
@@ -51,6 +57,10 @@ describe("compareVersions", function() {
 
 describe("versionCompareFunction", function() {
     it("Sorts an array of versions", function() {
-        expect(["4.1", "1.2", "2.0", "1.0", "4.1", "1.1", "4.5"].sort(versionCompareFunction)).to.eql(["1.0", "1.1" ,"1.2", "2.0", "4.1", "4.1", "4.5"]);
+        expect(
+            ["4.1", "1.2", "2.0", "1.0", "4.1", "1.1", "4.5"].sort(
+                versionCompareFunction
+            )
+        ).to.eql(["1.0", "1.1", "1.2", "2.0", "4.1", "4.1", "4.5"]);
     });
 });

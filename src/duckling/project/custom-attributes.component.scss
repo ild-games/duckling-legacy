@@ -1,9 +1,9 @@
-@import '../forms';
-@import '../fonts';
-@import '../colors';
-@import '../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css';
+@import "../forms";
+@import "../fonts";
+@import "../colors";
+@import "../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
-$background-color: #FFFFFF;
+$background-color: #ffffff;
 $attribute-list-background-color: $ultra-light-primary-color;
 $attribute-list-width: 200px;
 
@@ -19,7 +19,6 @@ $attribute-list-width: 200px;
         flex-direction: column;
         background-color: $attribute-list-background-color;
 
-        
         mat-list {
             max-width: $attribute-list-width;
             flex: 1 1 auto;

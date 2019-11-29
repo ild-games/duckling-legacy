@@ -1,7 +1,4 @@
-import {
-    Component,
-    Input
-} from '@angular/core';
+import { Component, Input } from "@angular/core";
 
 /**
  * Component used to render a font-icon
@@ -11,8 +8,8 @@ import {
     template: `
         <i class="fa fa-{{iconClass}}">
         </i>
-    `
+    `,
 })
 export class IconComponent {
-    @Input() iconClass : string;
+    @Input() iconClass: string;
 }

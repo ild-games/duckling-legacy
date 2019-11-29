@@ -4,16 +4,16 @@ import {
     Output,
     EventEmitter,
     ViewChild,
-    ElementRef
-} from '@angular/core';
+    ElementRef,
+} from "@angular/core";
 
 /**
  * Helper component used to implement input controls
  */
 @Component({
     selector: "dk-input",
-    styleUrls: ['./duckling/controls/input.component.css'],
-    template:`
+    styleUrls: ["./duckling/controls/input.component.css"],
+    template: `
         <mat-form-field
             dividerColor="{{dividerColor}}"
             (input)="onUserInput($event.target.value)"
@@ -24,30 +24,30 @@ import {
                 placeholder={{label}}
                 value="{{value}}">
         </mat-form-field>
-    `
+    `,
 })
 export class InputComponent {
     /**
      * HTMLElement of the input element
      */
-    @ViewChild('rawInputElement') rawInputElement : ElementRef;
-    
+    @ViewChild("rawInputElement") rawInputElement: ElementRef;
+
     /**
      * Text label displayed to the user.
      */
-    @Input() label : string;
+    @Input() label: string;
     /**
      * The value stored in the control.
      */
-    @Input() value : string;
+    @Input() value: string;
     /**
      * True if the input element is disabled.
      */
-    @Input() disabled : boolean;
+    @Input() disabled: boolean;
     /**
      * The color of the input field
      */
-    @Input() dividerColor : string = "primary";
+    @Input() dividerColor: string = "primary";
     /**
      * Event published when the user enters input.
      */
@@ -57,7 +57,7 @@ export class InputComponent {
      */
     @Output() focus = new EventEmitter<boolean>();
 
-    onUserInput(newValue : string) {
+    onUserInput(newValue: string) {
         this.inputChanged.emit(newValue);
     }
 
@@ -65,7 +65,7 @@ export class InputComponent {
         this.focus.emit(true);
     }
 
-    get rawValue() : string {
+    get rawValue(): string {
         return this.rawInputElement.nativeElement.value;
     }
 }

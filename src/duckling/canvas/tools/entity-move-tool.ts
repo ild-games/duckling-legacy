@@ -1,26 +1,33 @@
-import { Injectable } from '@angular/core';
-import { Graphics, DisplayObject } from 'pixi.js';
+import { Injectable } from "@angular/core";
+import { Graphics, DisplayObject } from "pixi.js";
 
 import {
     EntitySystemService,
     EntityPositionService,
     EntityKey,
     Entity,
-    EntityBoxService
-} from '../../entitysystem';
-import { resizePoint } from '../../entitysystem/services/resize';
-import { Vector, vectorAdd, vectorSubtract, vectorRound, vectorMultiply, vectorModulus } from '../../math/vector';
-import { Box2 } from '../../math/box2';
-import { newMergeKey } from '../../state';
-import { SelectionService, Selection } from '../../selection';
-import { ProjectService } from '../../project/project.service';
-import { KeyboardCode } from '../../util';
-import { drawRectangle } from '../drawing';
-import { DrawnConstruct } from '../drawing/drawn-construct';
+    EntityBoxService,
+} from "../../entitysystem";
+import { resizePoint } from "../../entitysystem/services/resize";
+import {
+    Vector,
+    vectorAdd,
+    vectorSubtract,
+    vectorRound,
+    vectorMultiply,
+    vectorModulus,
+} from "../../math/vector";
+import { Box2 } from "../../math/box2";
+import { newMergeKey } from "../../state";
+import { SelectionService, Selection } from "../../selection";
+import { ProjectService } from "../../project/project.service";
+import { KeyboardCode } from "../../util";
+import { drawRectangle } from "../drawing";
+import { DrawnConstruct } from "../drawing/drawn-construct";
 
-import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from './base-tool';
-import { minCornerSnapDistance } from './_grid-snap';
-import { SnapToGridService } from './grid-snap.service';
+import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from "./base-tool";
+import { minCornerSnapDistance } from "./_grid-snap";
+import { SnapToGridService } from "./grid-snap.service";
 
 enum State {
     initial,
@@ -38,10 +45,8 @@ enum State {
     moving,
 }
 
-
 @Injectable()
 export class EntityMoveTool extends BaseTool {
-
     private _mergeKey: any;
     private _initialMouseLocation: Vector;
     private _initialPositions: { [entityKey: string]: Vector } = {};
@@ -50,12 +55,14 @@ export class EntityMoveTool extends BaseTool {
 
     private _state: State;
 
-    constructor(private _entitySystemService: EntitySystemService,
+    constructor(
+        private _entitySystemService: EntitySystemService,
         private _entityPositionService: EntityPositionService,
         private _selectionService: SelectionService,
         private _snapToGridService: SnapToGridService,
         private _entityBoxService: EntityBoxService,
-        private _projectService: ProjectService) {
+        private _projectService: ProjectService
+    ) {
         super();
         this._state = State.initial;
     }
@@ -68,7 +75,8 @@ export class EntityMoveTool extends BaseTool {
         let drawnConstruct = new EntityMoveToolDrawnConstruct(
             canvasZoom,
             this._getSelectionBox(),
-            this._drawSelectedEntityGizmos());
+            this._drawSelectedEntityGizmos()
+        );
         drawnConstruct.layer = Number.POSITIVE_INFINITY;
         return drawnConstruct;
     }
@@ -82,12 +90,16 @@ export class EntityMoveTool extends BaseTool {
             }
         }
         let allEntitiesBox = this._entityBoxService.getEntitiesBoundingBox(
-            this._selectionService.selections.value.map((selection: Selection) => { return selection.key; }));
+            this._selectionService.selections.value.map(
+                (selection: Selection) => {
+                    return selection.key;
+                }
+            )
+        );
         if (allEntitiesBox) {
             boxes.push(allEntitiesBox);
         }
         return boxes;
-
     }
 
     private _getSelectionBox(): Box2 {
@@ -95,14 +107,17 @@ export class EntityMoveTool extends BaseTool {
             return;
         }
 
-        if (this._state !== State.clickSelectionBox && this._state !== State.shiftClickSelectionBox) {
+        if (
+            this._state !== State.clickSelectionBox &&
+            this._state !== State.shiftClickSelectionBox
+        ) {
             return;
         }
 
         return {
             position: this._initialMouseLocation,
             dimension: this._selectionBoxDimensions,
-            rotation: 0
+            rotation: 0,
         };
     }
 
@@ -110,18 +125,26 @@ export class EntityMoveTool extends BaseTool {
         this._mergeKey = newMergeKey();
         this._initialMouseLocation = event.stageCoords;
 
-        let selectedEntityKey = this._selectionService.getEntityKeyAtPosition(event.stageCoords);
+        let selectedEntityKey = this._selectionService.getEntityKeyAtPosition(
+            event.stageCoords
+        );
 
-        this._setStateFromMouseDown(selectedEntityKey, event.shiftKey)
+        this._setStateFromMouseDown(selectedEntityKey, event.shiftKey);
 
         switch (this._state) {
             case State.clickOnUnselected: {
                 this._selectionService.deselect(this._mergeKey);
-                this._selectionService.select([selectedEntityKey], this._mergeKey);
+                this._selectionService.select(
+                    [selectedEntityKey],
+                    this._mergeKey
+                );
                 break;
             }
             case State.shiftClickOnUnselected: {
-                this._selectionService.select([selectedEntityKey], this._mergeKey);
+                this._selectionService.select(
+                    [selectedEntityKey],
+                    this._mergeKey
+                );
                 break;
             }
         }
@@ -129,7 +152,9 @@ export class EntityMoveTool extends BaseTool {
         this._cacheInitialPositions();
     }
 
-    private _cacheEntityKeyAtMouseDownPosition(selectedEntityKey: EntityKey): void {
+    private _cacheEntityKeyAtMouseDownPosition(
+        selectedEntityKey: EntityKey
+    ): void {
         switch (this._state) {
             case State.clickOnSelected:
             case State.clickOnUnselected:
@@ -139,10 +164,12 @@ export class EntityMoveTool extends BaseTool {
                 break;
             }
         }
-
     }
 
-    private _setStateFromMouseDown(selectedEntityKey: string, shiftClick: boolean): void {
+    private _setStateFromMouseDown(
+        selectedEntityKey: string,
+        shiftClick: boolean
+    ): void {
         if (!selectedEntityKey) {
             if (shiftClick) {
                 this._state = State.shiftClickOff;
@@ -167,13 +194,14 @@ export class EntityMoveTool extends BaseTool {
     private _cacheInitialPositions(): void {
         if (this._selectionService.selections.value.length > 0) {
             for (let selection of this._selectionService.selections.value) {
-                this._initialPositions[selection.key] = this._entityPositionService.getPosition(selection.entity);
+                this._initialPositions[
+                    selection.key
+                ] = this._entityPositionService.getPosition(selection.entity);
             }
         }
     }
 
     onStageMove(event: CanvasMouseEvent) {
-
         this._setStateFromMove();
 
         switch (this._state) {
@@ -191,7 +219,10 @@ export class EntityMoveTool extends BaseTool {
                 return;
             }
             default: {
-                throw new Error("unexpected state during stage move execution " + State[this._state]);
+                throw new Error(
+                    "unexpected state during stage move execution " +
+                        State[this._state]
+                );
             }
         }
     }
@@ -223,16 +254,26 @@ export class EntityMoveTool extends BaseTool {
     }
 
     onStageMoveSelectionBox(event: CanvasMouseEvent) {
-        this._selectionBoxDimensions = vectorSubtract(event.stageCoords, this._initialMouseLocation);
+        this._selectionBoxDimensions = vectorSubtract(
+            event.stageCoords,
+            this._initialMouseLocation
+        );
         this.drawnConstructChanged.next(true);
     }
 
     onStageMoveSelectedEntities(event: CanvasMouseEvent) {
-        if (!this._selectionService.selections.value || this._selectionService.selections.value.length === 0 || !this._initialMouseLocation) {
+        if (
+            !this._selectionService.selections.value ||
+            this._selectionService.selections.value.length === 0 ||
+            !this._initialMouseLocation
+        ) {
             return;
         }
 
-        let dragDistance = vectorSubtract(event.stageCoords, this._initialMouseLocation);
+        let dragDistance = vectorSubtract(
+            event.stageCoords,
+            this._initialMouseLocation
+        );
 
         if (this._snapToGridService.shouldSnapToGrid(event)) {
             dragDistance = this._getDragDistanceWithSnapping(dragDistance);
@@ -243,31 +284,48 @@ export class EntityMoveTool extends BaseTool {
             let initialPosition = this._initialPositions[selection.key];
             let finalPosition = vectorAdd(dragDistance, initialPosition);
             finalPosition = vectorRound(finalPosition);
-            let updatedEntity = this._entityPositionService.setPosition(selection.entity, finalPosition);
+            let updatedEntity = this._entityPositionService.setPosition(
+                selection.entity,
+                finalPosition
+            );
             entities = entities.set(selection.key, updatedEntity);
         }
         this._entitySystemService.updateEntities(entities, this._mergeKey);
     }
 
     private _getDragDistanceWithSnapping(dragDistance: Vector): Vector {
-        let initialBox = this._entityBoxService.getEntityBox(this._entityKeyAtMouseDownPosition);
-        let dimensionModulus = vectorModulus(initialBox.dimension, vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 }));
+        let initialBox = this._entityBoxService.getEntityBox(
+            this._entityKeyAtMouseDownPosition
+        );
+        let dimensionModulus = vectorModulus(
+            initialBox.dimension,
+            vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 })
+        );
         if (dimensionModulus.x !== 0 || dimensionModulus.y !== 0) {
             return dragDistance;
         }
 
         let destination = vectorAdd(initialBox.position, dragDistance);
-        let snappedDestination = this._snapToGridService.snapBox(destination, initialBox);
+        let snappedDestination = this._snapToGridService.snapBox(
+            destination,
+            initialBox
+        );
         dragDistance = vectorSubtract(snappedDestination, initialBox.position);
         let selectionInitialDiff = vectorSubtract(
-            vectorModulus(this._initialPositions[this._entityKeyAtMouseDownPosition], vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 })),
-            vectorModulus(initialBox.position, vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 })));
+            vectorModulus(
+                this._initialPositions[this._entityKeyAtMouseDownPosition],
+                vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 })
+            ),
+            vectorModulus(
+                initialBox.position,
+                vectorMultiply(this._snapToGridService.grid, { x: 0.5, y: 0.5 })
+            )
+        );
         dragDistance = vectorSubtract(dragDistance, selectionInitialDiff);
         return dragDistance;
     }
 
     onStageUp(event: CanvasMouseEvent) {
-
         switch (this._state) {
             case State.clickOff: {
                 this._selectionService.deselect(this._mergeKey);
@@ -275,14 +333,18 @@ export class EntityMoveTool extends BaseTool {
             }
             case State.clickOnSelected: {
                 this._selectionService.deselect(this._mergeKey);
-                let entityKey = this._selectionService.getEntityKeyAtPosition(event.stageCoords);
+                let entityKey = this._selectionService.getEntityKeyAtPosition(
+                    event.stageCoords
+                );
                 this._selectionService.select([entityKey], this._mergeKey);
                 break;
             }
 
             case State.shiftClickOnSelected: {
-                let entityKey = this._selectionService.getEntityKeyAtPosition(event.stageCoords);
-                this.removeEntityFromSelection(entityKey)
+                let entityKey = this._selectionService.getEntityKeyAtPosition(
+                    event.stageCoords
+                );
+                this.removeEntityFromSelection(entityKey);
                 break;
             }
 
@@ -311,7 +373,10 @@ export class EntityMoveTool extends BaseTool {
     }
 
     selectEntitiesInSelectionBox() {
-        let entityKeys = this._selectionService.getEntityKeysInSelection(this._initialMouseLocation, this._selectionBoxDimensions);
+        let entityKeys = this._selectionService.getEntityKeysInSelection(
+            this._initialMouseLocation,
+            this._selectionBoxDimensions
+        );
         if (!entityKeys || entityKeys.length === 0) {
             return;
         }
@@ -320,21 +385,30 @@ export class EntityMoveTool extends BaseTool {
     }
 
     removeEntityFromSelection(selectedEntityKey: string) {
-
         if (selectedEntityKey) {
-            let newSelections = this._selectionService.selections.value.filter(selection => selection.key !== selectedEntityKey);
+            let newSelections = this._selectionService.selections.value.filter(
+                (selection) => selection.key !== selectedEntityKey
+            );
             this._selectionService.deselect(this._mergeKey);
-            this._selectionService.select(newSelections.map(selection => selection.key), this._mergeKey);
+            this._selectionService.select(
+                newSelections.map((selection) => selection.key),
+                this._mergeKey
+            );
         }
     }
 
     onKeyDown(event: CanvasKeyEvent) {
-        if (!this._selectionService.selections.value || this._selectionService.selections.value.length <= 0) {
+        if (
+            !this._selectionService.selections.value ||
+            this._selectionService.selections.value.length <= 0
+        ) {
             return;
         }
 
         if (this._isMovementKey(event.keyCode)) {
-            this._adjustEntityPosition(this._keyEventToPositionAdjustment(event));
+            this._adjustEntityPosition(
+                this._keyEventToPositionAdjustment(event)
+            );
         } else if (this._isDeleteKey(event.keyCode)) {
             this._deleteSelectedEntities();
         }
@@ -359,8 +433,13 @@ export class EntityMoveTool extends BaseTool {
     private _adjustEntityPosition(adjustment: Vector) {
         let entities = new Map<EntityKey, Entity>();
         for (let selection of this._selectionService.selections.value) {
-            let oldPosition = this._entityPositionService.getPosition(selection.entity);
-            let updatedEntity = this._entityPositionService.setPosition(selection.entity, vectorAdd(oldPosition, adjustment));
+            let oldPosition = this._entityPositionService.getPosition(
+                selection.entity
+            );
+            let updatedEntity = this._entityPositionService.setPosition(
+                selection.entity,
+                vectorAdd(oldPosition, adjustment)
+            );
             entities = entities.set(selection.key, updatedEntity);
         }
         this._entitySystemService.updateEntities(entities, this._mergeKey);
@@ -388,9 +467,11 @@ export class EntityMoveTool extends BaseTool {
         if (event.altKey) {
             modifier = 1;
         } else if (event.shiftKey) {
-            modifier = this._projectService.project.getValue().currentMap.gridSize * 2;
+            modifier =
+                this._projectService.project.getValue().currentMap.gridSize * 2;
         } else {
-            modifier = this._projectService.project.getValue().currentMap.gridSize / 4;
+            modifier =
+                this._projectService.project.getValue().currentMap.gridSize / 4;
         }
         let adjustment: Vector;
         let keyCode = event.keyCode;
@@ -421,9 +502,11 @@ export class EntityMoveTool extends BaseTool {
 }
 
 export class EntityMoveToolDrawnConstruct extends DrawnConstruct {
-    constructor(private _canvasZoom: number,
+    constructor(
+        private _canvasZoom: number,
         private _box: Box2,
-        private _selectedEntityGizmos: Box2[]) {
+        private _selectedEntityGizmos: Box2[]
+    ) {
         super();
     }
 

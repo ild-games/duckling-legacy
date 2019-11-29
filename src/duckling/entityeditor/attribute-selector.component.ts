@@ -6,14 +6,19 @@ import {
     OnChanges,
     AfterViewInit,
     OnInit,
-    OnDestroy
-} from '@angular/core';
-import {Subscriber} from 'rxjs';
+    OnDestroy,
+} from "@angular/core";
+import { Subscriber } from "rxjs";
 
-import {ArrayChoiceComponent, SelectOption} from '../controls';
-import {Entity, AvailableAttributeService, AttributeKey, attributeDisplayName} from '../entitysystem';
-import {changeType, ChangeType} from '../state';
-import {ProjectService} from '../project/project.service';
+import { ArrayChoiceComponent, SelectOption } from "../controls";
+import {
+    Entity,
+    AvailableAttributeService,
+    AttributeKey,
+    attributeDisplayName,
+} from "../entitysystem";
+import { changeType, ChangeType } from "../state";
+import { ProjectService } from "../project/project.service";
 
 /**
  * Allows the user to add attributes to an entity.
@@ -28,31 +33,35 @@ import {ProjectService} from '../project/project.service';
                 (addClicked)="onAddClicked($event)">
             </dk-array-choice>
         </div>
-    `
+    `,
 })
-export class AttributeSelectorComponent implements OnChanges, AfterViewInit, OnInit, OnDestroy {
+export class AttributeSelectorComponent
+    implements OnChanges, AfterViewInit, OnInit, OnDestroy {
     /**
      * The entity the user will add attributes to.
      */
-    @Input() entity : Entity;
+    @Input() entity: Entity;
 
     /**
      * Fired when the user clicks on the add button and the attribute should be added.
      */
     @Output() addAttribute = new EventEmitter<AttributeKey>();
 
-    selection : string;
-    options : SelectOption[] = [];
-    private _projectSubscription : Subscriber<any>;
+    selection: string;
+    options: SelectOption[] = [];
+    private _projectSubscription: Subscriber<any>;
 
-    constructor(private _availableAttribute : AvailableAttributeService,
-                private _projectService : ProjectService) {
-    }
+    constructor(
+        private _availableAttribute: AvailableAttributeService,
+        private _projectService: ProjectService
+    ) {}
 
     ngOnInit() {
-        this._projectSubscription = this._projectService.project.subscribe(() => {
-            this._rebuildOptions();
-        }) as Subscriber<any>;
+        this._projectSubscription = this._projectService.project.subscribe(
+            () => {
+                this._rebuildOptions();
+            }
+        ) as Subscriber<any>;
     }
 
     ngAfterViewInit() {
@@ -62,22 +71,24 @@ export class AttributeSelectorComponent implements OnChanges, AfterViewInit, OnI
     }
 
     ngOnDestroy() {
-        this._projectSubscription.unsubscribe(); 
+        this._projectSubscription.unsubscribe();
     }
 
     ngOnChanges() {
         this._rebuildOptions();
     }
 
-    onAddClicked(selection : string) {
+    onAddClicked(selection: string) {
         this.selection = selection;
         this.addAttribute.emit(this.selection);
     }
 
-    newOptions() : SelectOption[] {
-        return this._availableAttribute.availableAttributes(this.entity).map(key => {
-            return {title: attributeDisplayName(key), value: key};
-        });
+    newOptions(): SelectOption[] {
+        return this._availableAttribute
+            .availableAttributes(this.entity)
+            .map((key) => {
+                return { title: attributeDisplayName(key), value: key };
+            });
     }
 
     private _rebuildOptions() {
@@ -89,7 +100,7 @@ export class AttributeSelectorComponent implements OnChanges, AfterViewInit, OnI
         }
     }
 
-    private _getDefaultSelection(options : SelectOption[]) {
+    private _getDefaultSelection(options: SelectOption[]) {
         if (options.length > 0) {
             return options[0].value;
         } else {

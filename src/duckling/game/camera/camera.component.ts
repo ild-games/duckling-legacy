@@ -1,16 +1,11 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {VectorInputComponent, NumberInputComponent} from '../../controls';
-import {Vector} from '../../math/vector';
-import {immutableAssign} from '../../util/model';
-import {EntityKey} from '../../entitysystem/entity';
+import { VectorInputComponent, NumberInputComponent } from "../../controls";
+import { Vector } from "../../math/vector";
+import { immutableAssign } from "../../util/model";
+import { EntityKey } from "../../entitysystem/entity";
 
-import {CameraAttribute} from './camera-attribute';
+import { CameraAttribute } from "./camera-attribute";
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -19,7 +14,7 @@ import {CameraAttribute} from './camera-attribute';
  */
 @Component({
     selector: "dk-camera",
-    styleUrls: ['./duckling/game/camera/camera.component.css'],
+    styleUrls: ["./duckling/game/camera/camera.component.css"],
     template: `
         <div class="default-checkbox">
             <mat-checkbox
@@ -74,43 +69,60 @@ import {CameraAttribute} from './camera-attribute';
             [value]="attribute.lowerBounds"
             (validInput)="onLowerBoundsChanged($event)">
         </dk-vector-input>
-    `
+    `,
 })
 export class CameraComponent {
-
-    @Input() attribute : CameraAttribute;
+    @Input() attribute: CameraAttribute;
 
     @Output() attributeChanged = new EventEmitter<CameraAttribute>();
 
-    onDefaultPressed(newDefault : boolean) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {default: newDefault}));
+    onDefaultPressed(newDefault: boolean) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { default: newDefault })
+        );
     }
 
-    onSizeChanged(newSize : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {size: newSize}));
+    onSizeChanged(newSize: Vector) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { size: newSize })
+        );
     }
 
-    onOffsetChanged(newOffset : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {offset: newOffset}));
+    onOffsetChanged(newOffset: Vector) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { offset: newOffset })
+        );
     }
 
-    onUpperBoundsChanged(newUpperBounds : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {upperBounds: newUpperBounds}));
+    onUpperBoundsChanged(newUpperBounds: Vector) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { upperBounds: newUpperBounds })
+        );
     }
 
-    onLowerBoundsChanged(newLowerBounds : Vector) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {lowerBounds: newLowerBounds}));
+    onLowerBoundsChanged(newLowerBounds: Vector) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { lowerBounds: newLowerBounds })
+        );
     }
 
-    onScaleChanged(newScale : number) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {scale: newScale}));
+    onScaleChanged(newScale: number) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { scale: newScale })
+        );
     }
 
-    onRenderPriorityChanged(newRenderPriority : number) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {renderPriority: newRenderPriority}));
+    onRenderPriorityChanged(newRenderPriority: number) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, {
+                renderPriority: newRenderPriority,
+            })
+        );
     }
 
-    onFollowsChanged(newFollows : EntityKey) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {follows: newFollows}));
+    onFollowsChanged(newFollows: EntityKey) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { follows: newFollows })
+        );
     }
 }

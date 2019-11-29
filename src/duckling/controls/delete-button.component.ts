@@ -1,18 +1,13 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {IconButtonComponent} from './icon-button.component';
+import { IconButtonComponent } from "./icon-button.component";
 
 /**
  * Component for a general purpose delete button
  */
 @Component({
     selector: "dk-delete-button",
-    styleUrls: ['./duckling/controls/delete-button.component.css'],
+    styleUrls: ["./duckling/controls/delete-button.component.css"],
     template: `
         <div class="hover">
             <dk-icon-button
@@ -30,7 +25,7 @@ import {IconButtonComponent} from './icon-button.component';
                 (iconClick)="onClick()">
             </dk-icon-button>
         </div>
-    `
+    `,
 })
 export class DeleteButtonComponent {
     @Output() deleteClick = new EventEmitter<any>();

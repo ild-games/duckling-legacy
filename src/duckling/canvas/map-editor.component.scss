@@ -1,8 +1,7 @@
-@import '../misc-mixins';
-@import '../colors';
-@import '../forms';
-@import '../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css';
-
+@import "../misc-mixins";
+@import "../colors";
+@import "../forms";
+@import "../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
 :host {
     height: 100%;
@@ -12,7 +11,6 @@
 $canvas-top-bar-height: 35px;
 $canvas-bottom-bar-height: 60px;
 $canvas-left-right-border-width: $canvas-top-bar-height / 2;
-
 
 .canvas-toolbar {
     background-color: $header-color;

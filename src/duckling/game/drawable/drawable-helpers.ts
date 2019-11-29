@@ -1,14 +1,17 @@
-import {immutableAssign} from '../../util';
+import { immutableAssign } from "../../util";
 
-import {Drawable, DrawableType} from './drawable';
-import {defaultShapeDrawable} from './shape-drawable';
-import {defaultContainerDrawable, ContainerDrawable} from './container-drawable';
-import {defaultAnimatedDrawable, AnimatedDrawable} from './animated-drawable';
-import {defaultImageDrawable} from './image-drawable';
-import {defaultTileBlockDrawable} from './tile-block-drawable';
-import {defaultTextDrawable} from './text-drawable';
+import { Drawable, DrawableType } from "./drawable";
+import { defaultShapeDrawable } from "./shape-drawable";
+import {
+    defaultContainerDrawable,
+    ContainerDrawable,
+} from "./container-drawable";
+import { defaultAnimatedDrawable, AnimatedDrawable } from "./animated-drawable";
+import { defaultImageDrawable } from "./image-drawable";
+import { defaultTileBlockDrawable } from "./tile-block-drawable";
+import { defaultTextDrawable } from "./text-drawable";
 
-export function cppTypeToDrawableType(cppType : string) : DrawableType {
+export function cppTypeToDrawableType(cppType: string): DrawableType {
     switch (cppType) {
         case "ild::ShapeDrawable":
             return DrawableType.Shape;
@@ -25,7 +28,7 @@ export function cppTypeToDrawableType(cppType : string) : DrawableType {
     }
 }
 
-export function drawableTypeToCppType(type : DrawableType) : string {
+export function drawableTypeToCppType(type: DrawableType): string {
     switch (type) {
         case DrawableType.Shape:
             return "ild::ShapeDrawable";
@@ -47,7 +50,7 @@ export function drawableTypeToCppType(type : DrawableType) : string {
  * @param  type Type of the drawable
  * @return Default drawable implementation for the given type
  */
-export function getDefaultDrawable(drawableType : DrawableType) : Drawable {
+export function getDefaultDrawable(drawableType: DrawableType): Drawable {
     switch (drawableType) {
         default:
             return null;
@@ -66,22 +69,31 @@ export function getDefaultDrawable(drawableType : DrawableType) : Drawable {
     }
 }
 
-export function getDrawableByKey(parentDrawable : Drawable, key : string) : Drawable {
+export function getDrawableByKey(
+    parentDrawable: Drawable,
+    key: string
+): Drawable {
     if (key === parentDrawable.key) {
         return parentDrawable;
     }
 
     switch (cppTypeToDrawableType(parentDrawable.__cpp_type)) {
         case DrawableType.Container:
-            return findDrawableInArray(key, (parentDrawable as ContainerDrawable).drawables);
+            return findDrawableInArray(
+                key,
+                (parentDrawable as ContainerDrawable).drawables
+            );
         case DrawableType.Animated:
-            return findDrawableInArray(key, (parentDrawable as AnimatedDrawable).frames);
+            return findDrawableInArray(
+                key,
+                (parentDrawable as AnimatedDrawable).frames
+            );
         default:
             return null;
     }
 }
 
-function findDrawableInArray(key : string, drawables : Drawable[]) : Drawable {
+function findDrawableInArray(key: string, drawables: Drawable[]): Drawable {
     for (let drawable of drawables) {
         let childByKey = getDrawableByKey(drawable, key);
         if (childByKey) {
@@ -91,26 +103,44 @@ function findDrawableInArray(key : string, drawables : Drawable[]) : Drawable {
     return null;
 }
 
-export function newDrawable(drawableType : DrawableType, existingDrawables : Drawable[]) {
+export function newDrawable(
+    drawableType: DrawableType,
+    existingDrawables: Drawable[]
+) {
     let defaultDrawable = getDefaultDrawable(drawableType);
-    return immutableAssign(
-        defaultDrawable, 
-        {key: defaultDrawable.key + _findNextUniqueKey(drawableType, defaultDrawable.key, existingDrawables)});
+    return immutableAssign(defaultDrawable, {
+        key:
+            defaultDrawable.key +
+            _findNextUniqueKey(
+                drawableType,
+                defaultDrawable.key,
+                existingDrawables
+            ),
+    });
 }
 
-export function cloneDrawable(drawable : Drawable, existingDrawables : Drawable[]) {
+export function cloneDrawable(
+    drawable: Drawable,
+    existingDrawables: Drawable[]
+) {
     let drawableType = cppTypeToDrawableType(drawable.__cpp_type);
     let defaultKey = getDefaultDrawable(drawableType).key;
-    return immutableAssign(
-        drawable,
-        {key: defaultKey + _findNextUniqueKey(drawableType, defaultKey, existingDrawables)});
+    return immutableAssign(drawable, {
+        key:
+            defaultKey +
+            _findNextUniqueKey(drawableType, defaultKey, existingDrawables),
+    });
 }
 
-function _findNextUniqueKey(pickedType : DrawableType, defaultKey : string, existingDrawables : Drawable[]) {
+function _findNextUniqueKey(
+    pickedType: DrawableType,
+    defaultKey: string,
+    existingDrawables: Drawable[]
+) {
     let lastKey = 0;
     for (let drawable of existingDrawables) {
         if (drawable.__cpp_type === drawableTypeToCppType(pickedType)) {
-            let keyNum : number = +drawable.key.split(defaultKey)[1];
+            let keyNum: number = +drawable.key.split(defaultKey)[1];
             if (keyNum > lastKey) {
                 lastKey = keyNum;
             }
