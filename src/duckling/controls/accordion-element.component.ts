@@ -15,16 +15,7 @@ import { IconComponent } from "./icon.component";
             [sectionOpen]="opened"
             [headerText]="title"
             (sectionOpenChanged)="onToggle(!opened)">
-            <button
-                mat-button
-                *ngIf="clone"
-                class="display-on-hover"
-                title="Copy"
-                [disableRipple]=true
-                (click)="onCloned(false, $event)">
-                <dk-icon iconClass="clone"></dk-icon>
-            </button>
-            <button
+           <button
                 mat-button
                 *ngIf="!first"
                 class="display-on-hover"
@@ -41,6 +32,15 @@ import { IconComponent } from "./icon.component";
                 [disableRipple]=true
                 (click)="onMoved(true, $event)">
                 <dk-icon iconClass="arrow-down"></dk-icon>
+            </button>
+            <button
+                mat-button
+                *ngIf="clone"
+                class="display-on-hover"
+                title="Copy"
+                [disableRipple]=true
+                (click)="onCloned(false, $event)">
+                <dk-icon iconClass="clone"></dk-icon>
             </button>
             <button
                 mat-button
