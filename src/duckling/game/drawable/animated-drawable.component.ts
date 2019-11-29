@@ -4,34 +4,42 @@ import {
     Output,
     EventEmitter,
     AfterViewInit,
-    ViewContainerRef
-} from '@angular/core';
-import {MatDialog} from '@angular/material';
+    ViewContainerRef,
+} from "@angular/core";
+import { MatDialog } from "@angular/material";
 
-import {AccordionComponent, FormLabelComponent, EnumChoiceComponent, NumberInputComponent} from '../../controls';
-import {immutableAssign, immutableArrayAssign} from '../../util';
-import {AssetService} from '../../project/asset.service';
-import {Vector} from '../../math';
-import {Validator} from '../../controls/validated-input.component';
-
-import {AnimatedDrawable} from './animated-drawable';
-import {ImageDrawable, defaultImageDrawable} from './image-drawable';
-import {DrawableComponent} from './drawable.component';
-import {Drawable, DrawableType} from './drawable';
 import {
-    drawableTypeToCppType, 
+    AccordionComponent,
+    FormLabelComponent,
+    EnumChoiceComponent,
+    NumberInputComponent,
+} from "../../controls";
+import { immutableAssign, immutableArrayAssign } from "../../util";
+import { AssetService } from "../../project/asset.service";
+import { Vector } from "../../math";
+import { Validator } from "../../controls/validated-input.component";
+
+import { AnimatedDrawable } from "./animated-drawable";
+import { ImageDrawable, defaultImageDrawable } from "./image-drawable";
+import { DrawableComponent } from "./drawable.component";
+import { Drawable, DrawableType } from "./drawable";
+import {
+    drawableTypeToCppType,
     cppTypeToDrawableType,
     cloneDrawable,
-    newDrawable
-} from './drawable-helpers';
-import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto-create-animation-dialog.component';
+    newDrawable,
+} from "./drawable-helpers";
+import {
+    AutoCreateAnimationDialogComponent,
+    AutoCreateDialogResult,
+} from "./auto-create-animation-dialog.component";
 
 /**
  * Component used to edit an Aniamted Drawable including all its children drawables
  */
 @Component({
     selector: "dk-animated-drawable",
-    styleUrls: ['./duckling/game/drawable/animated-drawable.component.css'],
+    styleUrls: ["./duckling/game/drawable/animated-drawable.component.css"],
     template: `
         <dk-number-input
             label="Duration (seconds)"
@@ -79,95 +87,139 @@ import {AutoCreateAnimationDialogComponent, AutoCreateDialogResult} from './auto
                 </ng-template>
             </dk-accordion>
         </mat-card>
-    `
+    `,
 })
 export class AnimatedDrawableComponent {
     // hoist DrawableType so template can access it
     DrawableType = DrawableType;
 
-    @Input() keyValidator : Validator;
-    @Input() animatedDrawable : AnimatedDrawable;
+    @Input() keyValidator: Validator;
+    @Input() animatedDrawable: AnimatedDrawable;
     @Output() drawableChanged = new EventEmitter<AnimatedDrawable>();
 
-    constructor(private _viewContainerRef : ViewContainerRef,
-                private _assets : AssetService,
-                private _dialog : MatDialog) {
-    }
+    constructor(
+        private _viewContainerRef: ViewContainerRef,
+        private _assets: AssetService,
+        private _dialog: MatDialog
+    ) {}
 
-    onChildDrawableChanged(index : number, newDrawable : Drawable) {
-        let newDrawablesPatch : Drawable[] = [];
+    onChildDrawableChanged(index: number, newDrawable: Drawable) {
+        let newDrawablesPatch: Drawable[] = [];
         newDrawablesPatch[index] = newDrawable;
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
-            frames: immutableArrayAssign(this.animatedDrawable.frames, newDrawablesPatch)
-        }));
+        this.drawableChanged.emit(
+            immutableAssign(this.animatedDrawable, {
+                frames: immutableArrayAssign(
+                    this.animatedDrawable.frames,
+                    newDrawablesPatch
+                ),
+            })
+        );
     }
 
-    onChildDrawablesChanged(newDrawables : Drawable[]) {
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
-            frames: newDrawables
-        }));
+    onChildDrawablesChanged(newDrawables: Drawable[]) {
+        this.drawableChanged.emit(
+            immutableAssign(this.animatedDrawable, {
+                frames: newDrawables,
+            })
+        );
     }
 
-    onNewDrawableClicked(pickedType : DrawableType) {
-        let newDrawablesPatch : Drawable[] = [];
-        newDrawablesPatch[this.animatedDrawable.frames.length] = newDrawable(pickedType, this.animatedDrawable.frames);
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
-            frames: immutableArrayAssign(this.animatedDrawable.frames, newDrawablesPatch)
-        }));
+    onNewDrawableClicked(pickedType: DrawableType) {
+        let newDrawablesPatch: Drawable[] = [];
+        newDrawablesPatch[this.animatedDrawable.frames.length] = newDrawable(
+            pickedType,
+            this.animatedDrawable.frames
+        );
+        this.drawableChanged.emit(
+            immutableAssign(this.animatedDrawable, {
+                frames: immutableArrayAssign(
+                    this.animatedDrawable.frames,
+                    newDrawablesPatch
+                ),
+            })
+        );
     }
 
-    onFrameCloned(newDrawables : Drawable[]) {
-        let newDrawablesPatch : Drawable[] = [];
-        newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(newDrawables[newDrawables.length - 1], this.animatedDrawable.frames);
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {
-            frames: immutableArrayAssign(newDrawables, newDrawablesPatch)
-        }));
+    onFrameCloned(newDrawables: Drawable[]) {
+        let newDrawablesPatch: Drawable[] = [];
+        newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(
+            newDrawables[newDrawables.length - 1],
+            this.animatedDrawable.frames
+        );
+        this.drawableChanged.emit(
+            immutableAssign(this.animatedDrawable, {
+                frames: immutableArrayAssign(newDrawables, newDrawablesPatch),
+            })
+        );
     }
 
-    onDurationChanged(newDuration : number) {
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {duration: newDuration}));
+    onDurationChanged(newDuration: number) {
+        this.drawableChanged.emit(
+            immutableAssign(this.animatedDrawable, { duration: newDuration })
+        );
     }
 
     onCreateFromTilesheetClicked() {
-        this._dialog.open(AutoCreateAnimationDialogComponent).afterClosed().subscribe(result => this._autoCreateAnimationFromTilesheet(result));
+        this._dialog
+            .open(AutoCreateAnimationDialogComponent)
+            .afterClosed()
+            .subscribe((result) =>
+                this._autoCreateAnimationFromTilesheet(result)
+            );
     }
 
-
-    private _autoCreateAnimationFromTilesheet(dialogResult : AutoCreateDialogResult) {
+    private _autoCreateAnimationFromTilesheet(
+        dialogResult: AutoCreateDialogResult
+    ) {
         if (!dialogResult || !dialogResult.imageKey) {
             return;
         }
 
-        let frames : ImageDrawable[] = [];
-        let textureWidth = this._assets.getImageAssetDimensions({key: dialogResult.imageKey, type: "TexturePNG"}).x;
-        for (let curY = 0, i = 0; frames.length < dialogResult.numFrames; curY += dialogResult.frameDimensions.y) {
-            for (let curX = 0; frames.length < dialogResult.numFrames && curX < textureWidth; curX += dialogResult.frameDimensions.x) {
-                frames.push(immutableAssign(defaultImageDrawable, {
-                    key: defaultImageDrawable.key + (i + 1),
-                    isWholeImage: false,
-                    textureRect: {
-                        position: {
-                            x: curX,
-                            y: curY
+        let frames: ImageDrawable[] = [];
+        let textureWidth = this._assets.getImageAssetDimensions({
+            key: dialogResult.imageKey,
+            type: "TexturePNG",
+        }).x;
+        for (
+            let curY = 0, i = 0;
+            frames.length < dialogResult.numFrames;
+            curY += dialogResult.frameDimensions.y
+        ) {
+            for (
+                let curX = 0;
+                frames.length < dialogResult.numFrames && curX < textureWidth;
+                curX += dialogResult.frameDimensions.x
+            ) {
+                frames.push(
+                    immutableAssign(defaultImageDrawable, {
+                        key: defaultImageDrawable.key + (i + 1),
+                        isWholeImage: false,
+                        textureRect: {
+                            position: {
+                                x: curX,
+                                y: curY,
+                            },
+                            dimension: {
+                                x: dialogResult.frameDimensions.x,
+                                y: dialogResult.frameDimensions.y,
+                            },
                         },
-                        dimension: {
-                            x: dialogResult.frameDimensions.x,
-                            y: dialogResult.frameDimensions.y
-                        }
-                    },
-                    textureKey: dialogResult.imageKey
-                }));
+                        textureKey: dialogResult.imageKey,
+                    })
+                );
                 i++;
             }
-        } 
-        this.drawableChanged.emit(immutableAssign(this.animatedDrawable, {frames: frames}));
+        }
+        this.drawableChanged.emit(
+            immutableAssign(this.animatedDrawable, { frames: frames })
+        );
     }
 
-    findNextUniqueKey(pickedType : DrawableType, defaultKey : string) {
+    findNextUniqueKey(pickedType: DrawableType, defaultKey: string) {
         let lastKey = 0;
         for (let drawable of this.animatedDrawable.frames) {
             if (drawable.__cpp_type === drawableTypeToCppType(pickedType)) {
-                let keyNum : number = +drawable.key.split(defaultKey)[1];
+                let keyNum: number = +drawable.key.split(defaultKey)[1];
                 if (keyNum > lastKey) {
                     lastKey = keyNum;
                 }
@@ -177,6 +229,10 @@ export class AnimatedDrawableComponent {
     }
 
     get hasAnyFrames() {
-        return this.animatedDrawable && this.animatedDrawable.frames && this.animatedDrawable.frames.length > 0;
+        return (
+            this.animatedDrawable &&
+            this.animatedDrawable.frames &&
+            this.animatedDrawable.frames.length > 0
+        );
     }
 }

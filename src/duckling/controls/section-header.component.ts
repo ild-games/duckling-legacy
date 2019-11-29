@@ -1,16 +1,11 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
 /**
  * Component for the generic header for sections
  */
 @Component({
     selector: "dk-section-header",
-    styleUrls: ['./duckling/controls/section-header.component.css'],
+    styleUrls: ["./duckling/controls/section-header.component.css"],
     template: `
         <div
             [class]="headerCssClasses"
@@ -30,35 +25,30 @@ import {
                 <ng-content></ng-content>
             </div>
         </div>
-    `
+    `,
 })
 export class SectionHeaderComponent {
-    @Input()
-    checkboxMode : boolean = false;
+    @Input() checkboxMode: boolean = false;
 
-    @Input()
-    sectionOpen : boolean = false;
+    @Input() sectionOpen: boolean = false;
 
-    @Input()
-    headerText : string = "";
+    @Input() headerText: string = "";
 
-    @Input()
-    collapsible : boolean = true;
+    @Input() collapsible: boolean = true;
 
-    @Output()
-    sectionOpenChanged = new EventEmitter<boolean>();
+    @Output() sectionOpenChanged = new EventEmitter<boolean>();
 
-    onSectionOpenChanged(sectionOpened : boolean) {
+    onSectionOpenChanged(sectionOpened: boolean) {
         this.sectionOpenChanged.emit(sectionOpened);
     }
 
-    onWholeHeaderClicked(sectionOpened : boolean) {
+    onWholeHeaderClicked(sectionOpened: boolean) {
         if (!this.checkboxMode) {
             this.sectionOpenChanged.emit(sectionOpened);
         }
     }
 
-    get headerCssClasses() : string {
+    get headerCssClasses(): string {
         if (this.collapsible) {
             return "header mat-elevation-z3 pointer";
         }

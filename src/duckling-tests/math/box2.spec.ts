@@ -1,17 +1,23 @@
-import 'mocha';
-import {expect} from 'chai';
-import {Box2, boxContainsPoint, Vector, boxFromEdges, boxUnion} from '../../duckling/math';
+import "mocha";
+import { expect } from "chai";
+import {
+    Box2,
+    boxContainsPoint,
+    Vector,
+    boxFromEdges,
+    boxUnion,
+} from "../../duckling/math";
 
-function squareVector(size : number) : Vector {
-    return {x: size, y: size};
+function squareVector(size: number): Vector {
+    return { x: size, y: size };
 }
 
-function squareBox(size : number) : Box2 {
+function squareBox(size: number): Box2 {
     return {
-        position : squareVector(0),
-        dimension : squareVector(size),
-        rotation: 0
-    }
+        position: squareVector(0),
+        dimension: squareVector(size),
+        rotation: 0,
+    };
 }
 
 let yDIR = [0, -1, 0, 1];
@@ -28,50 +34,54 @@ describe("Box2", function() {
         });
 
         it("a box at origin contains origin", function() {
-            expect(boxContainsPoint(squareBox(10), squareVector(0))).to.eql(true);
+            expect(boxContainsPoint(squareBox(10), squareVector(0))).to.eql(
+                true
+            );
         });
 
         it("an empty box at origin contains origin", function() {
-            expect(boxContainsPoint(squareBox(0), squareVector(0))).to.eql(true);
+            expect(boxContainsPoint(squareBox(0), squareVector(0))).to.eql(
+                true
+            );
         });
 
         it("a box centered on origin behaves correctly in all directions", function() {
             let box = squareBox(10);
 
             // top left
-            expect(boxContainsPoint(box, {x : 0.1, y : 0.1})).to.eql(true);
-            expect(boxContainsPoint(box, {x : -0.1, y : -0.1})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 0.1, y: 0.1 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: -0.1, y: -0.1 })).to.eql(false);
 
             // top middle
-            expect(boxContainsPoint(box, {x : 5, y : 0.1})).to.eql(true);
-            expect(boxContainsPoint(box, {x : 5, y : -0.1})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 5, y: 0.1 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: 5, y: -0.1 })).to.eql(false);
 
             // top right
-            expect(boxContainsPoint(box, {x : 9.9, y : 0.1})).to.eql(true);
-            expect(boxContainsPoint(box, {x : 10.1, y : -0.1})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 9.9, y: 0.1 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: 10.1, y: -0.1 })).to.eql(false);
 
             // middle left
-            expect(boxContainsPoint(box, {x : 0.1, y : 5})).to.eql(true);
-            expect(boxContainsPoint(box, {x : -0.1, y : 5})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 0.1, y: 5 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: -0.1, y: 5 })).to.eql(false);
 
             // middle
-            expect(boxContainsPoint(box, {x : 5, y : 5})).to.eql(true);
+            expect(boxContainsPoint(box, { x: 5, y: 5 })).to.eql(true);
 
             // middle right
-            expect(boxContainsPoint(box, {x : 9.9, y : 5})).to.eql(true);
-            expect(boxContainsPoint(box, {x : 10.1, y : 5})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 9.9, y: 5 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: 10.1, y: 5 })).to.eql(false);
 
             // bottom left
-            expect(boxContainsPoint(box, {x : 0.1, y : 9.9})).to.eql(true);
-            expect(boxContainsPoint(box, {x : -0.1, y : 10.1})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 0.1, y: 9.9 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: -0.1, y: 10.1 })).to.eql(false);
 
             // bottom middle
-            expect(boxContainsPoint(box, {x : 5, y : 9.9})).to.eql(true);
-            expect(boxContainsPoint(box, {x : 5, y : 10.1})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 5, y: 9.9 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: 5, y: 10.1 })).to.eql(false);
 
             // bottom right
-            expect(boxContainsPoint(box, {x : 9.9, y : 9.9})).to.eql(true);
-            expect(boxContainsPoint(box, {x : 10.1, y : 10.1})).to.eql(false);
+            expect(boxContainsPoint(box, { x: 9.9, y: 9.9 })).to.eql(true);
+            expect(boxContainsPoint(box, { x: 10.1, y: 10.1 })).to.eql(false);
         });
     });
 
@@ -115,55 +125,55 @@ describe("Box2", function() {
     describe("boxUnion", function() {
         it("Two identical boxes produce the same box", function() {
             let box1 = {
-                position: { x: 0, y: 0},
-                dimension: { x: 10, y: 10},
-                rotation: 0
-            }
+                position: { x: 0, y: 0 },
+                dimension: { x: 10, y: 10 },
+                rotation: 0,
+            };
             let box2 = {
-                position: { x: 0, y: 0},
-                dimension: { x: 10, y: 10},
-                rotation: 0
-            }
+                position: { x: 0, y: 0 },
+                dimension: { x: 10, y: 10 },
+                rotation: 0,
+            };
             expect(boxUnion(box1, box2)).to.eql({
-                position: { x: 0, y: 0},
-                dimension: { x: 10, y: 10},
-                rotation: 0
+                position: { x: 0, y: 0 },
+                dimension: { x: 10, y: 10 },
+                rotation: 0,
             });
         });
         it("A box fully containing another produces the outer box", function() {
             let box1 = {
-                position: { x: 0, y: 0},
-                dimension: { x: 10, y: 10},
-                rotation: 0
-            }
+                position: { x: 0, y: 0 },
+                dimension: { x: 10, y: 10 },
+                rotation: 0,
+            };
             let box2 = {
-                position: { x: 0, y: 0},
-                dimension: { x: 9, y: 9},
-                rotation: 0
-            }
+                position: { x: 0, y: 0 },
+                dimension: { x: 9, y: 9 },
+                rotation: 0,
+            };
             let result = boxUnion(box1, box2);
             expect(boxUnion(box1, box2)).eql({
-                position: { x: 0, y: 0},
-                dimension: { x: 10, y: 10},
-                rotation: 0
+                position: { x: 0, y: 0 },
+                dimension: { x: 10, y: 10 },
+                rotation: 0,
             });
         });
         it("Two boxes disconnected from each other produce a box surrounding both box's boundaries", function() {
             let box1 = {
-                position: { x: 0, y: 0},
-                dimension: { x: 10, y: 10},
-                rotation: 0
-            }
+                position: { x: 0, y: 0 },
+                dimension: { x: 10, y: 10 },
+                rotation: 0,
+            };
             let box2 = {
-                position: { x: 20, y: 20},
-                dimension: { x: 10, y: 10},
-                rotation: 0
-            }
+                position: { x: 20, y: 20 },
+                dimension: { x: 10, y: 10 },
+                rotation: 0,
+            };
             let result = boxUnion(box1, box2);
             expect(boxUnion(box1, box2)).eql({
-                position: { x: 0, y: 0},
-                dimension: { x: 30, y: 30},
-                rotation: 0
+                position: { x: 0, y: 0 },
+                dimension: { x: 30, y: 30 },
+                rotation: 0,
             });
         });
     });

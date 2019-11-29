@@ -1,19 +1,14 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {immutableAssign} from '../../util/model';
-import {Vector} from '../../math/vector';
-import {Validator} from '../../controls/validated-input.component';
+import { immutableAssign } from "../../util/model";
+import { Vector } from "../../math/vector";
+import { Validator } from "../../controls/validated-input.component";
 
-import {PathAttribute} from './path-attribute';
+import { PathAttribute } from "./path-attribute";
 
 @Component({
     selector: "dk-path",
-    styleUrls: ['./duckling/game/path/path.component.css'],
+    styleUrls: ["./duckling/game/path/path.component.css"],
     template: `
         <dk-number-input
             label="Time To Complete Path"
@@ -56,39 +51,49 @@ import {PathAttribute} from './path-attribute';
                 </ng-template>
             </dk-accordion>
         </mat-card> 
-    `
+    `,
 })
 export class PathComponent {
-    @Input() attribute : PathAttribute;
+    @Input() attribute: PathAttribute;
     @Output() attributeChanged = new EventEmitter<PathAttribute>();
 
-    onVerticesChanged(newVertices : Vector[]) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {vertices: newVertices}));
-    }
-    
-    onVertexChanged(index : number, newVertex : Vector) {
-        let newVertices = [...this.attribute.vertices];
-        newVertices[index] = newVertex;
-        this.attributeChanged.emit(immutableAssign(this.attribute, {vertices: newVertices}));
+    onVerticesChanged(newVertices: Vector[]) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { vertices: newVertices })
+        );
     }
 
-    onIsLoopChanged(newIsLoop : boolean) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {isLoop: newIsLoop}));
+    onVertexChanged(index: number, newVertex: Vector) {
+        let newVertices = [...this.attribute.vertices];
+        newVertices[index] = newVertex;
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { vertices: newVertices })
+        );
     }
-    
-    onCycleTimeChanged(newCycleTime : number) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {cycleTime: newCycleTime}));
+
+    onIsLoopChanged(newIsLoop: boolean) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { isLoop: newIsLoop })
+        );
+    }
+
+    onCycleTimeChanged(newCycleTime: number) {
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, { cycleTime: newCycleTime })
+        );
     }
 
     onNewVertexClicked() {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {
-            vertices: this.attribute.vertices.concat([{x: 0, y: 0}])
-        }));
+        this.attributeChanged.emit(
+            immutableAssign(this.attribute, {
+                vertices: this.attribute.vertices.concat([{ x: 0, y: 0 }]),
+            })
+        );
     }
 
-    get timeValidator() : Validator {
-        return (value : string) => {
+    get timeValidator(): Validator {
+        return (value: string) => {
             return Number.isInteger(parseInt(value)) && parseFloat(value) > 0;
-        }
+        };
     }
 }

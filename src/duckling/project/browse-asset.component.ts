@@ -3,20 +3,20 @@ import {
     Input,
     Output,
     EventEmitter,
-    ChangeDetectorRef
-} from '@angular/core';
+    ChangeDetectorRef,
+} from "@angular/core";
 
-import {immutableAssign, DialogService, PathService} from '../util';
-import {ProjectService} from './project.service';
-import {AssetService} from './asset.service';
+import { immutableAssign, DialogService, PathService } from "../util";
+import { ProjectService } from "./project.service";
+import { AssetService } from "./asset.service";
 
 /**
  * Component for loading asset files.
  */
 @Component({
     selector: "dk-browse-asset",
-    styleUrls: ['./duckling/project/browse-asset.component.css'],
-    template:`
+    styleUrls: ["./duckling/project/browse-asset.component.css"],
+    template: `
         <div class="wrapper">
             <button
                 mat-raised-button
@@ -31,70 +31,73 @@ import {AssetService} from './asset.service';
                 [value]="fileName">
             </dk-input>
         </div>
-    `
+    `,
 })
 export class BrowseAssetComponent {
-    @Input()
-    buttonText : string = "Browse";
+    @Input() buttonText: string = "Browse";
 
-    @Input()
-    dialogOptions : any = {};
+    @Input() dialogOptions: any = {};
 
-    @Input()
-    selectedFile = "";
+    @Input() selectedFile = "";
 
-    @Output()
-    filePicked = new EventEmitter<string>();
+    @Output() filePicked = new EventEmitter<string>();
 
-    private static _lastFilePath : string = "";
+    private static _lastFilePath: string = "";
 
-    constructor(private _path : PathService,
-                private _project : ProjectService,
-                private _assets : AssetService,
-                private _dialog : DialogService) {
-    }
+    constructor(
+        private _path: PathService,
+        private _project: ProjectService,
+        private _assets: AssetService,
+        private _dialog: DialogService
+    ) {}
 
     onBrowseClicked() {
-        // This option forces macOS to not resolve an symlink in the path from the file 
+        // This option forces macOS to not resolve an symlink in the path from the file
         // picked in the dialog. This is necessary because we typically have the resources/
         // folder setup as a symlink and if the path is resolved then it fails validation
         // of making sure the resource chosen is within the project folder. See this issue
         // for more information: https://github.com/electron/electron/issues/8601
-        // 
-        // NOTE: This currently does not work unless the symlink is the leaf of the path, 
+        //
+        // NOTE: This currently does not work unless the symlink is the leaf of the path,
         // this is because of a macOS bug: http://www.openradar.me/11398659
-        this.dialogOptions.properties.push('noResolveAliases');
+        this.dialogOptions.properties.push("noResolveAliases");
 
-        this.dialogOptions.defaultPath = this.dialogOptions.defaultPath || this._openDialogPath;
+        this.dialogOptions.defaultPath =
+            this.dialogOptions.defaultPath || this._openDialogPath;
 
         this._dialog.showOpenDialog(
             this.dialogOptions,
-            (fileNames : string[]) => {
+            (fileNames: string[]) => {
                 if (fileNames && fileNames[0]) {
-                    this.onFilePicked(fileNames[0])
+                    this.onFilePicked(fileNames[0]);
                 }
-            });
+            }
+        );
     }
 
-    onFilePicked(file : string) {
+    onFilePicked(file: string) {
         if (!file) {
             return;
         }
         file = this._path.normalize(file);
 
-        let resourceDirectory = this._path.join(this._project.home, this._assets.resourceFolderName);
+        let resourceDirectory = this._path.join(
+            this._project.home,
+            this._assets.resourceFolderName
+        );
         BrowseAssetComponent._lastFilePath = this._path.dirname(file);
         if (!this._path.isSubOfDir(file, resourceDirectory)) {
             this._dialog.showErrorDialog(
                 "Unable to load asset",
-                "You must select assets from the resources/ folder in the root of your project");
+                "You must select assets from the resources/ folder in the root of your project"
+            );
             return;
         }
 
         this.filePicked.emit(this._path.toKey(resourceDirectory, file));
     }
 
-    get fileName() : string {
+    get fileName(): string {
         if (this.selectedFile) {
             return this.selectedFile;
         } else {
@@ -102,11 +105,17 @@ export class BrowseAssetComponent {
         }
     }
 
-    private get _openDialogPath() : string {
-        let openDialogPath = this._path.join(this._project.home, this._assets.resourceFolderName); 
+    private get _openDialogPath(): string {
+        let openDialogPath = this._path.join(
+            this._project.home,
+            this._assets.resourceFolderName
+        );
 
         if (this.selectedFile) {
-            return this._path.join(openDialogPath, this._path.dirname(this.selectedFile));
+            return this._path.join(
+                openDialogPath,
+                this._path.dirname(this.selectedFile)
+            );
         } else if (BrowseAssetComponent._lastFilePath) {
             return BrowseAssetComponent._lastFilePath;
         } else {

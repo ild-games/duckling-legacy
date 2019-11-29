@@ -5,20 +5,24 @@ import {
     EventEmitter,
     OnChanges,
     SimpleChange,
-    OnInit
-} from '@angular/core';
+    OnInit,
+} from "@angular/core";
 
-import {immutableAssign, immutableArrayAssign} from '../util/model';
-import {ChangeType, changeType} from '../state';
-import {jsonToSchema} from '../controls/json-schema-edit.component';
-import {getDefaultForSchema, JsonSchema, JsonSchemaValue} from '../util/json-schema';
+import { immutableAssign, immutableArrayAssign } from "../util/model";
+import { ChangeType, changeType } from "../state";
+import { jsonToSchema } from "../controls/json-schema-edit.component";
+import {
+    getDefaultForSchema,
+    JsonSchema,
+    JsonSchemaValue,
+} from "../util/json-schema";
 
 export enum JsonValueType {
     Number,
     String,
     Boolean,
     Object,
-    Array
+    Array,
 }
 
 /**
@@ -27,8 +31,8 @@ export enum JsonValueType {
 @Component({
     selector: "dk-json",
     styleUrls: [
-        './duckling/controls/json.component.css',
-        './duckling/layout.css'
+        "./duckling/controls/json.component.css",
+        "./duckling/layout.css",
     ],
     template: `
         <div
@@ -90,7 +94,7 @@ export enum JsonValueType {
                 </mat-card>
             </div>
         </div>
-    `
+    `,
 })
 export class JsonComponent implements OnInit {
     // hoist for template
@@ -99,13 +103,13 @@ export class JsonComponent implements OnInit {
     /**
      * The object that will be displayed as json.
      */
-    @Input() value : any;
+    @Input() value: any;
 
     /**
-     * Optional schema the json component should follow. If not provided the 
+     * Optional schema the json component should follow. If not provided the
      * schema will be inferred as best as it can be by the given json.
      */
-    @Input() schema : JsonSchema;
+    @Input() schema: JsonSchema;
 
     /**
      * Emits when the json was changed with the new json
@@ -114,31 +118,36 @@ export class JsonComponent implements OnInit {
 
     ngOnInit() {
         if (!this.schema) {
-            this.schema = jsonToSchema(this.value); 
+            this.schema = jsonToSchema(this.value);
         }
     }
 
-    onValueChanged(newValue : any, jsonKey : string, arrayIndex? : number) {
-        let patch : any = {};
+    onValueChanged(newValue: any, jsonKey: string, arrayIndex?: number) {
+        let patch: any = {};
         if (arrayIndex !== undefined && arrayIndex !== null) {
-            let patchArray : any[] = [];
+            let patchArray: any[] = [];
             patchArray[arrayIndex] = newValue;
-            patch[jsonKey] = immutableArrayAssign(this.value[jsonKey], patchArray);
+            patch[jsonKey] = immutableArrayAssign(
+                this.value[jsonKey],
+                patchArray
+            );
         } else {
             patch[jsonKey] = newValue;
         }
         this.valueChanged.emit(immutableAssign(this.value, patch));
     }
-    
-    onArrayAddClicked(key : string) {
+
+    onArrayAddClicked(key: string) {
         let patchArray = [];
-        patchArray[this.value[key].length] = getDefaultForSchema((this.schema[key] as JsonSchema[])[0] as JsonSchema);
-        let patch : any = {};
+        patchArray[this.value[key].length] = getDefaultForSchema((this.schema[
+            key
+        ] as JsonSchema[])[0] as JsonSchema);
+        let patch: any = {};
         patch[key] = immutableArrayAssign(this.value[key], patchArray);
         this.valueChanged.emit(immutableAssign(this.value, patch));
     }
-    
-    jsonValueType(schemaValue : JsonSchemaValue) : JsonValueType {
+
+    jsonValueType(schemaValue: JsonSchemaValue): JsonValueType {
         if (schemaValue === "number") {
             return JsonValueType.Number;
         } else if (schemaValue === "string") {
@@ -153,10 +162,10 @@ export class JsonComponent implements OnInit {
         return null;
     }
 
-    get jsonKeys() : string[] {
-        let keys : Set<string> = new Set<string>();
+    get jsonKeys(): string[] {
+        let keys: Set<string> = new Set<string>();
         for (let key in this.value) {
-            keys.add(key)
+            keys.add(key);
         }
 
         for (let keyInSchema in this.schema) {

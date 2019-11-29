@@ -8,10 +8,10 @@ import {
     SimpleChange,
     ComponentFactoryResolver,
     ChangeDetectionStrategy,
-    ChangeDetectorRef
-} from '@angular/core';
-import {Attribute, AttributeKey} from '../entitysystem';
-import {AttributeComponentService} from './attribute-component.service';
+    ChangeDetectorRef,
+} from "@angular/core";
+import { Attribute, AttributeKey } from "../entitysystem";
+import { AttributeComponentService } from "./attribute-component.service";
 
 let logcount = 0;
 
@@ -22,10 +22,10 @@ let logcount = 0;
 @Component({
     selector: "dk-attribute",
     template: "",
-    changeDetection : ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AttributeComponent {
-    private _childComponent : ComponentRef<AttributeComponent>;
+    private _childComponent: ComponentRef<AttributeComponent>;
 
     /**
      * The key of the attribute being displayed.
@@ -43,28 +43,38 @@ export class AttributeComponent {
      */
     @Output() attributeChanged = new EventEmitter<Attribute>();
 
-    constructor(private _attributeComponentService : AttributeComponentService,
-                private _componentResolver : ComponentFactoryResolver,
-                private _elementRef : ViewContainerRef,
-                private _changeDetector : ChangeDetectorRef) {
-    }
+    constructor(
+        private _attributeComponentService: AttributeComponentService,
+        private _componentResolver: ComponentFactoryResolver,
+        private _elementRef: ViewContainerRef,
+        private _changeDetector: ChangeDetectorRef
+    ) {}
 
-    ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
+    ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
         if (changes["key"]) {
             this.switchToType(changes["key"].currentValue);
         } else if (changes["attribute"] && this._childComponent) {
-            this._childComponent.instance.attribute = changes["attribute"].currentValue;
+            this._childComponent.instance.attribute =
+                changes["attribute"].currentValue;
         }
     }
 
-    switchToType(key : AttributeKey) {
+    switchToType(key: AttributeKey) {
         let type = this._attributeComponentService.getComponentType(key);
-        let componentFactory = this._componentResolver.resolveComponentFactory<AttributeComponent>(type);
-        let childComponent = this._elementRef.createComponent(componentFactory, 0, this._elementRef.injector);
+        let componentFactory = this._componentResolver.resolveComponentFactory<
+            AttributeComponent
+        >(type);
+        let childComponent = this._elementRef.createComponent(
+            componentFactory,
+            0,
+            this._elementRef.injector
+        );
 
         childComponent.instance.attribute = this.attribute;
-        childComponent.instance.key= this.key;
-        childComponent.instance.attributeChanged.subscribe((event : Attribute) => this.attributeChanged.emit(event));
+        childComponent.instance.key = this.key;
+        childComponent.instance.attributeChanged.subscribe((event: Attribute) =>
+            this.attributeChanged.emit(event)
+        );
 
         this._childComponent = childComponent;
         this._detectChanges();

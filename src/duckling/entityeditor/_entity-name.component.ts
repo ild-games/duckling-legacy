@@ -4,20 +4,20 @@ import {
     Output,
     EventEmitter,
     SimpleChange,
-    OnChanges
-} from '@angular/core';
+    OnChanges,
+} from "@angular/core";
 
-import {EntitySystemService, EntityKey} from '../entitysystem';
-import {DeleteButtonComponent} from '../controls/delete-button.component';
-import {InputComponent} from '../controls/input.component';
-import {Validator} from '../controls/validated-input.component';
+import { EntitySystemService, EntityKey } from "../entitysystem";
+import { DeleteButtonComponent } from "../controls/delete-button.component";
+import { InputComponent } from "../controls/input.component";
+import { Validator } from "../controls/validated-input.component";
 
 /**
  * Component that allows the user to modify an entity.
  */
 @Component({
     selector: "dk-entity-name",
-    styleUrls: ['./duckling/entityeditor/entity-name.component.css'],
+    styleUrls: ["./duckling/entityeditor/entity-name.component.css"],
     template: `
         <div class="entity-name-row">
             <dk-edit-input
@@ -31,17 +31,16 @@ import {Validator} from '../controls/validated-input.component';
             </dk-edit-input>
             <dk-delete-button (deleteClick)="onDeleteClicked()"></dk-delete-button>
         </div>
-    `
+    `,
 })
 export class EntityNameComponent {
-    @Input() currentSelectedEntity : EntityKey;
+    @Input() currentSelectedEntity: EntityKey;
     @Output() deleteEntity = new EventEmitter<any>();
     @Output() renameEntity = new EventEmitter<any>();
 
-    constructor(private _entitySystem : EntitySystemService) {
-    }
+    constructor(private _entitySystem: EntitySystemService) {}
 
-    onSaveEntityName(newEntityName : string) {
+    onSaveEntityName(newEntityName: string) {
         this.renameEntity.emit(newEntityName);
     }
 
@@ -49,21 +48,21 @@ export class EntityNameComponent {
         this.deleteEntity.emit(true);
     }
 
-    get nameValidator() : Validator {
-        return (value : string) => {
+    get nameValidator(): Validator {
+        return (value: string) => {
             if (!value || value === "") {
                 return false;
             }
             if (value === this.currentSelectedEntity) {
                 return true;
             }
-            
+
             let currentEntity = this._entitySystem.getEntity(value);
             if (currentEntity) {
                 return false;
             }
 
             return true;
-        }
+        };
     }
 }

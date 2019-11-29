@@ -1,7 +1,7 @@
 export interface Music {
     musicKey: string;
     volume: number;
-    loop: boolean,
+    loop: boolean;
     loopStart: number;
 }
 
@@ -9,5 +9,5 @@ export let defaultMusic = {
     musicKey: "",
     volume: 1.0,
     loop: true,
-    loopStart: 0.0
+    loopStart: 0.0,
 };

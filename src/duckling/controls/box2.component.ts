@@ -1,15 +1,10 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {Box2, Vector} from '../math';
-import {immutableAssign} from '../util';
+import { Box2, Vector } from "../math";
+import { immutableAssign } from "../util";
 
-import {VectorInputComponent} from './vector-input.component';
-import {Validator} from './validated-input.component';
+import { VectorInputComponent } from "./vector-input.component";
+import { Validator } from "./validated-input.component";
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -18,7 +13,7 @@ import {Validator} from './validated-input.component';
  */
 @Component({
     selector: "dk-box2",
-    styleUrls: ['./duckling/controls/box2.component.css'],
+    styleUrls: ["./duckling/controls/box2.component.css"],
     template: `
         <dk-vector-input
             xLabel="Starting X"
@@ -36,21 +31,25 @@ import {Validator} from './validated-input.component';
             [yValidator]="heightValidator"
             (validInput)="onDimensionChanged($event)">
         </dk-vector-input>
-    `
+    `,
 })
 export class Box2Component {
-    @Input() value : Box2;
-    @Input() xValidator : Validator;
-    @Input() yValidator : Validator;
-    @Input() widthValidator : Validator;
-    @Input() heightValidator : Validator;
+    @Input() value: Box2;
+    @Input() xValidator: Validator;
+    @Input() yValidator: Validator;
+    @Input() widthValidator: Validator;
+    @Input() heightValidator: Validator;
     @Output() boxChanged = new EventEmitter<Box2>();
 
-    onPositionChanged(newPosition : Vector) {
-        this.boxChanged.emit(immutableAssign(this.value, {position: newPosition}));
+    onPositionChanged(newPosition: Vector) {
+        this.boxChanged.emit(
+            immutableAssign(this.value, { position: newPosition })
+        );
     }
 
-    onDimensionChanged(newDimension : Vector) {
-        this.boxChanged.emit(immutableAssign(this.value, {dimension: newDimension}));
+    onDimensionChanged(newDimension: Vector) {
+        this.boxChanged.emit(
+            immutableAssign(this.value, { dimension: newDimension })
+        );
     }
 }

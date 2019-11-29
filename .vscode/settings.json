@@ -4,9 +4,10 @@
         // include the defaults from VS Code
         "**/.git": true,
         "**/.DS_Store": true,
-
         // exclude .js and .js.map files, when in a TypeScript project
-        "**/*.js": { "when": "$(basename).ts"}
+        "**/*.js": {
+            "when": "$(basename).ts"
+        }
     },
     "search.exclude": {
         // include the defaults from VS Code
@@ -14,11 +15,12 @@
         "**/.DS_Store": true,
         "**/node_modules": true,
         "**/build": true,
-
         // exclude .js and .js.map files, when in a TypeScript project
-        "**/*.js": { "when": "$(basename).ts"},
+        "**/*.js": {
+            "when": "$(basename).ts"
+        },
         "**/*.js.map": true
     },
     "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
 }

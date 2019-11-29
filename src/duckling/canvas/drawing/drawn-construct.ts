@@ -1,44 +1,53 @@
-import {Container, DisplayObject, Point, Graphics} from 'pixi.js';
+import { Container, DisplayObject, Point, Graphics } from "pixi.js";
 
-import {Box2, EMPTY_BOX, boxUnion, boxFromWidthHeight} from '../../math/box2';
-import {Vector} from '../../math/vector';
-import {degreesToRadians} from '../../math/number-utils';
-import {immutableAssign} from '../../util/model';
+import { Box2, EMPTY_BOX, boxUnion, boxFromWidthHeight } from "../../math/box2";
+import { Vector } from "../../math/vector";
+import { degreesToRadians } from "../../math/number-utils";
+import { immutableAssign } from "../../util/model";
 
 export class TransformProperties {
     rotation: number = 0;
-    scale: Vector = {x: 0, y: 0};
-    anchor: Vector = {x: 0, y: 0};
-    position: Vector = {x: 0, y: 0};
+    scale: Vector = { x: 0, y: 0 };
+    anchor: Vector = { x: 0, y: 0 };
+    position: Vector = { x: 0, y: 0 };
 }
 
 export class DrawnConstruct {
-    transformProperties : TransformProperties = new TransformProperties();
-    private _layer : number;
+    transformProperties: TransformProperties = new TransformProperties();
+    private _layer: number;
 
-    draw(totalMillis : number) : DisplayObject {
+    draw(totalMillis: number): DisplayObject {
         return null;
     }
 
-    paint(graphics : Graphics) {
-    }
+    paint(graphics: Graphics) {}
 
-    protected _applyDisplayObjectTransforms(displayObject : DisplayObject) {
+    protected _applyDisplayObjectTransforms(displayObject: DisplayObject) {
         if (this.transformProperties.anchor) {
-            let bounds : Box2;
-            if (this.transformProperties.anchor.x !== 0.0 || this.transformProperties.anchor.y !== 0.0) {
+            let bounds: Box2;
+            if (
+                this.transformProperties.anchor.x !== 0.0 ||
+                this.transformProperties.anchor.y !== 0.0
+            ) {
                 bounds = this._displayObjectBounds(displayObject);
             }
             if (this.transformProperties.anchor.x !== 0.0) {
-                displayObject.pivot.x = bounds.dimension.x * this.transformProperties.anchor.x;
+                displayObject.pivot.x =
+                    bounds.dimension.x * this.transformProperties.anchor.x;
             }
             if (this.transformProperties.anchor.y !== 0.0) {
-                displayObject.pivot.y = bounds.dimension.y * this.transformProperties.anchor.y;
+                displayObject.pivot.y =
+                    bounds.dimension.y * this.transformProperties.anchor.y;
             }
         }
 
-        if (this.transformProperties.rotation !== undefined && this.transformProperties.rotation !== null) {
-            displayObject.rotation = degreesToRadians(this.transformProperties.rotation);
+        if (
+            this.transformProperties.rotation !== undefined &&
+            this.transformProperties.rotation !== null
+        ) {
+            displayObject.rotation = degreesToRadians(
+                this.transformProperties.rotation
+            );
         }
 
         if (this.transformProperties.scale) {
@@ -52,7 +61,7 @@ export class DrawnConstruct {
         }
     }
 
-    private _displayObjectBounds(displayObject : DisplayObject) : Box2 {
+    private _displayObjectBounds(displayObject: DisplayObject): Box2 {
         if (!displayObject) {
             return null;
         }
@@ -62,17 +71,20 @@ export class DrawnConstruct {
         displayObject.updateTransform();
         let displayObjectBounds = container.getBounds();
         return {
-            position: {x: displayObjectBounds.x, y: displayObjectBounds.y},
-            dimension: {x: displayObjectBounds.width, y: displayObjectBounds.height},
-            rotation: 0
+            position: { x: displayObjectBounds.x, y: displayObjectBounds.y },
+            dimension: {
+                x: displayObjectBounds.width,
+                y: displayObjectBounds.height,
+            },
+            rotation: 0,
         };
     }
 
-    set layer(newLayer : number) {
+    set layer(newLayer: number) {
         this._layer = newLayer;
     }
 
-    get layer() : number {
+    get layer(): number {
         if (isNaN(this._layer)) {
             return Number.POSITIVE_INFINITY;
         }
@@ -85,7 +97,7 @@ export class DrawnConstruct {
  * @param  drawnConstruct Drawn construct to get the bounds for
  * @return The bounds of the drawn construct
  */
-export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
+export function drawnConstructBounds(drawnConstruct: DrawnConstruct): Box2 {
     if (!drawnConstruct) {
         return null;
     }
@@ -103,8 +115,8 @@ export function drawnConstructBounds(drawnConstruct : DrawnConstruct) : Box2 {
 
     let containerBounds = container.getBounds();
     return {
-        position: {x: containerBounds.x, y: containerBounds.y},
-        dimension: {x: containerBounds.width, y: containerBounds.height},
-        rotation: 0
+        position: { x: containerBounds.x, y: containerBounds.y },
+        dimension: { x: containerBounds.width, y: containerBounds.height },
+        rotation: 0,
     };
 }

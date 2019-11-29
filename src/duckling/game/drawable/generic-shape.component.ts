@@ -1,15 +1,10 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {immutableAssign} from '../../util';
-import {ColorComponent} from '../../controls';
-import {Color} from '../../canvas/drawing/color';
+import { immutableAssign } from "../../util";
+import { ColorComponent } from "../../controls";
+import { Color } from "../../canvas/drawing/color";
 
-import {Shape} from './shape';
+import { Shape } from "./shape";
 
 /**
  * Component to edit the shared properties of all shapes
@@ -21,13 +16,15 @@ import {Shape} from './shape';
             [color]="shape.fillColor"
             (colorChanged)="onColorChanged($event)">
         </dk-color>
-    `
+    `,
 })
 export class GenericShapeComponent {
-    @Input() shape : Shape;
+    @Input() shape: Shape;
     @Output() shapeChanged = new EventEmitter<Shape>();
 
-    onColorChanged(newColor : Color) {
-        this.shapeChanged.emit(immutableAssign(this.shape, {fillColor: newColor}));
+    onColorChanged(newColor: Color) {
+        this.shapeChanged.emit(
+            immutableAssign(this.shape, { fillColor: newColor })
+        );
     }
 }

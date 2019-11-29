@@ -1,5 +1,10 @@
-import { createEntitySystem, Entity, EntityKey, EntitySystem } from '../entitysystem';
-import { Action, changeType, ChangeType } from '../state';
+import {
+    createEntitySystem,
+    Entity,
+    EntityKey,
+    EntitySystem,
+} from "../entitysystem";
+import { Action, changeType, ChangeType } from "../state";
 
 const ACTION_UPDATE_ENTITY = "EntitySystem.UpdateEntity";
 
@@ -18,12 +23,15 @@ export interface EntityUpdateAction extends Action {
  * @param  entityKey The entity's key.
  * @return A new EntityUpdateAction.
  */
-export function updateEntityAction(entity: Entity, entityKey: EntityKey): EntityUpdateAction {
+export function updateEntityAction(
+    entity: Entity,
+    entityKey: EntityKey
+): EntityUpdateAction {
     return {
         type: ACTION_UPDATE_ENTITY,
         entity,
-        entityKey
-    }
+        entityKey,
+    };
 }
 
 function _isUpdateEntityAction(action: Action): action is EntityUpdateAction {
@@ -46,14 +54,18 @@ export interface EntitiesUpdateAction extends Action {
  * @param  entityKeys The keys for the entities
  * @return A new EntitiesUpdateAction.
  */
-export function updateEntitiesAction(entities: Map<EntityKey, Entity>): EntitiesUpdateAction {
+export function updateEntitiesAction(
+    entities: Map<EntityKey, Entity>
+): EntitiesUpdateAction {
     return {
         type: ACTION_UPDATE_ENTITIES,
-        entities
-    }
+        entities,
+    };
 }
 
-function _isUpdateEntitiesAction(action: Action): action is EntitiesUpdateAction {
+function _isUpdateEntitiesAction(
+    action: Action
+): action is EntitiesUpdateAction {
     return action.type === ACTION_UPDATE_ENTITIES;
 }
 
@@ -61,7 +73,7 @@ function _isUpdateEntitiesAction(action: Action): action is EntitiesUpdateAction
  *  Action used to replace the current entity system with another.
  */
 export interface ReplaceSystemAction extends Action {
-    entitySystem: EntitySystem
+    entitySystem: EntitySystem;
 }
 
 const ACTION_REPLACE_SYSTEM = "EntitySystem.ReplaceSystem";
@@ -75,8 +87,8 @@ const ACTION_REPLACE_SYSTEM = "EntitySystem.ReplaceSystem";
 export function replaceSystemAction(newSystem: EntitySystem) {
     return {
         type: ACTION_REPLACE_SYSTEM,
-        entitySystem: newSystem
-    }
+        entitySystem: newSystem,
+    };
 }
 
 function _isReplaceSystemAction(action: Action): action is ReplaceSystemAction {
@@ -98,8 +110,8 @@ export interface DeleteEntityAction extends Action {
 export function deleteEntityAction(key: EntityKey) {
     return {
         type: ACTION_DELETE_ENTITY,
-        key
-    }
+        key,
+    };
 }
 
 const ACTION_DELETE_ENTITY = "EntitySystem.DeleteEntity";
@@ -125,8 +137,8 @@ export function renameEntityAction(oldKey: EntityKey, newKey: EntityKey) {
     return {
         type: ACTION_RENAME_ENTITY,
         oldKey,
-        newKey
-    }
+        newKey,
+    };
 }
 
 const ACTION_RENAME_ENTITY = "EntitySystem.RenameEntity";
@@ -140,9 +152,15 @@ function _isRenameEntityAction(action: Action): action is RenameEntityAction {
  * undo individual characters when the modify an entity using an edit field.
  * @return True if the entity actions should be merged. False otherwise.
  */
-export function mergeEntityAction(action: EntityUpdateAction, previousAction: EntityUpdateAction): boolean {
-    if (action.type !== ACTION_UPDATE_ENTITY || previousAction.type !== ACTION_UPDATE_ENTITY) {
-        return false
+export function mergeEntityAction(
+    action: EntityUpdateAction,
+    previousAction: EntityUpdateAction
+): boolean {
+    if (
+        action.type !== ACTION_UPDATE_ENTITY ||
+        previousAction.type !== ACTION_UPDATE_ENTITY
+    ) {
+        return false;
     }
 
     if (action.entityKey !== previousAction.entityKey) {
@@ -156,7 +174,10 @@ export function mergeEntityAction(action: EntityUpdateAction, previousAction: En
 /**
  * Reducer for the EntitySystem portion of a map.
  */
-export function entitySystemReducer(entitySystem: EntitySystem = createEntitySystem(), action: Action): EntitySystem {
+export function entitySystemReducer(
+    entitySystem: EntitySystem = createEntitySystem(),
+    action: Action
+): EntitySystem {
     if (_isUpdateEntityAction(action)) {
         return entitySystem.set(action.entityKey, action.entity);
     } else if (_isUpdateEntitiesAction(action)) {

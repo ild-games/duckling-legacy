@@ -1,13 +1,8 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-import {ButtonAttribute} from './button-attribute';
-import {InputComponent} from '../../controls';
-import {immutableAssign} from '../../util/model';
+import { ButtonAttribute } from "./button-attribute";
+import { InputComponent } from "../../controls";
+import { immutableAssign } from "../../util/model";
 
 /**
  * Implementation that will be registered with the AttributeComponentService.
@@ -30,15 +25,14 @@ import {immutableAssign} from '../../util/model';
         The drawable attribute controls the display of the button. The attribute should have drawables with the keys "pressed", "hover", and "normal". The button
         attribute will hide and show the drawables depending on the button's state.
         </p>
-    `
+    `,
 })
 export class ButtonComponent {
-
-    @Input() attribute : ButtonAttribute;
+    @Input() attribute: ButtonAttribute;
 
     @Output() attributeChanged = new EventEmitter<ButtonAttribute>();
 
-    keyChanged(key : string) {
-        this.attributeChanged.emit(immutableAssign(this.attribute, {key}));
+    keyChanged(key: string) {
+        this.attributeChanged.emit(immutableAssign(this.attribute, { key }));
     }
 }

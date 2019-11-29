@@ -1,11 +1,24 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
-export const ZOOM_LEVELS = [0.10, 0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5];
+export const ZOOM_LEVELS = [
+    0.1,
+    0.25,
+    0.33,
+    0.5,
+    0.67,
+    0.75,
+    0.9,
+    1,
+    1.1,
+    1.25,
+    1.5,
+    1.75,
+    2,
+    2.5,
+    3,
+    4,
+    5,
+];
 export const DEFAULT_ZOOM_LEVEL = ZOOM_LEVELS.indexOf(1);
 
 /**
@@ -13,7 +26,7 @@ export const DEFAULT_ZOOM_LEVEL = ZOOM_LEVELS.indexOf(1);
  */
 @Component({
     selector: "dk-canvas-scale",
-    styleUrls: ['./duckling/canvas/_toolbars/canvas-scale.component.css'],
+    styleUrls: ["./duckling/canvas/_toolbars/canvas-scale.component.css"],
     template: `
         <dk-toolbar-button
             icon="minus"
@@ -28,10 +41,10 @@ export const DEFAULT_ZOOM_LEVEL = ZOOM_LEVELS.indexOf(1);
             tooltip="Zoom in"
             (click)="onZoomIn()">
         </dk-toolbar-button>
-    `
+    `,
 })
 export class CanvasScaleComponent {
-    @Input() scale : number;
+    @Input() scale: number;
 
     @Output() scaleChanged = new EventEmitter<number>();
 

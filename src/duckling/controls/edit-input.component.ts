@@ -5,16 +5,16 @@ import {
     EventEmitter,
     SimpleChange,
     OnChanges,
-    OnInit
-} from '@angular/core';
+    OnInit,
+} from "@angular/core";
 
-import {Validator} from './validated-input.component';
+import { Validator } from "./validated-input.component";
 
-import {DeleteButtonComponent, InputComponent} from '../controls';
+import { DeleteButtonComponent, InputComponent } from "../controls";
 
 @Component({
     selector: "dk-edit-input",
-    styleUrls: ['./duckling/controls/edit-input.component.css'],
+    styleUrls: ["./duckling/controls/edit-input.component.css"],
     template: `
         <div class="container">
             <div *ngIf="!isEditingValue" class="edit-label">
@@ -42,26 +42,26 @@ import {DeleteButtonComponent, InputComponent} from '../controls';
                 </dk-icon-button>
             </div>
         </div>
-    `
+    `,
 })
 export class EditInputComponent implements OnChanges, OnInit {
-    @Input() label : string;
-    @Input() value : string;
-    @Input() validator : Validator;
-    @Input() editTooltip : string;
-    @Input() validTooltip : string;
-    @Input() invalidTooltip : string;
-    @Input() floatIconRight : boolean;
+    @Input() label: string;
+    @Input() value: string;
+    @Input() validator: Validator;
+    @Input() editTooltip: string;
+    @Input() validTooltip: string;
+    @Input() invalidTooltip: string;
+    @Input() floatIconRight: boolean;
     @Output() onValueSaved = new EventEmitter<string>();
 
-    editValue : string;
-    isEditingValue : boolean = false;
+    editValue: string;
+    isEditingValue: boolean = false;
 
     ngOnInit() {
         this.editValue = this.value;
     }
 
-    ngOnChanges(changes : {value? : SimpleChange}) {
+    ngOnChanges(changes: { value?: SimpleChange }) {
         if (changes.value) {
             this.editValue = this.value;
             this.isEditingValue = false;
@@ -85,7 +85,7 @@ export class EditInputComponent implements OnChanges, OnInit {
         this.isEditingValue = false;
     }
 
-    onInput(newEditValue : string) {
+    onInput(newEditValue: string) {
         this.editValue = newEditValue;
     }
 
@@ -93,7 +93,7 @@ export class EditInputComponent implements OnChanges, OnInit {
         return this.isValid ? this.validTooltip : this.invalidTooltip;
     }
 
-    get isValid() : boolean {
+    get isValid(): boolean {
         if (!this.validator) {
             return true;
         }
@@ -101,14 +101,14 @@ export class EditInputComponent implements OnChanges, OnInit {
         return this.validator(this.editValue);
     }
 
-    get labelAndValue() : string {
+    get labelAndValue(): string {
         if (this.label) {
             return `${this.label}: ${this.value}`;
         }
         return this.value;
     }
 
-    get editLabel() : string {
+    get editLabel(): string {
         if (this.label) {
             return `${this.label}:`;
         }
