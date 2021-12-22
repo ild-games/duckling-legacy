@@ -58,7 +58,7 @@ var DRAWABLE = {
         },
         "priorityOffset": 0,
         "shape": {
-            "__cpp_type": "sf::RectangleShape",
+            "__cpp_type": "ildhal::RectangleShape",
             "fillColor": {
                 "r": 100,
                 "g": 200,

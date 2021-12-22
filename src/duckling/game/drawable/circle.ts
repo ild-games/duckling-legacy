@@ -7,6 +7,6 @@ export interface Circle extends Shape {
 }
 
 export let defaultCircle: Circle = immutableAssign(defaultShape as Circle, {
-    __cpp_type: "sf::CircleShape",
+    __cpp_type: "ildhal::CircleShape",
     radius: 10,
 });

@@ -3,7 +3,7 @@ import { NgModule, ApplicationRef, Type } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
-import { remote } from "electron";
+import { remote } from 'electron';
 import { SCALE_MODES } from "pixi.js";
 import * as PIXI from "pixi.js";
 

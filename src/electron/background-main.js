@@ -18,7 +18,8 @@ function createWindow () {
       height: 600,
       icon: __dirname + "/../resources/images/icon.png",
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        enableRemoteModule: true
       }
   });
 
