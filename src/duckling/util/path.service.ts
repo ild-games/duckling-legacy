@@ -132,7 +132,7 @@ export class PathService {
      * @returns An empty promise that evaluates once the directory has been created.
      */
     private _makedir(path: string): Promise<any> {
-        return new Promise(function(resolve, reject) {
+        return new Promise<void>(function(resolve, reject) {
             fs.mkdir(path, function(e) {
                 if (!e || e.code === "EEXIST") {
                     resolve();

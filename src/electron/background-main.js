@@ -16,7 +16,11 @@ function createWindow () {
       width: 800,
       title: "Duckling",
       height: 600,
-      icon: __dirname + "/../resources/images/icon.png"
+      icon: __dirname + "/../resources/images/icon.png",
+      webPreferences: {
+        nodeIntegration: true,
+        enableRemoteModule: true
+      }
   });
 
   // Open the DevTools.

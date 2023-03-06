@@ -7,9 +7,9 @@ export enum ShapeType {
 
 export function cppTypeToShapeType(cppType: string): ShapeType {
     switch (cppType) {
-        case "sf::CircleShape":
+        case "ildhal::CircleShape":
             return ShapeType.Circle;
-        case "sf::RectangleShape":
+        case "ildhal::RectangleShape":
             return ShapeType.Rectangle;
     }
 }
@@ -17,9 +17,9 @@ export function cppTypeToShapeType(cppType: string): ShapeType {
 export function shapeTypeToCppType(type: ShapeType): string {
     switch (type) {
         case ShapeType.Circle:
-            return "sf::CircleShape";
+            return "ildhal::CircleShape";
         case ShapeType.Rectangle:
-            return "sf::RectangleShape";
+            return "ildhal::RectangleShape";
     }
 }
 
