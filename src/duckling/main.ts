@@ -1,12 +1,8 @@
-import { NgModule, ApplicationRef, Type } from "@angular/core";
+import { NgModule, ApplicationRef } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { BrowserModule } from "@angular/platform-browser";
-import { FormsModule } from "@angular/forms";
-import { remote } from "electron";
-import { SCALE_MODES } from "pixi.js";
-
-import { EntityDrawerService } from "./canvas/drawing/entity-drawer.service";
-import { RenderPriorityService } from "./canvas/drawing/render-priority.service";
+import { getCurrentWindow } from "@electron/remote";
+import * as PIXI from "pixi.js";
 
 import { CanvasModule } from "./canvas/canvas.module";
 import { ControlsModule } from "./controls";
@@ -23,7 +19,7 @@ import { UtilModule } from "./util";
 import { DucklingElectronModule } from "../electron/duckling-electron.module";
 import { MigrationModule } from "./migration/migration.module";
 
-remote.getCurrentWindow().removeAllListeners();
+getCurrentWindow().removeAllListeners();
 
 let storeService = new StoreService(mainReducer, mergeEntityAction);
 
@@ -59,4 +55,4 @@ export class DucklingAppModule {
 platformBrowserDynamic().bootstrapModule(DucklingAppModule);
 
 // set pixi.js to use nearest neighbor scaling method as a default
-PIXI.settings.SCALE_MODE = SCALE_MODES.NEAREST;
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;

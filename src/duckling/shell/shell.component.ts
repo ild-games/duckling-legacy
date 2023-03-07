@@ -6,7 +6,7 @@ import {
     OnInit,
     ViewContainerRef,
 } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import { Subscriber } from "rxjs";
 
 import { Entity } from "../entitysystem";

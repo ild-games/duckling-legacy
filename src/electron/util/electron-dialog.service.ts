@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { remote } from "electron";
+import { dialog, getCurrentWindow } from "@electron/remote";
 
 import { DialogService } from "../../duckling/util/dialog.service";
 
@@ -11,20 +11,18 @@ export class ElectronDialogService implements DialogService {
     private _dialog: Electron.Dialog;
 
     constructor(protected _zone: NgZone) {
-        this._dialog = remote.dialog;
+        this._dialog = dialog;
     }
 
     showOpenDialog(options: any, callback?: (fileNames: string[]) => void) {
-        this._zone.runOutsideAngular(() => {
-            this._dialog.showOpenDialog(
-                remote.getCurrentWindow(),
-                options,
-                (fileNames) => {
-                    if (callback) {
-                        this._zone.run(() => callback(fileNames));
-                    }
-                }
+        this._zone.runOutsideAngular(async () => {
+            const {filePaths, canceled} = await this._dialog.showOpenDialog(
+                getCurrentWindow(),
+                options
             );
+            if (callback && !canceled) {
+                this._zone.run(() => callback(filePaths));
+            }
         });
     }
 
