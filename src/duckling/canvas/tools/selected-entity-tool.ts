@@ -1,16 +1,15 @@
 import { Injectable } from "@angular/core";
-import { Subscriber, BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, merge } from "rxjs";
 import { Container, DisplayObject, Graphics } from "pixi.js";
 
 import { DrawnConstruct } from "../drawing/drawn-construct";
 
 import { MultiModeTool } from "./multi-mode-tool";
 import {
-    EntityMoveTool,
-    EntityMoveToolDrawnConstruct,
+    EntityMoveTool
 } from "./entity-move-tool";
-import { EntityResizeTool, ResizeToolDrawnConstruct } from "./resize-tool";
-import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from "./base-tool";
+import { EntityResizeTool } from "./resize-tool";
+import { CanvasMouseEvent } from "./base-tool";
 
 @Injectable()
 export class SelectedEntityTool extends MultiModeTool {
@@ -22,7 +21,7 @@ export class SelectedEntityTool extends MultiModeTool {
     ) {
         super();
 
-        this.drawnConstructChanged = Observable.merge(
+        this.drawnConstructChanged = merge(
             this._entityMoveTool.drawnConstructChanged,
             this._entityResizeTool.drawnConstructChanged
         ) as BehaviorSubject<boolean>;

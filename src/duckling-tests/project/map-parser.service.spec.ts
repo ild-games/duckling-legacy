@@ -1,7 +1,7 @@
 import "mocha";
 import * as chai from "chai";
 import { expect } from "chai";
-import * as spies from "chai-spies";
+import spies from "chai-spies";
 import "reflect-metadata";
 
 chai.use(spies);

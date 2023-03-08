@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { loader, Texture, Rectangle } from "pixi.js";
 import { BehaviorSubject } from "rxjs";
 import { load as webFontLoader } from "webfontloader";
 import { Howl } from "howler";
@@ -10,6 +9,7 @@ import { PathService } from "../util/path.service";
 import { Vector } from "../math/vector";
 
 import { RequiredAssetService } from "./required-asset.service";
+import { Loader } from "pixi.js";
 
 export type AssetType = "TexturePNG" | "FontTTF" | "SoundWAV" | "MusicOGG";
 
@@ -33,10 +33,11 @@ export class AssetService {
         private _path: PathService,
         private _requiredAssets: RequiredAssetService
     ) {
-        loader.on("progress", (loader: any, resource: any) =>
-            this._onAssetLoaded(resource.name)
-        );
-        loader.once("complete", () => this._onLoaderComplete());
+        
+        // Loader.on("progress", (loader: any, resource: any) =>
+        //     this._onAssetLoaded(resource.name)
+        // );
+        // Loader.once("complete", () => this._onLoaderComplete());
     }
 
     private _assets: { [key: string]: Asset } = {};
@@ -54,10 +55,10 @@ export class AssetService {
      * @param  editorSpecific Optional boolean that says if the resource is an editor specific resource, default is false.
      */
     add(assets: LoadingAsset[]) {
-        if (loader.loading) {
-            this._cacheOffAssetsToLoad(assets);
-            return;
-        }
+        // if (loader.loading) {
+        //     this._cacheOffAssetsToLoad(assets);
+        //     return;
+        // }
 
         let nonFontAssetsToLoad = 0;
         for (let assetToLoad of assets) {
@@ -67,9 +68,9 @@ export class AssetService {
             }
         }
 
-        if (nonFontAssetsToLoad > 0) {
-            loader.load();
-        }
+        // if (nonFontAssetsToLoad > 0) {
+        //     loader.load();
+        // }
     }
 
     private _loadAsset(assetToLoad: LoadingAsset): boolean {
@@ -83,10 +84,10 @@ export class AssetService {
         } else if (this._assetTypeIsSound(assetToLoad.asset.type)) {
             this._loadSound(assetToLoad);
         } else {
-            loader.add(
-                this._getFullKey(assetToLoad),
-                this._getFilePath(assetToLoad)
-            );
+            // loader.add(
+            //     this._getFullKey(assetToLoad),
+            //     this._getFilePath(assetToLoad)
+            // );
         }
         return true;
     }
@@ -185,9 +186,9 @@ export class AssetService {
     }
 
     private _getTexture(key: string): any {
-        if (loader.resources[key]) {
-            return loader.resources[key].texture;
-        }
+        // if (loader.resources[key]) {
+        //     return loader.resources[key].texture;
+        // }
         return null;
     }
 

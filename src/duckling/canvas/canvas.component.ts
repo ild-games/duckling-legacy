@@ -11,16 +11,9 @@ import {
     EventEmitter,
     Output,
 } from "@angular/core";
-import { Observable } from "rxjs";
-import {
-    autoDetectRenderer,
-    DisplayObject,
-    WebGLRenderer,
-    CanvasRenderer,
-    Graphics,
-    Container,
-    Point,
-} from "pixi.js";
+import { CanvasRenderer } from "@pixi/canvas-renderer";
+import { Renderer } from "@pixi/core";
+import * as PIXI from "pixi.js";
 
 import { Vector } from "../math";
 import { WindowService, KeyboardCode } from "../util";
@@ -31,16 +24,14 @@ import {
     ZOOM_LEVELS,
     DEFAULT_ZOOM_LEVEL,
 } from "./_toolbars/canvas-scale.component";
-import { drawRectangle, drawGrid } from "./drawing/util";
+import { drawGrid } from "./drawing/util";
 import {
     BaseTool,
     ToolService,
-    MapMoveTool,
     CanvasMouseEvent,
     CanvasKeyEvent,
 } from "./tools";
 import { MouseService } from "../util/mouse.service";
-import { DrawnConstruct } from "./drawing";
 
 /**
  * The Canvas Component is used to render pixijs display objects and wire up Tools.
@@ -56,7 +47,8 @@ import { DrawnConstruct } from "./drawing";
             (mouseup)="onMouseUp($event)"
             (mousemove)="onMouseDrag($event)"
             (mouseout)="onMouseOut()"
-            (wheel)="onMouseWheel($event)">
+            (wheel)="onMouseWheel($event)"
+        >
         </canvas>
     `,
 })
@@ -67,8 +59,8 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     @Input() initialScrollPosition: Vector = { x: 0, y: 0 };
     @Input() scale: number;
     @Input() showGrid: boolean;
-    @Input() entitySystemDisplayObject: DisplayObject;
-    @Input() toolDisplayObject: DisplayObject;
+    @Input() entitySystemDisplayObject: PIXI.DisplayObject;
+    @Input() toolDisplayObject: PIXI.DisplayObject;
     @Input() tool: BaseTool;
 
     @ViewChild("canvas") canvasElement: ElementRef;
@@ -94,7 +86,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
     private _zoomLevel = DEFAULT_ZOOM_LEVEL;
     private _mouseLocation: Vector = { x: 0, y: 0 };
     private _zoomInCanvasCoords: Vector = null;
-    private _renderer: WebGLRenderer | CanvasRenderer;
+    private _renderer: CanvasRenderer | Renderer;
     private _scrollStageOffset = 32;
     private _viewInitialized = false;
     private _scrollPosition: Vector = { x: 0, y: 0 };
@@ -112,23 +104,21 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         this.setupContainingElementEvents();
 
         if (this._optionsService.getSetting("useWebGL", true)) {
-            this._renderer = new WebGLRenderer(
-                this.elementDimensions.x,
-                this.elementDimensions.y,
-                {
-                    view: this.canvasElement.nativeElement,
-                    backgroundColor: 0xffffff,
-                }
-            );
+            this._renderer = new Renderer({
+                preserveDrawingBuffer: false,
+                width: this.elementDimensions.x,
+                height: this.elementDimensions.y,
+                view: this.canvasElement.nativeElement,
+                backgroundColor: 0xffffff,
+            });
         } else {
-            this._renderer = new CanvasRenderer(
-                this.elementDimensions.x,
-                this.elementDimensions.y,
-                {
-                    view: this.canvasElement.nativeElement,
-                    backgroundColor: 0xffffff,
-                }
-            );
+            this._renderer = new CanvasRenderer({
+                preserveDrawingBuffer: false,
+                width: this.elementDimensions.x,
+                height: this.elementDimensions.y,
+                view: this.canvasElement.nativeElement,
+                backgroundColor: 0xffffff,
+            });
         }
 
         this._resizeCanvasElements();
@@ -200,7 +190,10 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         }
 
         let zoomPoint = this.entitySystemDisplayObject.toLocal(
-            new Point(this._zoomInCanvasCoords.x, this._zoomInCanvasCoords.y)
+            new PIXI.Point(
+                this._zoomInCanvasCoords.x,
+                this._zoomInCanvasCoords.y
+            )
         );
 
         let offsetPan = {
@@ -351,7 +344,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         }
 
         return this.entitySystemDisplayObject.toLocal(
-            new Point(canvasCoords.x, canvasCoords.y)
+            new PIXI.Point(canvasCoords.x, canvasCoords.y)
         );
     }
 
@@ -361,12 +354,13 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
         }
 
         return this.entitySystemDisplayObject.toGlobal(
-            new Point(stageCoords.x, stageCoords.y)
+            new PIXI.Point(stageCoords.x, stageCoords.y)
         );
     }
 
     private _resizeCanvasElements() {
-        this.elementDimensions.x = this.canvasElement.nativeElement.parentElement.offsetWidth;
+        this.elementDimensions.x =
+            this.canvasElement.nativeElement.parentElement.offsetWidth;
 
         // This 95 is the hardcoded height from the top and bottom toolbars. This is necessary because seemingly the
         // reported height of the flex element that houses the canvas lies about the size when resized. So the idea
@@ -402,7 +396,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     private _render() {
         if (this._renderer) {
-            let stage = new Container();
+            let stage = new PIXI.Container();
 
             this._addDisplayObjectToStageLocal(
                 stage,
@@ -414,34 +408,33 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             );
             this._addDisplayObjectToStageLocal(stage, this.toolDisplayObject);
 
-            this._renderer.preserveDrawingBuffer = false;
             this._renderer.render(stage);
         }
     }
 
     private _addDisplayObjectToStageLocal(
-        stage: Container,
-        displayObjectToAdd: DisplayObject
+        stage: PIXI.Container,
+        displayObjectToAdd: PIXI.DisplayObject
     ) {
         stage.addChild(displayObjectToAdd);
 
         let position = this._stagePosition;
         displayObjectToAdd.position.x = position.x + 0.5;
         displayObjectToAdd.position.y = position.y + 0.5;
-        displayObjectToAdd.scale = new Point(this.scale, this.scale);
+        displayObjectToAdd.scale = new PIXI.Point(this.scale, this.scale);
         displayObjectToAdd.updateTransform();
     }
 
     private _addDisplayObjectToStageWorld(
-        stage: Container,
-        displayObjectToAdd: DisplayObject
+        stage: PIXI.Container,
+        displayObjectToAdd: PIXI.DisplayObject
     ) {
         stage.addChild(displayObjectToAdd);
     }
 
-    private _buildGridDisplayObject(): DisplayObject {
+    private _buildGridDisplayObject(): PIXI.DisplayObject {
         if (!this.showGrid) {
-            return new DisplayObject();
+            return new PIXI.Container();
         }
 
         let stageZero = this.canvasCoordsFromStageCoords({ x: 0, y: 0 });
@@ -454,7 +447,7 @@ export class CanvasComponent implements OnChanges, OnDestroy, AfterViewInit {
             y: this.elementDimensions.y,
         };
 
-        let graphics = new Graphics();
+        let graphics = new PIXI.Graphics();
         graphics.lineStyle(1, 0xeeeeee, 0.5);
         drawGrid(
             startingPosition,

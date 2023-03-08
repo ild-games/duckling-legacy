@@ -7,18 +7,14 @@ import {
     OnDestroy,
     ChangeDetectorRef,
 } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import { Subscriber } from "rxjs";
 
-import { VectorInputComponent, FormLabelComponent } from "../../controls";
 import {
-    SelectOption,
-    ArraySelectComponent,
+    SelectOption
 } from "../../controls/array-select.component";
-import { EnumSelectComponent } from "../../controls/enum-select.component";
 import { Vector } from "../../math/vector";
 import { immutableAssign } from "../../util/model";
-import { ProjectService } from "../../project/project.service";
 
 import { CollisionAttribute, BodyTypeSelect } from "./collision-attribute";
 import { EditCollisionTypesComponent } from "./edit-collision-types.component";

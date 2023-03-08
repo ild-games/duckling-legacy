@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { MatSliderModule, MatSliderChange } from "@angular/material";
+import { MatSliderChange } from "@angular/material/slider";
 
-import { immutableAssign, immutableArrayAssign } from "../../util/model";
+import { immutableAssign } from "../../util/model";
 
 import { Sound } from "./sound";
 import { AssetService, Asset } from "../../project/asset.service";
@@ -21,7 +21,7 @@ import { ProjectService } from "../../project/project.service";
             <mat-slider
                 label="Volume"
                 min="0"
-                max="100" 
+                max="100"
                 [value]="displayVolume(sound.volume)"
                 (change)="onSliderChanged($event)">
             </mat-slider>

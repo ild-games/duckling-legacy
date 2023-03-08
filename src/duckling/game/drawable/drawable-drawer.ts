@@ -1,23 +1,18 @@
-import { ReflectiveInjector } from "@angular/core";
 
 import {
-    RenderTexture,
     Texture,
     Sprite,
     Graphics,
     DisplayObject,
     Container,
-    BaseTexture,
-    Point,
-    extras,
     Text,
+    TilingSprite,
+    TextStyle,
+    Rectangle as PRectangle
 } from "pixi.js";
 
 import { AssetService } from "../../project";
-import { Entity } from "../../entitysystem/entity";
-import { Vector, degreesToRadians } from "../../math";
-import { Box2 } from "../../math/box2";
-import { immutableAssign } from "../../util/model";
+import { Vector } from "../../math";
 import { drawMissingAsset } from "../../canvas/drawing/util";
 import {
     DrawnConstruct,
@@ -25,23 +20,20 @@ import {
 } from "../../canvas/drawing/drawn-construct";
 import { drawEllipse, drawRectangle } from "../../canvas/drawing/util";
 import { colorToHex } from "../../canvas/drawing/color";
-import { AttributeDrawer } from "../../canvas/drawing/entity-drawer.service";
 
-import { DrawableAttribute, getDrawableAttribute } from "./drawable-attribute";
+import { DrawableAttribute } from "./drawable-attribute";
 import { Drawable, DrawableType } from "./drawable";
 import { cppTypeToDrawableType } from "./drawable-helpers";
 import { ShapeDrawable } from "./shape-drawable";
 import { ContainerDrawable } from "./container-drawable";
 import { ImageDrawable } from "./image-drawable";
 import {
-    TileBlockDrawable,
-    getTileHeight,
-    getTileWidth,
+    TileBlockDrawable
 } from "./tile-block-drawable";
 import { drawTileBlockDrawable } from "./tile-block-drawable-drawer";
 import { AnimatedDrawable } from "./animated-drawable";
 import { TextDrawable } from "./text-drawable";
-import { ShapeType, Shape, cppTypeToShapeType } from "./shape";
+import { ShapeType, cppTypeToShapeType } from "./shape";
 import { Circle } from "./circle";
 import { Rectangle } from "./rectangle";
 
@@ -184,7 +176,7 @@ function _getTexture(
         if (_isPartialImageValidForTexture(imageDrawable, baseTexture)) {
             texture = new Texture(
                 baseTexture,
-                new PIXI.Rectangle(
+                new PRectangle(
                     imageDrawable.textureRect.position.x,
                     imageDrawable.textureRect.position.y,
                     imageDrawable.textureRect.dimension.x,
@@ -300,8 +292,7 @@ export class ShapeDrawnConstruct extends DrawnConstruct {
         this.transformProperties = transformProperties;
 
         let colorHex = colorToHex(this._shapeDrawable.shape.fillColor);
-        this._graphics.beginFill(parseInt(colorHex, 16), 1);
-        this._graphics.fillAlpha = this._shapeDrawable.shape.fillColor.a / 255;
+        this._graphics.beginFill(parseInt(colorHex, 16),this._shapeDrawable.shape.fillColor.a / 255);
         let shapeType = cppTypeToShapeType(
             this._shapeDrawable.shape.__cpp_type
         );
@@ -337,7 +328,7 @@ export class ImageDrawnConstruct extends DrawnConstruct {
         this.transformProperties = transformProperties;
 
         if (this._imageDrawable.isTiled && this._imageDrawable.tiledArea) {
-            this._sprite = new extras.TilingSprite(
+            this._sprite = new TilingSprite(
                 this._texture,
                 this._imageDrawable.tiledArea.x,
                 this._imageDrawable.tiledArea.y
@@ -424,7 +415,7 @@ export class TextDrawnConstruct extends DrawnConstruct {
             fontFamily: this._fontFamily,
             fontSize: this._textDrawable.text.characterSize,
             fill: colorHex,
-        } as PIXI.TextStyle);
+        } as TextStyle);
         this._applyDisplayObjectTransforms(this._text);
     }
 

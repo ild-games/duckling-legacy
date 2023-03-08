@@ -1,25 +1,15 @@
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    AfterViewInit,
-    OnDestroy,
-    ViewContainerRef,
+    Component, AfterViewInit,
+    OnDestroy
 } from "@angular/core";
-import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material";
 import { Subscriber } from "rxjs";
 
-import { ProjectService } from "../../project/project.service";
-import { AssetService } from "../../project/asset.service";
 import {
     EntityLayerService,
     Layer,
     AttributeLayer,
 } from "../../entitysystem/services/entity-layer.service";
 import { EntityDrawerService } from "../../canvas/drawing/entity-drawer.service";
-import { DialogService } from "../../util/dialog.service";
-import { PathService } from "../../util/path.service";
 
 @Component({
     selector: "dk-layer-dialog",

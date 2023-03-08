@@ -2,32 +2,20 @@ import {
     Component,
     Input,
     Output,
-    EventEmitter,
-    AfterViewInit,
-    ViewContainerRef,
+    EventEmitter, ViewContainerRef
 } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 
-import {
-    AccordionComponent,
-    FormLabelComponent,
-    EnumChoiceComponent,
-    NumberInputComponent,
-} from "../../controls";
 import { immutableAssign, immutableArrayAssign } from "../../util";
 import { AssetService } from "../../project/asset.service";
-import { Vector } from "../../math";
 import { Validator } from "../../controls/validated-input.component";
 
 import { AnimatedDrawable } from "./animated-drawable";
 import { ImageDrawable, defaultImageDrawable } from "./image-drawable";
-import { DrawableComponent } from "./drawable.component";
 import { Drawable, DrawableType } from "./drawable";
 import {
-    drawableTypeToCppType,
-    cppTypeToDrawableType,
-    cloneDrawable,
-    newDrawable,
+    drawableTypeToCppType, cloneDrawable,
+    newDrawable
 } from "./drawable-helpers";
 import {
     AutoCreateAnimationDialogComponent,

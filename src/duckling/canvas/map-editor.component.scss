@@ -10,7 +10,7 @@
 
 $canvas-top-bar-height: 35px;
 $canvas-bottom-bar-height: 60px;
-$canvas-left-right-border-width: $canvas-top-bar-height / 2;
+$canvas-left-right-border-width: $canvas-top-bar-height * 0.5;
 
 .canvas-toolbar {
     background-color: $header-color;

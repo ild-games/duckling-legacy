@@ -67,7 +67,7 @@ export class NumberInputComponent {
     onHitEnter() {
         let rawValue = this.validatedInputComponent.rawValue;
         try {
-            let evaluatedValue = math.eval(rawValue);
+            let evaluatedValue = math.evaluate(rawValue);
             if (this.combinedValidators(evaluatedValue + "")) {
                 this.validInput.emit(evaluatedValue);
             }

@@ -1,16 +1,8 @@
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    AfterViewInit,
-    ViewContainerRef,
-    OnInit,
-    OnDestroy,
+    Component
 } from "@angular/core";
-import { MatDialogConfig, MatDialogRef } from "@angular/material";
-import { Observable, Subscriber } from "rxjs";
-import { Rectangle } from "pixi.js";
+import { MatDialogRef } from "@angular/material/dialog";
+import { Subscriber } from "rxjs";
 
 import { Vector } from "../../math";
 import { ProjectService } from "../../project";

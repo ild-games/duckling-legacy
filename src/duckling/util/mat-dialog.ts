@@ -1,6 +1,4 @@
-import { Component, ViewContainerRef, ElementRef } from "@angular/core";
-import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material";
-import { Observable } from "rxjs";
+import { ViewContainerRef } from "@angular/core";
 
 /**
  * Removes the padding for the mat-dialog that the given view container is in

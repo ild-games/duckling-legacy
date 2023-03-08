@@ -1,11 +1,7 @@
 import {
-    Component,
-    ViewContainerRef,
-    ElementRef,
-    ViewChild,
-    AfterViewInit,
+    Component
 } from "@angular/core";
-import { MatDialogRef } from "@angular/material";
+import { MatDialogRef } from "@angular/material/dialog";
 
 import { ProjectService } from "./project.service";
 

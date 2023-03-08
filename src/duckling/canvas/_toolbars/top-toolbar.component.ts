@@ -6,13 +6,12 @@ import {
     EventEmitter,
     ViewContainerRef,
 } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 
 import { BaseTool, ToolService } from "../tools";
 import { StoreService } from "../../state";
 import { ToolbarOption } from "../../controls";
 import { MapSelectComponent } from "../../project/map-select.component";
-import { EntityLayerService } from "../../entitysystem";
 import { LayerDialogComponent } from "../../entitysystem/services/layer-dialog.component";
 
 @Component({

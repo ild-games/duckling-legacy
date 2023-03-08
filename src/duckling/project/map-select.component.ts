@@ -1,6 +1,5 @@
-import { Component, ViewContainerRef } from "@angular/core";
-import { MatDialogRef } from "@angular/material";
-import { Observable } from "rxjs";
+import { Component } from "@angular/core";
+import { MatDialogRef } from "@angular/material/dialog";
 
 import { ProjectService } from "./project.service";
 

@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Subscriber, BehaviorSubject, Observable } from "rxjs";
-import { DisplayObject } from "pixi.js";
+import { BehaviorSubject, merge } from "rxjs";
 
 import { KeyboardService, KeyboardCode } from "../../util/keyboard.service";
 import { MouseService, MouseButton } from "../../util/mouse.service";
 
-import { BaseTool, CanvasMouseEvent, CanvasKeyEvent } from "./base-tool";
+import { BaseTool } from "./base-tool";
 import { MultiModeTool } from "./multi-mode-tool";
 
 /**
@@ -22,7 +21,7 @@ export class BimodalTool extends MultiModeTool {
     ) {
         super();
 
-        this.drawnConstructChanged = Observable.merge(
+        this.drawnConstructChanged = merge(
             this._primaryTool.drawnConstructChanged,
             this._secondaryTool.drawnConstructChanged
         ) as BehaviorSubject<boolean>;

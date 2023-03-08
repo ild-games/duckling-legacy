@@ -6,12 +6,11 @@ import {
     OnDestroy,
     OnInit,
 } from "@angular/core";
-import { Container, DisplayObject, Graphics, Sprite, Texture } from "pixi.js";
-import { Subscriber } from "rxjs";
-import { TimerObservable } from "rxjs/observable/TimerObservable";
+import { Container, Graphics } from "pixi.js";
+import { Subscriber, timer } from "rxjs";
 
 import { StoreService } from "../state/store.service";
-import { AssetService, Asset, ProjectService } from "../project";
+import { AssetService, ProjectService } from "../project";
 import {
     setScrollPositionsAction,
     setInitialMap,
@@ -19,8 +18,7 @@ import {
     setHiddenLayers,
     setHiddenAttributes,
 } from "../project/user-meta-data";
-import { ArraySelectComponent, SelectOption } from "../controls";
-import { EntitySystemService, Entity, TaggedEntity } from "../entitysystem/";
+import { EntitySystemService, TaggedEntity } from "../entitysystem/";
 import { EntityLayerService } from "../entitysystem/services/entity-layer.service";
 import { Vector } from "../math";
 import { KeyboardService } from "../util/keyboard.service";
@@ -29,10 +27,8 @@ import { CopyPasteService, SelectionService, Selection } from "../selection";
 
 import { EntityDrawerService, EntityCache, DrawnConstruct } from "./drawing";
 import { RenderPriorityService } from "./drawing/render-priority.service";
-import { TopToolbarComponent, BottomToolbarComponent } from "./_toolbars";
 import { CanvasComponent } from "./canvas.component";
-import { drawRectangle, drawGrid } from "./drawing/util";
-import { BaseTool, ToolService, MapMoveTool, BimodalTool } from "./tools";
+import { BaseTool, ToolService, BimodalTool } from "./tools";
 
 type LayerCache = {
     graphics: Graphics;
@@ -149,7 +145,7 @@ export class MapEditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this._redrawInterval = TimerObservable.create(
+        this._redrawInterval = timer(
             0,
             1000 / this._framesPerSecond
         ).subscribe(() => this._drawFrame()) as Subscriber<any>;
