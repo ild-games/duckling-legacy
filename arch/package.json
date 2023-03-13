@@ -1,0 +1,67 @@
+{
+  "name": "@ild-games/duckling",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ild-games/duckling"
+  },
+  "version": "0.0.2",
+  "scripts": {
+    "start": "npm run build && concurrently \"npm run watch\" \"npm run duckling\" ",
+    "test": "tsc && npm run mocha",
+    "build": "gulp && tsc",
+    "watch": "concurrently \"npm run gulp:w\" \"npm run tsc:w\"",
+    "gulp": "gulp",
+    "gulp:w": "gulp watch",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "mocha": "electron-mocha --renderer \"build/duckling-tests/**/*.spec.js\"",
+    "mocha-debug": "electron-mocha --interactive \"build/duckling-tests/**/*.spec.js\"",
+    "duckling": "electron build/electron/background-main.js",
+    "format": "npm run format:ts && npm run format:scss",
+    "format:ts": "prettier --parser typescript --config ./package.json --write \"src/**/*.ts\"",
+    "format:scss": "prettier --parser scss --config ./package.json --write \"src/**/*.scss\""
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@angular/cli": "^15.2.2",
+    "@types/chai": "^4.3.4",
+    "@types/chai-spies": "^1.0.3",
+    "@types/howler": "^2.2.7",
+    "@types/lodash": "^4.14.191",
+    "@types/mocha": "^10.0.1",
+    "@types/webfontloader": "^1.6.35",
+    "chai-spies": "^1.0.0",
+    "concurrently": "^7.6.0",
+    "electron": "^23.1.2",
+    "gulp": "^4.0.2",
+    "gulp-sass": "^5.1.0"
+  },
+  "prettier": {
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "arrowParens": "always"
+  },
+  "dependencies": {
+    "@angular/common": "^15.2.1",
+    "@angular/core": "^15.2.1",
+    "@angular/forms": "^15.2.1",
+    "@angular/material": "^15.2.1",
+    "@angular/platform-browser": "^15.2.1",
+    "@angular/platform-browser-dynamic": "^15.2.1",
+    "@electron/remote": "^2.0.9",
+    "@pixi/canvas-renderer": "^7.1.4",
+    "@pixi/core": "^7.1.4",
+    "chai": "^4.3.7",
+    "glob": "^9.2.1",
+    "howler": "^2.2.3",
+    "lodash": "^4.17.21",
+    "mathjs": "^11.6.0",
+    "mocha": "^10.2.0",
+    "pixi.js": "^7.1.4",
+    "redux": "^4.2.1",
+    "rxjs": "^7.8.0",
+    "sass": "^1.58.3",
+    "typescript": "^4.9.5",
+    "webfontloader": "^1.6.28"
+  }
+}

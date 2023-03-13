@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "baseUrl": "./node_modules"
+  },
+  "compileOnSave": false,
+  "include": ["src/**/*.ts"],
+  "exclude": [
+  ]
+}
