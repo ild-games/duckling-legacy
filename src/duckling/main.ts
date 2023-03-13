@@ -18,8 +18,10 @@ import { mainReducer } from "./main.reducer";
 import { UtilModule } from "./util";
 import { DucklingElectronModule } from "../electron/duckling-electron.module";
 import { MigrationModule } from "./migration/migration.module";
+console.log("sup doo");
 
 getCurrentWindow().removeAllListeners();
+
 
 let storeService = new StoreService(mainReducer, mergeEntityAction);
 

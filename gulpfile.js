@@ -10,7 +10,7 @@ function css() {
 }
 
 function fwatch() {
-    return gulp.watch("src/**/*.scss", css);
+    return [gulp.watch("src/**/*.scss", css), gulp.watch("src/*.html", index)];
 }
 
 function index() {
@@ -31,6 +31,6 @@ exports.duckling = gulp.series(index, electron, css, resources);
 exports.default = exports.duckling;
 
 function swallowError(error) {
-    console.log(error.toString());
+    console.error(error);
     this.emit("end");
 }
