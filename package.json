@@ -30,10 +30,10 @@
     "@types/mocha": "^10.0.1",
     "@types/webfontloader": "^1.6.35",
     "chai-spies": "^1.0.0",
+    "concurrently": "^7.6.0",
     "electron": "^23.1.2",
     "gulp": "^4.0.2",
-    "gulp-sass": "^5.1.0",
-    "gulp-watch": "^5.0.1"
+    "gulp-sass": "^5.1.0"
   },
   "prettier": {
     "tabWidth": 4,

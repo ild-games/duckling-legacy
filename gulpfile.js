@@ -1,6 +1,5 @@
 var gulp = require("gulp");
 var sass = require("gulp-sass")(require("sass"));
-var watch = require("gulp-watch");
 
 function css() {
     return gulp
@@ -11,9 +10,7 @@ function css() {
 }
 
 function fwatch() {
-    return watch("src/**/*.scss", function () {
-        gulp.run("default");
-    });
+    return gulp.watch("src/**/*.scss", css);
 }
 
 function index() {
@@ -26,7 +23,7 @@ function resources() {
     return gulp.src("resources/**").pipe(gulp.dest("build/resources"));
 }
 
-exports.watch = watch;
+exports.watch = fwatch;
 exports.index = index;
 exports.electron = electron;
 exports.resources = resources;
