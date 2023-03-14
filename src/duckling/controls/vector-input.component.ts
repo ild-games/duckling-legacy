@@ -15,7 +15,7 @@ import { Validator } from './validated-input.component';
   template: `
     <dk-number-input
       [label]="xLabel"
-      [value]="value?.x"
+      [value]="value.x"
       [disabled]="xDisabled"
       [validator]="xValidator"
       (validInput)="onXInput($event)"
@@ -23,7 +23,7 @@ import { Validator } from './validated-input.component';
     </dk-number-input>
     <dk-number-input
       [label]="yLabel"
-      [value]="value?.y"
+      [value]="value.y"
       [disabled]="yDisabled"
       [validator]="yValidator"
       (validInput)="onYInput($event)"

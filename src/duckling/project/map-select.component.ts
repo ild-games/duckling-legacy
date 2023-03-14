@@ -29,7 +29,7 @@ import { ProjectService } from './project.service';
           class="dk-inline"
           label="New Map Name"
           [dividerColor]="newMapNameIsValid() ? 'primary' : 'warn'"
-          (inputChanged)="newMapName = $event"
+          (inputChanged)="newMapName = $event.toString()"
         >
         </dk-input>
         <dk-icon-button
