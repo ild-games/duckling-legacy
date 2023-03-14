@@ -9,7 +9,7 @@ import { ProjectService } from './project.service';
  */
 @Component({
   selector: 'dk-map-select',
-  styleUrls: ['./duckling/layout.css', './map-select.component.scss'],
+  styleUrls: ['../layout.scss', './map-select.component.scss'],
   template: `
     <div *ngIf="!listLoaded">
       <mat-spinner></mat-spinner>

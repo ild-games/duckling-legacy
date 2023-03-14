@@ -20,7 +20,7 @@ import { CustomAttribute } from './custom-attribute';
  */
 @Component({
   selector: 'dk-custom-attributes',
-  styleUrls: ['./duckling/layout.css', './custom-attributes.component.scss'],
+  styleUrls: ['../layout.scss', './custom-attributes.component.scss'],
   template: `
     <div #container class="container">
       <div class="left-section">

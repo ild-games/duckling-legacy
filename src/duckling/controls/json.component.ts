@@ -30,7 +30,7 @@ export enum JsonValueType {
  */
 @Component({
   selector: 'dk-json',
-  styleUrls: ['./json.component.scss', './duckling/layout.css'],
+  styleUrls: ['./json.component.scss', '../layout.scss'],
   template: `
     <div *ngFor="let key of jsonKeys" [ngSwitch]="jsonValueType(schema[key])">
       <dk-number-input

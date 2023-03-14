@@ -35,7 +35,7 @@ export type JsonSchemaEditValue =
 
 @Component({
   selector: 'dk-json-schema-edit',
-  styleUrls: ['./duckling/layout.css', './json-schema-edit.component.scss'],
+  styleUrls: ['../layout.scss', './json-schema-edit.component.scss'],
   template: `
     <div class="json-content">
       {{ '{' }}
