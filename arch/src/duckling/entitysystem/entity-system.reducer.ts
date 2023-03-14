@@ -3,10 +3,10 @@ import {
     Entity,
     EntityKey,
     EntitySystem,
-} from "../entitysystem";
-import { Action, changeType, ChangeType } from "../state";
+} from '../entitysystem';
+import { Action, changeType, ChangeType } from '../state';
 
-const ACTION_UPDATE_ENTITY = "EntitySystem.UpdateEntity";
+const ACTION_UPDATE_ENTITY = 'EntitySystem.UpdateEntity';
 
 /**
  *  Action used to describe updates to a specific entity. If no entity with the
@@ -38,7 +38,7 @@ function _isUpdateEntityAction(action: Action): action is EntityUpdateAction {
     return action.type === ACTION_UPDATE_ENTITY;
 }
 
-const ACTION_UPDATE_ENTITIES = "EntitySystem.UpdateEntities";
+const ACTION_UPDATE_ENTITIES = 'EntitySystem.UpdateEntities';
 
 /**
  *  Action used to describe updates to multiple entities. If no entity with the
@@ -76,7 +76,7 @@ export interface ReplaceSystemAction extends Action {
     entitySystem: EntitySystem;
 }
 
-const ACTION_REPLACE_SYSTEM = "EntitySystem.ReplaceSystem";
+const ACTION_REPLACE_SYSTEM = 'EntitySystem.ReplaceSystem';
 
 /**
  * Create an action that can be used to replace the existing entity system. useful
@@ -114,7 +114,7 @@ export function deleteEntityAction(key: EntityKey) {
     };
 }
 
-const ACTION_DELETE_ENTITY = "EntitySystem.DeleteEntity";
+const ACTION_DELETE_ENTITY = 'EntitySystem.DeleteEntity';
 function _isDeleteEntityAction(action: Action): action is DeleteEntityAction {
     return action.type === ACTION_DELETE_ENTITY;
 }
@@ -141,7 +141,7 @@ export function renameEntityAction(oldKey: EntityKey, newKey: EntityKey) {
     };
 }
 
-const ACTION_RENAME_ENTITY = "EntitySystem.RenameEntity";
+const ACTION_RENAME_ENTITY = 'EntitySystem.RenameEntity';
 function _isRenameEntityAction(action: Action): action is RenameEntityAction {
     return action.type === ACTION_RENAME_ENTITY;
 }
@@ -181,9 +181,9 @@ export function entitySystemReducer(
     if (_isUpdateEntityAction(action)) {
         return entitySystem.set(action.entityKey, action.entity);
     } else if (_isUpdateEntitiesAction(action)) {
-        for (let keyEntityPair of action.entities) {
-            entitySystem = entitySystem.set(keyEntityPair[0], keyEntityPair[1]);
-        }
+        const blah = action.entities.forEach((v, k) => {
+            entitySystem = entitySystem.set(k, v);
+        });
         return entitySystem;
     } else if (_isReplaceSystemAction(action)) {
         return action.entitySystem;

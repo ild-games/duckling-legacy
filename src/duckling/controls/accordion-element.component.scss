@@ -1,0 +1,21 @@
+dk-section-header {
+    .display-on-hover {
+        display: none;
+    }
+
+    &:hover .display-on-hover {
+        display: inline-block;
+    }
+
+    button {
+        padding: 2px;
+        width: 16px;
+        min-width: 16px;
+        line-width: 16px;
+        text-align: center;
+    }
+}
+
+.body {
+    padding: 8px;
+}

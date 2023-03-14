@@ -1,0 +1,51 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+
+import { IconComponent } from './icon.component';
+
+/**
+ * Component for a general purpose icon button
+ */
+@Component({
+  selector: 'dk-icon-button',
+  styleUrls: ['./icon-button.component.scss'],
+  template: `
+    <button
+      *ngIf="!isRaised"
+      mat-icon-button
+      [title]="tooltip"
+      [disableRipple]="true"
+      [disabled]="disabled"
+      [color]="color"
+      (click)="onButtonClicked()"
+    >
+      &nbsp;
+      <dk-icon [iconClass]="icon"></dk-icon>
+      &nbsp;
+    </button>
+    <button
+      *ngIf="isRaised"
+      mat-mini-fab
+      [title]="tooltip"
+      [disableRipple]="true"
+      [disabled]="disabled"
+      [color]="color"
+      (click)="onButtonClicked()"
+    >
+      &nbsp;
+      <dk-icon [iconClass]="icon"></dk-icon>
+      &nbsp;
+    </button>
+  `,
+})
+export class IconButtonComponent {
+  @Input() icon: string = '';
+  @Input() color: string = '';
+  @Input() tooltip: string = '';
+  @Input() isRaised: boolean = false;
+  @Input() disabled: boolean = false;
+  @Output() iconClick = new EventEmitter<boolean>();
+
+  onButtonClicked() {
+    this.iconClick.emit(true);
+  }
+}

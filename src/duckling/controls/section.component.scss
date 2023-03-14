@@ -1,0 +1,29 @@
+@import "../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@import "../colors";
+@import "../forms";
+
+:host {
+    display: block;
+}
+
+mat-card {
+    padding: 0;
+    margin-top: $spacer-unit;
+
+    .header {
+        padding: 2px 8px;
+        background-color: $header-color;
+        height: 32px;
+        line-height: 32px;
+        display: flex;
+        align-items: center;
+
+        mat-checkbox {
+            display: inline-block;
+        }
+    }
+
+    .body {
+        padding: 8px;
+    }
+}

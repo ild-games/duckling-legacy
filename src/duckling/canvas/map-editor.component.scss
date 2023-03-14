@@ -1,0 +1,53 @@
+@import "../misc-mixins";
+@import "../colors";
+@import "../forms";
+@import "../../../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+
+:host {
+    height: 100%;
+    display: flex;
+}
+
+$canvas-top-bar-height: 35px;
+$canvas-bottom-bar-height: 60px;
+$canvas-left-right-border-width: $canvas-top-bar-height * 0.5;
+
+.canvas-toolbar {
+    background-color: $header-color;
+}
+
+mat-card {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    z-index: 1;
+    min-width: 700px;
+
+    .canvas-top-toolbar {
+        @extend .canvas-toolbar;
+        width: 100%;
+        flex: 0 0 $canvas-top-bar-height;
+    }
+
+    dk-canvas {
+        flex: 1 0 auto;
+        overflow: auto;
+    }
+
+    dk-canvas::selection {
+        background: #ff0000;
+    }
+
+    dk-canvas:focus {
+        outline: none;
+    }
+
+    .canvas-bottom-toolbar {
+        @extend .canvas-toolbar;
+        width: 100%;
+        flex: 0 0 $canvas-bottom-bar-height;
+        padding: 5px 5px 5px 5px;
+        box-sizing: border-box;
+    }
+}

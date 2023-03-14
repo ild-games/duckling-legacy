@@ -1,0 +1,16 @@
+:host {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+div {
+    min-width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+dk-icon-button.float-icon-right {
+    margin-left: auto;
+}

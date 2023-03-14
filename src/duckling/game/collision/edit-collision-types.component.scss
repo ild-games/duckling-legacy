@@ -1,0 +1,17 @@
+.current-collision-types {
+    max-height: 350px;
+    overflow: auto;
+
+    div {
+        display: flex;
+
+        dk-edit-input {
+            flex: 1 1 auto;
+        }
+
+        dk-delete-button {
+            flex: 0 0 auto;
+            align-self: center;
+        }
+    }
+}

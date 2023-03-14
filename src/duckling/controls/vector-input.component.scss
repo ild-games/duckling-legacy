@@ -1,0 +1,10 @@
+@import "../forms";
+
+:host {
+    display: block;
+}
+
+dk-number-input {
+    display: inline-block;
+    width: 49%;
+}

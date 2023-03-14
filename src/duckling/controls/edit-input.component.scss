@@ -1,0 +1,17 @@
+@import "../forms";
+@import "../fonts";
+
+.edit-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    dk-validated-input {
+        height: 50px;
+        font-size: $font-size-normal;
+    }
+}
+
+.edit-label-text {
+    margin-right: $spacer-unit * 0.5;
+}

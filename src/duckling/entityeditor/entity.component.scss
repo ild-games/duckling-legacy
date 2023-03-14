@@ -1,0 +1,15 @@
+@import "../forms";
+
+mat-card {
+    margin-bottom: 1em;
+
+    mat-card-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        dk-delete-button {
+            margin-left: $spacer-unit;
+        }
+    }
+}
