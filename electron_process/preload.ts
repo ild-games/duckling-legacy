@@ -1,8 +1,20 @@
 ///<reference path="api.d.ts" />
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import { getCurrentWindow, dialog, Menu, MenuItem } from '@electron/remote';
 import { readFile, writeFile, access, mkdir } from 'fs/promises';
 import { posix, sep } from 'path';
+import {
+  dialogShowOpenChannel,
+  menuSetApplicationMenuChannel,
+  windowCenterChannel,
+  windowMaximizeChannel,
+  windowReloadChannel,
+  windowSetMinimumSizeChannel,
+  windowSetResizableChannel,
+  windowSetSizeChannel,
+  windowSizeChannel,
+  windowUnMaximizeChannel,
+} from './ipcChannels';
 
 export const PATH_API = {
   join: posix.join,
@@ -21,10 +33,27 @@ export const FS_API = {
 };
 
 export const ELECTRON_API = {
-  getCurrentWindow,
-  dialog,
-  Menu,
-  MenuItem,
+  window: {
+    getSize: () => ipcRenderer.invoke(windowSizeChannel),
+    setSize: (width, height) =>
+      ipcRenderer.invoke(windowSetSizeChannel, width, height),
+    setMinimumSize: (w, h) =>
+      ipcRenderer.invoke(windowSetMinimumSizeChannel, w, h),
+    center: () => ipcRenderer.invoke(windowCenterChannel),
+    maximize: () => ipcRenderer.invoke(windowMaximizeChannel),
+    unmaximize: () => ipcRenderer.invoke(windowUnMaximizeChannel),
+    setResizable: (r) => ipcRenderer.invoke(windowSetResizableChannel, r),
+    reload: () => ipcRenderer.invoke(windowReloadChannel),
+  },
+  dialog: {
+    showOpen: (options) => ipcRenderer.invoke(dialogShowOpenChannel, options),
+    showError: (title, content) =>
+      ipcRenderer.invoke(dialogShowOpenChannel, title, content),
+  },
+  menu: {
+    setApplicationMenu: (content) =>
+      ipcRenderer.invoke(menuSetApplicationMenuChannel, content),
+  },
 };
 
 export const PROCESS_API = {

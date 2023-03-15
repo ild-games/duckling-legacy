@@ -1,20 +1,26 @@
 import { Injectable } from '@angular/core';
 
 import { WindowService } from '../../duckling/util/window.service';
-
 /**
  * Service to manage the Electron window that Duckling is running in.
  */
 @Injectable()
 export class ElectronWindowService extends WindowService {
-  private _curWindow = electron_api.getCurrentWindow();
-
-  override get width(): number {
-    return this._curWindow.getSize()[0];
+  override get width(): Promise<number> {
+    return this.getWidth();
+  }
+  async getWidth(): Promise<number> {
+    const res = await electron_api.window.getSize();
+    return res[0];
   }
 
-  override get height(): number {
-    return this._curWindow.getSize()[1];
+  override get height(): Promise<number> {
+    return this.getHeight();
+  }
+
+  async getHeight(): Promise<number> {
+    const res = await electron_api.window.getSize();
+    return res[1];
   }
 
   onResize(handler: Function) {
@@ -57,28 +63,28 @@ export class ElectronWindowService extends WindowService {
     window.onmouseup = null;
   }
 
-  setSize(width: number, height: number): void {
-    this._curWindow.setSize(width, height);
+  async setSize(width: number, height: number): Promise<void> {
+    await electron_api.window.setSize(width, height);
   }
 
-  setMinimumSize(minWidth: number, minHeight: number): void {
-    this._curWindow.setMinimumSize(minWidth, minHeight);
+  async setMinimumSize(minWidth: number, minHeight: number): Promise<void> {
+    await electron_api.window.setMinimumSize(minWidth, minHeight);
   }
 
-  center(): void {
-    this._curWindow.center();
+  async center(): Promise<void> {
+    await electron_api.window.center();
   }
 
-  maximize(): void {
-    this._curWindow.maximize();
+  async maximize(): Promise<void> {
+    await electron_api.window.maximize();
   }
 
-  unmaximize(): void {
-    this._curWindow.unmaximize();
+  async unmaximize(): Promise<void> {
+    await electron_api.window.unmaximize();
   }
 
-  setResizable(isResizable: boolean): void {
-    this._curWindow.setResizable(isResizable);
+  async setResizable(isResizable: boolean): Promise<void> {
+    await electron_api.window.setResizable(isResizable);
   }
 
   clearSelection(): void {

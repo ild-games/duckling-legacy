@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PROCESS_API = exports.ELECTRON_API = exports.FS_API = exports.PATH_API = void 0;
 ///<reference path="api.d.ts" />
 const electron_1 = require("electron");
-const remote_1 = require("@electron/remote");
 const promises_1 = require("fs/promises");
 const path_1 = require("path");
+const ipcChannels_1 = require("./ipcChannels");
 exports.PATH_API = {
     join: path_1.posix.join,
     dirname: path_1.posix.dirname,
@@ -22,10 +22,23 @@ exports.FS_API = {
     mkdir: promises_1.mkdir,
 };
 exports.ELECTRON_API = {
-    getCurrentWindow: remote_1.getCurrentWindow,
-    dialog: remote_1.dialog,
-    Menu: remote_1.Menu,
-    MenuItem: remote_1.MenuItem,
+    window: {
+        getSize: () => electron_1.ipcRenderer.invoke(ipcChannels_1.windowSizeChannel),
+        setSize: (width, height) => electron_1.ipcRenderer.invoke(ipcChannels_1.windowSetSizeChannel, width, height),
+        setMinimumSize: (w, h) => electron_1.ipcRenderer.invoke(ipcChannels_1.windowSetMinimumSizeChannel, w, h),
+        center: () => electron_1.ipcRenderer.invoke(ipcChannels_1.windowCenterChannel),
+        maximize: () => electron_1.ipcRenderer.invoke(ipcChannels_1.windowMaximizeChannel),
+        unmaximize: () => electron_1.ipcRenderer.invoke(ipcChannels_1.windowUnMaximizeChannel),
+        setResizable: (r) => electron_1.ipcRenderer.invoke(ipcChannels_1.windowSetResizableChannel, r),
+        reload: () => electron_1.ipcRenderer.invoke(ipcChannels_1.windowReloadChannel),
+    },
+    dialog: {
+        showOpen: (options) => electron_1.ipcRenderer.invoke(ipcChannels_1.dialogShowOpenChannel, options),
+        showError: (title, content) => electron_1.ipcRenderer.invoke(ipcChannels_1.dialogShowOpenChannel, title, content),
+    },
+    menu: {
+        setApplicationMenu: (content) => electron_1.ipcRenderer.invoke(ipcChannels_1.menuSetApplicationMenuChannel, content),
+    },
 };
 exports.PROCESS_API = {
     home: process.env['HOME'] || process.env['USERPROFILE'],

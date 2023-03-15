@@ -1,6 +1,19 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron';
 import * as remoteMain from '@electron/remote/main';
 import { join } from 'path';
+import {
+  dialogShowErrorChannel,
+  dialogShowOpenChannel,
+  menuSetApplicationMenuChannel,
+  windowCenterChannel,
+  windowMaximizeChannel,
+  windowReloadChannel,
+  windowSetMinimumSizeChannel,
+  windowSetResizableChannel,
+  windowSetSizeChannel,
+  windowSizeChannel,
+  windowUnMaximizeChannel,
+} from './ipcChannels';
 
 const baseUrl = '../';
 
@@ -25,6 +38,28 @@ function createWindow() {
   remoteMain.enable(win.webContents);
   win.webContents.openDevTools();
   win.loadFile(`${baseUrl}dist/duckling/index.html`);
+
+  ipcMain.handle(windowSizeChannel, () => win.getSize());
+  ipcMain.handle(windowSetSizeChannel, (e, w, h) => win.setSize(w, h));
+  ipcMain.handle(windowSetMinimumSizeChannel, (e, w, h) =>
+    win.setMinimumSize(w, h)
+  );
+  ipcMain.handle(windowCenterChannel, () => win.center());
+  ipcMain.handle(windowMaximizeChannel, () => win.maximize());
+  ipcMain.handle(windowUnMaximizeChannel, () => win.unmaximize());
+  ipcMain.handle(windowSetResizableChannel, (e, v) => win.setResizable(v));
+  ipcMain.handle(windowReloadChannel, () => win.reload());
+
+  ipcMain.handle(dialogShowOpenChannel, (e, options) =>
+    dialog.showOpenDialog(options)
+  );
+  ipcMain.handle(dialogShowErrorChannel, (e, title, content) =>
+    dialog.showErrorBox(title, content)
+  );
+  ipcMain.handle(menuSetApplicationMenuChannel, (e, menu) =>
+    Menu.setApplicationMenu(menu)
+  );
+
   mainWindow = win;
 }
 

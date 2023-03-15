@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const remoteMain = require("@electron/remote/main");
 const path_1 = require("path");
+const ipcChannels_1 = require("./ipcChannels");
 const baseUrl = '../';
 let mainWindow = null;
 remoteMain.initialize();
@@ -24,6 +25,17 @@ function createWindow() {
     remoteMain.enable(win.webContents);
     win.webContents.openDevTools();
     win.loadFile(`${baseUrl}dist/duckling/index.html`);
+    electron_1.ipcMain.handle(ipcChannels_1.windowSizeChannel, () => win.getSize());
+    electron_1.ipcMain.handle(ipcChannels_1.windowSetSizeChannel, (e, w, h) => win.setSize(w, h));
+    electron_1.ipcMain.handle(ipcChannels_1.windowSetMinimumSizeChannel, (e, w, h) => win.setMinimumSize(w, h));
+    electron_1.ipcMain.handle(ipcChannels_1.windowCenterChannel, () => win.center());
+    electron_1.ipcMain.handle(ipcChannels_1.windowMaximizeChannel, () => win.maximize());
+    electron_1.ipcMain.handle(ipcChannels_1.windowUnMaximizeChannel, () => win.unmaximize());
+    electron_1.ipcMain.handle(ipcChannels_1.windowSetResizableChannel, (e, v) => win.setResizable(v));
+    electron_1.ipcMain.handle(ipcChannels_1.windowReloadChannel, () => win.reload());
+    electron_1.ipcMain.handle(ipcChannels_1.dialogShowOpenChannel, (e, options) => electron_1.dialog.showOpenDialog(options));
+    electron_1.ipcMain.handle(ipcChannels_1.dialogShowErrorChannel, (e, title, content) => electron_1.dialog.showErrorBox(title, content));
+    electron_1.ipcMain.handle(ipcChannels_1.menuSetApplicationMenuChannel, (e, menu) => electron_1.Menu.setApplicationMenu(menu));
     mainWindow = win;
 }
 // Quit when all windows are closed.

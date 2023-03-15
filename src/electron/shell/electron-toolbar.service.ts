@@ -19,7 +19,7 @@ export class ElectronToolbarService extends FileToolbarService {
       menuPath: ['File'],
       label: 'Close Project',
       shortcut: 'CmdOrCtrl+R',
-      callback: () => electron_api.getCurrentWindow().reload(),
+      callback: () => electron_api.window.reload(),
     });
     this.addAction({
       menuPath: ['Edit'],
@@ -36,7 +36,7 @@ export class ElectronToolbarService extends FileToolbarService {
   }
 
   bootstrapMenu() {
-    electron_api.Menu.setApplicationMenu(this._toMenu(this.actions));
+    electron_api.menu.setApplicationMenu(this._toMenu(this.actions));
   }
 
   private _toMenu(actions: FileToolbarAction[]) {
@@ -48,35 +48,33 @@ export class ElectronToolbarService extends FileToolbarService {
       return action.menuPath[0];
     }
 
-    let menu = new electron_api.Menu();
+    let menu = { subMenus: [], items: [] };
 
     let [subMenuActions, items] = _.partition(actions, isSubMenu);
     let subMenus = _.groupBy(subMenuActions, subMenuName);
 
     for (let menuName in subMenus) {
-      menu.append(
-        new electron_api.MenuItem({
-          label: menuName,
-          submenu: this._toMenu(this._popMenuLevel(subMenus[menuName])),
-        })
-      );
+      menu.subMenus.push({
+        label: menuName,
+        submenu: this._toMenu(this._popMenuLevel(subMenus[menuName])),
+      });
     }
 
     for (let item of items) {
-      menu.append(this._toMenuItem(item));
+      menu.items.push(this._toMenuItem(item));
     }
 
     return menu;
   }
 
   private _toMenuItem(action: FileToolbarAction) {
-    return new electron_api.MenuItem({
+    return {
       click: action.callback,
       type: 'normal',
       label: action.label,
       accelerator: action.shortcut,
       role: action.role as any,
-    });
+    };
   }
 
   private _popMenuLevel(actions: FileToolbarAction[]) {
