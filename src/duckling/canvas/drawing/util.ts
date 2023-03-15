@@ -1,9 +1,9 @@
-import { Graphics, Sprite, DisplayObject } from "pixi.js";
+import { Graphics, Sprite, DisplayObject } from 'pixi.js';
 
-import { Vector } from "../../math/vector";
-import { AssetService } from "../../project/asset.service";
+import { Vector } from '../../math/vector';
+import { AssetService } from '../../project/asset.service';
 
-import { DrawnConstruct } from "./drawn-construct";
+import { DrawnConstruct } from './drawn-construct';
 
 /**
  * Draw a rectangle at the given position
@@ -12,11 +12,11 @@ import { DrawnConstruct } from "./drawn-construct";
  * @param graphics  Graphics object used to draw
  */
 export function drawRectangle(
-    position: Vector,
-    dimension: Vector,
-    graphics: Graphics
+  position: Vector,
+  dimension: Vector,
+  graphics: Graphics
 ) {
-    graphics.drawRect(position.x, position.y, dimension.x, dimension.y);
+  graphics.drawRect(position.x, position.y, dimension.x, dimension.y);
 }
 
 /**
@@ -27,17 +27,17 @@ export function drawRectangle(
  * @param graphics Graphics object used to draw.
  */
 export function drawEllipse(
-    position: Vector,
-    xRadius: number,
-    yRadius: number,
-    graphics: Graphics
+  position: Vector,
+  xRadius: number,
+  yRadius: number,
+  graphics: Graphics
 ) {
-    graphics.drawEllipse(
-        position.x + xRadius,
-        position.y + yRadius,
-        xRadius,
-        yRadius
-    );
+  graphics.drawEllipse(
+    position.x + xRadius,
+    position.y + yRadius,
+    xRadius,
+    yRadius
+  );
 }
 
 /**
@@ -47,14 +47,14 @@ export function drawEllipse(
  * @param graphics  Graphics object used to draw
  */
 export function drawX(position: Vector, dimension: Vector, graphics: Graphics) {
-    let halfX = dimension.x / 2;
-    let halfY = dimension.y / 2;
+  let halfX = dimension.x / 2;
+  let halfY = dimension.y / 2;
 
-    graphics.moveTo(position.x, position.y);
-    graphics.lineTo(position.x + dimension.x, position.y + dimension.y);
+  graphics.moveTo(position.x, position.y);
+  graphics.lineTo(position.x + dimension.x, position.y + dimension.y);
 
-    graphics.moveTo(position.x, position.y + dimension.y);
-    graphics.lineTo(position.x + dimension.x, position.y);
+  graphics.moveTo(position.x, position.y + dimension.y);
+  graphics.lineTo(position.x + dimension.x, position.y);
 }
 
 /**
@@ -65,36 +65,36 @@ export function drawX(position: Vector, dimension: Vector, graphics: Graphics) {
  * @param  graphics       Graphics object used to draw
  */
 export function drawGrid(
-    position: Vector,
-    gridDimension: Vector,
-    cellDimension: Vector,
-    graphics: Graphics
+  position: Vector,
+  gridDimension: Vector,
+  cellDimension: Vector,
+  graphics: Graphics
 ) {
-    let endX = gridDimension.x;
-    let endY = gridDimension.y;
+  let endX = gridDimension.x;
+  let endY = gridDimension.y;
 
-    for (let curY = position.y; curY <= endY; curY += cellDimension.y) {
-        graphics.moveTo(0, curY);
-        graphics.lineTo(endX, curY);
-    }
+  for (let curY = position.y; curY <= endY; curY += cellDimension.y) {
+    graphics.moveTo(0, curY);
+    graphics.lineTo(endX, curY);
+  }
 
-    for (let curX = position.x; curX <= endX; curX += cellDimension.x) {
-        graphics.moveTo(curX, 0);
-        graphics.lineTo(curX, endY);
-    }
+  for (let curX = position.x; curX <= endX; curX += cellDimension.x) {
+    graphics.moveTo(curX, 0);
+    graphics.lineTo(curX, endY);
+  }
 }
 
 class MissingDrawnConstruct extends DrawnConstruct {
-    private _sprite: Sprite;
+  private _sprite: Sprite;
 
-    constructor(private _missingTexture: any) {
-        super();
-        this._sprite = new Sprite(this._missingTexture);
-    }
+  constructor(private _missingTexture: any) {
+    super();
+    this._sprite = new Sprite(this._missingTexture);
+  }
 
-    draw(totalMillis: number): DisplayObject {
-        return this._sprite;
-    }
+  override draw(totalMillis: number): DisplayObject {
+    return this._sprite;
+  }
 }
 
 /**
@@ -103,12 +103,12 @@ class MissingDrawnConstruct extends DrawnConstruct {
  * @return Sprite with the missing images
  */
 export function drawMissingAsset(assetService: AssetService): DrawnConstruct {
-    let missingTexture = assetService.get(
-        { key: "fa-missing-image", type: "TexturePNG" },
-        true
-    );
+  let missingTexture = assetService.get(
+    { key: 'fa-missing-image', type: 'TexturePNG' },
+    true
+  );
 
-    let drawnConstruct = new MissingDrawnConstruct(missingTexture);
-    drawnConstruct.layer = Number.POSITIVE_INFINITY;
-    return drawnConstruct;
+  let drawnConstruct = new MissingDrawnConstruct(missingTexture);
+  drawnConstruct.layer = Number.POSITIVE_INFINITY;
+  return drawnConstruct;
 }

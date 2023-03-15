@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "electron ./app/main.js",
+    "start": "electron ./electron_process/main.js",
     "build": "npm run build:t && npm run build:n",
     "build:t": "tsc -p tsconfig.electron_process.json",
     "build:n": "ng build --base-href ./",
