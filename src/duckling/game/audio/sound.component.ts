@@ -19,13 +19,19 @@ import { ProjectService } from '../../project/project.service';
     </dk-number-input>
     <div class="topRow">
       Volume
-      <mat-slider
-        label="Volume"
-        min="0"
-        max="100"
-        [value]="displayVolume(sound.volume)"
-        (change)="onSliderChanged($event)"
-      >
+      <mat-slider label="Volume" min="0" max="100" #ngSlider
+        ><input
+          matSliderThumb
+          [value]="displayVolume(sound.volume)"
+          (change)="
+            onSliderChanged({
+              source: ngSliderThumb,
+              parent: ngSlider,
+              value: ngSliderThumb.value
+            })
+          "
+          #ngSliderThumb="matSliderThumb"
+        />
       </mat-slider>
       {{ displayVolume(sound.volume) }}
       <dk-icon-button
@@ -34,7 +40,7 @@ import { ProjectService } from '../../project/project.service';
         icon="play"
         [disabled]="sound.soundKey === ''"
         [isRaised]="true"
-        (iconClick)="onPlaySound(index)"
+        (iconClick)="onPlaySound()"
       >
       </dk-icon-button>
     </div>
@@ -69,7 +75,7 @@ export class SoundComponent {
     this.soundChanged.emit(immutableAssign(this.sound, { pitch: newPitch }));
   }
 
-  onPlaySound(index: number) {
+  onPlaySound() {
     let asset: Asset = {
       type: 'SoundWAV',
       key: this.sound.soundKey,

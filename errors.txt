@@ -1,0 +1,184 @@
+Node.js version v19.7.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/releases/.
+Γáï Generating browser application bundles (phase: setup)...ΓáÖ Generating browser application bundles (phase: setup)...Γá╣ Generating browser application bundles (phase: setup)...Γá╕ Generating browser application bundles (phase: building)...Γá╝ Generating browser application bundles (phase: building)...Γá┤ Generating browser application bundles (phase: building)...Γáª Generating browser application bundles (phase: building)...Γáº Generating browser application bundles (phase: building)...Γáç Generating browser application bundles (phase: building)...ΓáÅ Generating browser application bundles (phase: building)...Γáï Generating browser application bundles (phase: building)...ΓáÖ Generating browser application bundles (phase: building)...Γá╣ Generating browser application bundles (phase: building)...Γá╕ Generating browser application bundles (phase: building)...Γá╝ Generating browser application bundles (phase: building)...Γá┤ Generating browser application bundles (phase: building)...Γáª Generating browser application bundles (phase: building)...Γáº Generating browser application bundles (phase: building)...Γáç Generating browser application bundles (phase: building)...ΓáÅ Generating browser application bundles (phase: building)...Γáï Generating browser application bundles (phase: building)...ΓáÖ Generating browser application bundles (phase: building)...Γá╣ Generating browser application bundles (phase: building)...Γá╕ Generating browser application bundles (phase: building)...Γá╝ Generating browser application bundles (phase: building)...Γá┤ Generating browser application bundles (phase: building)...Γ£ö Browser application bundle generation complete.
+
+./src/duckling/migration/migration.service.ts:134:28-45 - Warning: Critical dependency: the request of a dependency is an expression
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\@pixi\utils\lib\index.mjs depends on 'earcut'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\@pixi\utils\lib\index.mjs depends on 'eventemitter3'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\mathjs\lib\esm\core\create.js depends on 'typed-function'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\mathjs\lib\esm\function\probability\util\seededRNG.js depends on 'seedrandom'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\mathjs\lib\esm\function\relational\compareNatural.js depends on 'javascript-natural-sort'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\mathjs\lib\esm\type\complex\Complex.js depends on 'complex.js'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\mathjs\lib\esm\type\fraction\Fraction.js depends on 'fraction.js'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\node_modules\mathjs\lib\esm\utils\latex.js depends on 'escape-latex'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\src\duckling\project\asset.service.ts depends on 'howler'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: D:\Code\ILikeDucks\duckling-legacy\src\electron\shell\electron-toolbar.service.ts depends on 'lodash'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+
+
+./src/duckling/util/json-loader.service.ts:1:0-25 - Error: Module not found: Error: Can't resolve 'fs' in 'D:\Code\ILikeDucks\duckling-legacy\src\duckling\util'
+
+./src/duckling/util/path.service.ts:1:0-25 - Error: Module not found: Error: Can't resolve 'fs' in 'D:\Code\ILikeDucks\duckling-legacy\src\duckling\util'
+
+./src/duckling/util/path.service.ts:2:0-52 - Error: Module not found: Error: Can't resolve 'path' in 'D:\Code\ILikeDucks\duckling-legacy\src\duckling\util'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+
+./node_modules/electron/index.js:1:11-24 - Error: Module not found: Error: Can't resolve 'fs' in 'D:\Code\ILikeDucks\duckling-legacy\node_modules\electron'
+
+./node_modules/electron/index.js:2:13-28 - Error: Module not found: Error: Can't resolve 'path' in 'D:\Code\ILikeDucks\duckling-legacy\node_modules\electron'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+
+Error: node_modules/@pixi/canvas-renderer/lib/CanvasRenderer.d.ts:44:22 - error TS2420: Class 'CanvasRenderer' incorrectly implements interface 'IRenderer<ICanvas>'.
+  Type 'CanvasRenderer' is missing the following properties from type 'IRenderer<ICanvas>': extract, prepare
+
+44 export declare class CanvasRenderer extends SystemManager<CanvasRenderer> implements IRenderer {
+                        ~~~~~~~~~~~~~~
+
+
+Error: src/duckling/controls/json-schema-edit.component.ts:66:16 - error TS2322: Type 'JsonSchemaEditValue' is not assignable to type 'JsonSchemaEdit'.
+  Type 'string' is not assignable to type 'JsonSchemaEdit'.
+
+66               [jsonSchema]="jsonSchema.contents[index]"
+                  ~~~~~~~~~~
+
+
+Error: src/duckling/controls/json-schema-edit.component.ts:248:39 - error TS7030: Not all code paths return a value.
+
+248   jsonType(rhs: JsonSchemaEditValue): JsonValueType {
+                                          ~~~~~~~~~~~~~
+
+
+Error: src/duckling/controls/json.component.ts:60:12 - error TS2322: Type 'JsonSchemaValue' is not assignable to type 'JsonSchema'.
+  Type 'string' is not assignable to type 'JsonSchema'.
+
+60           [schema]="schema[key]"
+              ~~~~~~
+
+
+Error: src/duckling/controls/number-input.component.ts:28:8 - error TS2322: Type 'number' is not assignable to type 'string'.
+
+28       [value]="value"
+          ~~~~~
+
+
+Error: src/duckling/entityeditor/entity-editor.component.ts:48:34 - error TS2554: Expected 2 arguments, but got 1.
+
+48                 (entityChanged)="onEntityChanged($event)">
+                                    ~~~~~~~~~~~~~~~
+
+
+Error: src/duckling/game/audio/music-attribute.component.ts:37:43 - error TS2345: Argument of type 'readonly Music[]' is not assignable to parameter of type 'Music[]'.
+  The type 'readonly Music[]' is 'readonly' and cannot be assigned to the mutable type 'Music[]'.
+
+37         (elementDeleted)="onMusicsChanged($event)"
+                                             ~~~~~~
+
+
+Error: src/duckling/game/audio/music-attribute.component.ts:38:45 - error TS2345: Argument of type 'readonly Music[]' is not assignable to parameter of type 'Music[]'.
+  The type 'readonly Music[]' is 'readonly' and cannot be assigned to the mutable type 'Music[]'.
+
+38         (elementMovedDown)="onMusicsChanged($event)"
+                                               ~~~~~~
+
+
+Error: src/duckling/game/audio/music-attribute.component.ts:39:43 - error TS2345: Argument of type 'readonly Music[]' is not assignable to parameter of type 'Music[]'.
+  The type 'readonly Music[]' is 'readonly' and cannot be assigned to the mutable type 'Music[]'.
+
+39         (elementMovedUp)="onMusicsChanged($event)"
+                                             ~~~~~~
+
+
+Error: src/duckling/game/audio/music.component.ts:29:34 - error TS2339: Property 'index' does not exist on type 'MusicComponent'.
+
+29         (iconClick)="onPlayMusic(index)"
+                                    ~~~~~
+
+
+Error: src/duckling/game/audio/sound-attribute.component.ts:37:43 - error TS2345: Argument of type 'readonly Sound[]' is not assignable to parameter of type 'Sound[]'.
+  The type 'readonly Sound[]' is 'readonly' and cannot be assigned to the mutable type 'Sound[]'.
+
+37         (elementDeleted)="onSoundsChanged($event)"
+                                             ~~~~~~
+
+
+Error: src/duckling/game/audio/sound-attribute.component.ts:38:45 - error TS2345: Argument of type 'readonly Sound[]' is not assignable to parameter of type 'Sound[]'.
+  The type 'readonly Sound[]' is 'readonly' and cannot be assigned to the mutable type 'Sound[]'.
+
+38         (elementMovedDown)="onSoundsChanged($event)"
+                                               ~~~~~~
+
+
+Error: src/duckling/game/audio/sound-attribute.component.ts:39:43 - error TS2345: Argument of type 'readonly Sound[]' is not assignable to parameter of type 'Sound[]'.
+  The type 'readonly Sound[]' is 'readonly' and cannot be assigned to the mutable type 'Sound[]'.
+
+39         (elementMovedUp)="onSoundsChanged($event)"
+                                             ~~~~~~
+
+
+Error: src/duckling/game/audio/sound.component.ts:35:34 - error TS2339: Property 'index' does not exist on type 'SoundComponent'.
+
+35         (iconClick)="onPlaySound(index)"
+                                    ~~~~~
+
+
+Error: src/duckling/state/state.module.ts:7:17 - error NG2005: The class 'StoreService' cannot be created via dependency injection, as it does not have an Angular decorator. This will result in an error
+
+Error: src/duckling/state/store.service.ts:33:17 - error NG2003: No suitable injection token for parameter 'reducer' of class 'StoreService'.
+  Consider using the @Inject decorator to specify an injection token.
+
+33     constructor(reducer: Reducer<any>, autoMerger: AutoMerger) {
+                   ~~~~~~~
+
+  src/duckling/state/store.service.ts:33:26
+    33     constructor(reducer: Reducer<any>, autoMerger: AutoMerger) {
+                                ~~~~~~~~~~~~
+    This type does not have a value, so it cannot be used as injection token.
+  node_modules/redux/index.d.ts:102:1
+    102 export type Reducer<S = any, A extends Action = AnyAction> = (
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    103   state: S | undefined,
+        ~~~~~~~~~~~~~~~~~~~~~~~
+    104   action: A
+        ~~~~~~~~~~~
+    105 ) => S
+        ~~~~~~
+    The type is declared here.
+
+
+

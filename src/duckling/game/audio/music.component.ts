@@ -13,13 +13,19 @@ import { ProjectService } from '../../project/project.service';
   template: `
     <div class="topRow">
       Volume
-      <mat-slider
-        label="Volume"
-        min="0"
-        max="100"
-        [value]="displayVolume(music.volume)"
-        (change)="onSliderChanged($event)"
-      >
+      <mat-slider label="Volume" min="0" max="100" #ngSlider
+        ><input
+          matSliderThumb
+          [value]="displayVolume(music.volume)"
+          (change)="
+            onSliderChanged({
+              source: ngSliderThumb,
+              parent: ngSlider,
+              value: ngSliderThumb.value
+            })
+          "
+          #ngSliderThumb="matSliderThumb"
+        />
       </mat-slider>
       {{ displayVolume(music.volume) }}
       <dk-icon-button
@@ -28,7 +34,7 @@ import { ProjectService } from '../../project/project.service';
         icon="play"
         [disabled]="music.musicKey === ''"
         [isRaised]="true"
-        (iconClick)="onPlayMusic(index)"
+        (iconClick)="onPlayMusic()"
       >
       </dk-icon-button>
     </div>
@@ -81,7 +87,7 @@ export class MusicComponent {
     );
   }
 
-  onPlayMusic(index: number) {
+  onPlayMusic() {
     let asset: Asset = {
       type: 'MusicOGG',
       key: this.music.musicKey,
