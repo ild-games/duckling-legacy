@@ -69,7 +69,7 @@ export class TopToolbarComponent {
 
   @Input() mapName: string;
 
-  @Output() mapSelected = new EventEmitter<String>();
+  @Output() mapSelected = new EventEmitter<string>();
   @Output() saveClicked = new EventEmitter<void>();
 
   constructor(

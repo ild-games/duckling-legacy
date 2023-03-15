@@ -13,34 +13,27 @@ import { Color } from '../canvas/drawing/color';
   selector: 'dk-color',
   styleUrls: ['./color.component.scss'],
   template: `
-    <dk-validated-input
-      label="Color R"
-      [value]="color.r"
-      [validator]="isRGBAValue"
-      (validInput)="onColorRInput($event)"
-    >
-    </dk-validated-input>
+    <dk-validated-input label="Color R" [value]="color.r.toString()"
+    [validator]="isRGBAValue" (validInput)="onColorRInput($event)" />
     <dk-validated-input
       label="Color G"
-      [value]="color.g"
+      [value]="color.g.toString()"
       [validator]="isRGBAValue"
       (validInput)="onColorGInput($event)"
-    >
-    </dk-validated-input>
+    />
     <dk-validated-input
       label="Color B"
-      [value]="color.b"
+      [value]="color.b.toString()"
       [validator]="isRGBAValue"
       (validInput)="onColorBInput($event)"
-    >
-    </dk-validated-input>
+    />
     <dk-validated-input
       label="Color A"
-      [value]="color.a"
+      [value]="color.a.toString()"
       [validator]="isRGBAValue"
       (validInput)="onColorAInput($event)"
-    >
-    </dk-validated-input>
+    />
+
   `,
 })
 export class ColorComponent {

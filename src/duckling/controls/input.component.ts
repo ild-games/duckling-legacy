@@ -16,7 +16,7 @@ import {
   template: `
     <mat-form-field
       dividerColor="{{ dividerColor }}"
-      (input)="onUserInput($event.target.value)"
+      (input)="onUserInput($event)"
       (focus)="onFocus()"
     >
       <input
@@ -54,13 +54,14 @@ export class InputComponent {
   /**
    * Event published when the user enters input.
    */
-  @Output() inputChanged = new EventEmitter<String>();
+  @Output() inputChanged = new EventEmitter<string>();
   /**
    * Event published when the user focuses the input
    */
   @Output() focus = new EventEmitter<boolean>();
 
-  onUserInput(newValue: string) {
+  onUserInput(e: Event) {
+    const newValue = (e.target as HTMLInputElement).value;
     this.inputChanged.emit(newValue);
   }
 

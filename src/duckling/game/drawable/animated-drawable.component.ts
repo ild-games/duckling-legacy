@@ -107,7 +107,7 @@ export class AnimatedDrawableComponent {
     );
   }
 
-  onChildDrawablesChanged(newDrawables: Drawable[]) {
+  onChildDrawablesChanged(newDrawables: readonly Drawable[]) {
     this.drawableChanged.emit(
       immutableAssign(this.animatedDrawable, {
         frames: newDrawables,
@@ -131,7 +131,7 @@ export class AnimatedDrawableComponent {
     );
   }
 
-  onFrameCloned(newDrawables: Drawable[]) {
+  onFrameCloned(newDrawables: readonly Drawable[]) {
     let newDrawablesPatch: Drawable[] = [];
     newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(
       newDrawables[newDrawables.length - 1],

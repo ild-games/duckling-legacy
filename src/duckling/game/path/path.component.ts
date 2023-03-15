@@ -62,7 +62,7 @@ export class PathComponent {
   @Input() attribute: PathAttribute;
   @Output() attributeChanged = new EventEmitter<PathAttribute>();
 
-  onVerticesChanged(newVertices: Vector[]) {
+  onVerticesChanged(newVertices: readonly Vector[]) {
     this.attributeChanged.emit(
       immutableAssign(this.attribute, { vertices: newVertices })
     );

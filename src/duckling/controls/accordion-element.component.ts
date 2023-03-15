@@ -42,7 +42,7 @@ import { IconComponent } from './icon.component';
         class="display-on-hover"
         title="Copy"
         [disableRipple]="true"
-        (click)="onCloned(false, $event)"
+        (click)="onCloned($event)"
       >
         <dk-icon iconClass="clone"></dk-icon>
       </button>
@@ -89,7 +89,7 @@ export class AccordionElementComponent {
     this.moved.emit(down);
   }
 
-  onCloned() {
+  onCloned(event: Event) {
     event.stopPropagation();
     this.cloned.emit(true);
   }

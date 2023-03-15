@@ -19,10 +19,11 @@ export abstract class MultiModeTool extends BaseTool {
   protected abstract get selectedTool(): BaseTool;
   protected abstract get primaryTool(): BaseTool;
 
-  override drawTool(canvasZoom: number): DrawnConstruct {
+  override drawTool(canvasZoom: number): DrawnConstruct | undefined {
     if (this.primaryTool) {
       return this.primaryTool.drawTool(canvasZoom);
     }
+    return undefined;
   }
 
   override onStageDown(event: CanvasMouseEvent) {

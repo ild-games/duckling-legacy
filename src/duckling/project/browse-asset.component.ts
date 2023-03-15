@@ -26,7 +26,7 @@ import { AssetService } from './asset.service';
       >
         {{ buttonText }}
       </button>
-      <dk-input disabled="true" placeholder="File" [value]="fileName">
+      <dk-input [disabled]="true" placeholder="File" [value]="fileName">
       </dk-input>
     </div>
   `,

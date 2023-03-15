@@ -17,7 +17,7 @@ import {
   vectorMultiply,
   vectorModulus,
 } from '../../math/vector';
-import { Box2 } from '../../math/box2';
+import { Box2, EMPTY_BOX } from '../../math/box2';
 import { newMergeKey } from '../../state';
 import { SelectionService, Selection } from '../../selection';
 import { ProjectService } from '../../project/project.service';
@@ -102,14 +102,14 @@ export class EntityMoveTool extends BaseTool {
 
   private _getSelectionBox(): Box2 {
     if (!this._initialMouseLocation || !this._selectionBoxDimensions) {
-      return;
+      return EMPTY_BOX;
     }
 
     if (
       this._state !== State.clickSelectionBox &&
       this._state !== State.shiftClickSelectionBox
     ) {
-      return;
+      return EMPTY_BOX;
     }
 
     return {

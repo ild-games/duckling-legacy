@@ -16,7 +16,7 @@ import { EDIT_COLLISION_TYPE_MIGRATION_NAME } from './collision-migration';
  */
 @Component({
   selector: 'dk-edit-collision-types',
-  styleUrls: ['../../layout.css', './edit-collision-types.component.scss'],
+  styleUrls: ['../../layout.scss', './edit-collision-types.component.scss'],
   template: `
     <dk-section headerText="Create Collision Type">
       <div>

@@ -63,7 +63,7 @@ export class SplashComponent implements OnInit {
   // hoist version numbers
   EDITOR_VERSION = EDITOR_VERSION;
 
-  private _projects: ProjectModel[] = [];
+  public _projects: ProjectModel[] = [];
   private _dialogOptions: {};
 
   /**

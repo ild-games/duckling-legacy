@@ -80,7 +80,7 @@ export class ContainerDrawableComponent {
     );
   }
 
-  onChildDrawablesChanged(newDrawables: Drawable[]) {
+  onChildDrawablesChanged(newDrawables: readonly Drawable[]) {
     this.drawableChanged.emit(
       immutableAssign(this.containerDrawable, {
         drawables: newDrawables,
@@ -104,7 +104,7 @@ export class ContainerDrawableComponent {
     );
   }
 
-  onChildDrawableCloned(newDrawables: Drawable[]) {
+  onChildDrawableCloned(newDrawables: readonly Drawable[]) {
     let newDrawablesPatch: Drawable[] = [];
     newDrawablesPatch[newDrawables.length - 1] = cloneDrawable(
       newDrawables[newDrawables.length - 1],

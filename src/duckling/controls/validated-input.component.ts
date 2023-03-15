@@ -63,7 +63,7 @@ export class ValidatedInputComponent implements OnChanges {
   /**
    * Event published when the user enters a valid input.
    */
-  @Output() validInput = new EventEmitter<String>();
+  @Output() validInput = new EventEmitter<string>();
 
   ngOnChanges(changes: { value?: SimpleChange }) {
     if (changes.value) {
