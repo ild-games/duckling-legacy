@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ELECTRON_API = exports.FS_API = exports.PATH_API = void 0;
+exports.PROCESS_API = exports.ELECTRON_API = exports.FS_API = exports.PATH_API = void 0;
 ///<reference path="api.d.ts" />
 const electron_1 = require("electron");
 const remote_1 = require("@electron/remote");
@@ -27,8 +27,11 @@ exports.ELECTRON_API = {
     Menu: remote_1.Menu,
     MenuItem: remote_1.MenuItem,
 };
+exports.PROCESS_API = {
+    home: process.env['HOME'] || process.env['USERPROFILE'],
+};
 electron_1.contextBridge.exposeInMainWorld('path_api', exports.PATH_API);
 electron_1.contextBridge.exposeInMainWorld('fs_api', exports.FS_API);
+electron_1.contextBridge.exposeInMainWorld('process_api', exports.PROCESS_API);
 electron_1.contextBridge.exposeInMainWorld('electron_api', exports.ELECTRON_API);
-console.log(electron_api);
 //# sourceMappingURL=preload.js.map

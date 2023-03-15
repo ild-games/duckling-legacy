@@ -18,8 +18,6 @@ import { UtilModule } from './util';
 import { DucklingElectronModule } from '../electron/duckling-electron.module';
 import { MigrationModule } from './migration/migration.module';
 
-//getCurrentWindow().removeAllListeners();
-
 let storeService = new StoreService(mainReducer, mergeEntityAction);
 
 // Setup window defaults
@@ -41,15 +39,11 @@ let storeService = new StoreService(mainReducer, mergeEntityAction);
     MigrationModule,
   ],
   providers: [{ provide: StoreService, useValue: storeService }],
-  entryComponents: [ShellComponent],
+  bootstrap: [ShellComponent],
 })
 export class DucklingAppModule {
   constructor(private _appRef: ApplicationRef) {}
-
-  ngDoBootstrap() {
-    this._appRef.bootstrap(ShellComponent);
-  }
 }
 
 // set pixi.js to use nearest neighbor scaling method as a default
-PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;

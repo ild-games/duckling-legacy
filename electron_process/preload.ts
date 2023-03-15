@@ -27,6 +27,11 @@ export const ELECTRON_API = {
   MenuItem,
 };
 
+export const PROCESS_API = {
+  home: process.env['HOME'] || process.env['USERPROFILE'],
+};
+
 contextBridge.exposeInMainWorld('path_api', PATH_API);
 contextBridge.exposeInMainWorld('fs_api', FS_API);
+contextBridge.exposeInMainWorld('process_api', PROCESS_API);
 contextBridge.exposeInMainWorld('electron_api', ELECTRON_API);

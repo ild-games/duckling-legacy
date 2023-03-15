@@ -17,7 +17,7 @@ export class PathService {
    * @returns A path point to the users home.
    */
   home(): string {
-    return process.env['HOME'] || process.env['USERPROFILE'];
+    return process_api.home;
   }
 
   /**
