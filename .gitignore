@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+/electron_process/*.js
 
 # Node
 /node_modules
