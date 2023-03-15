@@ -30,5 +30,3 @@ export const ELECTRON_API = {
 contextBridge.exposeInMainWorld('path_api', PATH_API);
 contextBridge.exposeInMainWorld('fs_api', FS_API);
 contextBridge.exposeInMainWorld('electron_api', ELECTRON_API);
-
-console.log(electron_api);

@@ -1,9 +1,11 @@
 import { app, BrowserWindow } from 'electron';
+import * as remoteMain from '@electron/remote/main';
 import { join } from 'path';
 
 const baseUrl = '../';
 
 let mainWindow = null;
+remoteMain.initialize();
 
 app.whenReady().then(createWindow);
 function createWindow() {
@@ -11,10 +13,16 @@ function createWindow() {
     width: 1080,
     height: 1440,
     webPreferences: {
+      nodeIntegration: true,
+      plugins: true,
+      contextIsolation: true,
+      backgroundThrottling: false,
+      webSecurity: false,
       preload: join(__dirname, 'preload.js'),
     },
     icon: __dirname + '/../resources/images/icon.png',
   });
+  remoteMain.enable(win.webContents);
   win.webContents.openDevTools();
   win.loadFile(`${baseUrl}dist/duckling/index.html`);
   mainWindow = win;
