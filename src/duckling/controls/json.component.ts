@@ -57,7 +57,7 @@ export enum JsonValueType {
       <dk-section *ngSwitchCase="JsonValueType.Object" [headerText]="key">
         <dk-json
           [value]="value[key]"
-          [schema]="schema[key]"
+          [schema]="asSchema(schema[key])"
           (valueChanged)="onValueChanged($event, key)"
         >
         </dk-json>
@@ -115,6 +115,10 @@ export class JsonComponent implements OnInit {
    * Emits when the json was changed with the new json
    */
   @Output() valueChanged = new EventEmitter<any>();
+
+  asSchema(j: JsonSchemaValue): JsonSchema {
+    return j as JsonSchema;
+  }
 
   ngOnInit() {
     if (!this.schema) {

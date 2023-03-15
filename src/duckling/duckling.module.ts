@@ -1,7 +1,6 @@
 import { NgModule, ApplicationRef } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { BrowserModule } from '@angular/platform-browser';
-import { getCurrentWindow } from '@electron/remote';
 import * as PIXI from 'pixi.js';
 
 import { CanvasModule } from './canvas/canvas.module';
@@ -19,7 +18,7 @@ import { UtilModule } from './util';
 import { DucklingElectronModule } from '../electron/duckling-electron.module';
 import { MigrationModule } from './migration/migration.module';
 
-getCurrentWindow().removeAllListeners();
+//getCurrentWindow().removeAllListeners();
 
 let storeService = new StoreService(mainReducer, mergeEntityAction);
 

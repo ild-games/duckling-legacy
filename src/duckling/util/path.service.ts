@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as fs from 'fs';
-import { posix as npath, sep as osSep } from 'path';
 
 import { glob } from './glob';
 
@@ -11,7 +9,7 @@ export class PathService {
    * @param pathSegments Array of paths.
    */
   join(...pathSegments: string[]): string {
-    return npath.join(...pathSegments);
+    return path_api.join(...pathSegments);
   }
 
   /**
@@ -28,7 +26,7 @@ export class PathService {
    * @returns Path to the directory.
    */
   dirname(path: string): string {
-    return npath.dirname(path);
+    return path_api.dirname(path);
   }
 
   /**
@@ -37,11 +35,11 @@ export class PathService {
    * @returns The string basename.
    */
   basename(path: string): string {
-    return npath.basename(path);
+    return path_api.basename(path);
   }
 
   extname(path: string): string {
-    return npath.extname(path);
+    return path_api.extname(path);
   }
 
   /**
@@ -49,12 +47,13 @@ export class PathService {
    * @param path Path to check for existence.
    * @returns A promise that evalutes to true if the path exists or false otherwise.
    */
-  pathExists(path: string): Promise<boolean> {
-    return new Promise(function (resolve, reject) {
-      fs.exists(path, function (exists: boolean) {
-        resolve(exists);
-      });
-    });
+  async pathExists(path: string): Promise<boolean> {
+    try {
+      await fs_api.access(path);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -77,7 +76,7 @@ export class PathService {
    */
   toKey(directory: string, objectPath: string): string {
     let relativePath = this.relative(directory, objectPath);
-    let extension = npath.extname(objectPath);
+    let extension = path_api.extname(objectPath);
     if (extension.length !== 0) {
       return relativePath.slice(0, -extension.length);
     } else {
@@ -92,7 +91,7 @@ export class PathService {
    * @return The relative path.
    */
   relative(from: string, to: string) {
-    return npath.relative(from, to);
+    return path_api.relative(from, to);
   }
 
   /**
@@ -101,10 +100,10 @@ export class PathService {
    * @return Return the normalized path.
    */
   normalize(path: string): string {
-    if (osSep === '\\') {
+    if (path_api.sep === '\\') {
       path = path.replace(/\\/g, '/');
     }
-    return npath.normalize(path);
+    return path_api.normalize(path);
   }
 
   /**
@@ -131,15 +130,7 @@ export class PathService {
    * @returns An empty promise that evaluates once the directory has been created.
    */
   private _makedir(path: string): Promise<void> {
-    return new Promise(function (resolve, reject) {
-      fs.mkdir(path, function (e) {
-        if (!e || e.code === 'EEXIST') {
-          resolve();
-        } else {
-          reject();
-        }
-      });
-    });
+    return fs_api.mkdir(path);
   }
 
   /**
@@ -163,6 +154,6 @@ export class PathService {
    * Get the OS dependent folder separator
    */
   get folderSeparator(): string {
-    return npath.sep;
+    return path_api.sep;
   }
 }

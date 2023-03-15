@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { getCurrentWindow } from '@electron/remote';
 
 import { WindowService } from '../../duckling/util/window.service';
 
@@ -8,7 +7,7 @@ import { WindowService } from '../../duckling/util/window.service';
  */
 @Injectable()
 export class ElectronWindowService extends WindowService {
-  private _curWindow = getCurrentWindow();
+  private _curWindow = electron_api.getCurrentWindow();
 
   override get width(): number {
     return this._curWindow.getSize()[0];

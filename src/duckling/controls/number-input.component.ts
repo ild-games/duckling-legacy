@@ -25,7 +25,7 @@ let numberRegex = /^\-?[0-9]+(\.[0-9]+)?$/;
       #validatedInputComponent
       [disabled]="disabled"
       [label]="label"
-      [value]="value"
+      [value]="value.toString()"
       [validator]="combinedValidators"
       (keyup.enter)="onHitEnter()"
       (validInput)="onInput($event)"

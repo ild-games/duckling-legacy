@@ -11,7 +11,7 @@ import {
   EventEmitter,
   Output,
 } from '@angular/core';
-import { CanvasRenderer } from '@pixi/canvas-renderer';
+import { CanvasRenderer } from 'pixi.js-legacy';
 import { Renderer } from '@pixi/core';
 import * as PIXI from 'pixi.js';
 

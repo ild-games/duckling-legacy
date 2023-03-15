@@ -77,7 +77,7 @@ export class SoundAttributeComponent {
     );
   }
 
-  onSoundsChanged(newSounds: Sound[]) {
+  onSoundsChanged(newSounds: readonly Sound[]) {
     this.attributeChanged.emit(
       immutableAssign(this.attribute, { sounds: newSounds })
     );

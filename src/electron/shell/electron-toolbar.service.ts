@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { Menu, MenuItem, getCurrentWindow } from '@electron/remote';
 
 import {
   FileToolbarAction,
@@ -20,7 +19,7 @@ export class ElectronToolbarService extends FileToolbarService {
       menuPath: ['File'],
       label: 'Close Project',
       shortcut: 'CmdOrCtrl+R',
-      callback: () => getCurrentWindow().reload(),
+      callback: () => electron_api.getCurrentWindow().reload(),
     });
     this.addAction({
       menuPath: ['Edit'],
@@ -37,7 +36,7 @@ export class ElectronToolbarService extends FileToolbarService {
   }
 
   bootstrapMenu() {
-    Menu.setApplicationMenu(this._toMenu(this.actions));
+    electron_api.Menu.setApplicationMenu(this._toMenu(this.actions));
   }
 
   private _toMenu(actions: FileToolbarAction[]) {
@@ -49,14 +48,14 @@ export class ElectronToolbarService extends FileToolbarService {
       return action.menuPath[0];
     }
 
-    let menu = new Menu();
+    let menu = new electron_api.Menu();
 
     let [subMenuActions, items] = _.partition(actions, isSubMenu);
     let subMenus = _.groupBy(subMenuActions, subMenuName);
 
     for (let menuName in subMenus) {
       menu.append(
-        new MenuItem({
+        new electron_api.MenuItem({
           label: menuName,
           submenu: this._toMenu(this._popMenuLevel(subMenus[menuName])),
         })
@@ -71,7 +70,7 @@ export class ElectronToolbarService extends FileToolbarService {
   }
 
   private _toMenuItem(action: FileToolbarAction) {
-    return new MenuItem({
+    return new electron_api.MenuItem({
       click: action.callback,
       type: 'normal',
       label: action.label,

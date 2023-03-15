@@ -77,7 +77,7 @@ export class MusicAttributeComponent {
     );
   }
 
-  onMusicsChanged(newMusics: Music[]) {
+  onMusicsChanged(newMusics: readonly Music[]) {
     this.attributeChanged.emit(
       immutableAssign(this.attribute, { musics: newMusics })
     );

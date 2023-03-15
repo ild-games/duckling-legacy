@@ -8,7 +8,7 @@ fs.writeFileSync(
       .split("\r\n")
       .filter((x) => x.includes("Error"))
       .map((x) => {
-        const errNumPos = x.search(/TS\d\d\d\d/);
+        const errNumPos = x.search(/(TS|NG)\d\d\d\d/);
         return { errNum: x.slice(errNumPos, errNumPos + 6), text: x };
       })
   )

@@ -63,7 +63,7 @@ export type JsonSchemaEditValue =
         <div [ngSwitch]="jsonType(jsonSchema.contents[index])">
           <div *ngSwitchCase="JsonValueType.Object">
             <dk-json-schema-edit
-              [jsonSchema]="jsonSchema.contents[index]"
+              [jsonSchema]="asSchemaEdit(jsonSchema.contents[index])"
               (jsonSchemaChanged)="onChildJsonObjectChanged($event, index)"
             >
             </dk-json-schema-edit>
@@ -111,6 +111,10 @@ export class JsonSchemaEditComponent {
   @Output() jsonSchemaChanged = new EventEmitter<JsonSchemaEdit>();
 
   private _newPropertyKey = 'new-property';
+
+  asSchemaEdit(j: JsonSchemaEditValue): JsonSchemaEdit {
+    return j as JsonSchemaEdit;
+  }
 
   onKeyChanged(newKey: string, index: number) {
     if (!this.isValidKeyName(newKey, index)) {
@@ -257,6 +261,7 @@ export class JsonSchemaEditComponent {
     } else if (typeof rhs === 'object') {
       return JsonValueType.Object;
     }
+    throw new Error(`invalid json type: ${rhs}`);
   }
 
   defaultSelectValue(jsonValueType: JsonValueType) {

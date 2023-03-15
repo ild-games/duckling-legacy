@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as fs from 'fs';
-
 import { PathService } from './path.service';
 
 /**
@@ -17,7 +15,6 @@ interface PropertDescriptor {
   configurable: boolean;
   writable: boolean;
 }
-
 /**
  * JsonLoader is used to retrieve json strings using a provided path.
  */
@@ -30,22 +27,13 @@ export class JsonLoaderService {
    * @param path Path to retrieve data from.
    * @returns Promise resolving to the json string if it exists or null if it does not.
    */
-  getJsonFromPath(path: string): Promise<string | null> {
-    return this._path.pathExists(path).then(function (exists: boolean) {
-      if (exists) {
-        return new Promise<string>(function (resolve, reject) {
-          fs.readFile(path, function (err, data) {
-            if (err) {
-              reject({ error: true });
-            } else {
-              resolve(data.toString());
-            }
-          });
-        });
-      } else {
-        return null;
-      }
-    });
+  async getJsonFromPath(path: string): Promise<string | null> {
+    const exists = await this._path.pathExists(path);
+    if (exists) {
+      return fs_api.readFile(path, { encoding: 'utf-8' });
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -54,18 +42,10 @@ export class JsonLoaderService {
    * @param json String of Json that is being saved.
    * @returns Promise that resolves to a SaveResult describing the result of the save action.
    */
-  saveJsonToPath(path: string, json: string): Promise<SaveResult> {
+  async saveJsonToPath(path: string, json: string): Promise<SaveResult> {
     let dirname = this._path.dirname(path);
-    return this._path.makedirs(dirname).then(function () {
-      return new Promise<SaveResult>(function (resolve, reject) {
-        fs.writeFile(path, json, function (err) {
-          if (err) {
-            reject({ isSuccess: false, error: err });
-          } else {
-            resolve({ isSuccess: true, error: null });
-          }
-        });
-      });
-    });
+    await this._path.makedirs(dirname);
+    await fs_api.writeFile(path, json);
+    return { isSuccess: true, error: null };
   }
 }
