@@ -5,6 +5,7 @@ exports.PROCESS_API = exports.ELECTRON_API = exports.FS_API = exports.PATH_API =
 const electron_1 = require("electron");
 const promises_1 = require("fs/promises");
 const path_1 = require("path");
+const fg = require("fast-glob");
 const ipcChannels_1 = require("./ipcChannels");
 exports.PATH_API = {
     join: path_1.posix.join,
@@ -16,10 +17,16 @@ exports.PATH_API = {
     sep: path_1.sep,
 };
 exports.FS_API = {
+    duckling_home: (0, path_1.join)(__dirname, '../'),
     readFile: promises_1.readFile,
     writeFile: promises_1.writeFile,
     access: promises_1.access,
     mkdir: promises_1.mkdir,
+    glob: (p) => {
+        console.log(__dirname);
+        console.log(p);
+        return fg(p);
+    },
 };
 exports.ELECTRON_API = {
     window: {

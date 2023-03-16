@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItem } from 'electron';
 import * as remoteMain from '@electron/remote/main';
 import { join } from 'path';
 import {
@@ -57,10 +57,21 @@ function createWindow() {
     dialog.showErrorBox(title, content)
   );
   ipcMain.handle(menuSetApplicationMenuChannel, (e, menu) =>
-    Menu.setApplicationMenu(menu)
+    Menu.setApplicationMenu(toMenu(menu))
   );
 
   mainWindow = win;
+}
+
+function toMenu(menu): Menu {
+  const m = new Menu();
+  menu.subMenus.forEach((element) => {
+    m.append(new MenuItem({ ...element }));
+  });
+  menu.items.forEach((element) => {
+    m.append(new MenuItem({ ...element }));
+  });
+  return m;
 }
 
 // Quit when all windows are closed.

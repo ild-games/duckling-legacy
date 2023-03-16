@@ -35,8 +35,18 @@ function createWindow() {
     electron_1.ipcMain.handle(ipcChannels_1.windowReloadChannel, () => win.reload());
     electron_1.ipcMain.handle(ipcChannels_1.dialogShowOpenChannel, (e, options) => electron_1.dialog.showOpenDialog(options));
     electron_1.ipcMain.handle(ipcChannels_1.dialogShowErrorChannel, (e, title, content) => electron_1.dialog.showErrorBox(title, content));
-    electron_1.ipcMain.handle(ipcChannels_1.menuSetApplicationMenuChannel, (e, menu) => electron_1.Menu.setApplicationMenu(menu));
+    electron_1.ipcMain.handle(ipcChannels_1.menuSetApplicationMenuChannel, (e, menu) => electron_1.Menu.setApplicationMenu(toMenu(menu)));
     mainWindow = win;
+}
+function toMenu(menu) {
+    const m = new electron_1.Menu();
+    menu.subMenus.forEach((element) => {
+        m.append(new electron_1.MenuItem(Object.assign({}, element)));
+    });
+    menu.items.forEach((element) => {
+        m.append(new electron_1.MenuItem(Object.assign({}, element)));
+    });
+    return m;
 }
 // Quit when all windows are closed.
 electron_1.app.on('window-all-closed', function () {

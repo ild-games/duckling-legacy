@@ -1,8 +1,8 @@
 ///<reference path="api.d.ts" />
 import { contextBridge, ipcRenderer } from 'electron';
-import { getCurrentWindow, dialog, Menu, MenuItem } from '@electron/remote';
-import { readFile, writeFile, access, mkdir } from 'fs/promises';
-import { posix, sep } from 'path';
+import { readFile, writeFile, access, mkdir, readdir } from 'fs/promises';
+import { posix, sep, join } from 'path';
+import * as fg from 'fast-glob';
 import {
   dialogShowOpenChannel,
   menuSetApplicationMenuChannel,
@@ -25,11 +25,18 @@ export const PATH_API = {
   normalize: posix.normalize,
   sep,
 };
+
 export const FS_API = {
+  duckling_home: join(__dirname, '../'),
   readFile,
   writeFile,
   access,
   mkdir,
+  glob: (p) => {
+    console.log(__dirname);
+    console.log(p);
+    return fg(p);
+  },
 };
 
 export const ELECTRON_API = {
