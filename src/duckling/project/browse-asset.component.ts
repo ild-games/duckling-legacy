@@ -9,6 +9,7 @@ import {
 import { immutableAssign, DialogService, PathService } from '../util';
 import { ProjectService } from './project.service';
 import { AssetService } from './asset.service';
+import { OpenDialogReturnValue } from 'electron';
 
 /**
  * Component for loading asset files.
@@ -63,9 +64,9 @@ export class BrowseAssetComponent {
     this.dialogOptions.defaultPath =
       this.dialogOptions.defaultPath || this._openDialogPath;
 
-    this._dialog.showOpenDialog(this.dialogOptions, (fileNames: string[]) => {
-      if (fileNames && fileNames[0]) {
-        this.onFilePicked(fileNames[0]);
+    this._dialog.showOpenDialog(this.dialogOptions, (openDialogReturnValue: OpenDialogReturnValue) => {
+      if (!openDialogReturnValue.canceled) {
+        this.onFilePicked(openDialogReturnValue.filePaths[0]);
       }
     });
   }

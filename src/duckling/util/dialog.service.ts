@@ -1,3 +1,4 @@
+import { OpenDialogReturnValue } from 'electron';
 import { Injectable } from "@angular/core";
 
 @Injectable()
@@ -9,7 +10,7 @@ export class DialogService {
      */
     showOpenDialog(
         options: any,
-        callback?: (fileNames: string[]) => void
+        callback?: (openDialogReturnValue: OpenDialogReturnValue) => void
     ): void {}
 
     /**
