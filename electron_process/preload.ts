@@ -2,7 +2,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { readFile, writeFile, access, mkdir, readdir } from 'fs/promises';
 import { posix, sep, join } from 'path';
-import * as fg from 'fast-glob';
+import * as glob from 'fast-glob';
 import {
   dialogShowOpenChannel,
   menuAddSplashItemsChannel,
@@ -33,11 +33,7 @@ export const FS_API = {
   writeFile,
   access,
   mkdir,
-  glob: (p) => {
-    console.log(__dirname);
-    console.log(p);
-    return fg(p);
-  },
+  glob
 };
 
 export const ELECTRON_API = {

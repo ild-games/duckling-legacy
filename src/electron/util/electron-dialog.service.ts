@@ -1,4 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
+import { OpenDialogReturnValue } from 'electron';
 
 import { DialogService } from '../../duckling/util/dialog.service';
 
@@ -11,7 +12,7 @@ export class ElectronDialogService implements DialogService {
 
   showOpenDialog(
     options: any,
-    callback?: (o: Electron.OpenDialogReturnValue) => void
+    callback?: (openDialogReturnValue: OpenDialogReturnValue) => void
   ) {
     electron_api.dialog.showOpen(options).then(callback);
   }

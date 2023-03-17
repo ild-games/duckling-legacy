@@ -6,6 +6,7 @@ import { DialogService } from '../util/dialog.service';
 import { EDITOR_VERSION } from '../util/version';
 import { WindowService } from '../util/window.service';
 import { IconComponent } from '../controls';
+import { OpenDialogReturnValue } from 'electron';
 
 interface ProjectModel {
   title: string;
@@ -114,14 +115,16 @@ export class SplashComponent implements OnInit {
     this._window.center();
   }
 
-  onNewProjectClick(event: any) {
+  onNewProjectClick(_event: any) {
     this._dialog.showOpenDialog(
       this._dialogOptions,
-      (o: Electron.OpenDialogReturnValue) => {
-        if (o.filePaths) {
+      (openDialogReturnValue: OpenDialogReturnValue) => {
+        if (!openDialogReturnValue.canceled) {
           this.openProject({
-            path: o.filePaths[0],
-            title: this._path.basename(this._path.normalize(o.filePaths[0])),
+            path: openDialogReturnValue.filePaths[0],
+            title: this._path.basename(
+              this._path.normalize(openDialogReturnValue.filePaths[0])
+            ),
           });
         }
       }
