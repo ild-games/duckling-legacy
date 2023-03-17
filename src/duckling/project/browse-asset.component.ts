@@ -63,11 +63,14 @@ export class BrowseAssetComponent {
     this.dialogOptions.defaultPath =
       this.dialogOptions.defaultPath || this._openDialogPath;
 
-    this._dialog.showOpenDialog(this.dialogOptions, (fileNames: string[]) => {
-      if (fileNames && fileNames[0]) {
-        this.onFilePicked(fileNames[0]);
+    this._dialog.showOpenDialog(
+      this.dialogOptions,
+      (o: Electron.OpenDialogReturnValue) => {
+        if (o.filePaths && o.filePaths[0]) {
+          this.onFilePicked(o.filePaths[0]);
+        }
       }
-    });
+    );
   }
 
   onFilePicked(file: string) {

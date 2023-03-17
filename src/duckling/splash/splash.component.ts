@@ -115,14 +115,17 @@ export class SplashComponent implements OnInit {
   }
 
   onNewProjectClick(event: any) {
-    this._dialog.showOpenDialog(this._dialogOptions, (dirNames: string[]) => {
-      if (dirNames) {
-        this.openProject({
-          path: dirNames[0],
-          title: this._path.basename(this._path.normalize(dirNames[0])),
-        });
+    this._dialog.showOpenDialog(
+      this._dialogOptions,
+      (o: Electron.OpenDialogReturnValue) => {
+        if (o.filePaths) {
+          this.openProject({
+            path: o.filePaths[0],
+            title: this._path.basename(this._path.normalize(o.filePaths[0])),
+          });
+        }
       }
-    });
+    );
   }
 
   openProject(project: ProjectModel) {

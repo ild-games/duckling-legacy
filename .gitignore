@@ -6,6 +6,7 @@
 /out-tsc
 /bazel-out
 /electron_process/*.js
+/electron_process/*.js.map
 
 # Node
 /node_modules

@@ -44,7 +44,8 @@ exports.ELECTRON_API = {
         showError: (title, content) => electron_1.ipcRenderer.invoke(ipcChannels_1.dialogShowOpenChannel, title, content),
     },
     menu: {
-        setApplicationMenu: (content) => electron_1.ipcRenderer.invoke(ipcChannels_1.menuSetApplicationMenuChannel, content),
+        addSplashItems: () => electron_1.ipcRenderer.send(ipcChannels_1.menuAddSplashItemsChannel),
+        addProjectItems: () => electron_1.ipcRenderer.send(ipcChannels_1.menuAddProjectItemsChannel),
     },
 };
 exports.PROCESS_API = {

@@ -10,4 +10,5 @@ export const windowReloadChannel = 'RELOAD';
 export const dialogShowOpenChannel = 'DIALOG_OPEN';
 export const dialogShowErrorChannel = 'DIALOG_ERROR';
 
-export const menuSetApplicationMenuChannel = 'MENU_SET_APP';
+export const menuAddSplashItemsChannel = 'MENU_ADD_SPLASH';
+export const menuAddProjectItemsChannel = 'MENU_ADD_PROJECT';

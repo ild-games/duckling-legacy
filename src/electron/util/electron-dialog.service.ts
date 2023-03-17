@@ -9,7 +9,10 @@ import { DialogService } from '../../duckling/util/dialog.service';
 export class ElectronDialogService implements DialogService {
   constructor(protected _zone: NgZone) {}
 
-  showOpenDialog(options: any, callback?: (fileNames: string[]) => void) {
+  showOpenDialog(
+    options: any,
+    callback?: (o: Electron.OpenDialogReturnValue) => void
+  ) {
     electron_api.dialog.showOpen(options).then(callback);
   }
 

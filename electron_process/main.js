@@ -4,6 +4,7 @@ const electron_1 = require("electron");
 const remoteMain = require("@electron/remote/main");
 const path_1 = require("path");
 const ipcChannels_1 = require("./ipcChannels");
+const menuTemplates_1 = require("./menuTemplates");
 const baseUrl = '../';
 let mainWindow = null;
 remoteMain.initialize();
@@ -35,18 +36,11 @@ function createWindow() {
     electron_1.ipcMain.handle(ipcChannels_1.windowReloadChannel, () => win.reload());
     electron_1.ipcMain.handle(ipcChannels_1.dialogShowOpenChannel, (e, options) => electron_1.dialog.showOpenDialog(options));
     electron_1.ipcMain.handle(ipcChannels_1.dialogShowErrorChannel, (e, title, content) => electron_1.dialog.showErrorBox(title, content));
-    electron_1.ipcMain.handle(ipcChannels_1.menuSetApplicationMenuChannel, (e, menu) => electron_1.Menu.setApplicationMenu(toMenu(menu)));
+    electron_1.ipcMain.handle(ipcChannels_1.menuAddSplashItemsChannel, () => electron_1.Menu.setApplicationMenu(electron_1.Menu.buildFromTemplate(menuTemplates_1.splashMenu)));
+    electron_1.ipcMain.handle(ipcChannels_1.menuAddProjectItemsChannel, () => electron_1.Menu.setApplicationMenu(electron_1.Menu.buildFromTemplate(menuTemplates_1.projectMenu)));
+    const m = electron_1.Menu.buildFromTemplate(menuTemplates_1.defaultMenu);
+    electron_1.Menu.setApplicationMenu(m);
     mainWindow = win;
-}
-function toMenu(menu) {
-    const m = new electron_1.Menu();
-    menu.subMenus.forEach((element) => {
-        m.append(new electron_1.MenuItem(Object.assign({}, element)));
-    });
-    menu.items.forEach((element) => {
-        m.append(new electron_1.MenuItem(Object.assign({}, element)));
-    });
-    return m;
 }
 // Quit when all windows are closed.
 electron_1.app.on('window-all-closed', function () {

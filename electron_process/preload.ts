@@ -5,7 +5,8 @@ import { posix, sep, join } from 'path';
 import * as fg from 'fast-glob';
 import {
   dialogShowOpenChannel,
-  menuSetApplicationMenuChannel,
+  menuAddSplashItemsChannel,
+  menuAddProjectItemsChannel,
   windowCenterChannel,
   windowMaximizeChannel,
   windowReloadChannel,
@@ -58,8 +59,8 @@ export const ELECTRON_API = {
       ipcRenderer.invoke(dialogShowOpenChannel, title, content),
   },
   menu: {
-    setApplicationMenu: (content) =>
-      ipcRenderer.invoke(menuSetApplicationMenuChannel, content),
+    addSplashItems: () => ipcRenderer.send(menuAddSplashItemsChannel),
+    addProjectItems: () => ipcRenderer.send(menuAddProjectItemsChannel),
   },
 };
 

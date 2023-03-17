@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscriber } from 'rxjs';
 
-import { FileToolbarService } from './file-toolbar.service';
 import { AssetService } from '../project/asset.service';
 import { ProjectService } from '../project/project.service';
 import { CustomAttributesComponent } from '../project/custom-attributes.component';
@@ -47,7 +46,6 @@ export class ShellComponent implements OnInit, OnDestroy {
     private _pathService: PathService,
     private _optionsService: OptionsService,
     private _windowService: WindowService,
-    private _fileToolbar: FileToolbarService,
     private _store: StoreService,
     private _viewContainer: ViewContainerRef,
     private _dialog: MatDialog
@@ -80,50 +78,27 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   private _initSplashToolbar() {
-    this._fileToolbar.addAction({
-      menuPath: ['File'],
-      label: 'Undo',
-      shortcut: 'CmdOrCtrl+Z',
-      callback: () => this._store.undo(),
-    });
-
-    this._fileToolbar.addAction({
-      menuPath: ['File'],
-      label: 'Redo',
-      shortcut: 'CmdOrCtrl+Shift+Z',
-      callback: () => this._store.redo(),
-    });
+    electron_api.menu.addSplashItems();
+    document.addEventListener('undo', () => this._store.undo());
+    document.addEventListener('redo', () => this._store.redo());
   }
 
   private _initProjectToolbar() {
-    this._fileToolbar.addAction({
-      menuPath: ['Project'],
-      label: 'Edit Custom Attributes',
-      shortcut: 'CmdOrCtrl+Shift+E',
-      callback: () => this._dialog.open(CustomAttributesComponent),
-    });
+    electron_api.menu.addProjectItems();
+    document.addEventListener('ild_editCustomAttributes', () =>
+      this._dialog.open(CustomAttributesComponent)
+    );
+    document.addEventListener('ild_runMigrations:all_maps', () =>
+      this._dialog.open(MigrateAllMapsComponent, {
+        disableClose: true,
+      })
+    );
 
-    this._fileToolbar.addAction({
-      menuPath: ['Project'],
-      label: 'Run Migrations For All Maps',
-      shortcut: 'CmdOrCtrl+Shift+M',
-      callback: () =>
-        this._dialog.open(MigrateAllMapsComponent, {
-          disableClose: true,
-        }),
-    });
-
-    this._fileToolbar.addAction({
-      menuPath: ['Project'],
-      label: 'Minify Maps',
-      shortcut: '',
-      callback: () =>
-        this._dialog.open(MinifyAllMapsComponent, {
-          disableClose: true,
-        }),
-    });
-
-    this._fileToolbar.bootstrapMenu();
+    document.addEventListener('ild_minify_maps', () =>
+      this._dialog.open(MinifyAllMapsComponent, {
+        disableClose: true,
+      })
+    );
   }
 
   get showSplash() {

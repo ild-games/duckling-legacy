@@ -1,10 +1,19 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItem } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
+} from 'electron';
 import * as remoteMain from '@electron/remote/main';
 import { join } from 'path';
 import {
   dialogShowErrorChannel,
   dialogShowOpenChannel,
-  menuSetApplicationMenuChannel,
+  menuAddProjectItemsChannel,
+  menuAddSplashItemsChannel,
   windowCenterChannel,
   windowMaximizeChannel,
   windowReloadChannel,
@@ -14,6 +23,7 @@ import {
   windowSizeChannel,
   windowUnMaximizeChannel,
 } from './ipcChannels';
+import { defaultMenu, projectMenu, splashMenu } from './menuTemplates';
 
 const baseUrl = '../';
 
@@ -56,22 +66,17 @@ function createWindow() {
   ipcMain.handle(dialogShowErrorChannel, (e, title, content) =>
     dialog.showErrorBox(title, content)
   );
-  ipcMain.handle(menuSetApplicationMenuChannel, (e, menu) =>
-    Menu.setApplicationMenu(toMenu(menu))
+  ipcMain.handle(menuAddSplashItemsChannel, () =>
+    Menu.setApplicationMenu(Menu.buildFromTemplate(splashMenu))
+  );
+  ipcMain.handle(menuAddProjectItemsChannel, () =>
+    Menu.setApplicationMenu(Menu.buildFromTemplate(projectMenu))
   );
 
-  mainWindow = win;
-}
+  const m = Menu.buildFromTemplate(defaultMenu);
+  Menu.setApplicationMenu(m);
 
-function toMenu(menu): Menu {
-  const m = new Menu();
-  menu.subMenus.forEach((element) => {
-    m.append(new MenuItem({ ...element }));
-  });
-  menu.items.forEach((element) => {
-    m.append(new MenuItem({ ...element }));
-  });
-  return m;
+  mainWindow = win;
 }
 
 // Quit when all windows are closed.
