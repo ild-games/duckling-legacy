@@ -1,117 +1,120 @@
 import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    SimpleChange,
-    OnChanges,
-    OnInit,
-} from "@angular/core";
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  SimpleChange,
+  OnChanges,
+  OnInit,
+} from '@angular/core';
 
-import { Validator } from "./validated-input.component";
+import { Validator } from './validated-input.component';
 
-import { DeleteButtonComponent, InputComponent } from "../controls";
+import { DeleteButtonComponent, InputComponent } from '../controls';
 
 @Component({
-    selector: "dk-edit-input",
-    styleUrls: ["./duckling/controls/edit-input.component.css"],
-    template: `
-        <div class="container">
-            <div *ngIf="!isEditingValue" class="edit-label">
-                <dk-inline-edit-label
-                    [label]="labelAndValue"
-                    [floatIconRight]="floatIconRight"
-                    [tooltip]="editTooltip"
-                    (startEdit)="onBeginEdit()">
-                </dk-inline-edit-label>
-            </div>
-            
-            <div *ngIf="isEditingValue" class="edit-label">
-                <span class="edit-label-text">{{editLabel}}</span>
-                <dk-input
-                    [value]="editValue"
-                    [dividerColor]="isValid ? 'primary' : 'warn'"
-                    (keyup.enter)="onSave()"
-                    (inputChanged)="onInput($event)">
-                </dk-input>
-                <dk-icon-button
-                    icon="save"
-                    [tooltip]="getSaveTooltip()"
-                    [disabled]="!isValid"
-                    (iconClick)="onSave()">
-                </dk-icon-button>
-            </div>
-        </div>
-    `,
+  selector: 'dk-edit-input',
+  styleUrls: ['./edit-input.component.scss'],
+  template: `
+    <div class="container">
+      <div *ngIf="!isEditingValue" class="edit-label">
+        <dk-inline-edit-label
+          [label]="labelAndValue"
+          [floatIconRight]="floatIconRight"
+          [tooltip]="editTooltip"
+          (startEdit)="onBeginEdit()"
+        >
+        </dk-inline-edit-label>
+      </div>
+
+      <div *ngIf="isEditingValue" class="edit-label">
+        <span class="edit-label-text">{{ editLabel }}</span>
+        <dk-input
+          [value]="editValue"
+          [dividerColor]="isValid ? 'primary' : 'warn'"
+          (keyup.enter)="onSave()"
+          (inputChanged)="onInput($event)"
+        >
+        </dk-input>
+        <dk-icon-button
+          icon="save"
+          [tooltip]="getSaveTooltip()"
+          [disabled]="!isValid"
+          (iconClick)="onSave()"
+        >
+        </dk-icon-button>
+      </div>
+    </div>
+  `,
 })
 export class EditInputComponent implements OnChanges, OnInit {
-    @Input() label: string;
-    @Input() value: string;
-    @Input() validator: Validator;
-    @Input() editTooltip: string;
-    @Input() validTooltip: string;
-    @Input() invalidTooltip: string;
-    @Input() floatIconRight: boolean;
-    @Output() onValueSaved = new EventEmitter<string>();
+  @Input() label: string;
+  @Input() value: string;
+  @Input() validator: Validator;
+  @Input() editTooltip: string;
+  @Input() validTooltip: string;
+  @Input() invalidTooltip: string;
+  @Input() floatIconRight: boolean;
+  @Output() onValueSaved = new EventEmitter<string>();
 
-    editValue: string;
-    isEditingValue: boolean = false;
+  editValue: string;
+  isEditingValue: boolean = false;
 
-    ngOnInit() {
-        this.editValue = this.value;
+  ngOnInit() {
+    this.editValue = this.value;
+  }
+
+  ngOnChanges(changes: { value?: SimpleChange }) {
+    if (changes.value) {
+      this.editValue = this.value;
+      this.isEditingValue = false;
+    }
+  }
+
+  onBeginEdit() {
+    this.isEditingValue = true;
+  }
+
+  onSave() {
+    if (!this.validator(this.editValue)) {
+      return;
     }
 
-    ngOnChanges(changes: { value?: SimpleChange }) {
-        if (changes.value) {
-            this.editValue = this.value;
-            this.isEditingValue = false;
-        }
+    // if the value is the same don't do the replace or else undo/redo will have
+    // a state that appears to do nothing
+    if (this.editValue !== this.value) {
+      this.onValueSaved.emit(this.editValue);
+    }
+    this.isEditingValue = false;
+  }
+
+  onInput(newEditValue: string) {
+    this.editValue = newEditValue;
+  }
+
+  getSaveTooltip() {
+    return this.isValid ? this.validTooltip : this.invalidTooltip;
+  }
+
+  get isValid(): boolean {
+    if (!this.validator) {
+      return true;
     }
 
-    onBeginEdit() {
-        this.isEditingValue = true;
+    return this.validator(this.editValue);
+  }
+
+  get labelAndValue(): string {
+    if (this.label) {
+      return `${this.label}: ${this.value}`;
     }
+    return this.value;
+  }
 
-    onSave() {
-        if (!this.validator(this.editValue)) {
-            return;
-        }
-
-        // if the value is the same don't do the replace or else undo/redo will have
-        // a state that appears to do nothing
-        if (this.editValue !== this.value) {
-            this.onValueSaved.emit(this.editValue);
-        }
-        this.isEditingValue = false;
+  get editLabel(): string {
+    if (this.label) {
+      return `${this.label}:`;
     }
-
-    onInput(newEditValue: string) {
-        this.editValue = newEditValue;
-    }
-
-    getSaveTooltip() {
-        return this.isValid ? this.validTooltip : this.invalidTooltip;
-    }
-
-    get isValid(): boolean {
-        if (!this.validator) {
-            return true;
-        }
-
-        return this.validator(this.editValue);
-    }
-
-    get labelAndValue(): string {
-        if (this.label) {
-            return `${this.label}: ${this.value}`;
-        }
-        return this.value;
-    }
-
-    get editLabel(): string {
-        if (this.label) {
-            return `${this.label}:`;
-        }
-        return "";
-    }
+    return '';
+  }
 }

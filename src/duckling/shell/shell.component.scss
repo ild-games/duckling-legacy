@@ -16,13 +16,13 @@ $shell-padding: 16px;
         width: 800px;
         flex: 1 1 auto;
         min-width: 800px;
-        margin-right: $shell-padding / 2;
+        margin-right: $shell-padding * 0.5;
         padding: 0;
     }
 
     .entity-editor-container {
         flex: 0 1 450px;
-        margin-left: $shell-padding / 2;
+        margin-left: $shell-padding * 0.5;
         overflow-y: auto;
     }
 
@@ -32,7 +32,7 @@ $shell-padding: 16px;
         height: 350px;
         bottom: 0;
         right: 0;
-        background: url(./resources/images/entity-editor-duck-bg.svg) no-repeat;
+        background: url(../../../resources/images/entity-editor-duck-bg.svg) no-repeat;
         z-index: -1;
     }
 }

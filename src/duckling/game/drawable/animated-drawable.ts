@@ -1,6 +1,6 @@
 import { immutableAssign } from "../../util";
 
-import { Drawable, DrawableType, defaultDrawable } from "./drawable";
+import { Drawable, defaultDrawable } from "./drawable";
 
 export interface AnimatedDrawable extends Drawable {
     duration: number;

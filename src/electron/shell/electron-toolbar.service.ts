@@ -1,11 +1,10 @@
-import { Injectable } from "@angular/core";
-import { remote, Menu, MenuItem } from "electron";
-import * as _ from "lodash";
+import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
 
 import {
-    FileToolbarAction,
-    FileToolbarService,
-} from "../../duckling/shell/file-toolbar.service";
+  FileToolbarAction,
+  FileToolbarService,
+} from '../../duckling/shell/file-toolbar.service';
 
 /**
  * Electron implementation of the FileToolbarService used to handle the menu at the top of the
@@ -13,84 +12,80 @@ import {
  */
 @Injectable()
 export class ElectronToolbarService extends FileToolbarService {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.addAction({
-            menuPath: ["File"],
-            label: "Close Project",
-            shortcut: "CmdOrCtrl+R",
-            callback: () => remote.getCurrentWindow().reload(),
-        });
-        this.addAction({
-            menuPath: ["Edit"],
-            label: "Copy",
-            shortcut: "CmdOrCtrl+C",
-            role: "copy",
-        });
-        this.addAction({
-            menuPath: ["Edit"],
-            label: "Paste",
-            shortcut: "CmdOrCtrl+V",
-            role: "paste",
-        });
+    this.addAction({
+      menuPath: ['File'],
+      label: 'Close Project',
+      shortcut: 'CmdOrCtrl+R',
+      callback: () => electron_api.window.reload(),
+    });
+    this.addAction({
+      menuPath: ['Edit'],
+      label: 'Copy',
+      shortcut: 'CmdOrCtrl+C',
+      role: 'copy',
+    });
+    this.addAction({
+      menuPath: ['Edit'],
+      label: 'Paste',
+      shortcut: 'CmdOrCtrl+V',
+      role: 'paste',
+    });
+  }
+
+  bootstrapMenu() {
+    electron_api.menu.setApplicationMenu(this._toMenu(this.actions));
+  }
+
+  private _toMenu(actions: FileToolbarAction[]) {
+    function isSubMenu(action: FileToolbarAction) {
+      return action.menuPath.length > 0;
     }
 
-    bootstrapMenu() {
-        remote.Menu.setApplicationMenu(this._toMenu(this.actions));
+    function subMenuName(action: FileToolbarAction) {
+      return action.menuPath[0];
     }
 
-    private _toMenu(actions: FileToolbarAction[]) {
-        function isSubMenu(action: FileToolbarAction) {
-            return action.menuPath.length > 0;
-        }
+    let menu = { subMenus: [], items: [] };
 
-        function subMenuName(action: FileToolbarAction) {
-            return action.menuPath[0];
-        }
+    let [subMenuActions, items] = _.partition(actions, isSubMenu);
+    let subMenus = _.groupBy(subMenuActions, subMenuName);
 
-        let menu = new remote.Menu();
-
-        let [subMenuActions, items] = _.partition(actions, isSubMenu);
-        let subMenus = _.groupBy(subMenuActions, subMenuName);
-
-        for (let menuName in subMenus) {
-            menu.append(
-                new remote.MenuItem({
-                    label: menuName,
-                    submenu: this._toMenu(
-                        this._popMenuLevel(subMenus[menuName])
-                    ),
-                })
-            );
-        }
-
-        for (let item of items) {
-            menu.append(this._toMenuItem(item));
-        }
-
-        return menu;
+    for (let menuName in subMenus) {
+      menu.subMenus.push({
+        label: menuName,
+        submenu: this._toMenu(this._popMenuLevel(subMenus[menuName])),
+      });
     }
 
-    private _toMenuItem(action: FileToolbarAction) {
-        return new remote.MenuItem({
-            click: action.callback,
-            type: "normal",
-            label: action.label,
-            accelerator: action.shortcut,
-            role: action.role,
-        });
+    for (let item of items) {
+      menu.items.push(this._toMenuItem(item));
     }
 
-    private _popMenuLevel(actions: FileToolbarAction[]) {
-        return _.map(actions, (action) => {
-            return {
-                menuPath: action.menuPath.slice(1),
-                label: action.label,
-                shortcut: action.shortcut,
-                callback: action.callback,
-                role: action.role,
-            };
-        });
-    }
+    return menu;
+  }
+
+  private _toMenuItem(action: FileToolbarAction) {
+    return {
+      click: action.callback,
+      type: 'normal',
+      label: action.label,
+      accelerator: action.shortcut,
+      role: action.role as any,
+    };
+  }
+
+  private _popMenuLevel(actions: FileToolbarAction[]) {
+    return _.map(actions, (action) => {
+      return {
+        menuPath: action.menuPath.slice(1),
+        label: action.label,
+        shortcut: action.shortcut,
+        callback: action.callback,
+        role: action.role,
+      };
+    });
+  }
 }
